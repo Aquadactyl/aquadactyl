@@ -1,8 +1,7 @@
 # Stage 0:
-# Build the assets that are needed for the frontend. This build stage is then discarded
-# since we won't need NodeJS anymore in the future. This Docker image ships a final production
-# level distribution of Pterodactyl.
-FROM --platform=$BUILDPLATFORM node:22-alpine
+# Build frontend assets and retain the dependency tree used by Blueprint for
+# extension installs and rebuilds at runtime.
+FROM --platform=$BUILDPLATFORM node:22-alpine AS frontend
 WORKDIR /app
 COPY . ./
 RUN npm install --global pnpm@12.10.1 \
@@ -10,21 +9,43 @@ RUN npm install --global pnpm@12.10.1 \
     && pnpm run build:production
 
 # Stage 1:
-# Build the actual container with all of the needed PHP dependencies that will run the application.
+# Build the Aquadactyl runtime image.
 FROM --platform=$TARGETOS/$TARGETARCH php:8.5-fpm-alpine
 WORKDIR /app
+
 COPY . ./
-COPY --from=0 /app/public/assets ./public/assets
-RUN apk add --no-cache --update ca-certificates dcron curl git supervisor tar unzip nginx libpng-dev libxml2-dev libzip-dev certbot certbot-nginx mysql-client \
+COPY --from=frontend /app/public/assets ./public/assets
+COPY --from=frontend /app/node_modules ./node_modules
+
+RUN apk add --no-cache --update \
+        bash \
+        ca-certificates \
+        certbot \
+        certbot-nginx \
+        curl \
+        dcron \
+        git \
+        libpng-dev \
+        libxml2-dev \
+        libzip-dev \
+        mysql-client \
+        nginx \
+        nodejs \
+        npm \
+        oniguruma-dev \
+        supervisor \
+        tar \
+        unzip \
+    && npm install --global pnpm@12.10.1 \
     && docker-php-ext-configure zip \
-    && docker-php-ext-install bcmath gd pdo_mysql zip \
+    && docker-php-ext-install bcmath gd mbstring pdo_mysql posix zip \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
     && cp .env.example .env \
-    && mkdir -p bootstrap/cache/ storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
+    && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
     && chmod 777 -R bootstrap storage \
     && composer install --no-dev --optimize-autoloader \
     && rm -rf .env bootstrap/cache/*.php \
-    && mkdir -p /app/storage/logs/ \
+    && mkdir -p /app/storage/logs \
     && chown -R nginx:nginx .
 
 RUN rm /usr/local/etc/php-fpm.conf \
@@ -38,5 +59,5 @@ COPY .github/docker/www.conf /usr/local/etc/php-fpm.conf
 COPY .github/docker/supervisord.conf /etc/supervisord.conf
 
 EXPOSE 80 443
-ENTRYPOINT [ "/bin/ash", ".github/docker/entrypoint.sh" ]
-CMD [ "supervisord", "-n", "-c", "/etc/supervisord.conf" ]
+ENTRYPOINT ["/bin/ash", ".github/docker/entrypoint.sh"]
+CMD ["supervisord", "-n", "-c", "/etc/supervisord.conf"]
