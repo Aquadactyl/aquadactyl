@@ -1,16 +1,29 @@
-const colors = require('tailwindcss/colors');
-
 const gray = {
-    50: 'hsl(216, 33%, 97%)',
-    100: 'hsl(214, 15%, 91%)',
-    200: 'hsl(210, 16%, 82%)',
-    300: 'hsl(211, 13%, 65%)',
-    400: 'hsl(211, 10%, 53%)',
-    500: 'hsl(211, 12%, 43%)',
-    600: 'hsl(209, 14%, 37%)',
-    700: 'hsl(209, 18%, 30%)',
-    800: 'hsl(209, 20%, 25%)',
-    900: 'hsl(210, 24%, 16%)',
+    50: '#f2f3f5',
+    100: '#e3e5e8',
+    200: '#d6d9df',
+    300: '#c1c6cf',
+    400: '#b0b5bf',
+    500: '#8a909d',
+    600: '#41444c',
+    700: '#313338',
+    800: '#232428',
+    900: '#1e1f22',
+    950: '#18191c',
+};
+
+const aqua = {
+    50: '#effcfa',
+    100: '#d2f1ed',
+    200: '#a4e3dc',
+    300: '#78d4cc',
+    400: '#55c0b7',
+    500: '#237c7f',
+    600: '#20696d',
+    700: '#1d5558',
+    800: '#204448',
+    900: '#1d363a',
+    950: '#122528',
 };
 
 module.exports = {
@@ -20,16 +33,21 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
+                sans: ['"IBM Plex Sans"', '"Segoe UI"', 'system-ui', 'sans-serif'],
                 header: ['"IBM Plex Sans"', '"Roboto"', 'system-ui', 'sans-serif'],
             },
             colors: {
-                black: '#131a20',
+                black: gray[950],
                 // "primary" and "neutral" are deprecated, prefer the use of "blue" and "gray"
                 // in new code.
-                primary: colors.blue,
+                primary: aqua,
+                blue: aqua,
                 gray: gray,
                 neutral: gray,
-                cyan: colors.cyan,
+                cyan: aqua,
+            },
+            borderRadius: {
+                DEFAULT: '0.5rem',
             },
             fontSize: {
                 '2xs': '0.625rem',

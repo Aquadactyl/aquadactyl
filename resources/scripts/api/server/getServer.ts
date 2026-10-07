@@ -61,6 +61,7 @@ export interface Server {
     skipScripts: boolean;
     variables: ServerEggVariable[];
     allocations: Allocation[];
+    BlueprintFramework: { eggId: number };
 }
 
 export const rawDataToServerObject = ({ attributes: data }: FractalResponseData): Server => ({
@@ -85,6 +86,7 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     featureLimits: { ...data.feature_limits },
     isTransferring: data.is_transferring,
     skipScripts: data.skip_scripts,
+    BlueprintFramework: { eggId: data.BlueprintFramework.egg_id },
     variables: ((data.relationships?.variables as FractalResponseList | undefined)?.data || []).map(
         rawDataToServerEggVariable
     ),

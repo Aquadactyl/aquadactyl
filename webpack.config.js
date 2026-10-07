@@ -6,14 +6,14 @@ const TerserPlugin = require('terser-webpack-plugin');
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
-    cache: true,
+    cache: { type: 'filesystem', buildDependencies: { config: [__filename] } },
     target: 'web',
     mode: isProduction ? 'production' : 'development',
     devtool: process.env.DEVTOOL || (isProduction ? false : 'eval-source-map'),
     performance: {
         hints: false,
     },
-    entry: ['react-hot-loader/patch', './resources/scripts/index.tsx'],
+    entry: isProduction ? ['./resources/scripts/index.tsx'] : ['react-hot-loader/patch', './resources/scripts/index.tsx'],
     output: {
         path: path.join(__dirname, '/public/assets'),
         filename: isProduction ? 'bundle.[chunkhash:8].js' : 'bundle.[fullhash:8].js',
@@ -60,10 +60,8 @@ module.exports = {
             },
             {
                 test: /\.(png|jp(e?)g|gif)$/,
-                loader: 'file-loader',
-                options: {
-                    name: 'images/[name].[hash:8].[ext]',
-                },
+                type: 'asset/resource',
+                generator: { filename: 'images/[name].[contenthash:8][ext]' },
             },
             {
                 test: /\.(woff|woff2)$/i,
@@ -80,17 +78,15 @@ module.exports = {
             },
         ],
     },
-    stats: {
-        // Ignore warnings emitted by "source-map-loader" when trying to parse source maps from
-        // JS plugins we use, namely brace editor.
-        warningsFilter: [/Failed to parse source map/],
-    },
+    ignoreWarnings: [/Failed to parse source map/],
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.json'],
         alias: {
+            ...(!isProduction ? { 'react-dom': '@hot-loader/react-dom' } : {}),
             '@': path.join(__dirname, '/resources/scripts'),
             '@definitions': path.join(__dirname, '/resources/scripts/api/definitions'),
             '@feature': path.join(__dirname, '/resources/scripts/components/server/features'),
+            '@blueprint': path.join(__dirname, '/resources/scripts/blueprint'),
         },
         symlinks: false,
     },

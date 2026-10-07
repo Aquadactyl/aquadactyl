@@ -15,12 +15,11 @@ node_modules
 _ide_helper.php
 _ide_helper_models.php
 .phpstorm.meta.php
-.yarn
+.pnpm-store/
 public/assets/manifest.json
 
 # For local development with docker
 # Remove if we ever put the Dockerfile in the repo
-.dockerignore
 docker-compose.*
 !docker-compose.example.yml
 !docker-compose.example.yaml
@@ -35,3 +34,21 @@ resources/lang/locales.js
 /public/build
 /public/hot
 result
+
+# Blueprint runtime state and local configuration.
+.blueprintrc
+*.blueprint
+!.blueprint/
+.blueprint/tmp/*
+!.blueprint/tmp/.gitkeep
+.blueprint/dev/*
+!.blueprint/dev/.gitkeep
+.blueprint/extensions/blueprint/private/db/is_installed
+.blueprint/extensions/blueprint/private/db/version
+.blueprint/lib
+.blueprint/dist/types/*
+!.blueprint/dist/types/.gitkeep
+public/extensions/blueprint
+public/assets/extensions/blueprint
+public/storage
+.build-cache.json

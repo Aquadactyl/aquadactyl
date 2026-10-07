@@ -17,21 +17,24 @@ import { SocketEvent, SocketRequest } from '@/components/server/events';
 import classNames from 'classnames';
 import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
 
+import CommandRow from '@blueprint/components/Server/Terminal/CommandRow';
+
 import 'xterm/css/xterm.css';
 import styles from './style.module.css';
 
 const theme = {
     background: th`colors.black`.toString(),
+    foreground: th`colors.gray.200`.toString(),
     cursor: 'transparent',
     black: th`colors.black`.toString(),
     red: '#E54B4B',
     green: '#9ECE58',
     yellow: '#FAED70',
-    blue: '#396FE2',
+    blue: '#82aaff',
     magenta: '#BB80B3',
-    cyan: '#2DDAFD',
+    cyan: '#78d4cc',
     white: '#d0d0d0',
-    brightBlack: 'rgba(255, 255, 255, 0.2)',
+    brightBlack: '#8a909d',
     brightRed: '#FF5370',
     brightGreen: '#C3E88D',
     brightYellow: '#FFCB6B',
@@ -39,7 +42,7 @@ const theme = {
     brightMagenta: '#C792EA',
     brightCyan: '#89DDFF',
     brightWhite: '#ffffff',
-    selection: '#FAF089',
+    selection: '#1d5558',
 };
 
 const terminalProps: ITerminalOptions = {
@@ -228,6 +231,7 @@ export default () => {
                     >
                         <ChevronDoubleRightIcon className={'w-4 h-4'} />
                     </div>
+                    <CommandRow />
                 </div>
             )}
         </div>

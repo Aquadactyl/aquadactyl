@@ -11,13 +11,14 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: yarn
-      - run: yarn install --frozen-lockfile
-      - run: yarn tsc
-      - run: yarn build:production
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run tsc
+      - run: pnpm run build:production
       - name: create release branch and bump version
         env:
           VERSION: ${{ github.ref_name }}
@@ -34,7 +35,9 @@ jobs:
       - name: create release archive
         run: |
           rm -rf node_modules tests CONTRIBUTING.md flake.lock flake.nix phpunit.xml shell.nix
-          tar -czf panel.tar.gz * .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .prettierrc.json
+          tar --exclude='bootstrap/cache/*.php' --exclude='storage/logs/*.log' \
+            -czf panel.tar.gz * .blueprint .gitattributes .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .prettierrc.json
+          sha256sum panel.tar.gz > SHA256SUMS
       - name: write changelog
         run: |
           sed -n "/^## ${{ github.ref_name }}/,/^## /{/^## /b;p}" CHANGELOG.md > ./RELEASE_CHANGELOG
@@ -47,6 +50,7 @@ jobs:
           body_path: ./RELEASE_CHANGELOG
           files: |
             panel.tar.gz
+            SHA256SUMS
 
       # Hand the tagged version to pterodactyl/pterodactyl-cdn, which publishes
       # https://cdn.pterodactyl.io/releases/latest.json. It can't read the
@@ -54,7 +58,7 @@ jobs:
       # GITHUB_TOKEN deliberately cannot be used here: it has no access to
       # another repository.
       - name: Update CDN release manifest
-        if: ${{ !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'alpha') }}
+        if: ${{ github.repository == 'pterodactyl/panel' && !contains(github.ref_name, 'rc') && !contains(github.ref_name, 'beta') && !contains(github.ref_name, 'alpha') }}
         env:
           GH_TOKEN: ${{ secrets.CDN_DISPATCH_TOKEN }}
           VERSION: ${{ github.ref_name }}

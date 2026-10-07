@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Str;
-use NunoMaduro\Collision\Provider;
 use Illuminate\Contracts\Console\Kernel;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -16,10 +15,6 @@ $kernel = $app->make(Kernel::class);
  * Bootstrap the kernel and prepare application for testing.
  */
 $kernel->bootstrap();
-
-// Register the collision service provider so that errors during the test
-// setup process are output nicely.
-(new Provider())->register();
 
 $output = new ConsoleOutput();
 
@@ -43,3 +38,8 @@ if (!env('SKIP_MIGRATIONS')) {
 } else {
     $output->writeln(PHP_EOL . '<comment>Skipping database migrations...</comment>' . PHP_EOL);
 }
+
+// PHPUnit owns the handlers during test execution. Release the handlers installed
+// by this standalone migration application before individual test apps bootstrap.
+restore_error_handler();
+restore_exception_handler();

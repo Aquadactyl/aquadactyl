@@ -1,4 +1,4 @@
-import tw from 'twin.macro';
+import tw, { theme } from 'twin.macro';
 import { createGlobalStyle } from 'styled-components/macro';
 // @ts-expect-error untyped font file
 import font from '@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2';
@@ -11,6 +11,11 @@ export default createGlobalStyle`
         font-weight: 100 700;
         src: url(${font}) format('woff2-variations');
         unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+
+    :root {
+        color-scheme: dark;
+        scrollbar-color: ${theme`colors.gray.600`} ${theme`colors.gray.900`};
     }
 
     body {
@@ -30,8 +35,18 @@ export default createGlobalStyle`
         ${tw`m-0`};
     }
 
+    ::selection {
+        background: ${theme`colors.blue.700`};
+        color: ${theme`colors.blue.50`};
+    }
+
     textarea, select, input, button, button:focus, button:focus-visible {
         ${tw`outline-none`};
+    }
+
+    a:focus-visible, button:focus-visible, [role=button]:focus-visible {
+        outline: 2px solid ${theme`colors.blue.300`};
+        outline-offset: 3px;
     }
 
     input[type=number]::-webkit-outer-spin-button,
@@ -56,7 +71,7 @@ export default createGlobalStyle`
         border-right-width: 4px;
         border-left-width: 4px;
         -webkit-border-radius: 9px 4px;
-        -webkit-box-shadow: inset 0 0 0 1px hsl(211, 10%, 53%), inset 0 0 0 4px hsl(209deg 18% 30%);
+        -webkit-box-shadow: inset 0 0 0 1px ${theme`colors.gray.500`}, inset 0 0 0 4px ${theme`colors.gray.600`};
     }
 
     ::-webkit-scrollbar-track-piece {
@@ -73,5 +88,13 @@ export default createGlobalStyle`
 
     ::-webkit-scrollbar-corner {
         background: transparent;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
     }
 `;

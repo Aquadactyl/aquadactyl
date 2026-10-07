@@ -6,12 +6,16 @@ use Ramsey\Uuid\Uuid;
 use Pterodactyl\Models\ActivityLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
+use Pterodactyl\BlueprintFramework\GetExtensionSchedules;
 use Pterodactyl\Repositories\Eloquent\SettingsRepository;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Pterodactyl\Services\Telemetry\RegisterBlueprintTelemetry;
 use Pterodactyl\Services\Telemetry\TelemetryCollectionService;
 use Pterodactyl\Console\Commands\Schedule\ProcessRunnableCommand;
+// Import Blueprint schedules, telemetry and library
 use Pterodactyl\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
 use Pterodactyl\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
+use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\Console\BlueprintConsoleLibrary as BlueprintExtensionLibrary;
 
 class Kernel extends ConsoleKernel
 {
@@ -44,9 +48,35 @@ class Kernel extends ConsoleKernel
             $schedule->command(PruneCommand::class, ['--model' => [ActivityLog::class]])->daily();
         }
 
+        // Pterodactyl telemetry
         if (config('pterodactyl.telemetry.enabled')) {
             $this->registerTelemetry($schedule);
         }
+
+        // ============================
+        //    BLUEPRINT SCHEDULES
+        // ============================
+
+        // First installation must be able to create the database before scheduling Blueprint jobs.
+        if (!is_file(base_path('.blueprint/extensions/blueprint/private/db/is_installed'))) {
+            return;
+        }
+
+        // Blueprint telemetry
+        $blueprint = app()->make(BlueprintExtensionLibrary::class);
+        if ($blueprint->dbGet('blueprint', 'flags:telemetry_enabled', 0)) {
+            $registerBlueprintTelemetry = app()->make(RegisterBlueprintTelemetry::class);
+            $registerBlueprintTelemetry->register($schedule);
+        }
+
+        // Blueprint-related utilities
+        $minuteOfDay = hexdec(substr(hash('sha256', config('app.url')), 0, 6)) % 1440;
+        $time = sprintf('%02d:%02d', intdiv($minuteOfDay, 60), $minuteOfDay % 60);
+        $schedule->command('bp:version:cache')->dailyAt($time)->withoutOverlapping();
+        $schedule->command('bp:meta')->dailyAt($time)->withoutOverlapping();
+
+        // Blueprint extension schedules
+        GetExtensionSchedules::schedules($schedule);
     }
 
     /**

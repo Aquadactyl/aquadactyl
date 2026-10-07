@@ -47,15 +47,15 @@
 }
 
 .text {
-    @apply bg-gray-500 text-gray-50;
-    @apply hover:bg-gray-400 active:bg-gray-400 focus:ring-gray-300 focus:ring-opacity-50;
+    @apply bg-gray-700 text-gray-50 border border-gray-500;
+    @apply hover:bg-gray-600 active:bg-gray-600 focus:ring-gray-300 focus:ring-opacity-50;
 
     &.secondary {
-        @apply hover:bg-gray-500 active:bg-gray-500;
+        @apply hover:bg-gray-600 active:bg-gray-600;
     }
 
     &:disabled {
-        @apply bg-gray-500/75 text-gray-200/75;
+        @apply bg-gray-600/75 text-gray-200/75;
     }
 }
 

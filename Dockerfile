@@ -5,12 +5,13 @@
 FROM --platform=$BUILDPLATFORM node:22-alpine
 WORKDIR /app
 COPY . ./
-RUN yarn install --frozen-lockfile \
-    && yarn run build:production
+RUN npm install --global pnpm@12.10.1 \
+    && pnpm install --frozen-lockfile \
+    && pnpm run build:production
 
 # Stage 1:
 # Build the actual container with all of the needed PHP dependencies that will run the application.
-FROM --platform=$TARGETOS/$TARGETARCH php:8.3-fpm-alpine
+FROM --platform=$TARGETOS/$TARGETARCH php:8.5-fpm-alpine
 WORKDIR /app
 COPY . ./
 COPY --from=0 /app/public/assets ./public/assets

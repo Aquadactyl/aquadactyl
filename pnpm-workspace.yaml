@@ -1,0 +1,16 @@
+# Blueprint and the existing Webpack tooling expect a flat node_modules directory.
+nodeLinker: hoisted
+# Deployment changes ownership and permissions; never hardlink to the shared store.
+packageImportMethod: clone-or-copy
+verifyDepsBeforeRun: error
+# These packages ship ready-to-use code; their postinstall messages are unnecessary.
+allowBuilds:
+    '@fortawesome/fontawesome-common-types': false
+    '@fortawesome/fontawesome-svg-core': false
+    '@fortawesome/free-solid-svg-icons': false
+    core-js: false
+    core-js-pure: false
+overrides:
+    react-router>path-to-regexp: ^1.9.0
+    '@types/react': ^16.14.68
+    '@types/react-dom': ^16.9.25

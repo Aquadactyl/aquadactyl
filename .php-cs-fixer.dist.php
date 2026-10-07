@@ -26,6 +26,10 @@ return (new Config())
         '@PSR1' => true,
         '@PSR2' => true,
         '@PSR12' => true,
+        // Preserve the existing style when upgrading the formatter for PHP 8.5.
+        'fully_qualified_strict_types' => ['phpdoc_tags' => []],
+        'no_useless_else' => false,
+        'phpdoc_scalar' => false,
         'align_multiline_comment' => ['comment_type' => 'phpdocs_like'],
         'combine_consecutive_unsets' => true,
         'concat_space' => ['spacing' => 'one'],

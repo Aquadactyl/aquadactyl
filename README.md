@@ -1,91 +1,137 @@
-<p align="center">
-  <a href="https://pterodactyl.io">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg">
-      <img alt="Pterodactyl" src=".github/assets/logo-light.svg" height="72">
-    </picture>
-  </a>
-</p>
+# Aquadactyl
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/pterodactyl/panel/ci.yaml?label=Tests&style=for-the-badge&branch=1.0-develop)
-![Discord](https://img.shields.io/discord/122900397965705216?label=Discord&logo=Discord&logoColor=white&style=for-the-badge)
-![GitHub Releases](https://img.shields.io/github/downloads/pterodactyl/panel/latest/total?style=for-the-badge)
-![GitHub contributors](https://img.shields.io/github/contributors/pterodactyl/panel?style=for-the-badge)
+Aquadactyl is a game server management panel built on Pterodactyl, with Blueprint
+bundled and tools for installing and updating the panel on Linux with Nginx and
+PHP-FPM.
 
-# Pterodactyl Panel
+Manage your servers through Pterodactyl's familiar interface, extend the panel
+with Blueprint, and deploy updates using pinned dependencies and automatic backups.
+Game servers run on separate Wings nodes using Docker containers.
 
-Pterodactyl® is a free, open-source game server management panel built with PHP, React, and Go. Designed with security
-in mind, Pterodactyl runs all game servers in isolated Docker containers while exposing a beautiful and intuitive
-UI to end users.
+Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprint release.
 
-Stop settling for less. Make game servers a first class citizen on your platform.
+## What Aquadactyl includes
 
-## Pterodactyl v2 is coming soon
+- **Charcoal default theme:** Soft grey surfaces, readable text and muted aqua
+  accents across the dashboard, login, console and admin area. See the
+  [theme guide](docs/THEME.md) for palette tokens and customisation.
+- **Blueprint built in:** Framework beta-2026-08, including its CLI, admin pages,
+  extension routes and frontend hooks. The installer initializes the bundled framework.
+- **Managed installation and updates:** Linux scripts build assets, run migrations
+  and refresh application caches. Updates verify release checksums, back up the
+  database and panel files, and preserve configuration and extension data.
+- **Production performance defaults:** Redis cache, sessions and queues; PHP
+  OPcache; cached Laravel configuration, routes and views; and Nginx compression
+  and caching for hashed assets.
+- **Deployment security defaults:** Restricted filesystem permissions, HTTPS
+  session cookies, Nginx rules that protect hidden files and limit PHP execution
+  to the front controller, and validation of update archives before extraction.
+- **Addon libraries:** Axios, Lucide icons, React Hook Form, Zod, Zustand,
+  React Select and Lodash ES, alongside the panel's existing UI and chart libraries.
+  See the [addon development guide](docs/ADDONS.md).
+- **Dependency maintenance:** Committed Composer and pnpm lockfiles, weekly
+  Dependabot checks and CI audits for production dependencies.
 
-The next major version of Pterodactyl is on the way: a fully modernized tech stack, a brand new admin area, and an
-extension SDK built into the panel. It is still 100% free and open source under the MIT license.
+See [validation results](docs/VALIDATION.md) for the checks performed and remaining
+build dependency advisories.
 
-[![Watch: Introducing Pterodactyl v2](.github/assets/v2-video.jpg)](https://www.youtube.com/watch?v=1ER4kv0jVEU)
+## Linux installation
 
-Development happens on the [`2.0-develop`](https://github.com/pterodactyl/panel/tree/2.0-develop) branch. This branch
-(`1.0-develop`) remains the current stable release line.
+Prepare a Linux host with PHP 8.5 and PHP-FPM (PHP 8.4 is also supported), Composer 2,
+Node.js 22.13 or later, pnpm 12.10.1, Nginx, MariaDB or MySQL, Redis and systemd. Required PHP
+extensions and command-line utilities are listed in the
+[deployment guide](docs/DEPLOYMENT.md).
 
-![Image](https://cdn.pterodactyl.io/site-assets/pterodactyl_v1_demo.gif)
+Place an Aquadactyl release or source checkout in `/var/www/pterodactyl`.
+The deployment scripts retain this path for compatibility with existing panel
+installations and service templates.
+
+```bash
+cd /var/www/pterodactyl
+sudo cp .env.example .env
+sudo chmod 640 .env
+sudo nano .env
+sudo bash scripts/panel-install.sh
+```
+
+Before running the installer, configure your HTTPS `APP_URL`, database, Redis
+and mail settings in `.env`. The installer generates missing application keys
+and initializes Blueprint. Preserve your application key and Hashids salt
+across updates.
+
+For a **new, empty panel**, add the default nests and create an administrator:
+
+```bash
+sudo -u www-data php artisan db:seed --class=DatabaseSeeder --force
+sudo -u www-data php artisan p:user:make
+```
+
+Complete the [deployment guide](docs/DEPLOYMENT.md) to configure TLS, the supplied
+Nginx and PHP settings, the queue service and the scheduler. Configure
+[Wings](https://pterodactyl.io/wings/1.0/installing.html) separately to host game servers.
+
+## Updating Aquadactyl
+
+Update the panel and bundled Blueprint together using a reviewed release of this
+fork. Replace `vRELEASE_TAG` with a published release tag:
+
+```bash
+cd /var/www/pterodactyl
+sudo bash scripts/panel-update.sh vRELEASE_TAG EuphoriaTheme/panel
+```
+
+If you publish Aquadactyl under a different GitHub repository, replace
+`EuphoriaTheme/panel` with that repository's `owner/name`.
+
+The updater verifies the archive, enables maintenance mode, pauses the queue and
+creates database and filesystem backups in `/var/backups/pterodactyl`. It then
+installs locked dependencies, applies migrations, restores extension hooks and
+rebuilds assets and caches before bringing the panel online.
+
+Keep each installed extension's original `identifier.blueprint` package in the
+panel root so its hooks can be reapplied during updates. Read the
+[update and recovery instructions](docs/DEPLOYMENT.md#updates) before deploying.
+
+## Blueprint extensions
+
+Blueprint is included in Aquadactyl and initialized during installation:
+
+```bash
+cd /var/www/pterodactyl
+sudo blueprint -version
+sudo blueprint -i myextension
+```
+
+Place `myextension.blueprint` in the panel root before installing it. Extensions
+execute code as part of the panel, so use trusted publishers and check compatibility
+before updating production.
+
+The stock `blueprint -upgrade` command is disabled in Aquadactyl. Use the managed
+panel updater to keep the framework, dependencies and panel changes compatible.
+See the [Blueprint integration notes](docs/BLUEPRINT.md) for extension maintenance
+and framework provenance.
 
 ## Documentation
 
-* [Panel Documentation](https://pterodactyl.io/panel/1.0/getting_started.html)
-* [Wings Documentation](https://pterodactyl.io/wings/1.0/installing.html)
-* [Community Guides](https://pterodactyl.io/community/about.html)
-* Or, get additional help [via Discord](https://discord.gg/pterodactyl)
+| Guide | Covers |
+| --- | --- |
+| [Deployment](docs/DEPLOYMENT.md) | Requirements, installation, Nginx/PHP setup, updates, backups and recovery |
+| [Blueprint](docs/BLUEPRINT.md) | Bundled framework, extension installation and maintenance |
+| [Addon development](docs/ADDONS.md) | Shared libraries, imports and dependency management for extensions and themes |
+| [Default theme](docs/THEME.md) | Charcoal palette, shared colour tokens and theme customisation |
+| [Validation](docs/VALIDATION.md) | Test results and dependency audit limitations |
+| [Building](BUILDING.md) | Frontend development and production builds |
+| [Upstream security policy](SECURITY.md) | Pterodactyl's security reporting policy |
+| [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration |
 
-## Sponsors
+## Credits and license
 
-I would like to extend my sincere thanks to the following sponsors for helping fund Pterodactyl's development.
-[Interested in becoming a sponsor?](https://github.com/sponsors/pterodactyl)
+Aquadactyl builds on [Pterodactyl Panel](https://github.com/pterodactyl/panel)
+and integrates [Blueprint](https://github.com/BlueprintFramework/framework).
+Credit belongs to their authors and contributors for the underlying panel,
+server management platform and extension framework.
 
-| Company                                                                           | About                                                                                                                                                                                                                                           |
-|-----------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| [**Buildurly**](https://buildurly.com/)                                           | Buildurly is a hardware procurement company. They deliver tailored, enterprise-grade hardware solutions designed around your unique needs. From sourcing to delivery, Buildurly's white-glove service ensures a seamless, worry-free, professional experience.                                                                                                                                          |
-| [**Hosturly**](https://hosturly.com/)                                             | Hosturly is an enterprise hosting provider. They provide cost-effective, high-performance, and reliable services, including VPS, Web, Dedicated, and Colocation.                                                                                |
-| [**indifferent broccoli**](https://indifferentbroccoli.com/)                      | indifferent broccoli is a game server hosting and rental company. With them, you get top-notch computer power for your gaming sessions. They destroy lag, latency, and complexity--letting you focus on the fun stuff.                         |
-| [**Infraly, LLC**](https://infraly.co/)                                           | Infraly is an infrastructure company powering the next generation of online services. Through their brands, Infraly delivers cutting-edge solutions across multiple markets. Their vertically integrated approach provides unmatched performance, scalability, and reliability, giving our customers full control.                                                                                     |
-| [**MineStrator**](https://minestrator.com/)                                       | MineStrator is a game server hosting provider. Looking for the most high-end French hosting company for your Minecraft server? More than 24,000 members on our Discord trust us. Give us a try!                                                |
-| [**Physgun**](https://physgun.com/)                                               | Physgun is a game server hosting provider. Most providers rent rack space and rebrand a panel. At Physgun, they engineer the performance, write the features, and staff the support. Physgun truly is game hosting perfected!                   |
-| [**WISP**](https://wisp.gg/)                                                      | WISP is an industry-leading SaaS platform for game server management, designed for hosting companies, gaming organizations, and enthusiasts. WISP combines modern, intuitive interfaces with powerful tools, making server deployment and administration seamless, scalable, and efficient.                                                                                                                 |
-
-
-### Supported Games
-
-Pterodactyl supports a wide variety of games by utilizing Docker containers to isolate each instance. This gives
-you the power to run game servers without bloating machines with a host of additional dependencies.
-
-Some of our core supported games include:
-
-* Minecraft — including Paper, Sponge, Bungeecord, Waterfall, and more
-* Rust
-* Terraria
-* Teamspeak
-* Mumble
-* Team Fortress 2
-* Counter Strike: Global Offensive
-* Garry's Mod
-* ARK: Survival Evolved
-
-In addition to our standard nest of supported games, our community is constantly pushing the limits of this software
-and there are plenty more games available provided by the community. Some of these games include:
-
-* Factorio
-* San Andreas: MP
-* Pocketmine MP
-* Squad
-* Xonotic
-* Starmade
-* Discord ATLBot, and most other Node.js/Python discord bots
-* [and many more...](https://eggs.pterodactyl.io)
-
-## License
-
-Pterodactyl® Copyright © 2015 - 2022 Dane Everitt and contributors.
-
-Code released under the [MIT License](./LICENSE.md).
+Panel code is distributed under the [MIT License](LICENSE.md). Blueprint's
+[MIT license](deploy/BLUEPRINT-LICENSE.md) is included separately; bundled artwork
+retains its upstream license files. Existing upstream copyright notices remain
+in their respective files.

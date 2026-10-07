@@ -14,19 +14,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [ 22 ]
+        node-version: [ 22, 24 ]
     steps:
       - name: Code Checkout
         uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v6
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
+          cache: pnpm
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - run: yarn tsc
-      - run: yarn lint
-      - run: yarn build:production
+        run: pnpm install --frozen-lockfile
+      - run: pnpm audit --prod
+      - run: pnpm run tsc
+      - run: pnpm run lint
+      - run: pnpm exec jest --runInBand
+      - run: pnpm run build:production

@@ -1,3 +1,6 @@
+@include("blueprint.admin.admin")
+@yield('blueprint.lib')
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -14,7 +17,8 @@
         <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#bc6e3c">
         <link rel="shortcut icon" href="/favicons/favicon.ico">
         <meta name="msapplication-config" content="/favicons/browserconfig.xml">
-        <meta name="theme-color" content="#0e4688">
+        <meta name="theme-color" content="#1e1f22">
+        <meta name="color-scheme" content="dark">
 
         @include('layouts.scripts')
 
@@ -34,8 +38,11 @@
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
             <![endif]-->
         @show
+
+        @yield("blueprint.import")
     </head>
     <body class="hold-transition skin-blue fixed sidebar-mini">
+        @yield('blueprint.cache')
         <div class="wrapper">
             <header class="main-header">
                 <a href="{{ route('index') }}" class="logo">
@@ -56,6 +63,7 @@
                                     <span class="hidden-xs">{{ Auth::user()->name_first }} {{ Auth::user()->name_last }}</span>
                                 </a>
                             </li>
+                            @yield("blueprint.navigation")
                             <li>
                                 <li><a href="{{ route('index') }}" data-toggle="tooltip" data-placement="bottom" title="Exit Admin Control"><i class="fa fa-server"></i></a></li>
                             </li>
@@ -86,6 +94,7 @@
                             </a>
                         </li>
                         <li class="header">MANAGEMENT</li>
+                        @yield("blueprint.sidenav")
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">
                                 <i class="fa fa-database"></i> <span>Databases</span>
@@ -127,6 +136,7 @@
             </aside>
             <div class="content-wrapper">
                 <section class="content-header">
+                    @yield('blueprint.introduction')
                     @yield('content-header')
                 </section>
                 <section class="content">
@@ -159,7 +169,11 @@
                     <strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}<br />
                     <strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - LARAVEL_START, 3) }}s
                 </div>
-                Copyright &copy; 2015 - {{ date('Y') }} <a href="https://pterodactyl.io/">Pterodactyl Software</a>.
+                @if(starts_with(Route::currentRouteName(), 'admin.extensions'))
+                    Copyright &copy; 2023 - {{ date('Y') }} <a href="https://blueprint.zip/">Blueprint Framework</a>, Emma (<a href="https://prpl.wtf/">prpl.wtf</a>) and contributors.
+                @else
+                    Copyright &copy; 2015 - {{ date('Y') }} <a href="https://pterodactyl.io/">Pterodactyl Software</a>
+                @endif
             </footer>
         </div>
         @section('footer-scripts')
@@ -210,5 +224,6 @@
                 })
             </script>
         @show
+        @yield('blueprint.wrappers')
     </body>
 </html>

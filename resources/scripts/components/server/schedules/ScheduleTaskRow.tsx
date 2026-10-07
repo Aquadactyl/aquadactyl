@@ -111,7 +111,7 @@ export default ({ schedule, task }: Props) => {
                 )}
                 {task.sequenceId > 1 && task.timeOffset > 0 && (
                     <div css={tw`mr-6`}>
-                        <div css={tw`flex items-center px-2 py-1 bg-neutral-500 text-sm rounded-full`}>
+                        <div css={tw`flex items-center px-2 py-1 bg-neutral-600 text-sm rounded-full`}>
                             <Icon icon={faClock} css={tw`w-3 h-3 mr-2`} />
                             {task.timeOffset}s later
                         </div>

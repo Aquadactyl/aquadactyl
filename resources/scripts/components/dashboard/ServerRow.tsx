@@ -49,6 +49,12 @@ const StatusIndicatorBox = styled(GreyRowBox)<{ $status: ServerPowerState | unde
 
 type Timer = ReturnType<typeof setInterval>;
 
+import BeforeEntryName from '@blueprint/components/Dashboard/Serverlist/ServerRow/BeforeEntryName';
+import AfterEntryName from '@blueprint/components/Dashboard/Serverlist/ServerRow/AfterEntryName';
+import BeforeEntryDescription from '@blueprint/components/Dashboard/Serverlist/ServerRow/BeforeEntryDescription';
+import AfterEntryDescription from '@blueprint/components/Dashboard/Serverlist/ServerRow/AfterEntryDescription';
+import ResourceLimits from '@blueprint/components/Dashboard/Serverlist/ServerRow/ResourceLimits';
+
 export default ({ server, className }: { server: Server; className?: string }) => {
     const interval = useRef<Timer>(null) as React.MutableRefObject<Timer>;
     const [isSuspended, setIsSuspended] = useState(server.status === 'suspended');
@@ -95,9 +101,15 @@ export default ({ server, className }: { server: Server; className?: string }) =
                     <FontAwesomeIcon icon={faServer} />
                 </div>
                 <div>
+                    <BeforeEntryName />
                     <p css={tw`text-lg break-words`}>{server.name}</p>
+                    <AfterEntryName />
                     {!!server.description && (
-                        <p css={tw`text-sm text-neutral-300 break-words line-clamp-2`}>{server.description}</p>
+                        <div>
+                            <BeforeEntryDescription />
+                            <p css={tw`text-sm text-neutral-300 break-words line-clamp-2`}>{server.description}</p>
+                            <AfterEntryDescription />
+                        </div>
                     )}
                 </div>
             </div>
@@ -131,7 +143,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                         </div>
                     ) : server.isTransferring || server.status ? (
                         <div css={tw`flex-1 text-center`}>
-                            <span css={tw`bg-neutral-500 rounded px-2 py-1 text-neutral-100 text-xs`}>
+                            <span css={tw`bg-neutral-600 rounded px-2 py-1 text-neutral-100 text-xs`}>
                                 {server.isTransferring
                                     ? 'Transferring'
                                     : server.status === 'installing'
@@ -153,7 +165,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     {stats.cpuUsagePercent.toFixed(2)} %
                                 </IconDescription>
                             </div>
-                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>of {cpuLimit}</p>
+                            <p css={tw`text-xs text-neutral-400 text-center mt-1`}>of {cpuLimit}</p>
                         </div>
                         <div css={tw`flex-1 ml-4 sm:block hidden`}>
                             <div css={tw`flex justify-center`}>
@@ -162,7 +174,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     {bytesToString(stats.memoryUsageInBytes)}
                                 </IconDescription>
                             </div>
-                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>of {memoryLimit}</p>
+                            <p css={tw`text-xs text-neutral-400 text-center mt-1`}>of {memoryLimit}</p>
                         </div>
                         <div css={tw`flex-1 ml-4 sm:block hidden`}>
                             <div css={tw`flex justify-center`}>
@@ -171,8 +183,9 @@ export default ({ server, className }: { server: Server; className?: string }) =
                                     {bytesToString(stats.diskUsageInBytes)}
                                 </IconDescription>
                             </div>
-                            <p css={tw`text-xs text-neutral-600 text-center mt-1`}>of {diskLimit}</p>
+                            <p css={tw`text-xs text-neutral-400 text-center mt-1`}>of {diskLimit}</p>
                         </div>
+                        <ResourceLimits />
                     </React.Fragment>
                 )}
             </div>

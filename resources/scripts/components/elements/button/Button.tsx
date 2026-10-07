@@ -37,7 +37,13 @@ const DangerButton = forwardRef<HTMLButtonElement, ButtonProps>(({ className, ..
     <Button ref={ref} className={classNames(styles.danger, className)} {...props} />
 ));
 
-const _Button = Object.assign(Button, {
+const _Button: typeof Button & {
+    Sizes: typeof Options.Size;
+    Shapes: typeof Options.Shape;
+    Variants: typeof Options.Variant;
+    Text: typeof TextButton;
+    Danger: typeof DangerButton;
+} = Object.assign(Button, {
     Sizes: Options.Size,
     Shapes: Options.Shape,
     Variants: Options.Variant,

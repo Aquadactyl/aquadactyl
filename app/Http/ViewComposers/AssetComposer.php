@@ -4,14 +4,17 @@ namespace Pterodactyl\Http\ViewComposers;
 
 use Illuminate\View\View;
 use Pterodactyl\Services\Helpers\AssetHashService;
+use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\Admin\BlueprintAdminLibrary as BlueprintExtensionLibrary;
 
 class AssetComposer
 {
     /**
      * AssetComposer constructor.
      */
-    public function __construct(private AssetHashService $assetHashService)
-    {
+    public function __construct(
+        private AssetHashService $assetHashService,
+        private BlueprintExtensionLibrary $blueprint,
+    ) {
     }
 
     /**
@@ -19,6 +22,9 @@ class AssetComposer
      */
     public function compose(View $view): void
     {
+        $blueprintConfiguration = $this->blueprint->dbGetMany('blueprint', [
+            'flags:disable_attribution',
+        ]);
         $view->with('asset', $this->assetHashService);
         $view->with('siteConfiguration', [
             'name' => config('app.name') ?? 'Pterodactyl',
@@ -26,6 +32,9 @@ class AssetComposer
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),
                 'siteKey' => config('recaptcha.website_key') ?? '',
+            ],
+            'blueprint' => [
+                'disable_attribution' => (bool) $blueprintConfiguration['flags:disable_attribution'],
             ],
         ]);
     }

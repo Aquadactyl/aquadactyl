@@ -39,8 +39,10 @@ class UpgradeCommand extends Command
             $this->line($this->getUrl());
         }
 
-        if (version_compare(PHP_VERSION, '8.2.0', '<')) {
-            $this->error('Cannot execute self-upgrade process. The minimum required PHP version required is 8.2.0, you have [' . PHP_VERSION . '].');
+        if (PHP_VERSION_ID < 80400 || PHP_VERSION_ID >= 80600) {
+            $this->error('This panel requires PHP 8.4 or 8.5, you have [' . PHP_VERSION . '].');
+
+            return self::FAILURE;
         }
 
         $user = 'www-data';

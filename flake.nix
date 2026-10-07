@@ -20,7 +20,7 @@
         system,
         ...
       }: let
-        php = pkgs.php; # PHP 8.2
+        php = pkgs.php85;
 
         phpWithExtensions = php.buildEnv {
           extensions = {
@@ -47,9 +47,8 @@
         devShells.default = pkgs.mkShellNoCC {
           buildInputs = with pkgs; [
             composer
-            nodejs_18
-            nodePackages.pnpm
-            nodePackages.yarn
+            nodejs_22
+            pnpm
             phpWithExtensions
           ];
 
@@ -124,10 +123,9 @@
               caddy
               composer
               coreutils
-              mysql80
-              nodejs_18
-              nodePackages.pnpm
-              nodePackages.yarn
+              mysql84
+              nodejs_22
+              pnpm
               phpWithExtensions
             ];
             pathsToLink = ["/bin" "/etc"];
