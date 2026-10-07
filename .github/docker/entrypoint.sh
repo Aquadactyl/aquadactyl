@@ -101,10 +101,9 @@ fi
 # CI-mode Blueprint installation intentionally skips the application cache steps.
 # Refresh those here so the container is ready before nginx and the queue start.
 php artisan bp:cache
-php artisan bp:version:cache
-php artisan config:clear
-php artisan route:clear
-php artisan view:clear
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
 
 echo "Starting cron jobs."
 crond -L /var/log/crond -l 5
