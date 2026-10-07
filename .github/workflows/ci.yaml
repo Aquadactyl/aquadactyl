@@ -55,6 +55,12 @@ jobs:
       - run: vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Unit --fail-on-deprecation
         env:
           DB_HOST: UNIT_NO_DB
+      # Integration tests render panel views that reference the Webpack manifest.
+      # The dedicated Build workflow validates the real frontend build, so the PHP
+      # matrix only needs a minimal manifest to exercise those views.
+      - run: |
+          mkdir -p public/assets
+          printf '{}\n' > public/assets/manifest.json
       - run: vendor/bin/phpunit tests/Integration --fail-on-deprecation
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
