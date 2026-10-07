@@ -1,99 +1,113 @@
 #!/bin/ash -e
 cd /app
 
-mkdir -p /var/log/panel/logs/ /var/log/supervisord/ /var/log/nginx/ /var/log/php7/ \
-  && chmod 777 /var/log/panel/logs/ \
-  && ln -s /app/storage/logs/ /var/log/panel/
+mkdir -p /var/log/panel /var/log/supervisord /var/log/nginx /var/log/php7
+chmod 777 /var/log/panel
+ln -sfn /app/storage/logs /var/log/panel/logs
 
-## check for .env file and generate app keys if missing
+# Check for a persisted .env file and generate application secrets if missing.
 if [ -f /app/var/.env ]; then
-  echo "external vars exist."
+  echo "External vars exist."
   rm -rf /app/.env
-  ln -s /app/var/.env /app/
+  ln -s /app/var/.env /app/.env
 else
-  echo "external vars don't exist."
+  echo "External vars don't exist."
   rm -rf /app/.env
+  mkdir -p /app/var
   touch /app/var/.env
 
-  ## manually generate a key because key generate --force fails
-  if [ -z $APP_KEY ]; then
-     echo -e "Generating key."
-     APP_KEY=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-     echo -e "Generated app key: $APP_KEY"
-     echo -e "APP_KEY=$APP_KEY" > /app/var/.env
+  if [ -z "${APP_KEY:-}" ]; then
+    echo "Generating application key."
+    APP_KEY=$(php -r 'echo "base64:" . base64_encode(random_bytes(32));')
+    printf 'APP_KEY=%s\n' "$APP_KEY" > /app/var/.env
   else
-    echo -e "APP_KEY exists in environment, using that."
-    echo -e "APP_KEY=$APP_KEY" > /app/var/.env
+    echo "APP_KEY exists in environment, using that."
+    printf 'APP_KEY=%s\n' "$APP_KEY" > /app/var/.env
   fi
 
-  ## generate a random salt for hashids if not provided
-  if [ -z $HASHIDS_SALT ]; then
-     echo -e "Generating hashids salt."
-     HASHIDS_SALT=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9!@#$%^&*()_+?><~' | fold -w 20 | head -n 1)
-     echo -e "Generated hashids salt: $HASHIDS_SALT"
-     echo -e "HASHIDS_SALT=$HASHIDS_SALT" >> /app/var/.env
+  if [ -z "${HASHIDS_SALT:-}" ]; then
+    echo "Generating Hashids salt."
+    HASHIDS_SALT=$(php -r 'echo bin2hex(random_bytes(16));')
+    printf 'HASHIDS_SALT=%s\n' "$HASHIDS_SALT" >> /app/var/.env
   else
-    echo -e "HASHIDS_SALT exists in environment, using that."
-    echo -e "HASHIDS_SALT=$HASHIDS_SALT" >> /app/var/.env
+    echo "HASHIDS_SALT exists in environment, using that."
+    printf 'HASHIDS_SALT=%s\n' "$HASHIDS_SALT" >> /app/var/.env
   fi
 
-  ln -s /app/var/.env /app/
+  ln -s /app/var/.env /app/.env
 fi
 
-echo "Checking if https is required."
+echo "Checking if HTTPS is required."
 if [ -f /etc/nginx/http.d/panel.conf ]; then
   echo "Using nginx config already in place."
-  if [ $LE_EMAIL ]; then
-    echo "Checking for cert update"
-    certbot certonly -d $(echo $APP_URL | sed 's~http[s]*://~~g')  --standalone -m $LE_EMAIL --agree-tos -n
+  if [ -n "${LE_EMAIL:-}" ]; then
+    echo "Checking for certificate update."
+    certbot certonly -d "$(echo "$APP_URL" | sed 's~http[s]*://~~g')" --standalone -m "$LE_EMAIL" --agree-tos -n
   else
-    echo "No letsencrypt email is set"
+    echo "No Let's Encrypt email is set."
   fi
 else
-  echo "Checking if letsencrypt email is set."
-  if [ -z $LE_EMAIL ]; then
-    echo "No letsencrypt email is set using http config."
+  if [ -z "${LE_EMAIL:-}" ]; then
+    echo "No Let's Encrypt email is set; using HTTP config."
     cp .github/docker/default.conf /etc/nginx/http.d/panel.conf
   else
-    echo "writing ssl config"
+    echo "Writing SSL config."
     cp .github/docker/default_ssl.conf /etc/nginx/http.d/panel.conf
-    echo "updating ssl config for domain"
-    sed -i "s|<domain>|$(echo $APP_URL | sed 's~http[s]*://~~g')|g" /etc/nginx/http.d/panel.conf
-    echo "generating certs"
-    certbot certonly -d $(echo $APP_URL | sed 's~http[s]*://~~g')  --standalone -m $LE_EMAIL --agree-tos -n
+    sed -i "s|<domain>|$(echo "$APP_URL" | sed 's~http[s]*://~~g')|g" /etc/nginx/http.d/panel.conf
+    echo "Generating certificates."
+    certbot certonly -d "$(echo "$APP_URL" | sed 's~http[s]*://~~g')" --standalone -m "$LE_EMAIL" --agree-tos -n
   fi
-  echo "Removing the default nginx config"
-  rm -rf /etc/nginx/http.d/default.conf
+
+  rm -f /etc/nginx/http.d/default.conf
 fi
 
-if [[ -z $DB_PORT ]]; then
-  echo -e "DB_PORT not specified, defaulting to 3306"
-  DB_PORT=3306
-fi
+DB_PORT=${DB_PORT:-3306}
 
-## check log folder permissions
 echo "Checking log folder permissions."
-if [ "$(stat -c %U:%G /app/storage/logs)" != "nginx" ]; then
+if [ "$(stat -c %U:%G /app/storage/logs)" != "nginx:nginx" ]; then
   echo "Fixing log folder permissions."
-  chown -R nginx: /app/storage/logs/
+  chown -R nginx:nginx /app/storage/logs
 fi
 
-## check for DB up before starting the panel
 echo "Checking database status."
-until nc -z -v -w30 $DB_HOST $DB_PORT
-do
+until nc -z -w30 "$DB_HOST" "$DB_PORT"; do
   echo "Waiting for database connection..."
-  # wait for 1 seconds before check again
   sleep 1
 done
 
-## make sure the db is set up
-echo -e "Migrating and Seeding D.B"
-php artisan migrate --seed --force
+echo "Running database migrations and Pterodactyl seeders."
+php artisan migrate --force
+php artisan db:seed --class=DatabaseSeeder --force
 
-## start cronjobs for the queue
-echo -e "Starting cron jobs."
+echo "Seeding Blueprint settings."
+php artisan db:seed --class=BlueprintSeeder --force
+
+BLUEPRINT_MARKER="/app/.blueprint/extensions/blueprint/private/db/is_installed"
+if [ ! -f "$BLUEPRINT_MARKER" ]; then
+  echo "Initialising bundled Blueprint framework."
+
+  cat > /app/.blueprintrc <<'EOF'
+OWNERSHIP="nginx:nginx"
+WEBUSER="nginx"
+USERSHELL="/bin/ash"
+SHORTCUT_DIR="/usr/local/bin"
+EOF
+
+  BLUEPRINT_ENVIRONMENT=ci bash /app/blueprint.sh
+else
+  echo "Blueprint is already initialised."
+fi
+
+# CI-mode Blueprint installation intentionally skips the application cache steps.
+# Refresh those here so the container is ready before nginx and the queue start.
+php artisan bp:cache
+php artisan bp:version:cache
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+
+echo "Starting cron jobs."
 crond -L /var/log/crond -l 5
 
-echo -e "Starting supervisord."
+echo "Starting supervisord."
 exec "$@"
