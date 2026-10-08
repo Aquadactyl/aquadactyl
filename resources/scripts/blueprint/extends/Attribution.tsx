@@ -11,7 +11,7 @@ export default () => {
         <>
             {!disable_attribution && (
                 <>
-                    <span className={'mx-2'}>•</span>
+                    <span className={'mx-2'}>♥</span>
                     <a
                         rel={'noopener nofollow noreferrer'}
                         href={'https://blueprint.zip'}

@@ -195,7 +195,39 @@ their bootstrap resets and seeds that database. On Windows, the
 The Nix development shell uses PHP 8.5, Node.js 22 and pnpm. Install the pinned
 pnpm version above if the version provided by your Nix package set differs.
 
+## Site settings
+
+Use **Admin → Settings → General** to change the site name, upload a site logo,
+and enable or disable player counts, custom profile pictures, sensitive data blur,
+and server list quick actions for everyone. Database-backed settings require
+`APP_ENVIRONMENT_ONLY=false`; both Compose examples enable this by default.
+Reload open pages after saving settings.
+
+Logos accept PNG, JPEG or WebP images up to 2 MB and 4096 pixels per side. They
+are re-encoded as PNG, scaled to fit within 1200 × 600 without cropping, and
+stored on the public storage disk. Ensure `php artisan storage:link` has been run
+and the web server can serve `/storage/`. The local Docker image handles this.
+The logo appears on sign-in, client navigation and admin pages, and supplies
+browser favicons, Apple touch icons, Safari pinned-tab masks and Windows tiles.
+Icons fit the logo into a square without cropping or stretching; square logos
+work best. Restoring the default also restores the default browser icons.
+The configured site name supplies browser titles and home-screen shortcut names.
+Enable **Show Site Name Beside Logo** in General settings when your uploaded logo
+does not include your provider's name. This displays the site name beside the
+logo in client navigation, sign-in and admin headers. The default is **Logo only**.
+Icon and manifest URLs change with either branding setting to refresh browser
+caches. Branding endpoints are public so they also work before sign-in.
+
+Disabling custom profile pictures hides saved pictures and blocks new uploads.
+Disabling sensitive data blur overrides users' preferences and blocks changes.
+Saved pictures and preferences return when these features are enabled again.
+Disabling player counts stops game queries as well as hiding counts. Disabling
+quick actions hides the shortcuts while leaving controls on server pages available.
+
 ## Server list and game queries
+
+Click anywhere on a server card to open its console. Individual shortcuts remain
+independently accessible, and server links support opening in a new tab.
 
 Set a node's **Country** under **Admin → Nodes → Settings** to display its flag
 on the server list. Countries are optional and apply to every server on that node.

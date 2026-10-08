@@ -8,7 +8,7 @@ export default () => (
             target={'_blank'}
             className={'no-underline text-neutral-400 hover:text-neutral-200'}
         >
-            Aquadactyl
+            Aquadactyl&reg;
         </a>
         {' · Based on '}
         <a

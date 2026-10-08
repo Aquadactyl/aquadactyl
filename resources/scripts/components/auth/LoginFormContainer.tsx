@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useEffect } from 'react';
 import { Form } from 'formik';
 import { useStoreState } from 'easy-peasy';
 import FlashMessageRender from '@/components/FlashMessageRender';
@@ -15,12 +15,28 @@ type Props = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, 
 
 export default forwardRef<HTMLFormElement, Props>(({ title, description, children, ...props }, ref) => {
     const name = useStoreState((state) => state.settings.data!.name);
+    const logoUrl = useStoreState((state) => state.settings.data?.logoUrl);
+    const showNameWithLogo = useStoreState((state) => state.settings.data?.showNameWithLogo);
+    const pairedLogo = Boolean(logoUrl && showNameWithLogo);
     const isAquadactyl = name.trim().toLowerCase() === 'aquadactyl';
+
+    useEffect(() => {
+        document.title = title ? `${title} | ${name}` : name;
+    }, [title, name]);
 
     return (
         <div className={'authentication-container'}>
-            <div className={'authentication-brand'}>
-                {isAquadactyl ? (
+            <div className={'authentication-brand' + (pairedLogo ? ' authentication-brand-with-name' : '')}>
+                {logoUrl ? (
+                    <>
+                        <img className={'custom-site-logo'} src={logoUrl} alt={showNameWithLogo ? '' : name} />
+                        {showNameWithLogo && (
+                            <span className={'authentication-brand-text custom-site-name'} title={name}>
+                                {name}
+                            </span>
+                        )}
+                    </>
+                ) : isAquadactyl ? (
                     <img src={'/branding/aquadactyl-wordmark.png'} alt={name} />
                 ) : (
                     <span className={'authentication-brand-text'}>{name}</span>

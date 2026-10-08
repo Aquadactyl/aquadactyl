@@ -15,6 +15,9 @@
     RewriteRule ^ %1 [L,R=301]
 
     # Handle Front Controller...
+    # Dynamic branding also serves legacy browser icon and shortcut URLs.
+    RewriteRule ^(favicon\.ico|favicons/(favicon\.ico|manifest\.json|browserconfig\.xml))$ index.php [L]
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]

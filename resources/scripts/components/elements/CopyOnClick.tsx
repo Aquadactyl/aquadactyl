@@ -3,7 +3,7 @@ import Fade from '@/components/elements/Fade';
 import Portal from '@/components/elements/Portal';
 import copy from 'copy-to-clipboard';
 import classNames from 'classnames';
-import { useStoreState } from '@/state/hooks';
+import usePrivacyMode from '@/plugins/usePrivacyMode';
 
 interface CopyOnClickProps {
     text: string | number | null | undefined;
@@ -13,7 +13,7 @@ interface CopyOnClickProps {
 
 const CopyOnClick = ({ text, showInNotification = true, children }: CopyOnClickProps) => {
     const [copied, setCopied] = useState(false);
-    const privacyMode = useStoreState((state) => Boolean(state.user.data?.blurSensitiveData));
+    const privacyMode = usePrivacyMode();
 
     useEffect(() => {
         if (!copied) return;

@@ -2,7 +2,7 @@
 @yield('blueprint.lib')
 
 <!DOCTYPE html>
-<html class="{{ Auth::user()?->blur_sensitive_data ? 'privacy-mode' : '' }}">
+<html class="{{ Auth::user()?->shouldBlurSensitiveData() ? 'privacy-mode' : '' }}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -41,9 +41,18 @@
         <div class="wrapper">
             <header class="main-header">
                 <a href="{{ route('index') }}" class="logo" aria-label="{{ config('app.name', 'Aquadactyl') }}">
-                    <span class="logo-mini"><img src="/branding/aquadactyl-emblem.png" alt=""></span>
+                    <span class="logo-mini"><img src="{{ config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : '/branding/aquadactyl-emblem.png' }}" alt=""></span>
                     <span class="logo-lg">
-                        @if(strtolower(trim(config('app.name', 'Aquadactyl'))) === 'aquadactyl')
+                        @if(config('aquadactyl.branding.logo_path'))
+                            @if(config('aquadactyl.branding.show_name', false))
+                                <span class="brand-with-name">
+                                    <img class="custom-site-logo" src="{{ '/storage/' . config('aquadactyl.branding.logo_path') }}" alt="">
+                                    <span class="custom-site-name" title="{{ config('app.name') }}">{{ config('app.name') }}</span>
+                                </span>
+                            @else
+                                <img class="custom-site-logo" src="{{ '/storage/' . config('aquadactyl.branding.logo_path') }}" alt="{{ config('app.name') }}">
+                            @endif
+                        @elseif(strtolower(trim(config('app.name', 'Aquadactyl'))) === 'aquadactyl')
                             <img src="/branding/aquadactyl-wordmark.png" alt="Aquadactyl">
                         @else
                             {{ config('app.name', 'Aquadactyl') }}

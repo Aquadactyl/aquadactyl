@@ -2,7 +2,16 @@ import { action, Action } from 'easy-peasy';
 
 export interface SiteSettings {
     name: string;
+    appUrl?: string;
     locale: string;
+    logoUrl?: string | null;
+    showNameWithLogo?: boolean;
+    features?: {
+        playerCounts: boolean;
+        customProfilePictures: boolean;
+        privacyMode: boolean;
+        serverQuickActions: boolean;
+    };
     recaptcha: {
         enabled: boolean;
         siteKey: string;

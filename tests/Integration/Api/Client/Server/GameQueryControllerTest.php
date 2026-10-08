@@ -49,6 +49,21 @@ class GameQueryControllerTest extends ClientApiIntegrationTestCase
         Bus::assertDispatchedTimes(QueryGameServerJob::class, 1);
     }
 
+    public function testSiteWidePlayerCountSettingStopsNewQueriesAndQueuedJobs(): void
+    {
+        [$user, $server] = $this->generateTestAccount();
+        $settings = app(GameQuerySettingsService::class);
+        $key = $settings->key($server, $settings->target($server));
+        config()->set('aquadactyl.features.player_counts', false);
+        $runner = \Mockery::mock(GameQueryRunner::class);
+        $runner->shouldNotReceive('query');
+        (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
+        $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()
+            ->assertJsonPath('attributes.status', 'unsupported')->assertJsonPath('attributes.players', null);
+        $this->getJson('/api/client')->assertOk()->assertJsonPath('data.0.attributes.game_query_type', null);
+        Bus::assertNotDispatched(QueryGameServerJob::class);
+    }
+
     public function testCompletedQueriesAreCachedAndZeroPlayersArePreserved(): void
     {
         [$user, $server] = $this->generateTestAccount();

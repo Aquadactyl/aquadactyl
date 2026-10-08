@@ -1,8 +1,8 @@
 import React, { useRef } from 'react';
-import { useStoreState } from '@/state/hooks';
+import usePrivacyMode from '@/plugins/usePrivacyMode';
 
 export default ({ children, onClick, onPointerDown, ...props }: React.HTMLAttributes<HTMLSpanElement>) => {
-    const enabled = useStoreState((state) => Boolean(state.user.data?.blurSensitiveData));
+    const enabled = usePrivacyMode();
     const revealTouchClick = useRef(false);
     return (
         <span

@@ -208,7 +208,7 @@ class User extends Model implements
     public function toVueObject(): array
     {
         return Collection::make($this->toArray())->except(['id', 'external_id'])
-            ->merge(['identifier' => $this->identifier])
+            ->merge(['identifier' => $this->identifier, 'blur_sensitive_data' => $this->shouldBlurSensitiveData()])
             ->toArray();
     }
 
@@ -245,7 +245,12 @@ class User extends Model implements
 
     public function getAvatarUrlAttribute(): ?string
     {
-        return $this->avatar ? '/storage/' . $this->avatar : null;
+        return config('aquadactyl.features.custom_profile_pictures', true) && $this->avatar ? '/storage/' . $this->avatar : null;
+    }
+
+    public function shouldBlurSensitiveData(): bool
+    {
+        return config('aquadactyl.features.privacy_mode', true) && $this->blur_sensitive_data;
     }
 
     /**
