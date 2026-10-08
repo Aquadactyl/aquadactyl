@@ -1,7 +1,6 @@
 import React from 'react';
 import { PaginatedResult } from '@/api/http';
-import tw from 'twin.macro';
-import styled from 'styled-components/macro';
+import classNames from 'classnames';
 import Button from '@/components/elements/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDoubleLeft, faAngleDoubleRight } from '@fortawesome/free-solid-svg-icons';
@@ -20,13 +19,9 @@ interface Props<T> {
     children: (props: RenderFuncProps<T>) => React.ReactNode;
 }
 
-const Block = styled(Button)`
-    ${tw`p-0 w-10 h-10`}
-
-    &:not(:last-of-type) {
-        ${tw`mr-2`};
-    }
-`;
+const Block: React.FC<React.ComponentProps<typeof Button>> = ({ className, ...props }) => (
+    <Button className={classNames('!p-0 w-10 h-10 [&:not(:last-of-type)]:mr-2', className)} {...props} />
+);
 
 function Pagination<T>({ data: { items, pagination }, onPageSelect, children }: Props<T>) {
     const isFirstPage = pagination.currentPage === 1;
@@ -47,7 +42,7 @@ function Pagination<T>({ data: { items, pagination }, onPageSelect, children }: 
         <>
             {children({ items, isFirstPage, isLastPage })}
             {pages.length > 1 && (
-                <div css={tw`mt-4 flex justify-center`}>
+                <div className={'mt-4 flex justify-center'}>
                     {pages[0] > 1 && !isFirstPage && (
                         <Block isSecondary color={'primary'} onClick={() => onPageSelect(1)}>
                             <FontAwesomeIcon icon={faAngleDoubleLeft} />

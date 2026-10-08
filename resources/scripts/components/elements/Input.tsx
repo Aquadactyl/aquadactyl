@@ -1,87 +1,53 @@
-import styled, { css } from 'styled-components/macro';
-import tw from 'twin.macro';
+import React from 'react';
+import classNames from 'classnames';
 
 export interface Props {
     isLight?: boolean;
     hasError?: boolean;
 }
 
-const light = css<Props>`
-    ${tw`bg-white border-neutral-200 text-neutral-800`};
-    &:focus {
-        ${tw`border-primary-400`}
+const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement> & Props>(
+    ({ isLight, hasError, className, type, ...props }, ref) => {
+        const isCheckboxOrRadio = type === 'checkbox' || type === 'radio';
+        const classes = isCheckboxOrRadio
+            ? classNames(
+                  'bg-neutral-900 cursor-pointer appearance-none inline-block align-middle select-none flex-shrink-0 w-4 h-4 text-primary-500 border border-neutral-500 rounded-sm transition-all duration-75 [print-color-adjust:exact] [background-origin:border-box] checked:border-transparent checked:bg-no-repeat checked:bg-center checked:bg-current checked:[background-size:100%_100%] checked:[background-image:url("data:image/svg+xml,%3csvg_viewBox=\'0_0_16_16\'_fill=\'white\'_xmlns=\'http://www.w3.org/2000/svg\'%3e%3cpath_d=\'M5.707_7.293a1_1_0_0_0-1.414_1.414l2_2a1_1_0_0_0_1.414_0l4-4a1_1_0_0_0-1.414-1.414L7_8.586_5.707_7.293z\'/%3e%3c/svg%3e")] focus:outline-none focus:border-primary-300 focus:ring-2 focus:ring-primary-300 focus:ring-offset-2 focus:ring-offset-neutral-700',
+                  type === 'radio' && 'rounded-full',
+                  className
+              )
+            : classNames(
+                  'resize-none appearance-none outline-none w-full min-w-0 p-3 border rounded text-sm transition-all duration-150 shadow-none focus:ring-0 [&+.input-help]:mt-1 [&+.input-help]:text-xs required:shadow-none invalid:shadow-none disabled:opacity-75',
+                  isLight
+                      ? 'bg-white border-neutral-200 text-neutral-800 focus:border-primary-400 disabled:bg-neutral-100 disabled:border-neutral-200'
+                      : 'bg-neutral-900 border-neutral-600 hover:border-neutral-500 text-neutral-100 not-disabled:not-readonly:focus:border-primary-300 not-disabled:not-readonly:focus:ring-2 not-disabled:not-readonly:focus:ring-primary-400 not-disabled:not-readonly:focus:ring-opacity-20',
+                  hasError
+                      ? 'text-red-100 border-red-400 hover:border-red-300 [&+.input-help]:text-red-200 not-disabled:not-readonly:focus:border-red-300 not-disabled:not-readonly:focus:ring-red-200'
+                      : '[&+.input-help]:text-neutral-400',
+                  className
+              );
+
+        return <input ref={ref} type={type} className={classes} {...props} />;
     }
+);
+Input.displayName = 'Input';
 
-    &:disabled {
-        ${tw`bg-neutral-100 border-neutral-200`};
+const Textarea = React.forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement> & Props>(
+    ({ isLight, hasError, className, ...props }, ref) => {
+        const classes = classNames(
+            'resize-none appearance-none outline-none w-full min-w-0 p-3 border rounded text-sm transition-all duration-150 shadow-none focus:ring-0 [&+.input-help]:mt-1 [&+.input-help]:text-xs required:shadow-none invalid:shadow-none disabled:opacity-75',
+            isLight
+                ? 'bg-white border-neutral-200 text-neutral-800 focus:border-primary-400 disabled:bg-neutral-100 disabled:border-neutral-200'
+                : 'bg-neutral-900 border-neutral-600 hover:border-neutral-500 text-neutral-100 not-disabled:not-readonly:focus:border-primary-300 not-disabled:not-readonly:focus:ring-2 not-disabled:not-readonly:focus:ring-primary-400 not-disabled:not-readonly:focus:ring-opacity-20',
+            hasError
+                ? 'text-red-100 border-red-400 hover:border-red-300 [&+.input-help]:text-red-200 not-disabled:not-readonly:focus:border-red-300 not-disabled:not-readonly:focus:ring-red-200'
+                : '[&+.input-help]:text-neutral-400',
+            className
+        );
+
+        return <textarea ref={ref} className={classes} {...props} />;
     }
-`;
-
-const checkboxStyle = css<Props>`
-    ${tw`bg-neutral-900 cursor-pointer appearance-none inline-block align-middle select-none flex-shrink-0 w-4 h-4 text-primary-500 border border-neutral-500 rounded-sm`};
-    color-adjust: exact;
-    background-origin: border-box;
-    transition: all 75ms linear, box-shadow 25ms linear;
-
-    &:checked {
-        ${tw`border-transparent bg-no-repeat bg-center`};
-        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
-        background-color: currentColor;
-        background-size: 100% 100%;
-    }
-
-    &:focus {
-        ${tw`outline-none border-primary-300 ring-2 ring-primary-300 ring-offset-2 ring-offset-neutral-700`};
-    }
-`;
-
-const inputStyle = css<Props>`
-    // Reset to normal styling.
-    resize: none;
-    ${tw`appearance-none outline-none w-full min-w-0`};
-    ${tw`p-3 border rounded text-sm transition-all duration-150`};
-    ${tw`bg-neutral-900 border-neutral-600 hover:border-neutral-500 text-neutral-100 shadow-none focus:ring-0`};
-
-    & + .input-help {
-        ${tw`mt-1 text-xs`};
-        ${(props) => (props.hasError ? tw`text-red-200` : tw`text-neutral-400`)};
-    }
-
-    &:required,
-    &:invalid {
-        ${tw`shadow-none`};
-    }
-
-    &:not(:disabled):not(:read-only):focus {
-        ${tw`border-primary-300 ring-2 ring-primary-400 ring-opacity-20`};
-        ${(props) => props.hasError && tw`border-red-300 ring-red-200`};
-    }
-
-    &:disabled {
-        ${tw`opacity-75`};
-    }
-
-    ${(props) => props.isLight && light};
-    ${(props) => props.hasError && tw`text-red-100 border-red-400 hover:border-red-300`};
-`;
-
-const Input = styled.input<Props>`
-    &:not([type='checkbox']):not([type='radio']) {
-        ${inputStyle};
-    }
-
-    &[type='checkbox'],
-    &[type='radio'] {
-        ${checkboxStyle};
-
-        &[type='radio'] {
-            ${tw`rounded-full`};
-        }
-    }
-`;
-const Textarea = styled.textarea<Props>`
-    ${inputStyle}
-`;
+);
+Textarea.displayName = 'Textarea';
 
 export { Textarea };
 export default Input;

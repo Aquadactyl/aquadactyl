@@ -1,22 +1,36 @@
 import React, { useMemo } from 'react';
-import styled from 'styled-components/macro';
+import styled from 'styled-components';
 import { v4 } from 'uuid';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import Label from '@/components/elements/Label';
 import Input from '@/components/elements/Input';
 
 const ToggleContainer = styled.div`
-    ${tw`relative select-none w-12 leading-normal`};
+    position: relative;
+    user-select: none;
+    width: 3rem;
+    line-height: 1.5;
 
     & > input[type='checkbox'] {
-        ${tw`sr-only`};
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
 
         &:focus-visible + label {
-            ${tw`ring-2 ring-primary-300 ring-offset-2 ring-offset-neutral-800`};
+            outline: 2px solid #78d4cc;
+            outline-offset: 2px;
         }
 
         &:checked + label {
-            ${tw`bg-primary-500 border-primary-700 shadow-none`};
+            background-color: #237c7f;
+            border-color: #1d5558;
+            box-shadow: none;
         }
 
         &:checked + label:before {
@@ -25,15 +39,27 @@ const ToggleContainer = styled.div`
     }
 
     & > label {
-        ${tw`mb-0 block overflow-hidden cursor-pointer bg-neutral-600 border border-neutral-500 rounded-full h-6 shadow-inner`};
+        margin-bottom: 0;
+        display: block;
+        overflow: hidden;
+        cursor: pointer;
+        background-color: #39424b;
+        border: 1px solid #78838f;
+        border-radius: 9999px;
+        height: 1.5rem;
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
         transition: all 75ms linear;
 
         &::before {
-            ${tw`absolute block bg-neutral-200 border border-neutral-300 h-5 w-5 rounded-full`};
+            position: absolute;
+            display: block;
+            background-color: #d7dce1;
+            border: 1px solid #bbc2ca;
+            height: 1.25rem;
+            width: 1.25rem;
+            border-radius: 9999px;
             top: 0.125rem;
             right: calc(50% + 0.125rem);
-            //width: 1.25rem;
-            //height: 1.25rem;
             content: '';
             transition: all 75ms ease-in;
         }
@@ -54,8 +80,8 @@ const Switch = ({ name, label, description, defaultChecked, readOnly, onChange, 
     const uuid = useMemo(() => v4(), []);
 
     return (
-        <div css={tw`flex items-center`}>
-            <ToggleContainer css={tw`flex-none`}>
+        <div className={'flex items-center'}>
+            <ToggleContainer className={'flex-none'}>
                 {children || (
                     <Input
                         id={uuid}
@@ -69,13 +95,13 @@ const Switch = ({ name, label, description, defaultChecked, readOnly, onChange, 
                 <Label htmlFor={uuid} />
             </ToggleContainer>
             {(label || description) && (
-                <div css={tw`ml-4 w-full`}>
+                <div className={'ml-4 w-full'}>
                     {label && (
-                        <Label css={[tw`cursor-pointer`, !!description && tw`mb-0`]} htmlFor={uuid}>
+                        <Label className={classNames('cursor-pointer', !!description && 'mb-0')} htmlFor={uuid}>
                             {label}
                         </Label>
                     )}
-                    {description && <p css={tw`text-neutral-400 text-sm mt-2`}>{description}</p>}
+                    {description && <p className={'text-neutral-400 text-sm mt-2'}>{description}</p>}
                 </div>
             )}
         </div>

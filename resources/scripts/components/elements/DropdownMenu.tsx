@@ -1,6 +1,5 @@
 import React, { createRef } from 'react';
-import styled from 'styled-components/macro';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import Fade from '@/components/elements/Fade';
 
 interface Props {
@@ -8,14 +7,20 @@ interface Props {
     renderToggle: (onClick: (e: React.MouseEvent<any, MouseEvent>) => void) => React.ReactChild;
 }
 
-export const DropdownButtonRow = styled.button<{ danger?: boolean }>`
-    ${tw`p-2 flex items-center rounded w-full text-neutral-200`};
-    transition: 150ms all ease;
-
-    &:hover {
-        ${(props) => (props.danger ? tw`text-red-200 bg-red-900` : tw`text-neutral-50 bg-neutral-600`)};
-    }
-`;
+export const DropdownButtonRow: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & { danger?: boolean }> = ({
+    danger,
+    className,
+    ...props
+}) => (
+    <button
+        className={classNames(
+            'p-2 flex items-center rounded w-full text-neutral-200 transition-all duration-150 ease-linear',
+            danger ? 'hover:text-red-200 hover:bg-red-900' : 'hover:text-neutral-50 hover:bg-neutral-600',
+            className
+        )}
+        {...props}
+    />
+);
 
 interface State {
     posX: number;
@@ -94,7 +99,7 @@ class DropdownMenu extends React.PureComponent<Props, State> {
                             this.setState({ visible: false });
                         }}
                         style={{ width: '12rem' }}
-                        css={tw`absolute bg-neutral-700 p-2 rounded-lg border border-neutral-600 shadow-lg text-neutral-200 z-50`}
+                        className={'absolute bg-neutral-700 p-2 rounded-lg border border-neutral-600 shadow-lg text-neutral-200 z-50'}
                     >
                         {this.props.children}
                     </div>

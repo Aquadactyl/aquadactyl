@@ -5,7 +5,6 @@ import reinstallServer from '@/api/server/reinstallServer';
 import { Actions, useStoreActions } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import { httpErrorToHuman } from '@/api/http';
-import tw from 'twin.macro';
 import { Button } from '@/components/elements/button/index';
 import { Dialog } from '@/components/elements/dialog';
 
@@ -40,7 +39,7 @@ export default () => {
     if (skipScripts) {
         return (
             <TitledGreyBox title={'Reinstall Server'}>
-                <p css={tw`text-sm`}>
+                <p className={'text-sm'}>
                     Reinstalling this server has been disabled because it is configured to skip its egg&apos;s install
                     script. If you would like to reinstall this server, contact a server administrator.
                 </p>
@@ -49,7 +48,7 @@ export default () => {
     }
 
     return (
-        <TitledGreyBox title={'Reinstall Server'} css={tw`relative`}>
+        <TitledGreyBox title={'Reinstall Server'} className={'relative'}>
             <Dialog.Confirm
                 open={modalVisible}
                 title={'Confirm server reinstallation'}
@@ -60,15 +59,15 @@ export default () => {
                 Your server will be stopped and some files may be deleted or modified during this process, are you sure
                 you wish to continue?
             </Dialog.Confirm>
-            <p css={tw`text-sm`}>
+            <p className={'text-sm'}>
                 Reinstalling your server will stop it, and then re-run the installation script that initially set it
                 up.&nbsp;
-                <strong css={tw`font-medium`}>
+                <strong className={'font-medium'}>
                     Some files may be deleted or modified during this process, please back up your data before
                     continuing.
                 </strong>
             </p>
-            <div css={tw`mt-6 text-right`}>
+            <div className={'mt-6 text-right'}>
                 <Button.Danger variant={Button.Variants.Secondary} onClick={() => setModalVisible(true)}>
                     Reinstall Server
                 </Button.Danger>

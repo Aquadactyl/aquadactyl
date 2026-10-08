@@ -24,7 +24,7 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `framer-motion` | Animation |
 | `chart.js`, `react-chartjs-2` | Charts |
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning |
-| `styled-components`, `twin.macro`, `classnames` | Styling and conditional classes |
+| `styled-components`, `tailwindcss`, `classnames` | Styling and conditional classes |
 | `formik`, `yup` | The panel's existing form and validation libraries |
 | `swr`, `easy-peasy` | The panel's existing fetching and state tools |
 | `i18next`, `react-i18next` | Translation |

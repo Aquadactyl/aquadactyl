@@ -21,11 +21,10 @@ import copyFile from '@/api/server/files/copyFile';
 import Can from '@/components/elements/Can';
 import getFileDownloadUrl from '@/api/server/files/getFileDownloadUrl';
 import useFlash from '@/plugins/useFlash';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import { FileObject } from '@/api/server/files/loadDirectory';
 import useFileManagerSwr from '@/plugins/useFileManagerSwr';
 import DropdownMenu from '@/components/elements/DropdownMenu';
-import styled from 'styled-components/macro';
 import useEventListener from '@/plugins/useEventListener';
 import compressFiles from '@/api/server/files/compressFiles';
 import decompressFiles from '@/api/server/files/decompressFiles';
@@ -37,23 +36,24 @@ import DropdownItems from '@blueprint/components/Server/Files/Browse/DropdownIte
 
 type ModalType = 'rename' | 'move' | 'chmod';
 
-const StyledRow = styled.div<{ $danger?: boolean }>`
-    ${tw`p-2 flex items-center rounded`};
-    ${(props) =>
-        props.$danger ? tw`hover:bg-red-900 hover:text-red-200` : tw`hover:bg-neutral-600 hover:text-neutral-50`};
-`;
-
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
     icon: IconDefinition;
     title: string;
     $danger?: boolean;
 }
 
-const Row = ({ icon, title, ...props }: RowProps) => (
-    <StyledRow {...props}>
-        <FontAwesomeIcon icon={icon} css={tw`text-xs`} fixedWidth />
-        <span css={tw`ml-2`}>{title}</span>
-    </StyledRow>
+const Row = ({ icon, title, $danger, className, ...props }: RowProps) => (
+    <div
+        className={classNames(
+            'p-2 flex items-center rounded cursor-pointer',
+            $danger ? 'hover:bg-red-900 hover:text-red-200' : 'hover:bg-neutral-600 hover:text-neutral-50',
+            className
+        )}
+        {...props}
+    >
+        <FontAwesomeIcon icon={icon} className={'text-xs'} fixedWidth />
+        <span className={'ml-2'}>{title}</span>
+    </div>
 );
 
 const FileDropdownMenu = ({ file }: { file: FileObject }) => {
@@ -144,7 +144,7 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
             <DropdownMenu
                 ref={onClickRef}
                 renderToggle={(onClick) => (
-                    <div css={tw`px-4 py-2 hover:text-white`} onClick={onClick}>
+                    <div className={'px-4 py-2 hover:text-white'} onClick={onClick}>
                         <FontAwesomeIcon icon={faEllipsisH} />
                         {modal ? (
                             modal === 'chmod' ? (

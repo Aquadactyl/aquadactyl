@@ -9,7 +9,6 @@ import { ScrollDownHelperAddon } from '@/plugins/XtermScrollDownHelperAddon';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import { ServerContext } from '@/state/server';
 import { usePermissions } from '@/plugins/usePermissions';
-import { theme as th } from 'twin.macro';
 import useEventListener from '@/plugins/useEventListener';
 import { debounce } from 'debounce';
 import { usePersistedState } from '@/plugins/usePersistedState';
@@ -21,12 +20,13 @@ import CommandRow from '@blueprint/components/Server/Terminal/CommandRow';
 
 import 'xterm/css/xterm.css';
 import styles from './style.module.css';
+import { th } from '@/lib/theme';
 
 const theme = {
-    background: th`colors.black`.toString(),
-    foreground: th`colors.gray.200`.toString(),
+    background: '#0c1116',
+    foreground: '#d7dce1',
     cursor: 'transparent',
-    black: th`colors.black`.toString(),
+    black: '#0c1116',
     red: '#E54B4B',
     green: '#9ECE58',
     yellow: '#FAED70',

@@ -1,7 +1,7 @@
 import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { memo, useCallback, useState } from 'react';
 import isEqual from 'react-fast-compare';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
 import InputSpinner from '@/components/elements/InputSpinner';
@@ -10,7 +10,6 @@ import Can from '@/components/elements/Can';
 import { Button } from '@/components/elements/button/index';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 import { Allocation } from '@/api/server/getServer';
-import styled from 'styled-components/macro';
 import { debounce } from 'debounce';
 import setServerAllocationNotes from '@/api/server/network/setServerAllocationNotes';
 import { useFlashKey } from '@/plugins/useFlash';
@@ -22,9 +21,12 @@ import getServerAllocations from '@/api/swr/getServerAllocations';
 import { ip } from '@/lib/formatters';
 import Code from '@/components/elements/Code';
 
-const Label = styled.label`
-    ${tw`uppercase text-xs mt-1 text-neutral-400 block px-1 select-none transition-colors duration-150`}
-`;
+const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (
+    <label
+        className={classNames('uppercase text-xs mt-1 text-neutral-400 block px-1 select-none transition-colors duration-150', className)}
+        {...props}
+    />
+);
 
 interface Props {
     allocation: Allocation;

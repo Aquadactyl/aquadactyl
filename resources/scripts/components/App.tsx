@@ -6,7 +6,6 @@ import { store } from '@/state';
 import { SiteSettings } from '@/state/settings';
 import ProgressBar from '@/components/elements/ProgressBar';
 import { NotFound } from '@/components/elements/ScreenBlock';
-import tw from 'twin.macro';
 import GlobalStylesheet from '@/assets/css/GlobalStylesheet';
 import { history } from '@/components/history';
 import { setupInterceptors } from '@/api/interceptors';
@@ -68,7 +67,7 @@ const App = () => {
             <StoreProvider store={store}>
                 <PrivacyMode />
                 <ProgressBar />
-                <div css={tw`mx-auto w-auto`}>
+                <div className={'mx-auto w-auto'}>
                     <Router history={history}>
                         <Switch>
                             <Route path={'/auth'}>
