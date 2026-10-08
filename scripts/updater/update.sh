@@ -4,9 +4,8 @@ UpdaterInstall() {
   # Copy release files to Aquadactyl directory
   PRINT INFO "Copying release files to Aquadactyl directory.."
   cp -r .update/repo/* .
-  cp .update/repo/.eslintrc.js .
-  cp .update/repo/.prettierignore .
-  cp .update/repo/.prettierrc.json .
+  cp .update/repo/.oxlintrc.json .
+  cp .update/repo/.oxfmtrc.json .
   cp .update/repo/.shellcheckrc .
 
   # Check if nodejs version is sufficient

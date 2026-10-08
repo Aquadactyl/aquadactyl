@@ -20,5 +20,5 @@ export default (
         return () => {
             window.removeEventListener(eventName, eventListener);
         };
-    }, [eventName, window]);
+    }, [eventName]);
 };

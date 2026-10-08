@@ -36,7 +36,7 @@ jobs:
         run: |
           rm -rf node_modules tests CONTRIBUTING.md flake.lock flake.nix phpunit.xml shell.nix
           tar --exclude='bootstrap/cache/*.php' --exclude='storage/logs/*.log' \
-            -czf panel.tar.gz * .blueprint .gitattributes .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .prettierrc.json
+            -czf panel.tar.gz * .blueprint .gitattributes .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .oxfmtrc.json .oxlintrc.json .prettierrc.json
           sha256sum panel.tar.gz > SHA256SUMS
       - name: write changelog
         run: |
