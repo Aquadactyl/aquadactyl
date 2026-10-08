@@ -1409,7 +1409,7 @@ Command() {
     hide_progress
     cd "$FOLDER" || cdhalt
     rm -rf "$FOLDER/node_modules/.cache"
-    pnpm run build:production --progress || { lock_remove; exit 1; }
+    pnpm run build --progress || { lock_remove; exit 1; }
   fi
 
   ((PROGRESS_NOW++))

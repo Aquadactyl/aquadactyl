@@ -18,7 +18,7 @@ jobs:
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
             - run: pnpm run tsc
-            - run: pnpm run build:production
+            - run: pnpm run build
             - name: create release branch and bump version
               env:
                   VERSION: ${{ github.ref_name }}

@@ -7,7 +7,7 @@ RUN npm install --global pnpm@12.10.1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . ./
-RUN pnpm run build:production
+RUN pnpm run build
 
 # Stage 1:
 # Build the Aquadactyl runtime image.

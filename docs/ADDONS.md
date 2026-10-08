@@ -76,7 +76,7 @@ handling. Server routes must still validate input and enforce authorization.
 pnpm install --frozen-lockfile
 pnpm run tsc
 pnpm run lint
-pnpm run build:production
+pnpm run build
 ```
 
 For a library outside the shared catalogue, maintainers can use

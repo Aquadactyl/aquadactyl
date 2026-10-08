@@ -29,7 +29,7 @@ trap 'rm -f .blueprint/extensions/blueprint/private/db/is_installed; printf "%s\
 artisan migrate --force
 artisan db:seed --class=BlueprintSeeder --force
 initialize_blueprint
-pnpm run build:production
+pnpm run build
 finish_deployment
 artisan up
 printf '%s\n' 'Panel and bundled Blueprint are ready. Configure Nginx, TLS and the queue service using docs/DEPLOYMENT.md.'

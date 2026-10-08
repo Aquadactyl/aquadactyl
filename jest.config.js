@@ -20,8 +20,7 @@ const config = {
     },
     setupFilesAfterEnv: ['<rootDir>/resources/scripts/setup-tests.ts'],
     transform: {
-        '.*\\.[t|j]sx$': 'babel-jest',
-        '.*\\.ts$': 'ts-jest',
+        '.*\\.[t|j]sx?$': 'ts-jest',
     },
     testPathIgnorePatterns: ['/node_modules/'],
     modulePathIgnorePatterns: ['<rootDir>/.blueprint/dist/'],

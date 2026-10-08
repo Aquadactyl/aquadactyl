@@ -434,7 +434,7 @@ if [[ $1 != "-bash" ]]; then
       cd "$FOLDER" || cdhalt
       set -eo pipefail
       rm -rf "$FOLDER/node_modules/.cache"
-      pnpm run build:production --progress
+      pnpm run build --progress
       set +eo pipefail
     fi
 

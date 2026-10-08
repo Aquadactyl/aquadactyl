@@ -35,4 +35,4 @@ jobs:
             - run: pnpm run lint
             - run: pnpm exec jest --runInBand
             - run: node --test scripts/game-query.test.cjs
-            - run: pnpm run build:production
+            - run: pnpm run build

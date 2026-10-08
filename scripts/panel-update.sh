@@ -93,7 +93,7 @@ initialize_blueprint
 for extension in "${EXTENSIONS[@]}"; do
     bash blueprint.sh -bash -i "$extension"
 done
-pnpm run build:production
+pnpm run build
 finish_deployment
 if command -v systemctl >/dev/null; then systemctl start pteroq.service; fi
 artisan up

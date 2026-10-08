@@ -73,7 +73,7 @@ Rebuild client assets after changing Tailwind tokens or React styles:
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm run build:production
+pnpm run build
 ```
 
 Admin CSS is served directly, so CSS-only changes need a browser refresh.

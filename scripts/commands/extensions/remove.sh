@@ -429,7 +429,7 @@ Command() {
       PRINT INFO "Rebuilding panel assets.."
       cd "$FOLDER" || cdhalt
       rm -rf "$FOLDER/node_modules/.cache"
-      pnpm run build:production --progress
+      pnpm run build --progress
     fi
 
     ((PROGRESS_NOW++))

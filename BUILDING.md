@@ -170,7 +170,7 @@ HMR updates React components while you work.
 ## Production builds
 
 ```bash
-pnpm run build:production
+pnpm run build
 ```
 
 This generates minified assets and a manifest under `public/build/`. Managed
