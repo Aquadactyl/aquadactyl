@@ -1,15 +1,15 @@
 const gray = {
-    50: '#f2f3f5',
-    100: '#e3e5e8',
-    200: '#d6d9df',
-    300: '#c1c6cf',
-    400: '#b0b5bf',
-    500: '#8a909d',
-    600: '#41444c',
-    700: '#313338',
-    800: '#232428',
-    900: '#1e1f22',
-    950: '#18191c',
+    50: '#f5f6f7',
+    100: '#e9ecef',
+    200: '#d7dce1',
+    300: '#bbc2ca',
+    400: '#9ca5af',
+    500: '#78838f',
+    600: '#39424b',
+    700: '#272e35',
+    800: '#171c21',
+    900: '#11161b',
+    950: '#0c1116',
 };
 
 const aqua = {
@@ -27,9 +27,7 @@ const aqua = {
 };
 
 module.exports = {
-    content: [
-        './resources/scripts/**/*.{js,ts,tsx}',
-    ],
+    content: ['./resources/scripts/**/*.{js,ts,tsx}'],
     theme: {
         extend: {
             fontFamily: {
@@ -55,7 +53,7 @@ module.exports = {
             transitionDuration: {
                 250: '250ms',
             },
-            borderColor: theme => ({
+            borderColor: (theme) => ({
                 default: theme('colors.neutral.400', 'currentColor'),
             }),
         },
@@ -65,5 +63,5 @@ module.exports = {
         require('@tailwindcss/forms')({
             strategy: 'class',
         }),
-    ]
+    ],
 };

@@ -10,7 +10,7 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
 
 @section('content-header')
   @if($is_installed)
-    @if(($PlaceholderService->version() != $latestBlueprintVersion) && ($PlaceholderService->version() != "rolling") && $latestBlueprintVersion != "unknown")
+    @if(($PlaceholderService->version() != $latestBlueprintVersion) && !in_array($PlaceholderService->version(), ["rolling", "unknown"]) && $latestBlueprintVersion != "unknown")
       <div class="blueprint-statusbar blueprint-statusbar-danger">
         <div style="margin-right: 14px;">
           <i class="bi bi-exclamation-triangle-fill" style="font-size: 24px; color: #f52e98"></i>
@@ -81,7 +81,7 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
 
   <style>
     .blueprint-statusbar {
-      width: calc(100% + 3px);
+      width: 100%;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -106,7 +106,7 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
     }
 
     .blueprint-page-header {
-      width: calc(100% + 3px);
+      width: 100%;
       background-color: #1f2933;
       border-radius: 8px;
       padding: 14px 20px;

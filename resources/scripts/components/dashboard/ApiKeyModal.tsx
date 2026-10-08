@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useContext } from 'react';
 import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
@@ -21,7 +22,9 @@ const ApiKeyModal = ({ apiKey }: Props) => {
             </p>
             <pre css={tw`overflow-x-scroll text-sm bg-neutral-900 rounded py-2 px-4 font-mono`}>
                 <CopyOnClick text={apiKey}>
-                    <code css={tw`font-mono`}>{apiKey}</code>
+                    <code css={tw`font-mono`}>
+                        <SensitiveValue>{apiKey}</SensitiveValue>
+                    </code>
                 </CopyOnClick>
             </pre>
             <div css={tw`flex justify-end mt-6`}>

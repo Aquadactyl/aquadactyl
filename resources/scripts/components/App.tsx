@@ -13,7 +13,9 @@ import { setupInterceptors } from '@/api/interceptors';
 import AuthenticatedRoute from '@/components/elements/AuthenticatedRoute';
 import { ServerContext } from '@/state/server';
 import '@/assets/tailwind.css';
+import '@/assets/css/interface.css';
 import Spinner from '@/components/elements/Spinner';
+import PrivacyMode from '@/components/elements/PrivacyMode';
 
 const DashboardRouter = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/routers/DashboardRouter'));
 const ServerRouter = lazy(() => import(/* webpackChunkName: "server" */ '@/routers/ServerRouter'));
@@ -31,6 +33,8 @@ interface ExtendedWindow extends Window {
         language: string;
         updated_at: string;
         created_at: string;
+        avatar_url?: string | null;
+        blur_sensitive_data?: boolean;
         /* eslint-enable camelcase */
     };
 }
@@ -49,6 +53,8 @@ const App = () => {
             useTotp: PterodactylUser.use_totp,
             createdAt: new Date(PterodactylUser.created_at),
             updatedAt: new Date(PterodactylUser.updated_at),
+            avatarUrl: PterodactylUser.avatar_url ?? null,
+            blurSensitiveData: PterodactylUser.blur_sensitive_data ?? false,
         });
     }
 
@@ -60,6 +66,7 @@ const App = () => {
         <>
             <GlobalStylesheet />
             <StoreProvider store={store}>
+                <PrivacyMode />
                 <ProgressBar />
                 <div css={tw`mx-auto w-auto`}>
                     <Router history={history}>

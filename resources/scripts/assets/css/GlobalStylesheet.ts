@@ -20,7 +20,9 @@ export default createGlobalStyle`
 
     body {
         ${tw`font-sans bg-neutral-800 text-neutral-200`};
-        letter-spacing: 0.015em;
+        letter-spacing: 0;
+        -webkit-font-smoothing: antialiased;
+        min-width: 320px;
     }
 
     h1, h2, h3, h4, h5, h6 {
@@ -28,7 +30,7 @@ export default createGlobalStyle`
     }
 
     p {
-        ${tw`text-neutral-200 leading-snug font-sans`};
+        ${tw`text-neutral-200 leading-relaxed font-sans`};
     }
 
     form {

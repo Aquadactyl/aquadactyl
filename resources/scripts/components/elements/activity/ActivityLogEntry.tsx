@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
@@ -6,20 +7,23 @@ import { format, formatDistanceToNowStrict } from 'date-fns';
 import { ActivityLog } from '@definitions/user';
 import ActivityLogMetaButton from '@/components/elements/activity/ActivityLogMetaButton';
 import { FolderOpenIcon, TerminalIcon } from '@heroicons/react/solid';
-import classNames from 'classnames';
 import style from './style.module.css';
 import Avatar from '@/components/Avatar';
 import useLocationHash from '@/plugins/useLocationHash';
 import { getObjectKeys, isObject } from '@/lib/objects';
+import { activityEventLabel } from './events';
+import { useStoreState } from '@/state/hooks';
+import { isSensitiveProperty } from './sensitiveProperties';
 
 interface Props {
     activity: ActivityLog;
     children?: React.ReactNode;
 }
 
-function wrapProperties(value: unknown): any {
+function wrapProperties(value: unknown, key = ''): any {
     if (value === null || typeof value === 'string' || typeof value === 'number') {
-        return `<strong>${String(value)}</strong>`;
+        const content = isSensitiveProperty(key, value) ? `<sensitive>${String(value)}</sensitive>` : String(value);
+        return `<strong>${content}</strong>`;
     }
 
     if (isObject(value)) {
@@ -27,12 +31,12 @@ function wrapProperties(value: unknown): any {
             if (key === 'count' || (typeof key === 'string' && key.endsWith('_count'))) {
                 return { ...obj, [key]: value[key] };
             }
-            return { ...obj, [key]: wrapProperties(value[key]) };
+            return { ...obj, [key]: wrapProperties(value[key], String(key)) };
         }, {} as Record<string, unknown>);
     }
 
     if (Array.isArray(value)) {
-        return value.map(wrapProperties);
+        return value.map((item) => wrapProperties(item, key));
     }
 
     return value;
@@ -42,58 +46,78 @@ export default ({ activity, children }: Props) => {
     const { pathTo } = useLocationHash();
     const actor = activity.relationships.actor;
     const properties = wrapProperties(activity.properties);
+    const currentUser = useStoreState((state) => state.user.data);
+    const avatarUrl = actor?.uuid === currentUser?.uuid ? currentUser?.avatarUrl : actor?.avatarUrl;
+    const eventLabel = activityEventLabel(activity.event);
 
     return (
-        <div className={'grid grid-cols-10 py-4 border-b-2 border-gray-800 last:rounded-b last:border-0 group'}>
-            <div className={'hidden sm:flex sm:col-span-1 items-center justify-center select-none'}>
-                <div className={'flex items-center w-10 h-10 rounded-full bg-gray-600 overflow-hidden'}>
-                    <Avatar name={actor?.uuid || 'system'} />
-                </div>
+        <article className={style.entry}>
+            <div className={style.avatar}>
+                <Avatar
+                    name={actor?.uuid || 'system'}
+                    src={avatarUrl}
+                    alt={`${actor?.username || 'System'}'s profile picture`}
+                    size={40}
+                />
             </div>
-            <div className={'col-span-10 sm:col-span-9 flex'}>
-                <div className={'flex-1 px-4 sm:px-0'}>
-                    <div className={'flex items-center text-gray-50'}>
-                        <Tooltip placement={'top'} content={actor?.email || 'System User'}>
-                            <span>{actor?.username || 'System'}</span>
-                        </Tooltip>
-                        <span className={'text-gray-400'}>&nbsp;&mdash;&nbsp;</span>
+            <div className={style.content}>
+                <div className={style.header}>
+                    <div className={style.identity}>
+                        <span className={style.username}>{actor?.username || 'System'}</span>
                         <Link
-                            to={`#${pathTo({ event: activity.event })}`}
-                            className={'transition-colors duration-75 active:text-cyan-400 hover:text-cyan-400'}
+                            to={`#${pathTo({ event: undefined, event_exact: activity.event, page: undefined })}`}
+                            className={style.event}
+                            title={activity.event}
+                            aria-label={`Filter by ${eventLabel}`}
                         >
-                            {activity.event}
+                            {eventLabel}
                         </Link>
-                        <div className={classNames(style.icons, 'group-hover:text-gray-300')}>
-                            {activity.isApi && (
-                                <Tooltip placement={'top'} content={'Using API Key'}>
-                                    <TerminalIcon />
-                                </Tooltip>
-                            )}
-                            {activity.event.startsWith('server:sftp.') && (
-                                <Tooltip placement={'top'} content={'Using SFTP'}>
-                                    <FolderOpenIcon />
-                                </Tooltip>
-                            )}
-                            {children}
-                        </div>
                     </div>
-                    <p className={style.description}>
-                        <Translate ns={'activity'} values={properties} i18nKey={activity.event.replace(':', '.')} />
-                    </p>
-                    <div className={'mt-1 flex items-center text-sm'}>
-                        {activity.ip && (
-                            <span>
-                                {activity.ip}
-                                <span className={'text-gray-400'}>&nbsp;|&nbsp;</span>
-                            </span>
+                    {activity.hasAdditionalMetadata && <ActivityLogMetaButton meta={activity.properties} />}
+                </div>
+                <p className={style.description}>
+                    <Translate
+                        ns={'activity'}
+                        values={properties}
+                        i18nKey={activity.event.replace(':', '.')}
+                        defaults={activity.description || eventLabel}
+                        components={{ sensitive: <SensitiveValue /> }}
+                    />
+                </p>
+                <div className={style.details}>
+                    <Tooltip placement={'top'} content={format(activity.timestamp, 'MMM do, yyyy H:mm:ss')}>
+                        <time dateTime={activity.timestamp.toISOString()} tabIndex={0}>
+                            {formatDistanceToNowStrict(activity.timestamp, { addSuffix: true })}
+                        </time>
+                    </Tooltip>
+                    {activity.ip && (
+                        <Link
+                            to={`#${pathTo({ ip: activity.ip, page: undefined })}`}
+                            className={style.ip}
+                            aria-label={`Filter by IP address ${activity.ip}`}
+                        >
+                            <SensitiveValue>{activity.ip}</SensitiveValue>
+                        </Link>
+                    )}
+                    <div className={style.icons}>
+                        {activity.isApi && (
+                            <Tooltip placement={'top'} content={'Using API Key'}>
+                                <span tabIndex={0} aria-label={'API activity'}>
+                                    <TerminalIcon />
+                                </span>
+                            </Tooltip>
                         )}
-                        <Tooltip placement={'right'} content={format(activity.timestamp, 'MMM do, yyyy H:mm:ss')}>
-                            <span>{formatDistanceToNowStrict(activity.timestamp, { addSuffix: true })}</span>
-                        </Tooltip>
+                        {(activity.event.startsWith('server:sftp.') || activity.event.startsWith('auth:sftp.')) && (
+                            <Tooltip placement={'top'} content={'Using SFTP'}>
+                                <span tabIndex={0} aria-label={'SFTP activity'}>
+                                    <FolderOpenIcon />
+                                </span>
+                            </Tooltip>
+                        )}
+                        {children}
                     </div>
                 </div>
-                {activity.hasAdditionalMetadata && <ActivityLogMetaButton meta={activity.properties} />}
             </div>
-        </div>
+        </article>
     );
 };

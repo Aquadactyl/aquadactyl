@@ -10,6 +10,8 @@ export interface UserData {
     useTotp: boolean;
     createdAt: Date;
     updatedAt: Date;
+    avatarUrl?: string | null;
+    blurSensitiveData?: boolean;
 }
 
 export interface UserStore {

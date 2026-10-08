@@ -27,6 +27,8 @@ class AccountTransformer extends BaseClientTransformer
             'first_name' => $model->name_first,
             'last_name' => $model->name_last,
             'language' => $model->language,
+            'avatar_url' => $model->avatar_url,
+            'blur_sensitive_data' => $model->blur_sensitive_data,
         ];
     }
 }

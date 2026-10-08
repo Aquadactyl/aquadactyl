@@ -33,6 +33,10 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
         ->name('api:client.account.update-email');
     Route::put('/password', [Client\AccountController::class, 'updatePassword'])->name('api:client.account.update-password');
 
+    Route::post('/avatar', [Client\AccountAvatarController::class, 'store'])->name('api:client.account.update-avatar');
+    Route::delete('/avatar', [Client\AccountAvatarController::class, 'destroy'])->name('api:client.account.remove-avatar');
+    Route::put('/privacy', [Client\AccountPrivacyController::class, 'update'])->name('api:client.account.update-privacy');
+
     Route::get('/activity', Client\ActivityLogController::class)->name('api:client.account.activity');
 
     Route::get('/api-keys', [Client\ApiKeyController::class, 'index']);

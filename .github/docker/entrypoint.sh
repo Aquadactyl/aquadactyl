@@ -63,6 +63,22 @@ fi
 
 DB_PORT=${DB_PORT:-3306}
 
+if [ "${AQUADACTYL_LOCAL_SETUP:-false}" = "true" ]; then
+  WINGS_PORT=${AQUADACTYL_WINGS_PORT:-8082}
+  case "$WINGS_PORT" in
+    ''|*[!0-9]*) echo "Invalid local Wings port." >&2; exit 1 ;;
+  esac
+  if [ "$WINGS_PORT" -lt 1024 ] || [ "$WINGS_PORT" -gt 65535 ]; then
+    echo "Local Wings port must be between 1024 and 65535." >&2
+    exit 1
+  fi
+  sed "s/__WINGS_PORT__/$WINGS_PORT/g" .github/docker/local-wings-proxy.conf > /etc/nginx/http.d/local-wings.conf
+fi
+
+echo "Checking storage folder permissions."
+mkdir -p /app/storage/framework/cache/data /app/storage/framework/sessions /app/storage/framework/views
+chown -R nginx:nginx /app/storage /app/bootstrap/cache
+
 echo "Checking log folder permissions."
 if [ "$(stat -c %U:%G /app/storage/logs)" != "nginx:nginx" ]; then
   echo "Fixing log folder permissions."
@@ -76,8 +92,13 @@ until nc -z -w30 "$DB_HOST" "$DB_PORT"; do
 done
 
 echo "Running database migrations and Aquadactyl seeders."
+php artisan config:clear
 php artisan migrate --force
-php artisan db:seed --class=DatabaseSeeder --force
+if [ "${AQUADACTYL_LOCAL_SETUP:-false}" = "true" ]; then
+  php .github/docker/local-setup.php
+else
+  php artisan db:seed --class=DatabaseSeeder --force
+fi
 
 echo "Seeding Blueprint settings."
 php artisan db:seed --class=BlueprintSeeder --force
@@ -94,6 +115,10 @@ SHORTCUT_DIR="/usr/local/bin"
 EOF
 
   BLUEPRINT_ENVIRONMENT=ci bash /app/blueprint.sh
+  if [ ! -f "$BLUEPRINT_MARKER" ]; then
+    echo "Blueprint initialization did not complete; refusing to start the panel." >&2
+    exit 1
+  fi
 else
   echo "Blueprint is already initialised."
 fi

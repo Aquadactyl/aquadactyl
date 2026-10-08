@@ -40,11 +40,11 @@ const inputStyle = css<Props>`
     resize: none;
     ${tw`appearance-none outline-none w-full min-w-0`};
     ${tw`p-3 border rounded text-sm transition-all duration-150`};
-    ${tw`bg-neutral-900 border-neutral-500 hover:border-neutral-400 text-neutral-100 shadow-none focus:ring-0`};
+    ${tw`bg-neutral-900 border-neutral-600 hover:border-neutral-500 text-neutral-100 shadow-none focus:ring-0`};
 
     & + .input-help {
         ${tw`mt-1 text-xs`};
-        ${(props) => (props.hasError ? tw`text-red-200` : tw`text-neutral-200`)};
+        ${(props) => (props.hasError ? tw`text-red-200` : tw`text-neutral-400`)};
     }
 
     &:required,
@@ -53,7 +53,7 @@ const inputStyle = css<Props>`
     }
 
     &:not(:disabled):not(:read-only):focus {
-        ${tw`shadow-md border-primary-300 ring-2 ring-primary-400 ring-opacity-50`};
+        ${tw`border-primary-300 ring-2 ring-primary-400 ring-opacity-20`};
         ${(props) => props.hasError && tw`border-red-300 ring-red-200`};
     }
 

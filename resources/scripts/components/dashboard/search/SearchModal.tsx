@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect, useRef, useState } from 'react';
 import Modal, { RequiredModalProps } from '@/components/elements/Modal';
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
@@ -113,7 +114,9 @@ export default ({ ...props }: Props) => {
                                                 .filter((alloc) => alloc.isDefault)
                                                 .map((allocation) => (
                                                     <span key={allocation.ip + allocation.port.toString()}>
-                                                        {allocation.alias || ip(allocation.ip)}:{allocation.port}
+                                                        <SensitiveValue>
+                                                            {allocation.alias || ip(allocation.ip)}:{allocation.port}
+                                                        </SensitiveValue>
                                                     </span>
                                                 ))}
                                         </p>

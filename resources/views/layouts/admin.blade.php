@@ -2,16 +2,16 @@
 @yield('blueprint.lib')
 
 <!DOCTYPE html>
-<html>
+<html class="{{ Auth::user()?->blur_sensitive_data ? 'privacy-mode' : '' }}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>{{ config('app.name', 'Aquadactyl') }} - @yield('title')</title>
-        <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+        <meta content="width=device-width, initial-scale=1" name="viewport">
         <meta name="_token" content="{{ csrf_token() }}">
 
         @include('partials.favicons')
-        <meta name="theme-color" content="#1e1f22">
+        <meta name="theme-color" content="#11161b">
         <meta name="color-scheme" content="dark">
 
         @include('layouts.scripts')
@@ -23,7 +23,8 @@
             {!! Theme::css('vendor/adminlte/colors/skin-blue.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/sweetalert/sweetalert.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/animate/animate.min.css?t={cache-version}') !!}
-            {!! Theme::css('css/pterodactyl.css?t={cache-version}') !!}
+            {!! Theme::css('css/pterodactyl.css?v=' . filemtime(public_path('themes/pterodactyl/css/pterodactyl.css'))) !!}
+            <link rel="stylesheet" href="/css/privacy.css?v={{ filemtime(public_path('css/privacy.css')) }}">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 
@@ -60,16 +61,16 @@
                         <ul class="nav navbar-nav">
                             <li class="user-menu">
                                 <a href="{{ route('account') }}">
-                                    <img src="https://www.gravatar.com/avatar/{{ md5(strtolower(Auth::user()->email)) }}?s=160" class="user-image" alt="User Image">
+                                    <img src="{{ Auth::user()->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower(Auth::user()->email)) . '?s=160' }}" class="user-image" style="object-fit:cover;" alt="Your profile picture">
                                     <span class="hidden-xs">{{ Auth::user()->name_first }} {{ Auth::user()->name_last }}</span>
                                 </a>
                             </li>
                             @yield("blueprint.navigation")
                             <li>
-                                <li><a href="{{ route('index') }}" data-toggle="tooltip" data-placement="bottom" title="Exit Admin Control"><i class="fa fa-server"></i></a></li>
+                                <a href="{{ route('index') }}" aria-label="Back to servers" data-toggle="tooltip" data-placement="bottom" title="Back to servers"><i class="fa fa-server" aria-hidden="true"></i></a>
                             </li>
                             <li>
-                                <li><a href="{{ route('auth.logout') }}" id="logoutButton" data-toggle="tooltip" data-placement="bottom" title="Logout"><i class="fa fa-sign-out"></i></a></li>
+                                <a href="{{ route('auth.logout') }}" id="logoutButton" aria-label="Sign out" data-toggle="tooltip" data-placement="bottom" title="Sign out"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
                             </li>
                         </ul>
                     </div>
@@ -166,16 +167,18 @@
                 </section>
             </div>
             <footer class="main-footer">
-                <a href="https://aquadactyl.uk">Aquadactyl</a> &middot;
-                <div class="pull-right small text-gray" style="margin-right:10px;margin-top:-7px;">
-                    <strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}<br />
-                    <strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - LARAVEL_START, 3) }}s
+                <div class="admin-footer-copyright">
+                    <a href="https://aquadactyl.uk">Aquadactyl</a> &middot;
+                    @if(starts_with(Route::currentRouteName(), 'admin.extensions'))
+                        Copyright &copy; 2023 - {{ date('Y') }} <a href="https://blueprint.zip/">Blueprint Framework</a>, Emma (<a href="https://prpl.wtf/">prpl.wtf</a>) and contributors.
+                    @else
+                        Copyright &copy; 2015 - {{ date('Y') }} <a href="https://pterodactyl.io/">Pterodactyl Software</a>
+                    @endif
                 </div>
-                @if(starts_with(Route::currentRouteName(), 'admin.extensions'))
-                    Copyright &copy; 2023 - {{ date('Y') }} <a href="https://blueprint.zip/">Blueprint Framework</a>, Emma (<a href="https://prpl.wtf/">prpl.wtf</a>) and contributors.
-                @else
-                    Copyright &copy; 2015 - {{ date('Y') }} <a href="https://pterodactyl.io/">Pterodactyl Software</a>
-                @endif
+                <div class="admin-footer-meta small text-gray">
+                    <span><strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}</span>
+                    <span><strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - LARAVEL_START, 3) }}s</span>
+                </div>
             </footer>
         </div>
         @section('footer-scripts')

@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect, useMemo, useState } from 'react';
 import {
     faClock,
@@ -95,7 +96,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         <div className={classNames('grid grid-cols-6 gap-2 md:gap-4', className)}>
             <BeforeInformation />
             <StatBlock icon={faWifi} title={'Address'} copyOnClick={allocation}>
-                {allocation}
+                <SensitiveValue>{allocation}</SensitiveValue>
             </StatBlock>
             <StatBlock
                 icon={faClock}

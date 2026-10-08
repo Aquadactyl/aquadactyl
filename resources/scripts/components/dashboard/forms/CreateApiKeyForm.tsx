@@ -73,7 +73,7 @@ export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
                                 'Leave blank to allow any IP address to use this API key, otherwise provide each IP address on a new line.'
                             }
                         >
-                            <Field name={'allowedIps'} as={CustomTextarea} />
+                            <Field data-sensitive name={'allowedIps'} as={CustomTextarea} />
                         </FormikFieldWrapper>
                         <div css={tw`flex justify-end mt-6`}>
                             <Button>Create</Button>

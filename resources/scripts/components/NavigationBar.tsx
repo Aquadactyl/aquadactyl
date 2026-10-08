@@ -1,13 +1,9 @@
-import * as React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCogs, faLayerGroup, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { ArrowUpRight, LogOut, Server, Settings } from 'lucide-react';
 import { useStoreState } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
-import tw, { theme } from 'twin.macro';
-import styled from 'styled-components/macro';
 import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
@@ -17,101 +13,70 @@ import BeforeNavigation from '@blueprint/components/Navigation/NavigationBar/Bef
 import AdditionalItems from '@blueprint/components/Navigation/NavigationBar/AdditionalItems';
 import AfterNavigation from '@blueprint/components/Navigation/NavigationBar/AfterNavigation';
 
-const RightNavigation = styled.div`
-    & > a,
-    & > button,
-    & > .navigation-link {
-        ${tw`flex items-center justify-center h-full min-w-[2.75rem] no-underline text-neutral-300 px-3 sm:px-6 cursor-pointer transition-all duration-150`};
-
-        &:active,
-        &:hover {
-            ${tw`text-neutral-100 bg-black`};
-        }
-
-        &:active,
-        &:hover,
-        &.active {
-            box-shadow: inset 0 -2px ${theme`colors.cyan.400`.toString()};
-        }
-    }
-`;
-
 export default () => {
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
+    const user = useStoreState((state: ApplicationStore) => state.user.data!);
     const isAquadactyl = name.trim().toLowerCase() === 'aquadactyl';
-    const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const onTriggerLogout = () => {
         setIsLoggingOut(true);
-        http.post('/auth/logout').finally(() => {
-            // @ts-expect-error this is valid
-            window.location = '/';
-        });
+        http.post('/auth/logout').finally(() => window.location.assign('/'));
     };
 
     return (
-        <div
-            className={'w-full bg-neutral-900 border-b border-neutral-700 shadow-sm overflow-x-auto'}
-            id={'NavigationBar'}
-        >
+        <header className={'panel-navigation'} id={'NavigationBar'}>
             <BeforeNavigation />
             <SpinnerOverlay visible={isLoggingOut} />
-            <div className={'mx-auto w-full flex items-center h-[3.5rem] max-w-[1200px]'}>
-                <div id={'logo'} className={'flex-1 min-w-0'}>
-                    <Link
-                        to={'/'}
-                        aria-label={name}
-                        className={
-                            'flex items-center gap-2 text-xl sm:text-2xl font-header font-medium px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
-                        }
-                    >
-                        <img
-                            src={'/branding/aquadactyl-emblem.png'}
-                            alt={''}
-                            className={isAquadactyl ? 'h-7 w-auto shrink-0 sm:hidden' : 'h-7 w-auto shrink-0'}
-                        />
+            <div className={'navigation-inner'}>
+                <div id={'logo'} className={'navigation-brand'}>
+                    <Link to={'/'} aria-label={name + ' home'}>
                         {isAquadactyl ? (
-                            <img
-                                src={'/branding/aquadactyl-wordmark.png'}
-                                alt={''}
-                                className={'hidden sm:block w-44 max-w-full h-auto'}
-                            />
+                            <img src={'/branding/aquadactyl-wordmark.png'} alt={''} />
                         ) : (
-                            <span className={'truncate'}>{name}</span>
+                            <>
+                                <img className={'brand-emblem'} src={'/branding/aquadactyl-emblem.png'} alt={''} />
+                                <span>{name}</span>
+                            </>
                         )}
                     </Link>
                 </div>
-                <RightNavigation className={'flex flex-shrink-0 h-full items-center justify-center'}>
-                    <SearchContainer />
-                    <Tooltip placement={'bottom'} content={'Dashboard'}>
-                        <NavLink to={'/'} exact id={'NavigationDashboard'} aria-label={'Dashboard'}>
-                            <FontAwesomeIcon icon={faLayerGroup} />
-                        </NavLink>
-                    </Tooltip>
-                    {rootAdmin && (
-                        <Tooltip placement={'bottom'} content={'Admin'}>
-                            <a href={'/admin'} rel={'noreferrer'} id={'NavigationAdmin'} aria-label={'Admin'}>
-                                <FontAwesomeIcon icon={faCogs} />
-                            </a>
-                        </Tooltip>
+                <nav className={'navigation-items'} aria-label={'Main navigation'}>
+                    <NavLink to={'/'} exact id={'NavigationDashboard'} aria-label={'Servers'}>
+                        <Server size={17} aria-hidden />
+                        <span>Servers</span>
+                    </NavLink>
+                    {user.rootAdmin && (
+                        <a href={'/admin'} id={'NavigationAdmin'} aria-label={'Administration'}>
+                            <Settings size={17} aria-hidden />
+                            <span>Admin</span>
+                            <ArrowUpRight size={12} className={'navigation-external'} aria-hidden />
+                        </a>
                     )}
                     <AdditionalItems />
-                    <Tooltip placement={'bottom'} content={'Account Settings'}>
-                        <NavLink to={'/account'} id={'NavigationAccount'} aria-label={'Account settings'}>
-                            <span className={'flex items-center w-5 h-5'}>
-                                <Avatar.User />
-                            </span>
-                        </NavLink>
-                    </Tooltip>
-                    <Tooltip placement={'bottom'} content={'Sign Out'}>
-                        <button onClick={onTriggerLogout} id={'NavigationLogout'} aria-label={'Sign out'}>
-                            <FontAwesomeIcon icon={faSignOutAlt} />
+                    <SearchContainer />
+                    <NavLink to={'/account'} id={'NavigationAccount'} aria-label={'Account settings'}>
+                        <span className={'navigation-avatar'}>
+                            <Avatar.User size={23} />
+                        </span>
+                        <span>Account</span>
+                        <span className={'navigation-username'}>{user.username}</span>
+                    </NavLink>
+                    <Tooltip placement={'bottom'} content={'Sign out'}>
+                        <button
+                            type={'button'}
+                            onClick={onTriggerLogout}
+                            disabled={isLoggingOut}
+                            id={'NavigationLogout'}
+                            aria-label={'Sign out'}
+                            className={'navigation-logout'}
+                        >
+                            <LogOut size={17} aria-hidden />
                         </button>
                     </Tooltip>
-                </RightNavigation>
+                </nav>
             </div>
             <AfterNavigation />
-        </div>
+        </header>
     );
 };

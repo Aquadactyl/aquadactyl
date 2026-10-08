@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Search } from 'lucide-react';
 import useEventListener from '@/plugins/useEventListener';
 import SearchModal from '@/components/dashboard/search/SearchModal';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
@@ -10,7 +9,8 @@ export default () => {
 
     useEventListener('keydown', (e: KeyboardEvent) => {
         if (['input', 'textarea'].indexOf(((e.target as HTMLElement).tagName || 'input').toLowerCase()) < 0) {
-            if (!visible && e.metaKey && e.key.toLowerCase() === '/') {
+            if (!visible && (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === '/') {
+                e.preventDefault();
                 setVisible(true);
             }
         }
@@ -26,7 +26,8 @@ export default () => {
                     aria-label={'Search'}
                     onClick={() => setVisible(true)}
                 >
-                    <FontAwesomeIcon icon={faSearch} />
+                    <Search size={17} aria-hidden />
+                    <span className={'navigation-search-label'}>Search</span>
                 </button>
             </Tooltip>
         </>

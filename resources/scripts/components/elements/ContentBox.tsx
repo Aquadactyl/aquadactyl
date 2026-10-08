@@ -6,20 +6,30 @@ import tw from 'twin.macro';
 type Props = Readonly<
     React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
         title?: string;
+        description?: string;
         borderColor?: string;
         showFlashes?: string | boolean;
         showLoadingOverlay?: boolean;
     }
 >;
 
-const ContentBox = ({ title, borderColor, showFlashes, showLoadingOverlay, children, ...props }: Props) => (
+const ContentBox = ({
+    title,
+    description,
+    borderColor,
+    showFlashes,
+    showLoadingOverlay,
+    children,
+    ...props
+}: Props) => (
     <div {...props}>
-        {title && <h2 css={tw`text-neutral-300 mb-4 px-4 text-2xl`}>{title}</h2>}
-        {showFlashes && (
-            <FlashMessageRender byKey={typeof showFlashes === 'string' ? showFlashes : undefined} css={tw`mb-4`} />
-        )}
-        <div css={[tw`bg-neutral-700 p-4 rounded shadow-lg relative`, !!borderColor && tw`border-t-4`]}>
+        <div className={'content-box'} css={borderColor ? tw`border-t-4` : undefined}>
             <SpinnerOverlay visible={showLoadingOverlay || false} />
+            {title && <h2 className={'content-box-title'}>{title}</h2>}
+            {description && <p className={'content-box-description'}>{description}</p>}
+            {showFlashes && (
+                <FlashMessageRender byKey={typeof showFlashes === 'string' ? showFlashes : undefined} css={tw`mb-4`} />
+            )}
             {children}
         </div>
     </div>

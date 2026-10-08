@@ -30,7 +30,7 @@
 </div>
 <form action="{{ route('admin.nodes.view.settings', $node->id) }}" method="POST">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">Settings</h3>
@@ -120,7 +120,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
                     <h3 class="box-title">Allocation Limits</h3>

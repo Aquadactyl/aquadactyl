@@ -23,8 +23,8 @@
                         <div class="input-group input-group-sm">
                             <input type="text" name="filter[email]" class="form-control pull-right" value="{{ request()->input('filter.email') }}" placeholder="Search">
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                <a href="{{ route('admin.users.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">Create New</button></a>
+                                <button type="submit" class="btn btn-default" aria-label="Search users"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                <a href="{{ route('admin.users.new') }}" class="btn btn-sm btn-primary">Create New</a>
                             </div>
                         </div>
                     </form>
@@ -48,7 +48,7 @@
                         @foreach ($users as $user)
                             <tr class="align-middle">
                                 <td><code>{{ $user->id }}</code></td>
-                                <td><a href="{{ route('admin.users.view', $user->id) }}">{{ $user->email }}</a> @if($user->root_admin)<i class="fa fa-star text-yellow"></i>@endif</td>
+                                <td><a href="{{ route('admin.users.view', $user->id) }}"><span data-sensitive tabindex="0">{{ $user->email }}</span></a> @if($user->root_admin)<i class="fa fa-star text-yellow"></i>@endif</td>
                                 <td>{{ $user->name_last }}, {{ $user->name_first }}</td>
                                 <td>{{ $user->username }}</td>
                                 <td class="text-center">
@@ -62,7 +62,7 @@
                                     <a href="{{ route('admin.servers', ['filter[owner_id]' => $user->id]) }}">{{ $user->servers_count }}</a>
                                 </td>
                                 <td class="text-center">{{ $user->subuser_of_count }}</td>
-                                <td class="text-center"><img src="https://www.gravatar.com/avatar/{{ md5(strtolower($user->email)) }}?s=100" style="height:20px;" class="img-circle" /></td>
+                                <td class="text-center"><img src="{{ $user->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower($user->email)) . '?s=100' }}" style="width:32px;height:32px;object-fit:cover;" class="img-circle" alt="{{ $user->username }}'s profile picture" /></td>
                             </tr>
                         @endforeach
                     </tbody>

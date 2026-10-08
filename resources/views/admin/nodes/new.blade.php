@@ -16,7 +16,7 @@
 @section('content')
 <form action="{{ route('admin.nodes.new') }}" method="POST">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">Basic Details</h3>
@@ -94,18 +94,20 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-md-6">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">Configuration</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-xs-12">
                             <label for="pDaemonBase" class="form-label">Daemon Server File Directory</label>
                             <input type="text" name="daemonBase" id="pDaemonBase" class="form-control" value="/var/lib/pterodactyl/volumes" />
                             <p class="text-muted small">Enter the directory where server files should be stored. <strong>If you use OVH you should check your partition scheme. You may need to use <code>/home/daemon-data</code> to have enough space.</strong></p>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="form-group col-md-6">
                             <label for="pMemory" class="form-label">Total Memory</label>
                             <div class="input-group">

@@ -34,7 +34,7 @@
                         </tr>
                         @foreach($keys as $key)
                             <tr>
-                                <td><code>
+                                <td><code data-sensitive tabindex="0">
                                     @if (Auth::user()->is($key->user))
                                         {{ $key->identifier . decrypt($key->token) }}
                                     @else

@@ -3,6 +3,7 @@ import Fade from '@/components/elements/Fade';
 import Portal from '@/components/elements/Portal';
 import copy from 'copy-to-clipboard';
 import classNames from 'classnames';
+import { useStoreState } from '@/state/hooks';
 
 interface CopyOnClickProps {
     text: string | number | null | undefined;
@@ -12,6 +13,7 @@ interface CopyOnClickProps {
 
 const CopyOnClick = ({ text, showInNotification = true, children }: CopyOnClickProps) => {
     const [copied, setCopied] = useState(false);
+    const privacyMode = useStoreState((state) => Boolean(state.user.data?.blurSensitiveData));
 
     useEffect(() => {
         if (!copied) return;
@@ -51,7 +53,7 @@ const CopyOnClick = ({ text, showInNotification = true, children }: CopyOnClickP
                         <div className={'fixed z-50 bottom-0 right-0 m-4'}>
                             <div className={'rounded-md py-3 px-4 text-gray-200 bg-neutral-600/95 shadow'}>
                                 <p>
-                                    {showInNotification
+                                    {showInNotification && !privacyMode
                                         ? `Copied "${String(text)}" to clipboard.`
                                         : 'Copied text to clipboard.'}
                                 </p>

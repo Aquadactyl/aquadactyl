@@ -38,7 +38,7 @@
                             <tr>
                                 <td><code>{{ $host->id }}</code></td>
                                 <td><a href="{{ route('admin.databases.view', $host->id) }}">{{ $host->name }}</a></td>
-                                <td><code>{{ $host->host }}</code></td>
+                                <td><code data-sensitive tabindex="0">{{ $host->host }}</code></td>
                                 <td><code>{{ $host->port }}</code></td>
                                 <td>{{ $host->username }}</td>
                                 <td class="text-center">{{ $host->databases_count }}</td>

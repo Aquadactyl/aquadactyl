@@ -1,3 +1,5 @@
+# For instant local testing, use compose.yaml: docker compose up -d --build --wait
+# This example is for configuring a separate installation manually.
 x-common:
   database:
     &db-environment

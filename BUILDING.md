@@ -13,11 +13,102 @@ cover [installation](https://aquadactyl.uk/docs),
 in the [website repository](https://github.com/Aquadactyl/website); its
 [README](https://github.com/Aquadactyl/website#run-locally) covers website development.
 
+## Instant local setup with Docker
+
+Install Docker with the Compose plugin (Docker Desktop on Windows/macOS), then
+run this from the panel repository:
+
+```bash
+docker compose up -d --build --wait --wait-timeout 600
+```
+
+The first build downloads dependencies and compiles the current checkout. Compose
+starts MariaDB, Redis, the panel and Wings, waits for initialization, and
+automatically creates the application secrets, database tables, default eggs,
+Blueprint, a local administrator and a connected Wings node. No host PHP,
+Composer, Node.js or `.env` file is required.
+
+Open **[http://localhost:8081](http://localhost:8081)** and sign in with:
+
+- Email: `admin@aquadactyl.test` (or username `admin`)
+- Password: `AquadactylLocal123!`
+
+This testing stack binds to `127.0.0.1` and uses its own `aquadactyl-test` Compose
+project, image and named volumes. The database, application key and storage survive
+container recreation. Existing accounts and edited eggs are preserved on later
+starts. Use the separate deployment guide for public hosting.
+
+Profile pictures are stored in `storage/app/public/avatars` inside the persistent
+storage volume. The `public/storage` link exposes them to the web server. Linux
+installations need `php artisan storage:link` and GD with PNG, JPEG and WebP support;
+retain these files alongside the database when backing up or moving the panel.
+
+To choose a different port or initial credentials, set `AQUADACTYL_PORT`,
+`AQUADACTYL_ADMIN_EMAIL`, `AQUADACTYL_ADMIN_USERNAME` and/or
+`AQUADACTYL_ADMIN_PASSWORD` in your shell before the first start. In PowerShell:
+
+```powershell
+$env:AQUADACTYL_PORT = '8082'
+$env:AQUADACTYL_ADMIN_PASSWORD = 'MyLocalTestPassword123!'
+docker compose up -d --build --wait --wait-timeout 600
+```
+
+Changing the initial account variables does not change an existing account's
+password. Update that through the panel instead.
+
+```bash
+# Inspect startup, application services and mail sent to the log driver.
+docker compose logs -f panel
+docker compose exec panel sh -c "tail -f storage/logs/laravel*.log"
+
+# Stop the test instance, retaining its data.
+docker compose down
+
+# Start again, or rebuild after editing panel source files.
+docker compose up -d --build --wait --wait-timeout 600
+```
+
+To deliberately reset this test instance and delete its database and storage, run
+`docker compose down --volumes` before starting again. Container-local Blueprint
+extension changes must be exported before rebuilding or recreating the panel.
+
+The **Local Wings** node appears under [Admin > Nodes](http://localhost:8081/admin/nodes).
+It advertises 8 GiB RAM and 32 GiB disk for server placement, and provides ten local
+allocations, `localhost:25565` through `localhost:25574`. Create test servers through
+the panel's normal server creation page. Game containers bind their allocated ports
+to the Docker host's loopback interface. Wings listens at
+`http://wings.localhost:8082`, with SFTP available at `localhost:2022`.
+
+Wings uses the Docker socket to create sibling game containers. Its configuration,
+server files, backups and logs are kept in named volumes. The setup service reuses
+the node and credentials on later starts. Browsers resolve `wings.localhost` to the
+host; the panel's internal loopback proxy forwards backend requests to Wings.
+
+Set `AQUADACTYL_WINGS_PORT`, `AQUADACTYL_SFTP_PORT` or `AQUADACTYL_GAME_PORTS`
+(a range such as `25600-25609`) before starting to change those ports. The data mount
+matches the Docker daemon's volume path so Wings and game containers share the same
+files. If `docker info --format '{{.DockerRootDir}}'` reports a path other than
+`/var/lib/docker`, set `AQUADACTYL_DOCKER_ROOT` to that path before the first start.
+
+```bash
+# Add Wings to an already-running test panel without recreating the panel.
+docker compose up -d --build --no-recreate --wait --wait-timeout 120 wings
+
+# Inspect Wings startup and automatic node setup.
+docker compose logs -f wings wings-setup
+```
+
+When adding Wings to a panel container built before this setup was introduced,
+rebuild the panel first so it includes the internal Wings proxy. Stop or delete game
+servers through the panel before resetting the test stack; their sibling Docker
+containers are managed by Wings rather than Compose.
+
 ## Requirements
 
 - Node.js 22.13 or later.
 - pnpm 12.10.1, pinned in `package.json`.
 - PHP 8.4 or 8.5 and Composer 2 for backend work. Deployment defaults to PHP 8.5.
+  GD must support PNG, JPEG and WebP for profile-picture uploads.
 
 Install the pinned package manager, then the locked dependencies:
 
@@ -93,7 +184,8 @@ pnpm version above if the version provided by your Nix package set differs.
 
 ## Wings
 
-Wings is a separate Go service. The
+The local Docker stack includes Wings. For a production Linux node, Wings is a
+separate Go service. The
 [node setup section](https://aquadactyl.uk/docs#wings) links to the
 [Wings documentation](https://pterodactyl.io/wings/1.0/installing.html) to configure
 a node. Build and run it in its own repository on Linux.

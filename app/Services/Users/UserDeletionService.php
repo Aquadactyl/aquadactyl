@@ -4,6 +4,7 @@ namespace Pterodactyl\Services\Users;
 
 use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
+use Illuminate\Support\Facades\Storage;
 use Pterodactyl\Exceptions\DisplayException;
 
 class UserDeletionService
@@ -22,6 +23,11 @@ class UserDeletionService
             throw new DisplayException(trans('admin/user.exceptions.user_has_servers'));
         }
 
-        return $user->delete();
+        $deleted = $user->delete();
+        if ($deleted && $user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        return $deleted;
     }
 }
