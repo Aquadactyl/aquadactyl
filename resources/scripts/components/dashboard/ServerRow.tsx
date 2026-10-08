@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerStats } from '@/api/server/getServerResourceUsage';
 import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
+import { useStoreState } from '@/state/hooks';
 
 import BeforeEntryName from '@blueprint/components/Dashboard/Serverlist/ServerRow/BeforeEntryName';
 import AfterEntryName from '@blueprint/components/Dashboard/Serverlist/ServerRow/AfterEntryName';
@@ -19,6 +20,7 @@ import ResourceLimits from '@blueprint/components/Dashboard/Serverlist/ServerRow
 const isAlarmState = (current: number, limit: number): boolean => limit > 0 && current / mbToBytes(limit) >= 0.9;
 
 export default ({ server, className }: { server: Server; className?: string }) => {
+    const features = useStoreState((state) => state.settings.data?.features);
     const refreshTimer = useRef<ReturnType<typeof setTimeout>>();
     const enabled = !server.status && !server.isNodeUnderMaintenance && !server.isTransferring;
     const {
@@ -112,7 +114,13 @@ export default ({ server, className }: { server: Server; className?: string }) =
                 <div className={'server-identity-copy'}>
                     <BeforeEntryName />
                     <h2 className={'server-row-name'}>
-                        <Link to={'/server/' + server.id}>{server.name}</Link>
+                        <Link
+                            className={'server-card-link'}
+                            to={'/server/' + server.id}
+                            aria-label={'Open ' + server.name}
+                        >
+                            {server.name}
+                        </Link>
                     </h2>
                     <AfterEntryName />
                     {!!server.description && (
@@ -122,18 +130,22 @@ export default ({ server, className }: { server: Server; className?: string }) =
                             <AfterEntryDescription />
                         </div>
                     )}
-                    <span className={'server-address'}>
+                    <Link to={'/server/' + server.id} className={'server-address'} aria-label={'Open ' + server.name}>
                         <Network size={12} aria-hidden />
                         <SensitiveValue>{address}</SensitiveValue>
-                    </span>
-                    <div className={'server-metadata'}>
+                    </Link>
+                    <Link
+                        to={'/server/' + server.id}
+                        className={'server-metadata'}
+                        aria-label={'Open server on ' + server.node}
+                    >
                         <span className={'server-node'}>
                             <MapPin size={12} aria-hidden />
                             <span>{server.node}</span>
                             <CountryFlag code={server.nodeCountry} name={server.nodeCountryName} />
                         </span>
-                        <ServerPlayerCount server={server} state={state} />
-                    </div>
+                        {features?.playerCounts !== false && <ServerPlayerCount server={server} state={state} />}
+                    </Link>
                 </div>
             </div>
             <div className={'server-resources'}>
@@ -151,23 +163,26 @@ export default ({ server, className }: { server: Server; className?: string }) =
             <span className={'server-state'} data-state={state}>
                 {statusLabels[state] || 'Unavailable'}
             </span>
-            <Link to={'/server/' + server.id} className={'server-row-arrow'} aria-label={'Open ' + server.name}>
+            <span className={'server-row-arrow'} aria-hidden>
                 <ArrowRight size={16} aria-hidden />
-            </Link>
-            <ServerQuickActions
-                server={server}
-                state={state}
-                onPower={(action) =>
-                    mutate(
-                        (value) => (value ? { ...value, status: action === 'stop' ? 'stopping' : 'starting' } : value),
-                        false
-                    )
-                }
-                onRefresh={() => {
-                    if (refreshTimer.current) clearTimeout(refreshTimer.current);
-                    refreshTimer.current = setTimeout(() => mutate(), 1500);
-                }}
-            />
+            </span>
+            {features?.serverQuickActions !== false && (
+                <ServerQuickActions
+                    server={server}
+                    state={state}
+                    onPower={(action) =>
+                        mutate(
+                            (value) =>
+                                value ? { ...value, status: action === 'stop' ? 'stopping' : 'starting' } : value,
+                            false
+                        )
+                    }
+                    onRefresh={() => {
+                        if (refreshTimer.current) clearTimeout(refreshTimer.current);
+                        refreshTimer.current = setTimeout(() => mutate(), 1500);
+                    }}
+                />
+            )}
         </article>
     );
 };

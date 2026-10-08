@@ -8,7 +8,7 @@ class GameQuerySettingsService
 {
     public function game(Server $server): ?string
     {
-        if (!config('game-query.enabled') || $server->game_query_type === 'none') {
+        if (!config('aquadactyl.features.player_counts', true) || !config('game-query.enabled') || $server->game_query_type === 'none') {
             return null;
         }
         if ($server->game_query_type !== 'auto') {

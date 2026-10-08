@@ -51,7 +51,7 @@ services:
       APP_URL: "http://localhost:${AQUADACTYL_PORT:-8081}"
       APP_ENV: local
       APP_DEBUG: "false"
-      APP_ENVIRONMENT_ONLY: "true"
+      APP_ENVIRONMENT_ONLY: "false"
       APP_TIMEZONE: Europe/London
       APP_SERVICE_AUTHOR: admin@aquadactyl.test
       DB_HOST: database

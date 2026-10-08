@@ -70,7 +70,7 @@ services:
       DB_PORT: "3306"
 
       APP_ENV: "production"
-      APP_ENVIRONMENT_ONLY: "true"
+      APP_ENVIRONMENT_ONLY: "false"
 
       CACHE_STORE: "redis"
       CACHE_DRIVER: "redis"

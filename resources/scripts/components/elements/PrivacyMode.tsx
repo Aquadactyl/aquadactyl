@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import { useStoreState } from '@/state/hooks';
+import usePrivacyMode from '@/plugins/usePrivacyMode';
 
 export default () => {
-    const enabled = useStoreState((state) => Boolean(state.user.data?.blurSensitiveData));
+    const enabled = usePrivacyMode();
     useEffect(() => {
         document.documentElement.classList.toggle('privacy-mode', enabled);
     }, [enabled]);
