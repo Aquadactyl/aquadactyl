@@ -9,7 +9,7 @@ export default () => (
             target={'_blank'}
             css={tw`no-underline text-neutral-400 hover:text-neutral-200`}
         >
-            Aquadactyl&reg;
+            Aquadactyl&copy;
         </a>
         {' · Based on '}
         <a
