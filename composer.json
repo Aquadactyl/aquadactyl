@@ -1,6 +1,7 @@
 {
-    "name": "pterodactyl/panel",
-    "description": "The free, open-source game management panel. Supporting Minecraft, Spigot, BungeeCord, and SRCDS servers.",
+    "name": "aquadactyl/panel",
+    "description": "Aquadactyl game server management panel, an independent Pterodactyl fork with Blueprint bundled.",
+    "homepage": "https://aquadactyl.uk",
     "license": "MIT",
     "authors": [
         {

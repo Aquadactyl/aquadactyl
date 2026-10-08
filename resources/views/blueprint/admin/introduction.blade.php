@@ -17,7 +17,7 @@
             <div class="modal-body">
               <h3 class="modal-title">Welcome to Blueprint</h3>
               <p style="padding-top: 5px;">
-                Blueprint is the industry-leading tool to build, manage and maintain extensions for the Pterodactyl panel. You are almost ready to manage extensions, this is the last step.
+                Blueprint is the industry-leading tool to build, manage and maintain extensions for the Aquadactyl panel. You are almost ready to manage extensions, this is the last step.
               </p>
               <div class="row" style="padding-top: 5px;">
                 <div class="col-xs-12">

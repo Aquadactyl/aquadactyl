@@ -27,7 +27,7 @@ if [[ $1 == --archive ]]; then
     EXPECTED=$3
 else
     [[ $# -le 2 && $1 =~ ^v[0-9][a-zA-Z0-9._-]*$ ]] || fail 'Specify an explicit release tag beginning with v.'
-    REPOSITORY=${2:-EuphoriaTheme/panel}
+    REPOSITORY=${2:-Aquadactyl/aquadactyl}
     [[ "$REPOSITORY" =~ ^[a-zA-Z0-9_.-]+/[a-zA-Z0-9_.-]+$ ]] || fail 'Invalid GitHub repository.'
     URL="https://github.com/$REPOSITORY/releases/download/$1"
     curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' "$URL/panel.tar.gz" -o "$WORK/panel.tar.gz"
@@ -63,7 +63,7 @@ if [[ -f .blueprint/extensions/blueprint/private/db/installed_extensions ]]; the
     done
 fi
 
-BACKUP_BASE=${BACKUP_DIR:-/var/backups/pterodactyl}
+BACKUP_BASE=${BACKUP_DIR:-/var/backups/aquadactyl}
 mkdir -p -- "$BACKUP_BASE"
 BACKUP_BASE=$(realpath -- "$BACKUP_BASE")
 [[ "$BACKUP_BASE/" != "$PANEL_ROOT/"* ]] || fail 'Backups must be outside the panel directory.'

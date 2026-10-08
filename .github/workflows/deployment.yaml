@@ -1,9 +1,9 @@
 name: Deployment checks
 on:
   pull_request:
-    branches: [1.0-develop]
+    branches: [main, 1.0-develop]
   push:
-    branches: [1.0-develop]
+    branches: [main, 1.0-develop]
 permissions:
   contents: read
 jobs:

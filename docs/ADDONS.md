@@ -1,5 +1,9 @@
 # Developing Aquadactyl addons and themes
 
+For installing and maintaining extensions, use the
+[Blueprint guide](https://aquadactyl.uk/docs/blueprint). This document covers
+development against the panel's shared libraries.
+
 Blueprint addons compile into the panel's React application. The packages below
 are direct dependencies of Aquadactyl, so extensions can import them without
 installing their own copies. Assets include a library when an extension uses it;

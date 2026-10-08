@@ -38,6 +38,7 @@ const RightNavigation = styled.div`
 
 export default () => {
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
+    const isAquadactyl = name.trim().toLowerCase() === 'aquadactyl';
     const rootAdmin = useStoreState((state: ApplicationStore) => state.user.data!.rootAdmin);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -60,11 +61,25 @@ export default () => {
                 <div id={'logo'} className={'flex-1 min-w-0'}>
                     <Link
                         to={'/'}
+                        aria-label={name}
                         className={
-                            'block truncate text-xl sm:text-2xl font-header font-medium px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
+                            'flex items-center gap-2 text-xl sm:text-2xl font-header font-medium px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
                         }
                     >
-                        {name}
+                        <img
+                            src={'/branding/aquadactyl-emblem.png'}
+                            alt={''}
+                            className={isAquadactyl ? 'h-7 w-auto shrink-0 sm:hidden' : 'h-7 w-auto shrink-0'}
+                        />
+                        {isAquadactyl ? (
+                            <img
+                                src={'/branding/aquadactyl-wordmark.png'}
+                                alt={''}
+                                className={'hidden sm:block w-44 max-w-full h-auto'}
+                            />
+                        ) : (
+                            <span className={'truncate'}>{name}</span>
+                        )}
                     </Link>
                 </div>
                 <RightNavigation className={'flex flex-shrink-0 h-full items-center justify-center'}>

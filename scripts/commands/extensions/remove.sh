@@ -454,7 +454,7 @@ Command() {
     ((PROGRESS_NOW++))
 
     # Make sure all files have correct permissions.
-    PRINT INFO "Changing Pterodactyl file ownership to '$OWNERSHIP'.."
+    PRINT INFO "Changing Aquadactyl file ownership to '$OWNERSHIP'.."
     find "$FOLDER/" \
     -path "$FOLDER/node_modules" -prune \
     -o -exec chown "$OWNERSHIP" {} + &>> "$BLUEPRINT__DEBUG"

@@ -75,7 +75,7 @@ until nc -z -w30 "$DB_HOST" "$DB_PORT"; do
   sleep 1
 done
 
-echo "Running database migrations and Pterodactyl seeders."
+echo "Running database migrations and Aquadactyl seeders."
 php artisan migrate --force
 php artisan db:seed --class=DatabaseSeeder --force
 

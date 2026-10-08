@@ -67,7 +67,7 @@
 
           <div class="modal-body" style="border-color:transparent; border-radius:12px 12px 5px 5px; margin-bottom: 8px">
             <h4><b>Permissions</b></h4>
-            <p class="text-muted text-left">Configure what elements this extension can or can't edit/extend on your Pterodactyl panel.</p><br>
+            <p class="text-muted text-left">Configure what elements this extension can or can't edit/extend on your Aquadactyl panel.</p><br>
 
             <div class="row">
               <div class="col-xs-6">
@@ -97,7 +97,7 @@
                     <option value="{{ $egg->id }}" @if(in_array(strval($egg->id), json_decode($blueprint->dbGet('blueprint', 'extensionconfig_'.$EXTENSION_ID.'_eggs') ?: '["-1"]'))) selected @endif>{{ $egg->name }}</option>
                   @endforeach
                 </select>
-                <p class="text-muted small">Choose on which Pterodactyl eggs this extension should be able to add new pages on.</p>
+                <p class="text-muted small">Choose on which Aquadactyl eggs this extension should be able to add new pages on.</p>
               </div>
             </div>
           </div>

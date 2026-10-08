@@ -15,7 +15,7 @@ export const NavigationLinks = () => {
     const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
     return (
         <>
-            {/* Pterodactyl routes */}
+            {/* Aquadactyl routes */}
             {routes.account
                 .filter((route) => !!route.name)
                 .map(({ path, name, exact = false }) => (
@@ -57,7 +57,7 @@ export const NavigationRouter = () => {
                             <DashboardContainer />
                         </Route>
 
-                        {/* Pterodactyl routes */}
+                        {/* Aquadactyl routes */}
                         {routes.account.map(({ path, component: Component }) => (
                             <Route key={path} path={`/account/${path}`.replace('//', '/')} exact>
                                 <Component />

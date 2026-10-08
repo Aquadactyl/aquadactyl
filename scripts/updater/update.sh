@@ -1,8 +1,8 @@
 #!/bin/bash
 
 UpdaterInstall() {
-  # Copy release files to Pterodactyl directory
-  PRINT INFO "Copying release files to Pterodactyl directory.."
+  # Copy release files to Aquadactyl directory
+  PRINT INFO "Copying release files to Aquadactyl directory.."
   cp -r .update/repo/* .
   cp .update/repo/.eslintrc.js .
   cp .update/repo/.prettierignore .

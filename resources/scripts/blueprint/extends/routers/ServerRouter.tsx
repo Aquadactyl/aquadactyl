@@ -56,7 +56,7 @@ export const NavigationLinks = () => {
 
     return (
         <>
-            {/* Pterodactyl routes */}
+            {/* Aquadactyl routes */}
             {routes.server
                 .filter((route) => !!route.name)
                 .map((route) =>
@@ -131,7 +131,7 @@ export const NavigationRouter = () => {
         <>
             <TransitionRouter>
                 <Switch location={location}>
-                    {/* Pterodactyl routes */}
+                    {/* Aquadactyl routes */}
                     {routes.server.map(({ path, permission, component: Component }) => (
                         <PermissionRoute key={path} permission={permission} path={to(path)} exact>
                             <Spinner.Suspense>

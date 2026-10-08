@@ -12,7 +12,7 @@ Command() {
 
   extract_extension "$1"
 
-  # Return to the Pterodactyl installation folder.
+  # Return to the Aquadactyl installation folder.
   cd "$FOLDER" || cdhalt
 
   eval "$(parse_yaml .blueprint/tmp/"${n}"/conf.yml conf_)"

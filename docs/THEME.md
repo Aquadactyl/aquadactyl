@@ -29,6 +29,41 @@ for success, amber for warnings and red for errors or destructive actions.
 
 ## Customising the theme
 
+### Brand assets
+
+The supplied Aquadactyl artwork is used across login, navigation, the admin
+header, browser favicons, Apple touch icons and Windows tiles. Narrow client
+headers and the collapsed admin sidebar use the emblem. Custom panel names
+remain visible alongside it.
+
+| Asset | File |
+| --- | --- |
+| Transparent emblem | `public/branding/aquadactyl-emblem.png` |
+| Transparent wordmark | `public/branding/aquadactyl-wordmark.png` |
+| Banner with background | `public/branding/aquadactyl-banner.png` |
+| Supplied vector emblem | `public/favicons/aquadactyl.svg` |
+| Original PNG and SVG sources | `resources/branding/` |
+
+To regenerate the trimmed PNG logos and square PNG/ICO icons after replacing the
+source PNGs, use PHP with the GD extension:
+
+```bash
+php scripts/build/branding.php
+```
+
+The generator preserves the artwork's colours and proportions, trims transparent
+canvas padding, centres the emblem and adds a dark background to Apple icons.
+PNG and ICO browser icons preserve the supplied emblem's colour gradient. The
+coloured vector emblem is copied unchanged from the supplied SVG. Its original
+canvas and path coordinates are also retained in the monochrome Safari mask.
+SVG viewports must come from the SVG source, not from cropped PNG coordinates.
+Keep the vector files aligned with any new artwork.
+The icon metadata is shared in `resources/views/partials/favicons.blade.php`.
+Update the icon URLs' version query when replacing existing browser icons so
+browsers fetch the new files.
+
+### Colours and layouts
+
 Client colours are defined in `tailwind.config.js`, with shared browser styles
 in `resources/scripts/assets/css/GlobalStylesheet.ts`. The admin palette lives
 in `public/themes/pterodactyl/css/palette.css`, imported by `pterodactyl.css`.

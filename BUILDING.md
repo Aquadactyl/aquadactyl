@@ -2,7 +2,16 @@
 
 Aquadactyl uses React, TypeScript, Tailwind CSS and Webpack, with Blueprint
 beta-2026-08 bundled. Use pnpm to install dependencies and compile panel or theme
-changes. Production installation is covered in [the deployment guide](docs/DEPLOYMENT.md).
+changes. Production installation is covered in the
+[hosted installation guide](https://aquadactyl.uk/docs), with script details in
+the [deployment reference](docs/DEPLOYMENT.md).
+
+The project website is [aquadactyl.uk](https://aquadactyl.uk). Its operator guides
+cover [installation](https://aquadactyl.uk/docs),
+[updates](https://aquadactyl.uk/docs/updating) and
+[Blueprint](https://aquadactyl.uk/docs/blueprint). Website content is maintained
+in the [website repository](https://github.com/Aquadactyl/website); its
+[README](https://github.com/Aquadactyl/website#run-locally) covers website development.
 
 ## Requirements
 
@@ -42,13 +51,14 @@ Build at least once to create `public/assets/manifest.json`, which the panel nee
 to render its frontend. Blueprint's CLI also uses pnpm when it installs or removes
 an extension and rebuilds those assets.
 
-See [addon development](docs/ADDONS.md) for available libraries, imports and
-dependency conventions. Use the panel's React 16.14 runtime when building addons.
+See the [Blueprint guide](https://aquadactyl.uk/docs/blueprint) for installing
+extensions and [addon development](docs/ADDONS.md) for available libraries, imports
+and dependency conventions. Use the panel's React 16.14 runtime when building addons.
 
 ## Hot module reloading
 
 `pnpm run serve` starts the HTTPS Webpack development server at
-`https://pterodactyl.test:5173/`. The existing local development environment expects
+`https://aquadactyl.test:5173/`. The existing local development environment expects
 certificates under `../../docker/certificates/`; configure `webpack.config.js`
 and the `serve` script for your own hostname and certificates when needed.
 `WEBPACK_PUBLIC_PATH` must match the URL from which the browser loads development
@@ -83,6 +93,7 @@ pnpm version above if the version provided by your Nix package set differs.
 
 ## Wings
 
-Wings is a separate Go service. Follow the
+Wings is a separate Go service. The
+[node setup section](https://aquadactyl.uk/docs#wings) links to the
 [Wings documentation](https://pterodactyl.io/wings/1.0/installing.html) to configure
 a node. Build and run it in its own repository on Linux.

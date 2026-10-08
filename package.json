@@ -148,7 +148,7 @@
         "watch": "cross-env NODE_ENV=development webpack --watch --progress",
         "build": "cross-env NODE_ENV=development webpack --progress",
         "build:production": "pnpm run clean && cross-env NODE_ENV=production webpack --mode production",
-        "serve": "pnpm run clean && cross-env NODE_ENV=development USE_LOCAL_CERTS=true WEBPACK_PUBLIC_PATH=https://pterodactyl.test:5173/ webpack serve --progress --hot --server-type https",
+        "serve": "pnpm run clean && cross-env NODE_ENV=development USE_LOCAL_CERTS=true WEBPACK_PUBLIC_PATH=https://aquadactyl.test:5173/ webpack serve --progress --hot --server-type https",
         "audit:production": "pnpm audit --prod"
     },
     "browserslist": [

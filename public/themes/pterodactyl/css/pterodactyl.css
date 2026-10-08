@@ -474,8 +474,17 @@ label.control-label > span.field-optional:before {
 }
 
 .logo-mini > img {
-    height: 42px;
+    max-height: 38px;
+    max-width: 40px;
     width: auto;
+    vertical-align: middle;
+}
+
+.logo-lg > img {
+    width: 172px;
+    max-width: 100%;
+    height: auto;
+    vertical-align: middle;
 }
 
 .search01 {

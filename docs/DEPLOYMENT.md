@@ -1,5 +1,10 @@
 # Linux installation and updates
 
+Read the [installation guide](https://aquadactyl.uk/docs) and
+[update guide](https://aquadactyl.uk/docs/updating) on the project website.
+This reference covers the scripts and configuration in this checkout. The hosted
+guides are maintained in the [website repository](https://github.com/Aquadactyl/website).
+
 This repository includes Blueprint beta-2026-08 in its source and release archives.
 The install command initializes its database settings, CLI shortcut and public asset
 links. No framework download is needed on the server. Use releases of this fork for
@@ -30,11 +35,18 @@ fork. Use `PHP_FPM_SERVICE=php8.4-fpm` and the matching Nginx socket for PHP 8.4
 
 ## First installation
 
-Extract this fork's release to `/var/www/pterodactyl`. A source checkout also works;
+Extract this fork's release to `/var/www/aquadactyl`. A source checkout also works;
 the installer builds the frontend using the committed lockfile.
 
+Existing installations can keep their current directory, database credentials
+and `pteroq.service`. The scripts find the panel root from their own location;
+adjust the Nginx, systemd and cron examples to your actual directory. Do not create
+a second queue worker or scheduler when updating an existing installation.
+See [branding compatibility](BRANDING.md#existing-installations) for display names
+and Redis/session prefixes.
+
 ```bash
-cd /var/www/pterodactyl
+cd /var/www/aquadactyl
 sudo cp .env.example .env
 sudo chmod 640 .env
 sudo nano .env
@@ -42,6 +54,8 @@ sudo bash scripts/panel-install.sh
 ```
 
 Configure `APP_URL` with your HTTPS domain, database credentials, Redis and mail.
+New installs default to `APP_NAME=Aquadactyl`, `DB_USERNAME=aquadactyl` and
+`MAIL_FROM_NAME="Aquadactyl Panel"`; create that database user or supply your own credentials.
 The installer creates an application key and Hashids salt when they are missing.
 Preserve both across every update and backup; the application key encrypts stored credentials. For local HTTP
 development, explicitly set `SESSION_SECURE_COOKIE=false`.
@@ -69,10 +83,10 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now pteroq.service
 ```
 
-Add this line to `/etc/cron.d/pterodactyl`:
+Add this line to `/etc/cron.d/aquadactyl`:
 
 ```cron
-* * * * * www-data cd /var/www/pterodactyl && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
+* * * * * www-data cd /var/www/aquadactyl && /usr/bin/php artisan schedule:run >> /dev/null 2>&1
 ```
 
 The defaults use Redis for cache, sessions and queues. FPM uses OPcache; the
@@ -94,11 +108,11 @@ Publish a tagged release of this fork first. The release workflow attaches
 `panel.tar.gz` and `SHA256SUMS`. Then choose an explicit tag:
 
 ```bash
-cd /var/www/pterodactyl
-sudo bash scripts/panel-update.sh v1.15.1-blueprint.1 EuphoriaTheme/panel
+cd /var/www/aquadactyl
+sudo bash scripts/panel-update.sh vRELEASE_TAG Aquadactyl/aquadactyl
 ```
 
-That tag is an example, not a release created by this change. If your fork has a
+Replace `vRELEASE_TAG` with a reviewed, published release tag. If your fork has a
 different owner, provide its `owner/repository` argument. For an already downloaded
 archive, use the SHA256 from your reviewed release:
 
@@ -119,7 +133,8 @@ source. A missing package stops the update before maintenance or file changes.
 Extensions that patch core files through custom scripts need compatibility checks
 in staging before deployment. Extension scripts run again during reapplication.
 
-Backups default to `/var/backups/pterodactyl`. Override with `BACKUP_DIR` if needed.
+Backups default to `/var/backups/aquadactyl`. Override with `BACKUP_DIR` if needed.
+To continue using an older backup location, set `BACKUP_DIR=/var/backups/pterodactyl`.
 Back them up off-host and retain them according to your storage policy. SQL dumps
 assume the panel's normal InnoDB tables and a single application instance. Coordinate
 maintenance across all instances if you run multiple panels against one database.
@@ -149,6 +164,10 @@ additional deployment guard tests.
 
 The tested versions, results and remaining build dependency advisories are recorded
 in [VALIDATION.md](VALIDATION.md).
+
+`php artisan p:upgrade` displays the managed update instructions and exits without
+changing the installation. Use `scripts/panel-update.sh`; upstream Panel archives
+would replace Aquadactyl changes and do not include this bundled Blueprint integration.
 
 For local PHP verification on Windows, build `tests/runtime/Dockerfile`; it provides
 PHP 8.5, pnpm, Composer, a dump client and ShellCheck. Pass

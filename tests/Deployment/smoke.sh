@@ -20,10 +20,10 @@ test ! -f storage/framework/down
 test "$(stat -c %a .env)" = 640
 test "$(stat -c %U app/Http/Kernel.php)" = root
 test "$(stat -c %U storage)" = www-data
-mkdir -p /var/backups/pterodactyl
-php artisan p:maintenance:backup-database /var/backups/pterodactyl/smoke.sql
-test -s /var/backups/pterodactyl/smoke.sql
-test "$(stat -c %a /var/backups/pterodactyl/smoke.sql)" = 600
+mkdir -p /var/backups/aquadactyl
+php artisan p:maintenance:backup-database /var/backups/aquadactyl/smoke.sql
+test -s /var/backups/aquadactyl/smoke.sql
+test "$(stat -c %a /var/backups/aquadactyl/smoke.sql)" = 600
 php artisan route:list --path=extensions
 printf '%s\n' 'Installation smoke checks passed: Blueprint, assets, permissions, cache, routes and SQL backup.'
 
@@ -67,5 +67,5 @@ grep -Fq preserved-extension-data .blueprint/extensions/smoke/private/preserved.
 grep -Fq SmokeComponent resources/scripts/blueprint/components/Dashboard/Serverlist/ServerRow/AfterEntryName.tsx
 test "$(bash blueprint.sh -bash -version)" = beta-2026-08
 test ! -f storage/framework/down
-test -s "$(find /var/backups/pterodactyl -mindepth 2 -name database.sql -print -quit)"
+test -s "$(find /var/backups/aquadactyl -mindepth 2 -name database.sql -print -quit)"
 printf '%s\n' 'Update smoke checks passed: verified archive, backup, environment, extension data, hook reapplication and Blueprint version.'

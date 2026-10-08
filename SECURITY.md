@@ -1,24 +1,22 @@
-# Security Policy
+# Aquadactyl security policy
 
-## Supported Versions
+Aquadactyl is an independent fork of Pterodactyl Panel with Blueprint bundled.
+Upstream support commitments do not apply to changes made in this fork.
 
-Pterodactyl only provides security support for the latest `major.minor` versions of the Panel and Wings software.
-If a security vulnerability is found in an older version but cannot be reproduced on a supported version it will
-not be considered. Additionally, security issues found in unreleased code will be addressed, but do not warrant a
-security advisory.
+## Reporting a vulnerability
 
-For example, if the latest version of the Panel is `1.2.5` then we only support security reports for issues that
-occur on `>= 1.2.x` versions of the Panel software. The Panel and Wings have their own versions, but they generally
-follow eachother.
+Report Aquadactyl-specific vulnerabilities privately to this repository's
+maintainers. Use the repository's GitHub Security tab to submit a private report
+when that feature is enabled; otherwise arrange a private channel with the
+maintainers before sending details. Do not publish sensitive details in issues.
+Include the affected Aquadactyl version, reproduction steps and impact.
 
-## Reporting a Vulnerability
+For vulnerabilities affecting upstream Pterodactyl Panel or Wings, follow the
+[upstream security policy](https://github.com/pterodactyl/panel/blob/1.0-develop/SECURITY.md)
+and its reporting channels, including security@pterodactyl.io. That address belongs
+to Pterodactyl and is not an Aquadactyl contact. Report Blueprint-specific issues
+privately to the [Blueprint maintainers](https://github.com/BlueprintFramework/framework).
 
-Please use our GitHub Security reporting meachnism to quickly alert the team to any security issues you come across,
-or send an email to `security@pterodactyl.io` with the details of your report.
-
-We make every effort to respond as soon as possible, although it may take a day or two for us to sync internally and
-determine the severity of the report and its impact. Please, _do not_ use a public facing channel or GitHub issues to
-report sensitive security issues.
-
-As part of our process, we will create a security advisory for the affected versions and disclose it publicly, usually
-two to four weeks after a releasing a version that addresses it.
+Run a current, reviewed Aquadactyl release and keep Wings and extensions updated.
+The bundled dependencies and their validation are documented in
+[docs/VALIDATION.md](docs/VALIDATION.md).
