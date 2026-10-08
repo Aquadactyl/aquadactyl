@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es2015",
-    "module": "es2020",
+    "target": "esnext",
+    "module": "esnext",
     "jsx": "react-jsx",
     "moduleResolution": "node",
     "lib": [
-      "es2015",
-      "dom"
+      "ESNext",
+      "DOM"
     ],
     "strict": true,
     "noEmit": true,
@@ -16,7 +16,6 @@
     "skipDefaultLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
     "verbatimModuleSyntax": false,
     "paths": {
       "@/*": [
