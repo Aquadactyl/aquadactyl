@@ -195,12 +195,6 @@ export default () => {
                     </Pagination>
                 )}
             </div>
-            <div className={'workspace-footer'}>
-                <span>Console, files, backups and more — inside each server.</span>
-                <Link to={'/account'}>
-                    Account settings <ArrowRight size={14} aria-hidden />
-                </Link>
-            </div>
             <AfterContent />
         </PageContentBlock>
     );
