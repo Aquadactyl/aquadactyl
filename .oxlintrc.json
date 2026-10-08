@@ -20,8 +20,8 @@
         "storage/**",
         "resources/views/**",
         "scripts/**",
-        "babel.config.js",
-        "tailwind.config.js",
+        "tailwind.config.ts",
+        "postcss.config.ts",
         "vite.config.ts"
     ],
     "rules": {
