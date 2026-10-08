@@ -57,6 +57,9 @@ class AccountPrivacyControllerTest extends ClientApiIntegrationTestCase
 
     public function testBothLayoutsApplyTheViewersPreferenceBeforeRendering(): void
     {
+        if (!defined('LARAVEL_START')) {
+            define('LARAVEL_START', microtime(true));
+        }
         $admin = User::factory()->create(['root_admin' => true]);
         $admin->forceFill(['blur_sensitive_data' => true])->save();
         $other = User::factory()->create();

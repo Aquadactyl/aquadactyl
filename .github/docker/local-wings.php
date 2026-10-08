@@ -133,7 +133,10 @@ $config['system']['machine_id']['directory'] = $dataRoot . '/machine-id';
 $config['system']['passwd']['directory'] = $dataRoot . '/etc';
 $config['docker']['network']['name'] = $network;
 $config['docker']['network']['network_mode'] = $network;
-$config['docker']['network']['interface'] = $ipv4['Gateway'];
+// Wings replaces loopback allocations with this port-publishing address.
+// Docker Desktop cannot publish ports on the Linux bridge gateway, so keep
+// local game ports on the host's loopback interface. IPAM still uses its gateway.
+$config['docker']['network']['interface'] = '127.0.0.1';
 $config['docker']['network']['interfaces']['v4'] = [
     'subnet' => $ipv4['Subnet'],
     'gateway' => $ipv4['Gateway'],

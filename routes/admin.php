@@ -132,6 +132,7 @@ Route::group(['prefix' => 'servers'], function () {
     Route::post('/view/{server:id}/delete', [Admin\ServersController::class, 'delete']);
 
     Route::patch('/view/{server:id}/details', [Admin\ServersController::class, 'setDetails']);
+    Route::patch('/view/{server:id}/game-query', [Admin\Servers\GameQuerySettingsController::class, 'update'])->name('admin.servers.view.game-query');
     Route::patch('/view/{server:id}/database', [Admin\ServersController::class, 'resetDatabasePassword']);
 
     Route::delete('/view/{server:id}/database/{database:id}/delete', [Admin\ServersController::class, 'deleteDatabase'])->name('admin.servers.view.database.delete');

@@ -21,6 +21,8 @@ class StoreNodeRequest extends ApplicationApiRequest
             'public',
             'name',
             'description',
+            'country_code',
+            'query_address',
             'location_id',
             'fqdn',
             'scheme',

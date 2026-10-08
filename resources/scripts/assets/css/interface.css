@@ -1007,3 +1007,111 @@
         transition: none;
     }
 }
+
+.country-flag {
+    display: inline-block;
+    width: 20px;
+    height: 15px;
+    object-fit: cover;
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+.server-row-name a {
+    color: inherit;
+}
+.server-row-name a:hover {
+    color: #a4e3dc;
+}
+.server-row-name a:focus-visible,
+.server-quick-actions a:focus-visible,
+.server-quick-actions button:focus-visible {
+    outline: 2px solid #78d4cc;
+    outline-offset: 3px;
+}
+.server-metadata {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 16px;
+    margin-top: 10px;
+}
+.server-node,
+.server-player-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #9ca5af;
+    font-size: 11px;
+}
+.server-node > span {
+    overflow-wrap: anywhere;
+}
+.server-player-count strong {
+    font-weight: 500;
+    color: #cbd2d9;
+}
+.server-quick-area {
+    grid-column: 1 / -1;
+    border-top: 1px solid #303942;
+    padding-top: 14px;
+}
+.server-quick-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+.server-quick-actions a,
+.server-quick-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 7px 12px;
+    border: 1px solid #39424b;
+    border-radius: 5px;
+    color: #bbc2ca;
+    background: #202830;
+    font-size: 12px;
+    transition: color 150ms, border-color 150ms, background 150ms;
+}
+.server-quick-actions a:hover,
+.server-quick-actions button:hover:not(:disabled) {
+    color: #edf0f3;
+    border-color: #596571;
+    background: #2a343e;
+}
+.server-quick-actions button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+.server-quick-actions .server-quick-stop:hover:not(:disabled) {
+    color: #f4b9b9;
+    border-color: #8f5050;
+}
+.server-quick-power {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-left: auto;
+}
+.server-quick-error {
+    color: #f4b9b9;
+    font-size: 12px;
+    margin-top: 12px;
+    overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+    .server-metadata {
+        gap: 10px;
+    }
+    .server-quick-power {
+        margin-left: 0;
+        width: 100%;
+    }
+    .server-quick-actions a,
+    .server-quick-actions button {
+        flex: 1;
+    }
+}

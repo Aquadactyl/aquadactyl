@@ -29,17 +29,17 @@
 </div>
 <div class="row">
     <div class="col-xs-6 col-sm-3 text-center">
-        <a href="https://github.com/Aquadactyl/aquadactyl/issues"><button class="btn btn-warning" style="width:100%;"><i class="fa fa-fw fa-support"></i> Get Help</button></a>
+        <a href="https://discord.euphoriadevelopment.uk" class="btn btn-warning" style="width:100%;" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-comments" aria-hidden="true"></i> Get Help</a>
     </div>
     <div class="col-xs-6 col-sm-3 text-center">
-        <a href="https://aquadactyl.uk/docs"><button class="btn btn-primary" style="width:100%;"><i class="fa fa-fw fa-link"></i> Documentation</button></a>
+        <a href="https://aquadactyl.uk/docs" class="btn btn-primary" style="width:100%;" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-book" aria-hidden="true"></i> Documentation</a>
     </div>
     <div class="clearfix visible-xs-block">&nbsp;</div>
     <div class="col-xs-6 col-sm-3 text-center">
-        <a href="https://github.com/Aquadactyl/aquadactyl"><button class="btn btn-primary" style="width:100%;"><i class="fa fa-fw fa-support"></i> GitHub</button></a>
+        <a href="https://github.com/Aquadactyl/aquadactyl" class="btn btn-primary" style="width:100%;" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-github" aria-hidden="true"></i> GitHub</a>
     </div>
     <div class="col-xs-6 col-sm-3 text-center">
-        <a href="{{ $version->getDonations() }}"><button class="btn btn-success" style="width:100%;"><i class="fa fa-fw fa-money"></i> Support Pterodactyl</button></a>
+        <a href="https://aquadactyl.uk" class="btn btn-success" style="width:100%;" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-globe" aria-hidden="true"></i> Website</a>
     </div>
 </div>
 @endsection

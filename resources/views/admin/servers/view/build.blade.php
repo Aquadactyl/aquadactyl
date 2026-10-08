@@ -131,7 +131,7 @@
                         <div class="box-body">
                             <div class="form-group">
                                 <label for="pAllocation" class="control-label">Game Port</label>
-                                <select id="pAllocation" name="allocation_id" class="form-control">
+                                <select data-sensitive id="pAllocation" name="allocation_id" class="form-control">
                                     @foreach ($assigned as $assignment)
                                         <option value="{{ $assignment->id }}"
                                             @if($assignment->id === $server->allocation_id)
@@ -145,7 +145,7 @@
                             <div class="form-group">
                                 <label for="pAddAllocations" class="control-label">Assign Additional Ports</label>
                                 <div>
-                                    <select name="add_allocations[]" class="form-control" multiple id="pAddAllocations">
+                                    <select data-sensitive name="add_allocations[]" class="form-control" multiple id="pAddAllocations">
                                         @foreach ($unassigned as $assignment)
                                             <option value="{{ $assignment->id }}">{{ $assignment->alias }}:{{ $assignment->port }}</option>
                                         @endforeach
@@ -156,7 +156,7 @@
                             <div class="form-group">
                                 <label for="pRemoveAllocations" class="control-label">Remove Additional Ports</label>
                                 <div>
-                                    <select name="remove_allocations[]" class="form-control" multiple id="pRemoveAllocations">
+                                    <select data-sensitive name="remove_allocations[]" class="form-control" multiple id="pRemoveAllocations">
                                         @foreach ($assigned as $assignment)
                                             <option value="{{ $assignment->id }}">{{ $assignment->alias }}:{{ $assignment->port }}</option>
                                         @endforeach

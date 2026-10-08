@@ -36,7 +36,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pUserId" class="control-label">Server Owner <span class="field-required"></span></label>
-                        <select name="owner_id" class="form-control" id="pUserId">
+                        <select data-sensitive name="owner_id" class="form-control" id="pUserId">
                             <option value="{{ $server->owner_id }}" selected>{{ $server->user->email }}</option>
                         </select>
                         <p class="text-muted small">You can change the owner of this server by changing this field to an email matching another use on this system. If you do this a new daemon security token will be generated automatically.</p>
@@ -51,6 +51,42 @@
                     {!! csrf_field() !!}
                     {!! method_field('PATCH') !!}
                     <input type="submit" class="btn btn-sm btn-primary" value="Update Details" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-xs-12">
+        <div class="box box-primary">
+            <div class="box-header with-border"><h3 class="box-title">Game Player Counts</h3></div>
+            <form action="{{ route('admin.servers.view.game-query', $server->id) }}" method="POST">
+                <div class="box-body">
+                    <div class="form-group">
+                        <label for="pGameQuery" class="control-label">Game Type</label>
+                        <select id="pGameQuery" name="game_query_type" class="form-control">
+                            <option value="auto" {{ old('game_query_type', $server->game_query_type) === 'auto' ? 'selected' : '' }}>Detect from egg</option>
+                            <option value="none" {{ old('game_query_type', $server->game_query_type) === 'none' ? 'selected' : '' }}>Disabled / not a game</option>
+                            @foreach(config('game-query.games') as $type => $name)
+                                <option value="{{ $type }}" {{ old('game_query_type', $server->game_query_type) === $type ? 'selected' : '' }}>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-muted small">Player counts are queried while the game is running. Select a game when the egg cannot be detected automatically.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="pGameQueryPort" class="control-label">Query Address / Port</label>
+                        <select data-sensitive id="pGameQueryPort" name="game_query_allocation_id" class="form-control">
+                            <option value="">Automatic (primary allocation)</option>
+                            @foreach($server->allocations as $allocation)
+                                <option value="{{ $allocation->id }}" {{ (int) old('game_query_allocation_id', $server->game_query_allocation_id) === $allocation->id ? 'selected' : '' }}>{{ $allocation->alias }}:{{ $allocation->port }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-muted small">Use a dedicated allocation if this game has a separate query port. The query port must be reachable from the panel.</p>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    {!! csrf_field() !!}
+                    {!! method_field('PATCH') !!}
+                    <button type="submit" class="btn btn-sm btn-primary">Save Query Settings</button>
                 </div>
             </form>
         </div>

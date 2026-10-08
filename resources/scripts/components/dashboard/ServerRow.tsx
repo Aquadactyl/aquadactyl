@@ -1,6 +1,10 @@
 import SensitiveValue from '@/components/elements/SensitiveValue';
-import React, { useEffect, useState } from 'react';
-import { ArrowRight, Cpu, HardDrive, MemoryStick, Network, Server as ServerIcon } from 'lucide-react';
+import React, { useEffect, useRef } from 'react';
+import useSWR from 'swr';
+import CountryFlag from '@/components/elements/CountryFlag';
+import ServerPlayerCount from './ServerPlayerCount';
+import ServerQuickActions from './ServerQuickActions';
+import { ArrowRight, Cpu, HardDrive, MapPin, MemoryStick, Network, Server as ServerIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerStats } from '@/api/server/getServerResourceUsage';
@@ -15,35 +19,29 @@ import ResourceLimits from '@blueprint/components/Dashboard/Serverlist/ServerRow
 const isAlarmState = (current: number, limit: number): boolean => limit > 0 && current / mbToBytes(limit) >= 0.9;
 
 export default ({ server, className }: { server: Server; className?: string }) => {
-    const [stats, setStats] = useState<ServerStats | null>(null);
-    const [unavailable, setUnavailable] = useState(false);
+    const refreshTimer = useRef<ReturnType<typeof setTimeout>>();
+    const enabled = !server.status && !server.isNodeUnderMaintenance && !server.isTransferring;
+    const {
+        data: stats,
+        error,
+        mutate,
+    } = useSWR<ServerStats>(
+        enabled ? ['server-resources', server.uuid] : null,
+        () => getServerResourceUsage(server.uuid),
+        {
+            refreshInterval: 30000,
+            revalidateOnFocus: false,
+            errorRetryInterval: 30000,
+        }
+    );
+    const unavailable = Boolean(error);
     const isSuspended = server.status === 'suspended' || !!stats?.isSuspended;
-
-    useEffect(() => {
-        if (isSuspended || server.isNodeUnderMaintenance) return;
-        let active = true;
-        const getStats = () => {
-            getServerResourceUsage(server.uuid)
-                .then((data) => {
-                    if (active) {
-                        setStats(data);
-                        setUnavailable(false);
-                    }
-                })
-                .catch(() => {
-                    if (active) {
-                        setStats(null);
-                        setUnavailable(true);
-                    }
-                });
-        };
-        getStats();
-        const timer = setInterval(getStats, 30000);
-        return () => {
-            active = false;
-            clearInterval(timer);
-        };
-    }, [server.uuid, isSuspended, server.isNodeUnderMaintenance]);
+    useEffect(
+        () => () => {
+            if (refreshTimer.current) clearTimeout(refreshTimer.current);
+        },
+        []
+    );
 
     const allocation = server.allocations.find((allocation) => allocation.isDefault);
     const address = allocation
@@ -75,7 +73,12 @@ export default ({ server, className }: { server: Server; className?: string }) =
         loading: 'Connecting',
     };
     const showStats =
-        stats && !isSuspended && !server.isNodeUnderMaintenance && !server.status && !server.isTransferring;
+        stats &&
+        !unavailable &&
+        !isSuspended &&
+        !server.isNodeUnderMaintenance &&
+        !server.status &&
+        !server.isTransferring;
     const resources = [
         {
             label: 'CPU',
@@ -101,14 +104,16 @@ export default ({ server, className }: { server: Server; className?: string }) =
     ];
 
     return (
-        <Link to={'/server/' + server.id} className={'server-row' + (className ? ' ' + className : '')}>
+        <article className={'server-row' + (className ? ' ' + className : '')} aria-label={'Server ' + server.name}>
             <div className={'server-identity'}>
                 <div className={'server-row-icon'}>
                     <ServerIcon size={20} aria-hidden />
                 </div>
                 <div className={'server-identity-copy'}>
                     <BeforeEntryName />
-                    <p className={'server-row-name'}>{server.name}</p>
+                    <h2 className={'server-row-name'}>
+                        <Link to={'/server/' + server.id}>{server.name}</Link>
+                    </h2>
                     <AfterEntryName />
                     {!!server.description && (
                         <div>
@@ -121,6 +126,14 @@ export default ({ server, className }: { server: Server; className?: string }) =
                         <Network size={12} aria-hidden />
                         <SensitiveValue>{address}</SensitiveValue>
                     </span>
+                    <div className={'server-metadata'}>
+                        <span className={'server-node'}>
+                            <MapPin size={12} aria-hidden />
+                            <span>{server.node}</span>
+                            <CountryFlag code={server.nodeCountry} name={server.nodeCountryName} />
+                        </span>
+                        <ServerPlayerCount server={server} state={state} />
+                    </div>
                 </div>
             </div>
             <div className={'server-resources'}>
@@ -138,7 +151,23 @@ export default ({ server, className }: { server: Server; className?: string }) =
             <span className={'server-state'} data-state={state}>
                 {statusLabels[state] || 'Unavailable'}
             </span>
-            <ArrowRight className={'server-row-arrow'} size={16} aria-hidden />
-        </Link>
+            <Link to={'/server/' + server.id} className={'server-row-arrow'} aria-label={'Open ' + server.name}>
+                <ArrowRight size={16} aria-hidden />
+            </Link>
+            <ServerQuickActions
+                server={server}
+                state={state}
+                onPower={(action) =>
+                    mutate(
+                        (value) => (value ? { ...value, status: action === 'stop' ? 'stopping' : 'starting' } : value),
+                        false
+                    )
+                }
+                onRefresh={() => {
+                    if (refreshTimer.current) clearTimeout(refreshTimer.current);
+                    refreshTimer.current = setTimeout(() => mutate(), 1500);
+                }}
+            />
+        </article>
     );
 };

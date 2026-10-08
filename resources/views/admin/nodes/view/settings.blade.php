@@ -44,6 +44,21 @@
                         </div>
                     </div>
                     <div class="form-group col-xs-12">
+                        <label for="pCountry" class="control-label">Country</label>
+                        <select name="country_code" id="pCountry" class="form-control">
+                            <option value="">Not specified</option>
+                            @foreach(config('countries') as $code => $name)
+                                <option value="{{ $code }}" {{ old('country_code', $node->country_code) === $code ? 'selected' : '' }}>{{ $name }}</option>
+                            @endforeach
+                        </select>
+                        <p class="text-muted small">Choose the hosting country to display its flag next to servers on this node.</p>
+                    </div>
+                    <div class="form-group col-xs-12">
+                        <label for="pQueryAddress" class="control-label">Game Query Address <span class="field-optional"></span></label>
+                        <input data-sensitive type="text" name="query_address" id="pQueryAddress" class="form-control" value="{{ old('query_address', $node->query_address) }}" />
+                        <p class="text-muted small">Optional address the panel can reach for game queries. Leave blank to use server allocation addresses.</p>
+                    </div>
+                    <div class="form-group col-xs-12">
                         <label for="description" class="control-label">Description</label>
                         <div>
                             <textarea name="description" id="description" rows="4" class="form-control">{{ $node->description }}</textarea>

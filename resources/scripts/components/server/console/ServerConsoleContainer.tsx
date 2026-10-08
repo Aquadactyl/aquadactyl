@@ -18,6 +18,7 @@ export type PowerAction = 'start' | 'stop' | 'restart' | 'kill';
 
 const ServerConsoleContainer = () => {
     const name = ServerContext.useStoreState((state) => state.server.data!.name);
+    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const description = ServerContext.useStoreState((state) => state.server.data!.description);
     const isInstalling = ServerContext.useStoreState((state) => state.server.isInstalling);
     const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
@@ -41,6 +42,9 @@ const ServerConsoleContainer = () => {
                     <h1 className={'font-header font-medium text-2xl text-gray-50 leading-relaxed line-clamp-1'}>
                         {name}
                     </h1>
+                    <p className={'mb-1 font-mono text-xs text-gray-400 break-all'} title={'Server UUID'}>
+                        {uuid}
+                    </p>
                     <p className={'text-sm text-gray-400 line-clamp-2'}>{description}</p>
                 </div>
                 <div className={'col-span-4 sm:col-span-2 lg:col-span-1 self-end'}>

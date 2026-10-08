@@ -229,7 +229,7 @@
     });
 
     var typingTimer;
-    $('input[data-sensitive data-action="set-alias"]').keyup(function () {
+    $('input[data-action="set-alias"]').keyup(function () {
         clearTimeout(typingTimer);
         $(this).parent().removeClass('has-error has-success');
         typingTimer = setTimeout(sendAlias, 250, $(this));

@@ -84,6 +84,19 @@ server files, backups and logs are kept in named volumes. The setup service reus
 the node and credentials on later starts. Browsers resolve `wings.localhost` to the
 host; the panel's internal loopback proxy forwards backend requests to Wings.
 
+The local bootstrap keeps Wings' port-publishing interface at `127.0.0.1` and
+uses the Docker bridge gateway only for IPAM. This lets Docker Desktop publish
+game ports on localhost. If an older stack reports a binding error for a
+`172.x.x.x` address, regenerate its Wings configuration without recreating the
+panel, then restart Wings:
+
+```bash
+docker compose run --rm --no-deps wings-setup
+docker compose restart wings
+```
+
+Start the affected server again through the panel after Wings is ready.
+
 Set `AQUADACTYL_WINGS_PORT`, `AQUADACTYL_SFTP_PORT` or `AQUADACTYL_GAME_PORTS`
 (a range such as `25600-25609`) before starting to change those ports. The data mount
 matches the Docker daemon's volume path so Wings and game containers share the same
@@ -181,6 +194,41 @@ their bootstrap resets and seeds that database. On Windows, the
 
 The Nix development shell uses PHP 8.5, Node.js 22 and pnpm. Install the pinned
 pnpm version above if the version provided by your Nix package set differs.
+
+## Server list and game queries
+
+Set a node's **Country** under **Admin → Nodes → Settings** to display its flag
+on the server list. Countries are optional and apply to every server on that node.
+The flag assets are served locally from `public/flags/`.
+
+The server list offers Console, Files, Start, Restart and Stop according to the
+viewer's existing server permissions. Power actions use the same API and activity
+logging as the server console.
+
+Player counts use [GameDig](https://github.com/gamedig/node-gamedig). Supported egg
+names are detected automatically; choose a game or disable queries under
+**Admin → Servers → Details → Game Player Counts**. Minecraft Java uses TCP status,
+Bedrock uses UDP ping, and Steam/Source games use their query protocol. A failed
+query displays **Unavailable**, rather than reporting zero players.
+
+For games with a separate query port, assign that port to the server and select
+it in the query settings. The panel and its queue worker must be able to reach
+that port using the game's TCP or UDP protocol. A node's optional **Game Query
+Address** overrides the allocated IP when a different reachable address is needed.
+The local Compose stack connects the panel to the game container network and
+queries local containers directly.
+
+Keep the locked Node dependencies installed on the panel/worker host, even after
+building the frontend. Queries run on the `low` queue and cache results for 30
+seconds; run a worker that includes this queue. The Docker image already provides
+Node and the dependencies. Set `GAME_QUERY_ENABLED=false` to disable querying or
+`GAME_QUERY_NODE_BINARY` to use a different Node executable.
+
+The protocol fixtures can be checked without running game servers:
+
+```bash
+node --test scripts/game-query.test.cjs
+```
 
 ## Wings
 

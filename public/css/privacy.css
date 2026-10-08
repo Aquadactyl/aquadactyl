@@ -8,6 +8,9 @@ html.privacy-mode [data-sensitive]:is(:hover, :focus, :focus-within) {
 html.privacy-mode [data-sensitive] [data-sensitive] {
     filter: none;
 }
+html.privacy-mode a:focus > [data-sensitive] {
+    filter: none;
+}
 html.privacy-mode
     :is(
         input[type='email'],
@@ -44,8 +47,7 @@ html.privacy-mode
     -webkit-text-fill-color: currentColor;
     text-shadow: none;
 }
-html.privacy-mode
-    :is(input[data-sensitive], textarea[data-sensitive], input[type='email'], input[type='password'])::placeholder {
+html.privacy-mode :is(input, textarea)::placeholder {
     -webkit-text-fill-color: currentColor;
     text-shadow: none;
 }
