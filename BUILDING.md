@@ -151,7 +151,7 @@ pnpm run lint
 pnpm exec jest --runInBand
 ```
 
-Build at least once to create `public/assets/manifest.json`, which the panel needs
+Build at least once to create `public/build/manifest.json`, which the panel needs
 to render its frontend. Blueprint's CLI also uses pnpm when it installs or removes
 an extension and rebuilds those assets.
 
@@ -161,12 +161,11 @@ and dependency conventions. Use the panel's React 16.14 runtime when building ad
 
 ## Hot module reloading
 
-`pnpm run serve` starts the HTTPS Webpack development server at
+`pnpm run serve` (or `pnpm run dev`) starts the Vite development server at
 `https://aquadactyl.test:5173/`. The existing local development environment expects
-certificates under `../../docker/certificates/`; configure `webpack.config.js`
+certificates under `../../docker/certificates/`; configure `vite.config.mts`
 and the `serve` script for your own hostname and certificates when needed.
-`WEBPACK_PUBLIC_PATH` must match the URL from which the browser loads development
-assets. HMR updates React components while you work.
+HMR updates React components while you work.
 
 ## Production builds
 
@@ -174,7 +173,7 @@ assets. HMR updates React components while you work.
 pnpm run build:production
 ```
 
-This generates minified assets and a manifest under `public/assets/`. Managed
+This generates minified assets and a manifest under `public/build/`. Managed
 Linux deployment builds the frontend and refreshes backend caches automatically.
 
 ## Backend checks

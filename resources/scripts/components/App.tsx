@@ -1,5 +1,4 @@
 import React, { lazy } from 'react';
-import { hot } from 'react-hot-loader/root';
 import { Route, Router, Switch } from 'react-router-dom';
 import { StoreProvider } from 'easy-peasy';
 import { store } from '@/state';
@@ -98,4 +97,4 @@ const App = () => {
     );
 };
 
-export default hot(App);
+export default App;

@@ -12,10 +12,6 @@ module.exports = function (api) {
         '@babel/syntax-dynamic-import',
     ];
 
-    if (!api.env('production')) {
-        plugins.push('react-hot-loader/babel');
-    }
-
     if (api.env('test')) {
         targets = { node: 'current' };
         plugins.push('@babel/transform-modules-commonjs');

@@ -46,7 +46,8 @@
             @yield('blueprint.wrappers')
         @show
         @section('scripts')
-            {!! $asset->js('main.js') !!}
+            @viteReactRefresh
+            @vite(['resources/scripts/index.tsx'])
         @show
     </body>
 </html>

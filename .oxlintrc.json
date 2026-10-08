@@ -8,8 +8,8 @@
     "settings": {
         "react": {
             "linkComponents": [
-                { "name": "Link", "linkAttribute": "to" },
-                { "name": "NavLink", "linkAttribute": "to" }
+                { "name": "Link", "attribute": "to" },
+                { "name": "NavLink", "attribute": "to" }
             ]
         }
     },
@@ -22,7 +22,7 @@
         "scripts/**",
         "babel.config.js",
         "tailwind.config.js",
-        "webpack.config.js"
+        "vite.config.mts"
     ],
     "rules": {
         "eqeqeq": "error",
