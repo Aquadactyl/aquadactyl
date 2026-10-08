@@ -17,7 +17,7 @@ Command() {
   cp -r dev/* tmp/
   cd tmp || cdhalt
 
-  if ! node "$FOLDER/scripts/helpers/normalize-conf-yaml.js" conf.yml; then
+  if ! pnpm exec tsx "$FOLDER/scripts/helpers/normalize-conf-yaml.ts" conf.yml; then
     PRINT FATAL "Unable to normalize extension configuration to UTF-8."
     return 1
   fi

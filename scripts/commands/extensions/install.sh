@@ -396,7 +396,7 @@ InstallExtension() {
   # Test identifier
   export VALIDATE_IDENTIFIER_INPUT="$identifier"
   local TEST_IDENTIFIER
-  TEST_IDENTIFIER="$(node scripts/helpers/validate-identifier.js)"
+  TEST_IDENTIFIER="$(pnpm exec tsx scripts/helpers/validate-identifier.ts)"
   local TEST_IDENTIFIER_MATCHES="false"
   unset VALIDATE_IDENTIFIER_INPUT
 

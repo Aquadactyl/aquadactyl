@@ -1,13 +1,13 @@
-const fs = require('fs');
+import fs from 'node:fs';
 
 const path = process.argv[2];
 
 if (!path) {
-  console.error('Usage: node normalize-conf-yaml.js <conf.yml>');
+  console.error('Usage: tsx normalize-conf-yaml.ts <conf.yml>');
   process.exit(1);
 }
 
-let contents;
+let contents: Buffer;
 
 try {
   contents = fs.readFileSync(path);
@@ -36,3 +36,4 @@ try {
   console.error(`Unable to convert ${path} to UTF-8.`);
   process.exit(1);
 }
+

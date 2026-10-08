@@ -1,8 +1,9 @@
-const { pathsToModuleNameMapper } = require('ts-jest');
-const { compilerOptions } = require('./tsconfig');
+import { pathsToModuleNameMapper } from 'ts-jest';
+import fs from 'node:fs';
 
-/** @type {import('ts-jest').InitialOptionsTsJest} */
-module.exports = {
+const tsconfig = JSON.parse(fs.readFileSync(new URL('./tsconfig.json', import.meta.url), 'utf-8'));
+
+const config = {
     preset: 'ts-jest',
     globals: {
         'ts-jest': {
@@ -13,7 +14,7 @@ module.exports = {
     moduleNameMapper: {
         '\\.(jpe?g|png|gif|svg)$': '<rootDir>/resources/scripts/__mocks__/file.ts',
         '\\.(s?css|less)$': 'identity-obj-proxy',
-        ...pathsToModuleNameMapper(compilerOptions.paths, {
+        ...pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
             prefix: '<rootDir>/',
         }),
     },
@@ -23,4 +24,7 @@ module.exports = {
         '.*\\.ts$': 'ts-jest',
     },
     testPathIgnorePatterns: ['/node_modules/'],
+    modulePathIgnorePatterns: ['<rootDir>/.blueprint/dist/'],
 };
+
+export default config;

@@ -20,7 +20,7 @@ Command() {
 
   # Initialize types.
   PRINT INFO "Generating types.."
-  node scripts/helpers/generate-types.js 2> /dev/null
+  pnpm exec tsx scripts/helpers/generate-types.ts 2> /dev/null
 
   
   PRINT SUCCESS "Finished regenerating dist files."

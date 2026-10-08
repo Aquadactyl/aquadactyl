@@ -1,3 +1,6 @@
+import tailwindcssForms from '@tailwindcss/forms';
+import type { Config } from 'tailwindcss';
+
 const gray = {
     50: '#f5f6f7',
     100: '#e9ecef',
@@ -26,7 +29,7 @@ const aqua = {
     950: '#122528',
 };
 
-module.exports = {
+export default {
     content: ['./resources/scripts/**/*.{js,ts,tsx}'],
     theme: {
         extend: {
@@ -59,8 +62,8 @@ module.exports = {
         },
     },
     plugins: [
-        require('@tailwindcss/forms')({
+        tailwindcssForms({
             strategy: 'class',
         }),
     ],
-};
+} satisfies Config;

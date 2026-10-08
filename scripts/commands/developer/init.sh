@@ -160,7 +160,7 @@ Command() {
 
   # Initialize types.
   PRINT INFO "Generating types.."
-  node scripts/helpers/generate-types.js 2> /dev/null
+  pnpm exec tsx scripts/helpers/generate-types.ts 2> /dev/null
 
   # Remove tmp files.
   PRINT INFO "Cleaning up build files.."

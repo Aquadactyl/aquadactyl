@@ -163,7 +163,7 @@ and dependency conventions. Use the panel's React 16.14 runtime when building ad
 
 `pnpm run serve` (or `pnpm run dev`) starts the Vite development server at
 `https://aquadactyl.test:5173/`. The existing local development environment expects
-certificates under `../../docker/certificates/`; configure `vite.config.mts`
+certificates under `../../docker/certificates/`; configure `vite.config.ts`
 and the `serve` script for your own hostname and certificates when needed.
 HMR updates React components while you work.
 

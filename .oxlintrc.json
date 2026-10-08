@@ -22,7 +22,7 @@
         "scripts/**",
         "babel.config.js",
         "tailwind.config.js",
-        "vite.config.mts"
+        "vite.config.ts"
     ],
     "rules": {
         "eqeqeq": "error",

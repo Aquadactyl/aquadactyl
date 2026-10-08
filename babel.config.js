@@ -1,4 +1,4 @@
-module.exports = function (api) {
+export default function (api) {
     let targets = {};
     const plugins = [
         'babel-plugin-macros',
@@ -33,4 +33,4 @@ module.exports = function (api) {
             '@babel/react',
         ],
     };
-};
+}

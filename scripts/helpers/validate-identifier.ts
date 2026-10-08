@@ -1,5 +1,5 @@
-const identifier = process.env.VALIDATE_IDENTIFIER_INPUT;
-var exit = '';
+const identifier = process.env.VALIDATE_IDENTIFIER_INPUT || '';
+let exit = '';
 
 // Identifiers shouldn't be longer than 48 characters
 if (identifier.length > 48) {
@@ -13,8 +13,9 @@ if (identifier.match(regex)) {
 }
 
 // Identifier cannot be 'blueprint'
-if (identifier == 'blueprint') {
+if (identifier === 'blueprint') {
   exit = exit + '[potential-crashout]';
 }
 
 console.log(exit);
+

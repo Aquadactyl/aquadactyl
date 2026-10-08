@@ -130,8 +130,8 @@ depend() {
   { [[ $nodeMajor -eq 22 ]] && [[ $nodeMinor -lt 13 ]]; } ||
   [[ $phpSupported != "yes" ]] ||                                                # PHP version
   [[ $pnpmVersion != "$requiredPnpm" ]] ||                                        # pnpm version
-  ! [ "$(ls "node_modules/"*"vite"* 2> /dev/null)"      ] ||                      # vite
-  ! [ "$(ls "node_modules/"*"react"* 2> /dev/null)"     ] ||                      # react
+  ! [ -e "node_modules/vite" ] ||                                                 # vite
+  ! [ -e "node_modules/react" ] ||                                                # react
   [[ $missinglibs != "" ]]; then                                                  # internal
     DEPEND_MISSING=true
   fi
@@ -158,8 +158,8 @@ depend() {
     if ! [ -x "$(command -v sed)"                          ]; then PRINT FATAL "Missing dependency \"sed\".";     fi
     if ! [ -x "$(command -v awk)"                          ]; then PRINT FATAL "Missing dependency \"awk\".";     fi
     if ! [ -x "$(command -v tput)"                         ]; then PRINT FATAL "Missing dependency \"tput\".";    fi
-    if ! [ "$(ls "node_modules/"*"vite"* 2> /dev/null)"    ]; then PRINT FATAL "Missing dependency \"vite\". Forgot to run 'pnpm install'?"; fi
-    if ! [ "$(ls "node_modules/"*"react"* 2> /dev/null)"   ]; then PRINT FATAL "Missing dependency \"react\". Forgot to run 'pnpm install'?"; fi
+    if ! [ -e "node_modules/vite"                          ]; then PRINT FATAL "Missing dependency \"vite\". Forgot to run 'pnpm install'?"; fi
+    if ! [ -e "node_modules/react"                         ]; then PRINT FATAL "Missing dependency \"react\". Forgot to run 'pnpm install'?"; fi
 
     if ! [ -x "$(command -v inotifywait)" ] && [[ "$DeveloperWatch" == true ]]; then
       PRINT FATAL "Developer dependency \"inotify-tools\" is not installed or detected."
