@@ -64,7 +64,7 @@ const EulaModalFeature = () => {
             showSpinnerOverlay={loading}
         >
             <FlashMessageRender key={'feature:eula'} className={'mb-4'} />
-            <h2 className={'text-2xl mb-4 text-neutral-100'}>Accept Minecraft&reg; EULA</h2>
+            <h2 className={'mb-4 text-2xl text-neutral-100'}>Accept Minecraft&reg; EULA</h2>
             <p className={'text-neutral-200'}>
                 By pressing {'"I Accept"'} below you are indicating your agreement to the&nbsp;
                 <a
@@ -77,11 +77,11 @@ const EulaModalFeature = () => {
                 </a>
                 .
             </p>
-            <div className={'mt-8 sm:flex items-center justify-end'}>
-                <Button isSecondary onClick={() => setVisible(false)} className={'w-full sm:w-auto border-transparent'}>
+            <div className={'mt-8 items-center justify-end sm:flex'}>
+                <Button isSecondary onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                     Cancel
                 </Button>
-                <Button onClick={onAcceptEULA} className={'mt-4 sm:mt-0 sm:ml-4 w-full sm:w-auto'}>
+                <Button onClick={onAcceptEULA} className={'mt-4 w-full sm:ml-4 sm:mt-0 sm:w-auto'}>
                     I Accept
                 </Button>
             </div>

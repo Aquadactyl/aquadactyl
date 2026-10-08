@@ -134,20 +134,20 @@ Operator guides are hosted at [aquadactyl.uk/docs](https://aquadactyl.uk/docs).
 Their source lives in the [website repository](https://github.com/Aquadactyl/website).
 The local guides retain deployment details, developer references and validation records.
 
-| Guide | Covers |
-| --- | --- |
-| [Installation](https://aquadactyl.uk/docs) | Requirements, source checkout, environment, Nginx/TLS, queue, scheduler and Wings |
-| [Updates](https://aquadactyl.uk/docs/updating) | Reviewed releases, managed updates, backups and recovery |
-| [Blueprint](https://aquadactyl.uk/docs/blueprint) | Bundled framework, extension installation and maintenance |
-| [Deployment reference](docs/DEPLOYMENT.md) | Deployment scripts, permissions, compatibility settings and recovery details |
-| [Blueprint integration reference](docs/BLUEPRINT.md) | Framework provenance and implementation details |
-| [Addon development](docs/ADDONS.md) | Shared libraries, imports and dependency management for extensions and themes |
-| [Default theme](docs/THEME.md) | Charcoal palette, shared colour tokens and theme customisation |
-| [Validation](docs/VALIDATION.md) | Test results and dependency audit limitations |
-| [Building](BUILDING.md) | Frontend development and production builds |
-| [Security policy](SECURITY.md) | Reporting vulnerabilities in Aquadactyl and its upstream projects |
-| [Branding and licensing](docs/BRANDING.md) | Rebranding permissions, attribution and compatibility identifiers |
-| [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration |
+| Guide                                                                                       | Covers                                                                            |
+| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [Installation](https://aquadactyl.uk/docs)                                                  | Requirements, source checkout, environment, Nginx/TLS, queue, scheduler and Wings |
+| [Updates](https://aquadactyl.uk/docs/updating)                                              | Reviewed releases, managed updates, backups and recovery                          |
+| [Blueprint](https://aquadactyl.uk/docs/blueprint)                                           | Bundled framework, extension installation and maintenance                         |
+| [Deployment reference](docs/DEPLOYMENT.md)                                                  | Deployment scripts, permissions, compatibility settings and recovery details      |
+| [Blueprint integration reference](docs/BLUEPRINT.md)                                        | Framework provenance and implementation details                                   |
+| [Addon development](docs/ADDONS.md)                                                         | Shared libraries, imports and dependency management for extensions and themes     |
+| [Default theme](docs/THEME.md)                                                              | Charcoal palette, shared colour tokens and theme customisation                    |
+| [Validation](docs/VALIDATION.md)                                                            | Test results and dependency audit limitations                                     |
+| [Building](BUILDING.md)                                                                     | Frontend development and production builds                                        |
+| [Security policy](SECURITY.md)                                                              | Reporting vulnerabilities in Aquadactyl and its upstream projects                 |
+| [Branding and licensing](docs/BRANDING.md)                                                  | Rebranding permissions, attribution and compatibility identifiers                 |
+| [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration                                                 |
 
 ## Credits and license
 

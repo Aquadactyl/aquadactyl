@@ -1,8 +1,18 @@
 {
     "name": "aquadactyl-panel",
-    "engines": {
-        "node": ">=22.13",
-        "pnpm": "12.10.1"
+    "private": true,
+    "scripts": {
+        "watch": "cross-env NODE_ENV=development webpack --watch --progress",
+        "build": "cross-env NODE_ENV=development webpack --progress",
+        "build:production": "pnpm run clean && cross-env NODE_ENV=production webpack --mode production",
+        "serve": "pnpm run clean && cross-env NODE_ENV=development USE_LOCAL_CERTS=true WEBPACK_PUBLIC_PATH=https://aquadactyl.test:5173/ webpack serve --progress --hot --server-type https",
+        "clean": "node scripts/build/clean.cjs",
+        "format": "oxfmt --write .",
+        "format:check": "oxfmt --check .",
+        "lint": "oxlint .",
+        "lint:fix": "oxlint --fix .",
+        "types": "tsc --noEmit",
+        "test": "jest"
     },
     "dependencies": {
         "@floating-ui/react-dom-interactions": "^0.6.6",
@@ -133,32 +143,22 @@
         "webpack-cli": "^6.0.1",
         "webpack-dev-server": "^5.2.2"
     },
-    "scripts": {
-        "watch": "cross-env NODE_ENV=development webpack --watch --progress",
-        "build": "cross-env NODE_ENV=development webpack --progress",
-        "build:production": "pnpm run clean && cross-env NODE_ENV=production webpack --mode production",
-        "serve": "pnpm run clean && cross-env NODE_ENV=development USE_LOCAL_CERTS=true WEBPACK_PUBLIC_PATH=https://aquadactyl.test:5173/ webpack serve --progress --hot --server-type https",
-        "clean": "node scripts/build/clean.cjs",
-        "format": "oxfmt --write .",
-        "format:check": "oxfmt --check .",
-        "lint": "oxlint .",
-        "lint:fix": "oxlint --fix .",
-        "types": "tsc --noEmit",
-        "test": "jest"
-    },
     "browserslist": [
         "> 0.5%",
         "last 2 versions",
         "firefox esr",
         "not dead"
     ],
+    "engines": {
+        "node": ">=22.13",
+        "pnpm": "12.10.1"
+    },
+    "packageManager": "pnpm@12.10.1",
     "babelMacros": {
         "styledComponents": {
             "pure": true,
             "displayName": true,
             "fileName": true
         }
-    },
-    "packageManager": "pnpm@12.10.1",
-    "private": true
+    }
 }

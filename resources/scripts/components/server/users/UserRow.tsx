@@ -20,16 +20,20 @@ export default ({ subuser }: Props) => {
     return (
         <GreyRowBox className={'mb-2'}>
             <EditSubuserModal subuser={subuser} visible={visible} onModalDismissed={() => setVisible(false)} />
-            <div className={'w-10 h-10 rounded-full bg-white border-2 border-neutral-800 overflow-hidden hidden md:block'}>
-                <img className={'w-full h-full'} src={`${subuser.image}?s=400`} />
+            <div
+                className={
+                    'hidden h-10 w-10 overflow-hidden rounded-full border-2 border-neutral-800 bg-white md:block'
+                }
+            >
+                <img className={'h-full w-full'} src={`${subuser.image}?s=400`} />
             </div>
             <div className={'ml-4 flex-1 overflow-hidden'}>
-                <p className={'text-sm truncate'}>
+                <p className={'truncate text-sm'}>
                     <SensitiveValue>{subuser.email}</SensitiveValue>
                 </p>
             </div>
             <div className={'ml-4'}>
-                <p className={'font-medium text-center'}>
+                <p className={'text-center font-medium'}>
                     &nbsp;
                     <FontAwesomeIcon
                         icon={subuser.twoFactorEnabled ? faUserLock : faUnlockAlt}
@@ -38,13 +42,13 @@ export default ({ subuser }: Props) => {
                     />
                     &nbsp;
                 </p>
-                <p className={'text-2xs text-neutral-500 uppercase hidden md:block'}>2FA Enabled</p>
+                <p className={'hidden text-2xs uppercase text-neutral-500 md:block'}>2FA Enabled</p>
             </div>
             <div className={'ml-4 hidden md:block'}>
-                <p className={'font-medium text-center'}>
+                <p className={'text-center font-medium'}>
                     {subuser.permissions.filter((permission) => permission !== 'websocket.connect').length}
                 </p>
-                <p className={'text-2xs text-neutral-500 uppercase'}>Permissions</p>
+                <p className={'text-2xs uppercase text-neutral-500'}>Permissions</p>
             </div>
             {subuser.uuid !== uuid && (
                 <>
@@ -52,7 +56,9 @@ export default ({ subuser }: Props) => {
                         <button
                             type={'button'}
                             aria-label={'Edit subuser'}
-                            className={'block text-sm p-1 md:p-2 text-neutral-500 hover:text-neutral-100 transition-colors duration-150 mx-4'}
+                            className={
+                                'mx-4 block p-1 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 md:p-2'
+                            }
                             onClick={() => setVisible(true)}
                         >
                             <FontAwesomeIcon icon={faPencilAlt} />

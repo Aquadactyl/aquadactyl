@@ -44,7 +44,7 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
     >
         <SelectFileCheckbox name={file.name} />
         <Clickable file={file}>
-            <div className={'flex-none text-neutral-400 ml-6 mr-4 text-lg pl-3'}>
+            <div className={'ml-6 mr-4 flex-none pl-3 text-lg text-neutral-400'}>
                 {file.isFile ? (
                     <FontAwesomeIcon
                         icon={file.isSymlink ? faFileImport : file.isArchiveType() ? faFileArchive : faFileAlt}
@@ -54,8 +54,8 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
                 )}
             </div>
             <div className={'flex-1 truncate'}>{file.name}</div>
-            {file.isFile && <div className={'w-1/6 text-right mr-4 hidden sm:block'}>{bytesToString(file.size)}</div>}
-            <div className={'w-1/5 text-right mr-4 hidden md:block'} title={file.modifiedAt.toString()}>
+            {file.isFile && <div className={'mr-4 hidden w-1/6 text-right sm:block'}>{bytesToString(file.size)}</div>}
+            <div className={'mr-4 hidden w-1/5 text-right md:block'} title={file.modifiedAt.toString()}>
                 {Math.abs(differenceInHours(file.modifiedAt, new Date())) > 48
                     ? format(file.modifiedAt, 'MMM do, yyyy h:mma')
                     : formatDistanceToNow(file.modifiedAt, { addSuffix: true })}

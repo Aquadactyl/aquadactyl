@@ -96,10 +96,10 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     skipScripts: data.skip_scripts,
     BlueprintFramework: { eggId: data.BlueprintFramework.egg_id },
     variables: ((data.relationships?.variables as FractalResponseList | undefined)?.data || []).map(
-        rawDataToServerEggVariable
+        rawDataToServerEggVariable,
     ),
     allocations: ((data.relationships?.allocations as FractalResponseList | undefined)?.data || []).map(
-        rawDataToServerAllocation
+        rawDataToServerAllocation,
     ),
 });
 
@@ -111,7 +111,7 @@ export default (uuid: string): Promise<[Server, string[]]> => {
                     rawDataToServerObject(data),
                     // eslint-disable-next-line camelcase
                     data.meta?.is_server_owner ? ['*'] : data.meta?.user_permissions || [],
-                ])
+                ]),
             )
             .catch(reject);
     });

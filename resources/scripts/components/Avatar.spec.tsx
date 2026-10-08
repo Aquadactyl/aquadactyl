@@ -14,7 +14,7 @@ describe('Avatar', () => {
         const markup = renderToStaticMarkup(
             <StoreProvider store={store}>
                 <Avatar.User size={64} />
-            </StoreProvider>
+            </StoreProvider>,
         );
 
         expect(markup).toContain('src="/storage/avatars/example.png"');
@@ -27,7 +27,7 @@ describe('Avatar', () => {
         const markup = renderToStaticMarkup(
             <StoreProvider store={store}>
                 <Avatar.User size={64} />
-            </StoreProvider>
+            </StoreProvider>,
         );
 
         expect(markup).toContain('<svg');
@@ -41,7 +41,7 @@ describe('Avatar', () => {
                 src={'/storage/avatars/other.png'}
                 alt={"Other user's profile picture"}
                 size={40}
-            />
+            />,
         );
 
         expect(markup).toContain('src="/storage/avatars/other.png"');
@@ -56,6 +56,6 @@ describe('Avatar', () => {
 
             expect(markup).toContain('<svg');
             expect(markup).toContain('width="40"');
-        }
+        },
     );
 });

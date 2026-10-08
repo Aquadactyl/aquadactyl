@@ -28,7 +28,10 @@ const ContentBox = ({
             {title && <h2 className={'content-box-title'}>{title}</h2>}
             {description && <p className={'content-box-description'}>{description}</p>}
             {showFlashes && (
-                <FlashMessageRender byKey={typeof showFlashes === 'string' ? showFlashes : undefined} className={'mb-4'} />
+                <FlashMessageRender
+                    byKey={typeof showFlashes === 'string' ? showFlashes : undefined}
+                    className={'mb-4'}
+                />
             )}
             {children}
         </div>

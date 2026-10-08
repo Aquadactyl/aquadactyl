@@ -66,7 +66,7 @@ export default () => {
         <ServerContentBlock title={'File Manager'} showFlashKey={'files'}>
             <ErrorBoundary>
                 <BeforeContent />
-                <div className={'flex flex-wrap-reverse md:flex-nowrap mb-4'}>
+                <div className={'mb-4 flex flex-wrap-reverse md:flex-nowrap'}>
                     <FileManagerBreadcrumbs
                         renderLeft={
                             <FileActionCheckbox
@@ -95,13 +95,13 @@ export default () => {
             ) : (
                 <>
                     {!files.length ? (
-                        <p className={'text-sm text-neutral-400 text-center'}>This directory seems to be empty.</p>
+                        <p className={'text-center text-sm text-neutral-400'}>This directory seems to be empty.</p>
                     ) : (
                         <CSSTransition classNames={'fade'} timeout={150} appear in>
                             <div>
                                 {files.length > 250 && (
-                                    <div className={'rounded bg-yellow-400 mb-px p-3'}>
-                                        <p className={'text-yellow-900 text-sm text-center'}>
+                                    <div className={'mb-px rounded bg-yellow-400 p-3'}>
+                                        <p className={'text-center text-sm text-yellow-900'}>
                                             This directory is too large to display in the browser, limiting the output
                                             to the first 250 files.
                                         </p>

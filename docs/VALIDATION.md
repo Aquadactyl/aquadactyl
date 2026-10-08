@@ -39,20 +39,20 @@ Validated on 7 October 2026 with PHP 8.4.26 and 8.5.11, Laravel 12.69.3,
 pnpm 12.10.1 and Node.js 22.23.3 in the Linux deployment fixture. Local frontend
 checks also passed with Node.js 24.14.0.
 
-| Check | Result |
-| --- | --- |
-| PHP unit tests on 8.4 and 8.5 | 95 passed, 170 assertions on each version |
-| PHP integration tests with MariaDB on 8.4 and 8.5 | 377 passed, 2,083 assertions on each version |
-| PHP test deprecations | None; CI fails on deprecations |
-| Frontend tests | 52 passed, including all six avatar variants on React 16 |
-| TypeScript, ESLint and production frontend build | Passed |
-| Default theme browser preview | Passed at desktop and phone sizes, using fixture data |
-| Blueprint declaration generation | Passed; shared component declarations emitted |
-| PHP coding style | Passed across 945 files, with follow-up checks on changed PHP files |
-| ShellCheck and update guard tests | Passed, including rejection of unsupported PHP, Node and pnpm versions |
-| Composer and pnpm production dependency audits | No known advisories |
-| Production Docker build | Passed with PHP 8.5 and pnpm |
-| Nix development configuration evaluation | Shell and image derivations passed after updating nixpkgs and the MySQL client |
+| Check                                             | Result                                                                         |
+| ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| PHP unit tests on 8.4 and 8.5                     | 95 passed, 170 assertions on each version                                      |
+| PHP integration tests with MariaDB on 8.4 and 8.5 | 377 passed, 2,083 assertions on each version                                   |
+| PHP test deprecations                             | None; CI fails on deprecations                                                 |
+| Frontend tests                                    | 52 passed, including all six avatar variants on React 16                       |
+| TypeScript, ESLint and production frontend build  | Passed                                                                         |
+| Default theme browser preview                     | Passed at desktop and phone sizes, using fixture data                          |
+| Blueprint declaration generation                  | Passed; shared component declarations emitted                                  |
+| PHP coding style                                  | Passed across 945 files, with follow-up checks on changed PHP files            |
+| ShellCheck and update guard tests                 | Passed, including rejection of unsupported PHP, Node and pnpm versions         |
+| Composer and pnpm production dependency audits    | No known advisories                                                            |
+| Production Docker build                           | Passed with PHP 8.5 and pnpm                                                   |
+| Nix development configuration evaluation          | Shell and image derivations passed after updating nixpkgs and the MySQL client |
 
 ## Default theme preview
 

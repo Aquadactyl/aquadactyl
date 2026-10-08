@@ -89,25 +89,25 @@ const EditScheduleModal = ({ schedule }: Props) => {
         >
             {({ isSubmitting }) => (
                 <Form>
-                    <h3 className={'text-2xl mb-6'}>{schedule ? 'Edit schedule' : 'Create new schedule'}</h3>
+                    <h3 className={'mb-6 text-2xl'}>{schedule ? 'Edit schedule' : 'Create new schedule'}</h3>
                     <FlashMessageRender byKey={'schedule:edit'} className={'mb-6'} />
                     <Field
                         name={'name'}
                         label={'Schedule name'}
                         description={'A human readable identifier for this schedule.'}
                     />
-                    <div className={'grid grid-cols-2 sm:grid-cols-5 gap-4 mt-6'}>
+                    <div className={'mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5'}>
                         <Field name={'minute'} label={'Minute'} />
                         <Field name={'hour'} label={'Hour'} />
                         <Field name={'dayOfMonth'} label={'Day of month'} />
                         <Field name={'month'} label={'Month'} />
                         <Field name={'dayOfWeek'} label={'Day of week'} />
                     </div>
-                    <p className={'text-neutral-400 text-xs mt-2'}>
+                    <p className={'mt-2 text-xs text-neutral-400'}>
                         The schedule system supports the use of Cronjob syntax when defining when tasks should begin
                         running. Use the fields above to specify when these tasks should begin running.
                     </p>
-                    <div className={'mt-6 bg-neutral-700 border border-neutral-800 shadow-inner p-4 rounded'}>
+                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
                         <Switch
                             name={'show_cheatsheet'}
                             description={'Show the cron cheatsheet for some examples.'}
@@ -116,19 +116,19 @@ const EditScheduleModal = ({ schedule }: Props) => {
                             onChange={() => setShowCheetsheet((s) => !s)}
                         />
                         {showCheatsheet && (
-                            <div className={'block md:flex w-full'}>
+                            <div className={'block w-full md:flex'}>
                                 <ScheduleCheatsheetCards />
                             </div>
                         )}
                     </div>
-                    <div className={'mt-6 bg-neutral-700 border border-neutral-800 shadow-inner p-4 rounded'}>
+                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
                         <FormikSwitch
                             name={'onlyWhenOnline'}
                             description={'Only execute this schedule when the server is in a running state.'}
                             label={'Only When Server Is Online'}
                         />
                     </div>
-                    <div className={'mt-6 bg-neutral-700 border border-neutral-800 shadow-inner p-4 rounded'}>
+                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
                         <FormikSwitch
                             name={'enabled'}
                             description={'This schedule will be executed automatically if enabled.'}

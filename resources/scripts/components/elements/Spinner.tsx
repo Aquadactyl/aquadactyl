@@ -37,12 +37,12 @@ const SpinnerComponent = styled.div<Props>`
                   border-width: 2px;
               `
             : props.size === 'large'
-            ? css`
-                  width: 4rem;
-                  height: 4rem;
-                  border-width: 6px;
-              `
-            : null};
+              ? css`
+                    width: 4rem;
+                    height: 4rem;
+                    border-width: 6px;
+                `
+              : null};
 
     border-color: ${(props) => (!props.isBlue ? 'rgba(255, 255, 255, 0.2)' : 'hsla(212, 92%, 43%, 0.2)')};
     border-top-color: ${(props) => (!props.isBlue ? 'rgb(255, 255, 255)' : 'hsl(212, 92%, 43%)')};
@@ -50,7 +50,13 @@ const SpinnerComponent = styled.div<Props>`
 
 const Spinner: Spinner = ({ centered, className, ...props }) =>
     centered ? (
-        <div className={classNames('flex justify-center items-center', props.size === 'large' ? 'm-20' : 'm-6', className)}>
+        <div
+            className={classNames(
+                'flex items-center justify-center',
+                props.size === 'large' ? 'm-20' : 'm-6',
+                className,
+            )}
+        >
             <SpinnerComponent {...props} />
         </div>
     ) : (

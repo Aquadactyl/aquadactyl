@@ -41,7 +41,7 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({
                 </ContentContainer>
                 <AfterSection />
                 <ContentContainer className={'mb-8'}>
-                    <p className={'text-center text-neutral-500 text-xs leading-relaxed'}>
+                    <p className={'text-center text-xs leading-relaxed text-neutral-500'}>
                         <PanelBranding />
                         <Attribution />
                     </p>

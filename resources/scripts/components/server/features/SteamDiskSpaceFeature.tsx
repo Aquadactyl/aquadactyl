@@ -48,8 +48,8 @@ const SteamDiskSpaceFeature = () => {
             <FlashMessageRender key={'feature:steamDiskSpace'} className={'mb-4'} />
             {isAdmin ? (
                 <>
-                    <div className={'mt-4 sm:flex items-center'}>
-                        <h2 className={'text-2xl mb-4 text-neutral-100'}>Out of available disk space...</h2>
+                    <div className={'mt-4 items-center sm:flex'}>
+                        <h2 className={'mb-4 text-2xl text-neutral-100'}>Out of available disk space...</h2>
                     </div>
                     <p className={'mt-4'}>
                         This server has run out of available disk space and cannot complete the install or update
@@ -57,26 +57,26 @@ const SteamDiskSpaceFeature = () => {
                     </p>
                     <p className={'mt-4'}>
                         Ensure the machine has enough disk space by typing{' '}
-                        <code className={'font-mono bg-neutral-900 rounded py-1 px-2'}>df -h</code> on the machine hosting
-                        this server. Delete files or increase the available disk space to resolve the issue.
+                        <code className={'rounded bg-neutral-900 px-2 py-1 font-mono'}>df -h</code> on the machine
+                        hosting this server. Delete files or increase the available disk space to resolve the issue.
                     </p>
-                    <div className={'mt-8 sm:flex items-center justify-end'}>
-                        <Button onClick={() => setVisible(false)} className={'w-full sm:w-auto border-transparent'}>
+                    <div className={'mt-8 items-center justify-end sm:flex'}>
+                        <Button onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                             Close
                         </Button>
                     </div>
                 </>
             ) : (
                 <>
-                    <div className={'mt-4 sm:flex items-center'}>
-                        <h2 className={'text-2xl mb-4 text-neutral-100'}>Out of available disk space...</h2>
+                    <div className={'mt-4 items-center sm:flex'}>
+                        <h2 className={'mb-4 text-2xl text-neutral-100'}>Out of available disk space...</h2>
                     </div>
                     <p className={'mt-4'}>
                         This server has run out of available disk space and cannot complete the install or update
                         process. Please get in touch with the administrator(s) and inform them of disk space issues.
                     </p>
-                    <div className={'mt-8 sm:flex items-center justify-end'}>
-                        <Button onClick={() => setVisible(false)} className={'w-full sm:w-auto border-transparent'}>
+                    <div className={'mt-8 items-center justify-end sm:flex'}>
+                        <Button onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                             Close
                         </Button>
                     </div>

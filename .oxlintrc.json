@@ -1,61 +1,53 @@
 {
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "react",
-    "typescript",
-    "oxc",
-    "jest"
-  ],
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "settings": {
-    "react": {
-      "linkComponents": [
-        { "name": "Link", "linkAttribute": "to" },
-        { "name": "NavLink", "linkAttribute": "to" }
-      ]
-    }
-  },
-  "ignorePatterns": [
-    "public/**",
-    "node_modules/**",
-    "vendor/**",
-    "storage/**",
-    "resources/views/**",
-    "scripts/**",
-    "babel.config.js",
-    "tailwind.config.js",
-    "webpack.config.js"
-  ],
-  "rules": {
-    "eqeqeq": "error",
-    "react/display-name": "off",
-    "typescript/no-explicit-any": "off",
-    "typescript/no-non-null-assertion": "off",
-    "no-use-before-define": "off",
-    "no-unused-vars": [
-      "warn",
-      {
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_"
-      }
+    "$schema": "./node_modules/oxlint/configuration_schema.json",
+    "plugins": ["react", "typescript", "oxc", "jest"],
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "settings": {
+        "react": {
+            "linkComponents": [
+                { "name": "Link", "linkAttribute": "to" },
+                { "name": "NavLink", "linkAttribute": "to" }
+            ]
+        }
+    },
+    "ignorePatterns": [
+        "public/**",
+        "node_modules/**",
+        "vendor/**",
+        "storage/**",
+        "resources/views/**",
+        "scripts/**",
+        "babel.config.js",
+        "tailwind.config.js",
+        "webpack.config.js"
     ],
-    "typescript/ban-ts-comment": [
-      "error",
-      {
-        "ts-expect-error": "allow-with-description"
-      }
-    ],
-    "react/no-unknown-property": [
-      "error",
-      {
-        "ignore": [
-          "css"
+    "rules": {
+        "eqeqeq": "error",
+        "react/display-name": "off",
+        "typescript/no-explicit-any": "off",
+        "typescript/no-non-null-assertion": "off",
+        "no-use-before-define": "off",
+        "no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_",
+                "varsIgnorePattern": "^_"
+            }
+        ],
+        "typescript/ban-ts-comment": [
+            "error",
+            {
+                "ts-expect-error": "allow-with-description"
+            }
+        ],
+        "react/no-unknown-property": [
+            "error",
+            {
+                "ignore": ["css"]
+            }
         ]
-      }
-    ]
-  }
+    }
 }
-

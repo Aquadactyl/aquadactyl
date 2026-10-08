@@ -63,8 +63,8 @@ export default ({ backup }: Props) => {
                         items: data.items.filter((b) => b.uuid !== backup.uuid),
                         backupCount: data.backupCount - 1,
                     }),
-                    false
-                )
+                    false,
+                ),
             )
             .catch((error) => {
                 console.error(error);
@@ -82,7 +82,7 @@ export default ({ backup }: Props) => {
                 setServerFromState((s) => ({
                     ...s,
                     status: 'restoring_backup',
-                }))
+                })),
             )
             .catch((error) => {
                 console.error(error);
@@ -108,11 +108,11 @@ export default ({ backup }: Props) => {
                                 : {
                                       ...b,
                                       isLocked: !b.isLocked,
-                                  }
+                                  },
                         ),
                     }),
-                    false
-                )
+                    false,
+                ),
             )
             .catch((error) => alert(httpErrorToHuman(error)))
             .then(() => setModal(''));
@@ -139,8 +139,8 @@ export default ({ backup }: Props) => {
                     Your server will be stopped. You will not be able to control the power state, access the file
                     manager, or create additional backups until completed.
                 </p>
-                <p className={'mt-4 -mb-2 bg-gray-700 p-3 rounded'}>
-                    <label htmlFor={'restore_truncate'} className={'text-base flex items-center cursor-pointer'}>
+                <p className={'-mb-2 mt-4 rounded bg-gray-700 p-3'}>
+                    <label htmlFor={'restore_truncate'} className={'flex cursor-pointer items-center text-base'}>
                         <Input
                             type={'checkbox'}
                             className={'text-red-500! w-5! h-5! mr-2'}
@@ -168,7 +168,7 @@ export default ({ backup }: Props) => {
                     renderToggle={(onClick) => (
                         <button
                             onClick={onClick}
-                            className={'text-gray-200 transition-colors duration-150 hover:text-gray-100 p-2'}
+                            className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'}
                         >
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </button>
@@ -193,7 +193,7 @@ export default ({ backup }: Props) => {
                                     <FontAwesomeIcon
                                         fixedWidth
                                         icon={backup.isLocked ? faUnlock : faLock}
-                                        className={'text-xs mr-2'}
+                                        className={'mr-2 text-xs'}
                                     />
                                     {backup.isLocked ? 'Unlock' : 'Lock'}
                                 </DropdownButtonRow>
@@ -211,7 +211,7 @@ export default ({ backup }: Props) => {
             ) : (
                 <button
                     onClick={() => setModal('delete')}
-                    className={'text-gray-200 transition-colors duration-150 hover:text-gray-100 p-2'}
+                    className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'}
                 >
                     <FontAwesomeIcon icon={faTrashAlt} />
                 </button>

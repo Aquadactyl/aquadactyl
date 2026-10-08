@@ -18,27 +18,27 @@ export default ({ server, state }: { server: Server; state: string }) => {
             onSuccess: (result) => {
                 setRefreshInterval(result.status === 'pending' && pendingPolls.current++ === 0 ? 5000 : 30000);
             },
-        }
+        },
     );
     if (!server.gameQueryType) return null;
     const value = !running
         ? state === 'offline'
             ? 'Offline'
             : state === 'starting'
-            ? 'Starting...'
-            : 'Unavailable'
+              ? 'Starting...'
+              : 'Unavailable'
         : error || data?.status === 'unavailable' || data?.status === 'unsupported'
-        ? 'Unavailable'
-        : data?.status === 'available'
-        ? String(data.players) + (data.maxPlayers ? ' / ' + data.maxPlayers : '')
-        : 'Checking...';
+          ? 'Unavailable'
+          : data?.status === 'available'
+            ? String(data.players) + (data.maxPlayers ? ' / ' + data.maxPlayers : '')
+            : 'Checking...';
     const description = !running
         ? 'Player counts are queried while the server is running.'
         : error || data?.status === 'unavailable' || data?.status === 'unsupported'
-        ? 'The game did not respond. Check the game query settings and query port.'
-        : data?.checkedAt
-        ? 'Last checked ' + data.checkedAt.toLocaleTimeString()
-        : 'Waiting for the game query.';
+          ? 'The game did not respond. Check the game query settings and query port.'
+          : data?.checkedAt
+            ? 'Last checked ' + data.checkedAt.toLocaleTimeString()
+            : 'Waiting for the game query.';
     return (
         <span className={'server-player-count'} title={description} aria-label={'Players: ' + value}>
             <Users size={12} aria-hidden />

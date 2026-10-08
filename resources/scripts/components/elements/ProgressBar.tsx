@@ -7,8 +7,8 @@ import { CSSTransition } from 'react-transition-group';
 const BarFill: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, style, ...props }) => (
     <div
         className={classNames(
-            'h-full bg-cyan-400 transition-all duration-250 ease-in-out shadow-[0_0_6px_rgb(85_192_183/25%)]',
-            className
+            'h-full bg-cyan-400 shadow-[0_0_6px_rgb(85_192_183/25%)] transition-all duration-250 ease-in-out',
+            className,
         )}
         style={style}
         {...props}
@@ -63,7 +63,7 @@ export default () => {
     }, [progress, continuous]);
 
     return (
-        <div className={'w-full fixed'} style={{ height: '2px' }}>
+        <div className={'fixed w-full'} style={{ height: '2px' }}>
             <CSSTransition timeout={150} appear in={visible} unmountOnExit classNames={'fade'}>
                 <BarFill style={{ width: progress === undefined ? '100%' : `${progress}%` }} />
             </CSSTransition>

@@ -57,42 +57,42 @@ const PIDLimitModalFeature = () => {
             <FlashMessageRender key={'feature:pidLimit'} className={'mb-4'} />
             {isAdmin ? (
                 <>
-                    <div className={'mt-4 sm:flex items-center'}>
+                    <div className={'mt-4 items-center sm:flex'}>
                         <FontAwesomeIcon className={'pr-4'} icon={faExclamationTriangle} color={'orange'} size={'4x'} />
-                        <h2 className={'text-2xl mb-4 text-neutral-100'}>Memory or process limit reached...</h2>
+                        <h2 className={'mb-4 text-2xl text-neutral-100'}>Memory or process limit reached...</h2>
                     </div>
                     <p className={'mt-4'}>This server has reached the maximum process or memory limit.</p>
                     <p className={'mt-4'}>
-                        Increasing <code className={'font-mono bg-neutral-900'}>container_pid_limit</code> in the wings
-                        configuration, <code className={'font-mono bg-neutral-900'}>config.yml</code>, might help resolve
-                        this issue.
+                        Increasing <code className={'bg-neutral-900 font-mono'}>container_pid_limit</code> in the wings
+                        configuration, <code className={'bg-neutral-900 font-mono'}>config.yml</code>, might help
+                        resolve this issue.
                     </p>
                     <p className={'mt-4'}>
                         <b>Note: Wings must be restarted for the configuration file changes to take effect</b>
                     </p>
-                    <div className={'mt-8 sm:flex items-center justify-end'}>
-                        <Button onClick={() => setVisible(false)} className={'w-full sm:w-auto border-transparent'}>
+                    <div className={'mt-8 items-center justify-end sm:flex'}>
+                        <Button onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                             Close
                         </Button>
                     </div>
                 </>
             ) : (
                 <>
-                    <div className={'mt-4 sm:flex items-center'}>
+                    <div className={'mt-4 items-center sm:flex'}>
                         <FontAwesomeIcon className={'pr-4'} icon={faExclamationTriangle} color={'orange'} size={'4x'} />
-                        <h2 className={'text-2xl mb-4 text-neutral-100'}>Possible resource limit reached...</h2>
+                        <h2 className={'mb-4 text-2xl text-neutral-100'}>Possible resource limit reached...</h2>
                     </div>
                     <p className={'mt-4'}>
                         This server is attempting to use more resources than allocated. Please contact the administrator
                         and give them the error below.
                     </p>
                     <p className={'mt-4'}>
-                        <code className={'font-mono bg-neutral-900'}>
+                        <code className={'bg-neutral-900 font-mono'}>
                             pthread_create failed, Possibly out of memory or process/resource limits reached
                         </code>
                     </p>
-                    <div className={'mt-8 sm:flex items-center justify-end'}>
-                        <Button onClick={() => setVisible(false)} className={'w-full sm:w-auto border-transparent'}>
+                    <div className={'mt-8 items-center justify-end sm:flex'}>
+                        <Button onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                             Close
                         </Button>
                     </div>

@@ -34,7 +34,7 @@ export default ({ title, description, scope, data, isValidating, hasError, contr
                     <p className={'page-description'}>{description}</p>
                 </div>
                 <button type={'button'} className={'panel-link-button'} disabled={isValidating} onClick={onRefresh}>
-                    <RefreshIcon className={classNames('w-4 h-4', { 'is-refreshing': isValidating })} /> Refresh
+                    <RefreshIcon className={classNames('h-4 w-4', { 'is-refreshing': isValidating })} /> Refresh
                 </button>
             </div>
             <ActivityLogFilters
@@ -53,8 +53,8 @@ export default ({ title, description, scope, data, isValidating, hasError, contr
                                   data.pagination.total === 1 ? 'event' : 'events'
                               }${controls.hasFilters ? ' matching your filters' : ''}`
                             : hasError
-                            ? 'Unable to load activity'
-                            : 'Loading activity…'}
+                              ? 'Unable to load activity'
+                              : 'Loading activity…'}
                     </p>
                 </div>
                 {!data && !hasError ? (
@@ -70,15 +70,15 @@ export default ({ title, description, scope, data, isValidating, hasError, contr
                             {hasError
                                 ? 'Activity could not be loaded'
                                 : controls.hasFilters
-                                ? 'No matching activity'
-                                : 'No activity yet'}
+                                  ? 'No matching activity'
+                                  : 'No activity yet'}
                         </h3>
                         <p>
                             {hasError
                                 ? 'Try refreshing the page or clearing your filters.'
                                 : controls.hasFilters
-                                ? 'Choose another event or time range to see more activity.'
-                                : 'Actions will appear here as they happen.'}
+                                  ? 'Choose another event or time range to see more activity.'
+                                  : 'Actions will appear here as they happen.'}
                         </p>
                         {controls.hasFilters && (
                             <button className={'panel-link-button'} onClick={controls.clear}>

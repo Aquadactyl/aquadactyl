@@ -85,7 +85,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                         spellCheck={false}
                         disabled={isSubmitting}
                     />
-                    <div className={'mt-5 password-field'}>
+                    <div className={'password-field mt-5'}>
                         <Field
                             type={showPassword ? 'text' : 'password'}
                             label={'Password'}

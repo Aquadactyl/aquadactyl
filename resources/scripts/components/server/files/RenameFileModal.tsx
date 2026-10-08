@@ -60,8 +60,10 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
             {({ isSubmitting, values }) => (
                 <Modal {...props} dismissable={!isSubmitting} showSpinnerOverlay={isSubmitting}>
                     <Form className={'m-0'}>
-                        <div className={classNames('flex flex-wrap', useMoveTerminology ? 'items-center' : 'items-end')}>
-                            <div className={'w-full sm:flex-1 sm:mr-4'}>
+                        <div
+                            className={classNames('flex flex-wrap', useMoveTerminology ? 'items-center' : 'items-end')}
+                        >
+                            <div className={'w-full sm:mr-4 sm:flex-1'}>
                                 <Field
                                     type={'string'}
                                     id={'file_name'}
@@ -75,12 +77,12 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
                                     autoFocus
                                 />
                             </div>
-                            <div className={'w-full sm:w-auto mt-4 sm:mt-0'}>
+                            <div className={'mt-4 w-full sm:mt-0 sm:w-auto'}>
                                 <Button className={'w-full'}>{useMoveTerminology ? 'Move' : 'Rename'}</Button>
                             </div>
                         </div>
                         {useMoveTerminology && (
-                            <p className={'text-xs mt-2 text-neutral-400'}>
+                            <p className={'mt-2 text-xs text-neutral-400'}>
                                 <strong className={'text-neutral-200'}>New location:</strong>
                                 &nbsp;/home/container/{join(directory, values.name).replace(/^(\.\.\/|\/)+/, '')}
                             </p>

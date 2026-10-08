@@ -49,11 +49,11 @@ export default () => {
         <PageContentBlock title={'Account API'}>
             <FlashMessageRender byKey={'account'} />
             <BeforeContent />
-            <div className={'md:flex flex-nowrap my-10'}>
-                <ContentBox title={'Create API Key'} className={'flex-none w-full md:w-1/2'}>
+            <div className={'my-10 flex-nowrap md:flex'}>
+                <ContentBox title={'Create API Key'} className={'w-full flex-none md:w-1/2'}>
                     <CreateApiKeyForm onKeyCreated={(key) => setKeys((s) => [...s!, key])} />
                 </ContentBox>
-                <ContentBox title={'API Keys'} className={'flex-1 overflow-hidden mt-8 md:mt-0 md:ml-8'}>
+                <ContentBox title={'API Keys'} className={'mt-8 flex-1 overflow-hidden md:ml-8 md:mt-0'}>
                     <SpinnerOverlay visible={loading} />
                     <Dialog.Confirm
                         title={'Delete API Key'}
@@ -72,25 +72,28 @@ export default () => {
                         keys.map((key, index) => (
                             <GreyRowBox
                                 key={key.identifier}
-                                className={classNames('bg-neutral-600 flex items-center', index > 0 && 'mt-2')}
+                                className={classNames('flex items-center bg-neutral-600', index > 0 && 'mt-2')}
                             >
                                 <FontAwesomeIcon icon={faKey} className={'text-neutral-300'} />
                                 <div className={'ml-4 flex-1 overflow-hidden'}>
-                                    <p className={'text-sm break-words'}>{key.description}</p>
-                                    <p className={'text-2xs text-neutral-300 uppercase'}>
+                                    <p className={'break-words text-sm'}>{key.description}</p>
+                                    <p className={'text-2xs uppercase text-neutral-300'}>
                                         Last used:&nbsp;
                                         {key.lastUsedAt ? format(key.lastUsedAt, 'MMM do, yyyy HH:mm') : 'Never'}
                                     </p>
                                 </div>
-                                <p className={'text-sm ml-4 hidden md:block'}>
-                                    <code className={'font-mono py-1 px-2 bg-neutral-900 rounded'}>
+                                <p className={'ml-4 hidden text-sm md:block'}>
+                                    <code className={'rounded bg-neutral-900 px-2 py-1 font-mono'}>
                                         <SensitiveValue>{key.identifier}</SensitiveValue>
                                     </code>
                                 </p>
-                                <button className={'ml-4 p-2 text-sm'} onClick={() => setDeleteIdentifier(key.identifier)}>
+                                <button
+                                    className={'ml-4 p-2 text-sm'}
+                                    onClick={() => setDeleteIdentifier(key.identifier)}
+                                >
                                     <FontAwesomeIcon
                                         icon={faTrashAlt}
-                                        className={'text-neutral-400 hover:text-red-400 transition-colors duration-150'}
+                                        className={'text-neutral-400 transition-colors duration-150 hover:text-red-400'}
                                     />
                                 </button>
                             </GreyRowBox>

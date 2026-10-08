@@ -27,7 +27,7 @@ export default ({ events, hash, hasFilters, onChange, onClear }: Props) => {
     const eventValue = hash.event_exact ? `event:${hash.event_exact}` : hash.event ? `category:${hash.event}` : '';
     const knownValue = groups.some(
         ([prefix, group]) =>
-            eventValue === `category:${prefix}` || group.events.some((event) => eventValue === `event:${event}`)
+            eventValue === `category:${prefix}` || group.events.some((event) => eventValue === `event:${event}`),
     );
     return (
         <section className={'activity-filters'} aria-label={'Activity filters'}>
@@ -125,7 +125,7 @@ export default ({ events, hash, hasFilters, onChange, onClear }: Props) => {
                 </form>
                 {hasFilters && (
                     <button type={'button'} className={'activity-clear'} onClick={onClear}>
-                        <XIcon className={'w-4 h-4'} /> Clear filters
+                        <XIcon className={'h-4 w-4'} /> Clear filters
                     </button>
                 )}
             </div>

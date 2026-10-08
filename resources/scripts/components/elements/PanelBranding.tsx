@@ -6,7 +6,7 @@ export default () => (
             rel={'noopener nofollow noreferrer'}
             href={'https://aquadactyl.uk'}
             target={'_blank'}
-            className={'no-underline text-neutral-400 hover:text-neutral-200'}
+            className={'text-neutral-400 no-underline hover:text-neutral-200'}
         >
             Aquadactyl&copy;
         </a>
@@ -15,7 +15,7 @@ export default () => (
             rel={'noopener nofollow noreferrer'}
             href={'https://pterodactyl.io'}
             target={'_blank'}
-            className={'no-underline text-neutral-400 hover:text-neutral-200'}
+            className={'text-neutral-400 no-underline hover:text-neutral-200'}
         >
             Pterodactyl&reg;
         </a>

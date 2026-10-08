@@ -20,19 +20,19 @@ export default ({ schedule }: { schedule: Schedule }) => (
         <div>
             <p
                 className={classNames(
-                    'py-1 px-3 rounded text-xs uppercase text-white sm:hidden',
-                    schedule.isActive ? 'bg-green-600' : 'bg-neutral-400'
+                    'rounded px-3 py-1 text-xs uppercase text-white sm:hidden',
+                    schedule.isActive ? 'bg-green-600' : 'bg-neutral-400',
                 )}
             >
                 {schedule.isActive ? 'Active' : 'Inactive'}
             </p>
         </div>
-        <ScheduleCronRow cron={schedule.cron} className={'mx-auto sm:mx-8 w-full sm:w-auto mt-4 sm:mt-0'} />
+        <ScheduleCronRow cron={schedule.cron} className={'mx-auto mt-4 w-full sm:mx-8 sm:mt-0 sm:w-auto'} />
         <div>
             <p
                 className={classNames(
-                    'py-1 px-3 rounded text-xs uppercase text-white hidden sm:block',
-                    schedule.isActive && !schedule.isProcessing ? 'bg-green-600' : 'bg-neutral-400'
+                    'hidden rounded px-3 py-1 text-xs uppercase text-white sm:block',
+                    schedule.isActive && !schedule.isProcessing ? 'bg-green-600' : 'bg-neutral-400',
                 )}
             >
                 {schedule.isProcessing ? 'Processing' : schedule.isActive ? 'Active' : 'Inactive'}

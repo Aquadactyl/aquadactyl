@@ -9,7 +9,7 @@ export type { ActivityLogFilters } from '@/api/activity';
 
 const useActivityLogs = (
     filters?: ActivityLogFilters,
-    config?: ConfigInterface<ActivityLogResult, AxiosError>
+    config?: ConfigInterface<ActivityLogResult, AxiosError>,
 ): responseInterface<ActivityLogResult, AxiosError> => {
     const key = useUserSWRKey(['account', 'activity', JSON.stringify(useFilteredObject(filters || {}))]);
 
@@ -25,7 +25,7 @@ const useActivityLogs = (
 
             return toActivityLogResult(data);
         },
-        { revalidateOnMount: false, ...(config || {}) }
+        { revalidateOnMount: false, ...(config || {}) },
     );
 };
 

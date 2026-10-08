@@ -31,10 +31,10 @@ const useExtensionEggs = () => {
                             params: { id },
                         });
                         return [id, response.data];
-                    })
-                )
+                    }),
+                ),
             ),
-        { revalidateOnFocus: false, dedupingInterval: 60000 }
+        { revalidateOnFocus: false, dedupingInterval: 60000 },
     );
     return (
         data ||
@@ -70,7 +70,7 @@ export const NavigationLinks = () => {
                         <NavLink key={route.path} to={to(route.path, true)} exact={route.exact}>
                             {route.name}
                         </NavLink>
-                    )
+                    ),
                 )}
 
             {/* Blueprint routes */}
@@ -81,7 +81,7 @@ export const NavigationLinks = () => {
                     .filter((route) =>
                         extensionEggs[route.identifier].includes('-1')
                             ? true
-                            : extensionEggs[route.identifier].find((id) => id === serverEgg?.toString())
+                            : extensionEggs[route.identifier].find((id) => id === serverEgg?.toString()),
                     )
                     .map((route) =>
                         route.permission ? (
@@ -108,7 +108,7 @@ export const NavigationLinks = () => {
                                     </>
                                 ) : undefined}
                             </NavLink>
-                        )
+                        ),
                     )}
         </>
     );
@@ -147,7 +147,7 @@ export const NavigationRouter = () => {
                             .filter((route) =>
                                 extensionEggs[route.identifier].includes('-1')
                                     ? true
-                                    : extensionEggs[route.identifier].find((id) => id === serverEgg?.toString())
+                                    : extensionEggs[route.identifier].find((id) => id === serverEgg?.toString()),
                             )
                             .map(({ path, permission, component: Component }) => (
                                 <PermissionRoute key={path} permission={permission} path={to(path)} exact>

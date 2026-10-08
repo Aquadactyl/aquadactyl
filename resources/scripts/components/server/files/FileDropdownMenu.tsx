@@ -45,9 +45,9 @@ interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
 const Row = ({ icon, title, $danger, className, ...props }: RowProps) => (
     <div
         className={classNames(
-            'p-2 flex items-center rounded cursor-pointer',
+            'flex cursor-pointer items-center rounded p-2',
             $danger ? 'hover:bg-red-900 hover:text-red-200' : 'hover:bg-neutral-600 hover:text-neutral-50',
-            className
+            className,
         )}
         {...props}
     >

@@ -75,7 +75,7 @@ const JavaVersionModalFeature = () => {
             showSpinnerOverlay={loading}
         >
             <FlashMessageRender key={'feature:javaVersion'} className={'mb-4'} />
-            <h2 className={'text-2xl mb-4 text-neutral-100'}>Unsupported Java Version</h2>
+            <h2 className={'mb-4 text-2xl text-neutral-100'}>Unsupported Java Version</h2>
             <p className={'mt-4'}>
                 This server is currently running an unsupported version of Java and cannot be started.
                 <Can action={'startup.docker-image'}>
@@ -99,7 +99,7 @@ const JavaVersionModalFeature = () => {
                     </InputSpinner>
                 </div>
             </Can>
-            <div className={'mt-8 flex flex-col sm:flex-row justify-end sm:space-x-4 space-y-4 sm:space-y-0'}>
+            <div className={'mt-8 flex flex-col justify-end space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'}>
                 <Button isSecondary onClick={() => setVisible(false)} className={'w-full sm:w-auto'}>
                     Cancel
                 </Button>

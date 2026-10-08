@@ -11,23 +11,23 @@ adding a dependency alone does not include it in the panel's browser bundle.
 
 ## Shared frontend libraries
 
-| Package | Use |
-| --- | --- |
-| `axios` | HTTP requests; prefer `@/api/http` for panel API calls |
-| `lucide-react` | SVG icons through named component imports |
-| `react-hook-form`, `@hookform/resolvers` | Forms and schema validation adapters |
-| `zod` | Typed validation of forms, settings and API responses |
-| `zustand` | Small extension-specific state stores |
-| `react-select` | Searchable and multi-value selects |
-| `lodash-es` | Utility functions with ES module imports |
-| `date-fns` | Date formatting and arithmetic |
-| `framer-motion` | Animation |
-| `chart.js`, `react-chartjs-2` | Charts |
-| `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning |
-| `styled-components`, `tailwindcss`, `classnames` | Styling and conditional classes |
-| `formik`, `yup` | The panel's existing form and validation libraries |
-| `swr`, `easy-peasy` | The panel's existing fetching and state tools |
-| `i18next`, `react-i18next` | Translation |
+| Package                                                    | Use                                                    |
+| ---------------------------------------------------------- | ------------------------------------------------------ |
+| `axios`                                                    | HTTP requests; prefer `@/api/http` for panel API calls |
+| `lucide-react`                                             | SVG icons through named component imports              |
+| `react-hook-form`, `@hookform/resolvers`                   | Forms and schema validation adapters                   |
+| `zod`                                                      | Typed validation of forms, settings and API responses  |
+| `zustand`                                                  | Small extension-specific state stores                  |
+| `react-select`                                             | Searchable and multi-value selects                     |
+| `lodash-es`                                                | Utility functions with ES module imports               |
+| `date-fns`                                                 | Date formatting and arithmetic                         |
+| `framer-motion`                                            | Animation                                              |
+| `chart.js`, `react-chartjs-2`                              | Charts                                                 |
+| `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
+| `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
+| `formik`, `yup`                                            | The panel's existing form and validation libraries     |
+| `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |
+| `i18next`, `react-i18next`                                 | Translation                                            |
 
 React and React DOM remain on 16.14 for compatibility with this panel and Blueprint.
 Zod uses the 3.x API, Zustand the 4.x API, and Hook Form resolvers the 3.x API.
@@ -52,11 +52,15 @@ export default function ExtensionSettings() {
     });
 
     return (
-        <form onSubmit={handleSubmit(async (values) => {
-            await http.put('/api/client/extensions/myextension/settings', values);
-        })}>
-            <input {...register('label')} aria-label="Label" />
-            <button type="submit"><Settings size={16} /> Save</button>
+        <form
+            onSubmit={handleSubmit(async (values) => {
+                await http.put('/api/client/extensions/myextension/settings', values);
+            })}
+        >
+            <input {...register('label')} aria-label='Label' />
+            <button type='submit'>
+                <Settings size={16} /> Save
+            </button>
         </form>
     );
 }

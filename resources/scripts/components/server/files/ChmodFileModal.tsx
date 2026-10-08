@@ -33,9 +33,9 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
         mutate(
             (data) =>
                 data.map((f) =>
-                    f.name === files[0].file ? { ...f, mode: fileBitsToString(mode, !f.isFile), modeBits: mode } : f
+                    f.name === files[0].file ? { ...f, mode: fileBitsToString(mode, !f.isFile), modeBits: mode } : f,
                 ),
-            false
+            false,
         );
 
         const data = files.map((f) => ({ file: f.file, mode: mode }));
@@ -57,10 +57,10 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
                 <Modal {...props} dismissable={!isSubmitting} showSpinnerOverlay={isSubmitting}>
                     <Form className={'m-0'}>
                         <div className={'flex flex-wrap items-end'}>
-                            <div className={'w-full sm:flex-1 sm:mr-4'}>
+                            <div className={'w-full sm:mr-4 sm:flex-1'}>
                                 <Field type={'string'} id={'file_mode'} name={'mode'} label={'File Mode'} autoFocus />
                             </div>
-                            <div className={'w-full sm:w-auto mt-4 sm:mt-0'}>
+                            <div className={'mt-4 w-full sm:mt-0 sm:w-auto'}>
                                 <Button className={'w-full'}>Update</Button>
                             </div>
                         </div>

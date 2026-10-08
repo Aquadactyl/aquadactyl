@@ -17,7 +17,7 @@ describe('SensitiveValue', () => {
         const markup = renderToStaticMarkup(
             <StoreProvider store={store}>
                 <SensitiveValue>192.0.2.10</SensitiveValue>
-            </StoreProvider>
+            </StoreProvider>,
         );
         expect(markup).toContain('data-sensitive="true"');
         expect(markup).toContain('tabindex="0"');
@@ -29,7 +29,7 @@ describe('SensitiveValue', () => {
         const markup = renderToStaticMarkup(
             <StoreProvider store={store}>
                 <SensitiveValue>user@example.com</SensitiveValue>
-            </StoreProvider>
+            </StoreProvider>,
         );
         expect(markup).not.toContain('tabindex');
         expect(markup).toContain('user@example.com');
@@ -44,7 +44,7 @@ describe('SensitiveValue', () => {
         const markup = renderToStaticMarkup(
             <StoreProvider store={store}>
                 <SensitiveValue>user@example.com</SensitiveValue>
-            </StoreProvider>
+            </StoreProvider>,
         );
         expect(markup).not.toContain('tabindex');
     });

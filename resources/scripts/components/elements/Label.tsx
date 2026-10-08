@@ -10,9 +10,9 @@ const Label: React.FC<LabelProps> = ({ isLight, className, as: Component = 'labe
     return (
         <Component
             className={classNames(
-                'block text-sm font-medium text-neutral-300 mb-2',
+                'mb-2 block text-sm font-medium text-neutral-300',
                 isLight && 'text-neutral-700',
-                className
+                className,
             )}
             {...props}
         />

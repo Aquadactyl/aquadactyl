@@ -32,7 +32,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const appendSubuser = ServerContext.useStoreActions((actions) => actions.subusers.appendSubuser);
     const { clearFlashes, clearAndAddHttpError } = useStoreActions(
-        (actions: Actions<ApplicationStore>) => actions.flashes
+        (actions: Actions<ApplicationStore>) => actions.flashes,
     );
     const { dismiss, setPropOverrides } = useContext(ModalContext);
 
@@ -46,7 +46,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
     // The permissions that can be modified by this user.
     const editablePermissions = useDeepCompareMemo(() => {
         const cleaned = Object.keys(permissions).map((key) =>
-            Object.keys(permissions[key].keys).map((pkey) => `${key}.${pkey}`)
+            Object.keys(permissions[key].keys).map((pkey) => `${key}.${pkey}`),
         );
 
         const list: string[] = ([] as string[]).concat.apply([], Object.values(cleaned));
@@ -82,7 +82,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
         () => () => {
             clearFlashes('user:edit');
         },
-        []
+        [],
     );
 
     return (
@@ -122,7 +122,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                 </div>
                 <FlashMessageRender byKey={'user:edit'} className={'mt-4'} />
                 {!isRootAdmin && loggedInPermissions[0] !== '*' && (
-                    <div className={'mt-4 pl-4 py-2 border-l-4 border-cyan-400'}>
+                    <div className={'mt-4 border-l-4 border-cyan-400 py-2 pl-4'}>
                         <p className={'text-sm text-neutral-300'}>
                             Only permissions which your account is currently assigned may be selected when creating or
                             modifying other users.
@@ -152,7 +152,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                                 permissions={Object.keys(permissions[key].keys).map((pkey) => `${key}.${pkey}`)}
                                 className={index > 0 ? 'mt-4' : undefined}
                             >
-                                <p className={'text-sm text-neutral-400 mb-4'}>{permissions[key].description}</p>
+                                <p className={'mb-4 text-sm text-neutral-400'}>{permissions[key].description}</p>
                                 {Object.keys(permissions[key].keys).map((pkey) => (
                                     <PermissionRow
                                         key={`permission_${key}.${pkey}`}
@@ -164,7 +164,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                         ))}
                 </div>
                 <Can action={subuser ? 'user.update' : 'user.create'}>
-                    <div className={'pb-6 flex justify-end'}>
+                    <div className={'flex justify-end pb-6'}>
                         <Button type={'submit'} className={'w-full sm:w-auto'}>
                             {subuser ? 'Save' : 'Invite User'}
                         </Button>

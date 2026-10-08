@@ -71,7 +71,7 @@ export default () => {
             })}
         >
             {({ isSubmitting, setSubmitting, submitForm }) => (
-                <LoginFormContainer title={'Request Password Reset'} className={'w-full flex'}>
+                <LoginFormContainer title={'Request Password Reset'} className={'flex w-full'}>
                     <Field
                         label={'Email'}
                         description={
@@ -103,7 +103,9 @@ export default () => {
                     <div className={'mt-6 text-center'}>
                         <Link
                             to={'/auth/login'}
-                            className={'text-xs text-neutral-400 tracking-wide uppercase no-underline hover:text-neutral-200'}
+                            className={
+                                'text-xs uppercase tracking-wide text-neutral-400 no-underline hover:text-neutral-200'
+                            }
                         >
                             Return to Login
                         </Link>

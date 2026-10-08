@@ -32,36 +32,36 @@ const ServerConsoleContainer = () => {
                     {isNodeUnderMaintenance
                         ? 'The node of this server is currently under maintenance and all actions are unavailable.'
                         : isInstalling
-                        ? 'This server is currently running its installation process and most actions are unavailable.'
-                        : 'This server is currently being transferred to another node and all actions are unavailable.'}
+                          ? 'This server is currently running its installation process and most actions are unavailable.'
+                          : 'This server is currently being transferred to another node and all actions are unavailable.'}
                 </Alert>
             )}
             <BeforeContent />
-            <div className={'grid grid-cols-4 gap-4 mb-4'}>
-                <div className={'col-span-4 sm:col-span-2 lg:col-span-3 pr-4'}>
-                    <h1 className={'font-header font-medium text-2xl text-gray-50 leading-relaxed line-clamp-1'}>
+            <div className={'mb-4 grid grid-cols-4 gap-4'}>
+                <div className={'col-span-4 pr-4 sm:col-span-2 lg:col-span-3'}>
+                    <h1 className={'line-clamp-1 font-header text-2xl font-medium leading-relaxed text-gray-50'}>
                         {name}
                     </h1>
-                    <p className={'mb-1 font-mono text-xs text-gray-400 break-all'} title={'Server UUID'}>
+                    <p className={'mb-1 break-all font-mono text-xs text-gray-400'} title={'Server UUID'}>
                         {uuid}
                     </p>
-                    <p className={'text-sm text-gray-400 line-clamp-2'}>{description}</p>
+                    <p className={'line-clamp-2 text-sm text-gray-400'}>{description}</p>
                 </div>
-                <div className={'col-span-4 sm:col-span-2 lg:col-span-1 self-end'}>
+                <div className={'col-span-4 self-end sm:col-span-2 lg:col-span-1'}>
                     <Can action={['control.start', 'control.stop', 'control.restart']} matchAny>
-                        <PowerButtons className={'flex sm:justify-end space-x-2'} />
+                        <PowerButtons className={'flex space-x-2 sm:justify-end'} />
                     </Can>
                 </div>
             </div>
-            <div className={'grid grid-cols-4 gap-2 sm:gap-4 mb-4'}>
-                <div className={'flex col-span-4 lg:col-span-3'}>
+            <div className={'mb-4 grid grid-cols-4 gap-2 sm:gap-4'}>
+                <div className={'col-span-4 flex lg:col-span-3'}>
                     <Spinner.Suspense>
                         <Console />
                     </Spinner.Suspense>
                 </div>
-                <ServerDetailsBlock className={'col-span-4 lg:col-span-1 order-last lg:order-none'} />
+                <ServerDetailsBlock className={'order-last col-span-4 lg:order-none lg:col-span-1'} />
             </div>
-            <div className={'grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-4'}>
+            <div className={'grid grid-cols-1 gap-2 sm:gap-4 md:grid-cols-3'}>
                 <Spinner.Suspense>
                     <StatGraphs />
                 </Spinner.Suspense>

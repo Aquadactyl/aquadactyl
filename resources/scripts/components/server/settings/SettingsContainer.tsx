@@ -29,7 +29,7 @@ export default () => {
             <FlashMessageRender byKey={'settings'} className={'mb-4'} />
             <BeforeContent />
             <div className={'md:flex'}>
-                <div className={'w-full md:flex-1 md:mr-10'}>
+                <div className={'w-full md:mr-10 md:flex-1'}>
                     <Can action={'file.sftp'}>
                         <TitledGreyBox title={'SFTP Details'} className={'mb-6 md:mb-10'}>
                             <div>
@@ -68,17 +68,17 @@ export default () => {
                     <TitledGreyBox title={'Debug Information'} className={'mb-6 md:mb-10'}>
                         <div className={'flex items-center justify-between text-sm'}>
                             <p>Node</p>
-                            <code className={'font-mono bg-neutral-900 rounded py-1 px-2'}>{node}</code>
+                            <code className={'rounded bg-neutral-900 px-2 py-1 font-mono'}>{node}</code>
                         </div>
                         <CopyOnClick text={uuid}>
-                            <div className={'flex items-center justify-between mt-2 text-sm'}>
+                            <div className={'mt-2 flex items-center justify-between text-sm'}>
                                 <p>Server ID</p>
-                                <code className={'font-mono bg-neutral-900 rounded py-1 px-2'}>{uuid}</code>
+                                <code className={'rounded bg-neutral-900 px-2 py-1 font-mono'}>{uuid}</code>
                             </div>
                         </CopyOnClick>
                     </TitledGreyBox>
                 </div>
-                <div className={'w-full mt-6 md:flex-1 md:mt-0'}>
+                <div className={'mt-6 w-full md:mt-0 md:flex-1'}>
                     <Can action={'settings.rename'}>
                         <div className={'mb-6 md:mb-10'}>
                             <RenameServerBox />

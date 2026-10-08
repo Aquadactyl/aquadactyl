@@ -37,10 +37,10 @@ export default ({ backup, className }: Props) => {
                                   checksum: (parsed.checksum_type || '') + ':' + (parsed.checksum || ''),
                                   bytes: parsed.file_size || 0,
                                   completedAt: new Date(),
-                              }
+                              },
                     ),
                 }),
-                false
+                false,
             );
         } catch (e) {
             console.warn(e);
@@ -48,8 +48,8 @@ export default ({ backup, className }: Props) => {
     });
 
     return (
-        <GreyRowBox className={classNames('flex-wrap md:flex-nowrap items-center', className)}>
-            <div className={'flex items-center truncate w-full md:flex-1'}>
+        <GreyRowBox className={classNames('flex-wrap items-center md:flex-nowrap', className)}>
+            <div className={'flex w-full items-center truncate md:flex-1'}>
                 <div className={'mr-4'}>
                     {backup.completedAt !== null ? (
                         backup.isLocked ? (
@@ -62,36 +62,36 @@ export default ({ backup, className }: Props) => {
                     )}
                 </div>
                 <div className={'flex flex-col truncate'}>
-                    <div className={'flex items-center text-sm mb-1'}>
+                    <div className={'mb-1 flex items-center text-sm'}>
                         {backup.completedAt !== null && !backup.isSuccessful && (
                             <span
                                 className={
-                                    'bg-red-500 py-px px-2 rounded-full text-white text-xs uppercase border border-red-600 mr-2'
+                                    'mr-2 rounded-full border border-red-600 bg-red-500 px-2 py-px text-xs uppercase text-white'
                                 }
                             >
                                 Failed
                             </span>
                         )}
-                        <p className={'break-words truncate'}>{backup.name}</p>
+                        <p className={'truncate break-words'}>{backup.name}</p>
                         {backup.completedAt !== null && backup.isSuccessful && (
-                            <span className={'ml-3 text-neutral-300 text-xs font-extralight hidden sm:inline'}>
+                            <span className={'ml-3 hidden text-xs font-extralight text-neutral-300 sm:inline'}>
                                 {bytesToString(backup.bytes)}
                             </span>
                         )}
                     </div>
-                    <p className={'mt-1 md:mt-0 text-xs text-neutral-400 font-mono truncate'}>{backup.checksum}</p>
+                    <p className={'mt-1 truncate font-mono text-xs text-neutral-400 md:mt-0'}>{backup.checksum}</p>
                 </div>
             </div>
-            <div className={'flex-1 md:flex-none md:w-48 mt-4 md:mt-0 md:ml-8 md:text-center'}>
+            <div className={'mt-4 flex-1 md:ml-8 md:mt-0 md:w-48 md:flex-none md:text-center'}>
                 <p title={format(backup.createdAt, 'ddd, MMMM do, yyyy HH:mm:ss')} className={'text-sm'}>
                     {formatDistanceToNow(backup.createdAt, { includeSeconds: true, addSuffix: true })}
                 </p>
-                <p className={'text-2xs text-neutral-500 uppercase mt-1'}>Created</p>
+                <p className={'mt-1 text-2xs uppercase text-neutral-500'}>Created</p>
             </div>
             <Can action={['backup.download', 'backup.restore', 'backup.delete']} matchAny>
-                <div className={'mt-4 md:mt-0 ml-6'} style={{ marginRight: '-0.5rem' }}>
+                <div className={'ml-6 mt-4 md:mt-0'} style={{ marginRight: '-0.5rem' }}>
                     {!backup.completedAt ? (
-                        <div className={'p-2 invisible'}>
+                        <div className={'invisible p-2'}>
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </div>
                     ) : (

@@ -1,53 +1,53 @@
 name: Release
 on:
-  push:
-    tags:
-      - "v*"
+    push:
+        tags:
+            - 'v*'
 jobs:
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run tsc
-      - run: pnpm run build:production
-      - name: create release branch and bump version
-        env:
-          VERSION: ${{ github.ref_name }}
-        run: |
-          BRANCH=release/${{ env.VERSION }}
-          git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git config --local user.name 'Aquadactyl CI'
-          git checkout -b "$BRANCH"
-          git push -u origin "$BRANCH"
-          sed -i "s/'canary'/'${VERSION:1}'/" config/app.php
-          git add config/app.php
-          git commit -m 'ci(release): bump version'
-          git push
-      - name: create release archive
-        run: |
-          rm -rf node_modules tests CONTRIBUTING.md flake.lock flake.nix phpunit.xml shell.nix
-          tar --exclude='bootstrap/cache/*.php' --exclude='storage/logs/*.log' \
-            -czf panel.tar.gz * .blueprint .gitattributes .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .oxfmtrc.json .oxlintrc.json .prettierrc.json
-          sha256sum panel.tar.gz > SHA256SUMS
-      - name: write changelog
-        run: |
-          sed -n "/^## ${{ github.ref_name }}/,/^## /{/^## /b;p}" CHANGELOG.md > ./RELEASE_CHANGELOG
-      - uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          draft: true
-          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
-          body_path: ./RELEASE_CHANGELOG
-          files: |
-            panel.tar.gz
-            SHA256SUMS
+    release:
+        name: Release
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v6
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - run: pnpm run tsc
+            - run: pnpm run build:production
+            - name: create release branch and bump version
+              env:
+                  VERSION: ${{ github.ref_name }}
+              run: |
+                  BRANCH=release/${{ env.VERSION }}
+                  git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
+                  git config --local user.name 'Aquadactyl CI'
+                  git checkout -b "$BRANCH"
+                  git push -u origin "$BRANCH"
+                  sed -i "s/'canary'/'${VERSION:1}'/" config/app.php
+                  git add config/app.php
+                  git commit -m 'ci(release): bump version'
+                  git push
+            - name: create release archive
+              run: |
+                  rm -rf node_modules tests CONTRIBUTING.md flake.lock flake.nix phpunit.xml shell.nix
+                  tar --exclude='bootstrap/cache/*.php' --exclude='storage/logs/*.log' \
+                    -czf panel.tar.gz * .blueprint .gitattributes .editorconfig .env.example .eslintignore .eslintrc.js .gitignore .oxfmtrc.json .oxlintrc.json .prettierrc.json
+                  sha256sum panel.tar.gz > SHA256SUMS
+            - name: write changelog
+              run: |
+                  sed -n "/^## ${{ github.ref_name }}/,/^## /{/^## /b;p}" CHANGELOG.md > ./RELEASE_CHANGELOG
+            - uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  draft: true
+                  prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+                  body_path: ./RELEASE_CHANGELOG
+                  files: |
+                      panel.tar.gz
+                      SHA256SUMS

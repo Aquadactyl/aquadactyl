@@ -8,11 +8,7 @@
     "name": "Paper",
     "author": "parker@pterodactyl.io",
     "description": "High performance Spigot fork that aims to fix gameplay and mechanics inconsistencies.",
-    "features": [
-        "eula",
-        "java_version",
-        "pid_limit"
-    ],
+    "features": ["eula", "java_version", "pid_limit"],
     "docker_images": {
         "Java 25": "ghcr.io\/pterodactyl\/yolks:java_25",
         "Java 21": "ghcr.io\/pterodactyl\/yolks:java_21",

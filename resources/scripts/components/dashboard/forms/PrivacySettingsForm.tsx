@@ -37,8 +37,8 @@ export default () => {
                     {saving
                         ? 'Saving...'
                         : saved
-                        ? 'Saved to your account.'
-                        : 'Applies across the panel and admin area.'}
+                          ? 'Saved to your account.'
+                          : 'Applies across the panel and admin area.'}
                 </p>
             </div>
             <button

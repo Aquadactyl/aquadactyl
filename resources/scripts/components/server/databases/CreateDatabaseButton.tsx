@@ -22,7 +22,7 @@ const schema = object().shape({
         .max(48, 'Database name must not exceed 48 characters.')
         .matches(
             /^[\w\-.]{3,48}$/,
-            'Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.'
+            'Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.',
         ),
     connectionsFrom: string().matches(/^[\w\-/.%:]+$/, 'A valid host address must be provided.'),
 });
@@ -72,7 +72,7 @@ export default ({ className }: Props) => {
                         }}
                     >
                         <FlashMessageRender byKey={'database:create'} className={'mb-6'} />
-                        <h2 className={'text-2xl mb-6'}>Create new database</h2>
+                        <h2 className={'mb-6 text-2xl'}>Create new database</h2>
                         <Form className={'m-0'}>
                             <Field
                                 type={'string'}
@@ -92,16 +92,16 @@ export default ({ className }: Props) => {
                                     }
                                 />
                             </div>
-                            <div className={'flex flex-wrap justify-end mt-6'}>
+                            <div className={'mt-6 flex flex-wrap justify-end'}>
                                 <Button
                                     type={'button'}
                                     isSecondary
-                                    className={'w-full sm:w-auto sm:mr-2'}
+                                    className={'w-full sm:mr-2 sm:w-auto'}
                                     onClick={() => setVisible(false)}
                                 >
                                     Cancel
                                 </Button>
-                                <Button className={'w-full mt-4 sm:w-auto sm:mt-0'} type={'submit'}>
+                                <Button className={'mt-4 w-full sm:mt-0 sm:w-auto'} type={'submit'}>
                                     Create Database
                                 </Button>
                             </div>
@@ -109,7 +109,9 @@ export default ({ className }: Props) => {
                     </Modal>
                 )}
             </Formik>
-            <Button className={className} onClick={() => setVisible(true)}>New Database</Button>
+            <Button className={className} onClick={() => setVisible(true)}>
+                New Database
+            </Button>
         </>
     );
 };

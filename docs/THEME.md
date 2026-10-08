@@ -7,21 +7,21 @@ visible, and animations respect the browser's reduced motion preference.
 
 ## Palette
 
-| Role | Colour | Client token | Admin CSS variable |
-| --- | --- | --- | --- |
-| Page background | `#232428` | `gray.800` | `--aqua-background` |
-| Navigation and inset controls | `#1e1f22` | `gray.900` | `--aqua-chrome` |
-| Cards and dialogs | `#313338` | `gray.700` | `--aqua-surface` |
-| Raised surfaces and subtle borders | `#41444c` | `gray.600` | `--aqua-raised`, `--aqua-border` |
-| Body text | `#d6d9df` | `gray.200` | `--aqua-text` |
-| Headings | `#f2f3f5` | `gray.50` | `--aqua-heading` |
-| Secondary text | `#b0b5bf` | `gray.400` | `--aqua-muted` |
-| Control borders | `#8a909d` | `gray.500` | `--aqua-control-border` |
-| Links and focus outlines | `#78d4cc` | `blue.300` | `--aqua-accent` |
-| Primary buttons | `#237c7f` | `blue.500` | `--aqua-primary` |
-| Primary button hover | `#20696d` | `blue.600` | `--aqua-primary-hover` |
-| Primary button text | `#effcfa` | `blue.50` | `--aqua-on-primary` |
-| Terminal background | `#18191c` | `black`, `gray.950` | — |
+| Role                               | Colour    | Client token        | Admin CSS variable               |
+| ---------------------------------- | --------- | ------------------- | -------------------------------- |
+| Page background                    | `#232428` | `gray.800`          | `--aqua-background`              |
+| Navigation and inset controls      | `#1e1f22` | `gray.900`          | `--aqua-chrome`                  |
+| Cards and dialogs                  | `#313338` | `gray.700`          | `--aqua-surface`                 |
+| Raised surfaces and subtle borders | `#41444c` | `gray.600`          | `--aqua-raised`, `--aqua-border` |
+| Body text                          | `#d6d9df` | `gray.200`          | `--aqua-text`                    |
+| Headings                           | `#f2f3f5` | `gray.50`           | `--aqua-heading`                 |
+| Secondary text                     | `#b0b5bf` | `gray.400`          | `--aqua-muted`                   |
+| Control borders                    | `#8a909d` | `gray.500`          | `--aqua-control-border`          |
+| Links and focus outlines           | `#78d4cc` | `blue.300`          | `--aqua-accent`                  |
+| Primary buttons                    | `#237c7f` | `blue.500`          | `--aqua-primary`                 |
+| Primary button hover               | `#20696d` | `blue.600`          | `--aqua-primary-hover`           |
+| Primary button text                | `#effcfa` | `blue.50`           | `--aqua-on-primary`              |
+| Terminal background                | `#18191c` | `black`, `gray.950` | —                                |
 
 `neutral` aliases `gray`; `primary` and `cyan` alias `blue` for existing panel
 components and Blueprint addons. Status colours retain their meaning: green
@@ -36,13 +36,13 @@ header, browser favicons, Apple touch icons and Windows tiles. Narrow client
 headers and the collapsed admin sidebar use the emblem. Custom panel names
 remain visible alongside it.
 
-| Asset | File |
-| --- | --- |
-| Transparent emblem | `public/branding/aquadactyl-emblem.png` |
-| Transparent wordmark | `public/branding/aquadactyl-wordmark.png` |
-| Banner with background | `public/branding/aquadactyl-banner.png` |
-| Supplied vector emblem | `public/favicons/aquadactyl.svg` |
-| Original PNG and SVG sources | `resources/branding/` |
+| Asset                        | File                                      |
+| ---------------------------- | ----------------------------------------- |
+| Transparent emblem           | `public/branding/aquadactyl-emblem.png`   |
+| Transparent wordmark         | `public/branding/aquadactyl-wordmark.png` |
+| Banner with background       | `public/branding/aquadactyl-banner.png`   |
+| Supplied vector emblem       | `public/favicons/aquadactyl.svg`          |
+| Original PNG and SVG sources | `resources/branding/`                     |
 
 To regenerate the trimmed PNG logos and square PNG/ICO icons after replacing the
 source PNGs, use PHP with the GD extension:

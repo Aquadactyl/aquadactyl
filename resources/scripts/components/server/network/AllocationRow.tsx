@@ -23,7 +23,10 @@ import Code from '@/components/elements/Code';
 
 const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (
     <label
-        className={classNames('uppercase text-xs mt-1 text-neutral-400 block px-1 select-none transition-colors duration-150', className)}
+        className={classNames(
+            'mt-1 block select-none px-1 text-xs uppercase text-neutral-400 transition-colors duration-150',
+            className,
+        )}
         {...props}
     />
 );
@@ -63,8 +66,8 @@ const AllocationRow = ({ allocation }: Props) => {
     };
 
     return (
-        <GreyRowBox $hoverable={false} className={'flex-wrap md:flex-nowrap mt-2'}>
-            <div className={'flex items-center w-full md:w-auto'}>
+        <GreyRowBox $hoverable={false} className={'mt-2 flex-wrap md:flex-nowrap'}>
+            <div className={'flex w-full items-center md:w-auto'}>
                 <div className={'pl-4 pr-6 text-neutral-400'}>
                     <FontAwesomeIcon icon={faNetworkWired} />
                 </div>
@@ -84,24 +87,24 @@ const AllocationRow = ({ allocation }: Props) => {
                     )}
                     <Label>{allocation.alias ? 'Hostname' : 'IP Address'}</Label>
                 </div>
-                <div className={'w-16 md:w-24 overflow-hidden'}>
+                <div className={'w-16 overflow-hidden md:w-24'}>
                     <Code dark>{allocation.port}</Code>
                     <Label>Port</Label>
                 </div>
             </div>
-            <div className={'mt-4 w-full md:mt-0 md:flex-1 md:w-auto'}>
+            <div className={'mt-4 w-full md:mt-0 md:w-auto md:flex-1'}>
                 <InputSpinner visible={loading}>
                     <Textarea
-                        className={'bg-neutral-800 hover:border-neutral-600 border-transparent'}
+                        className={'border-transparent bg-neutral-800 hover:border-neutral-600'}
                         placeholder={'Notes'}
                         defaultValue={allocation.notes || undefined}
                         onChange={(e) => setAllocationNotes(e.currentTarget.value)}
                     />
                 </InputSpinner>
             </div>
-            <div className={'flex justify-end space-x-4 mt-4 w-full md:mt-0 md:w-48'}>
+            <div className={'mt-4 flex w-full justify-end space-x-4 md:mt-0 md:w-48'}>
                 {allocation.isDefault ? (
-                    <Button size={Button.Sizes.Small} className={'!text-gray-50 !bg-blue-600'} disabled>
+                    <Button size={Button.Sizes.Small} className={'!bg-blue-600 !text-gray-50'} disabled>
                         Primary
                     </Button>
                 ) : (

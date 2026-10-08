@@ -54,7 +54,7 @@ export default () => {
                 sessionStorage.removeItem(draftKey);
             }
         },
-        [draftKey]
+        [draftKey],
     );
 
     let fetchFileContent: null | (() => Promise<string>) = null;
@@ -131,13 +131,14 @@ export default () => {
             </ErrorBoundary>
             <BeforeEdit />
             {hash.replace(/^#/, '').endsWith('.pteroignore') && (
-                <div className={'mb-4 p-4 border-l-4 bg-neutral-900 rounded border-cyan-400'}>
-                    <p className={'text-neutral-300 text-sm'}>
-                        You&apos;re editing a <code className={'font-mono bg-black rounded py-px px-1'}>.pteroignore</code>{' '}
-                        file. Any files or directories listed in here will be excluded from backups. Wildcards are
-                        supported by using an asterisk (<code className={'font-mono bg-black rounded py-px px-1'}>*</code>).
-                        You can negate a prior rule by prepending an exclamation point (
-                        <code className={'font-mono bg-black rounded py-px px-1'}>!</code>).
+                <div className={'mb-4 rounded border-l-4 border-cyan-400 bg-neutral-900 p-4'}>
+                    <p className={'text-sm text-neutral-300'}>
+                        You&apos;re editing a{' '}
+                        <code className={'rounded bg-black px-1 py-px font-mono'}>.pteroignore</code> file. Any files or
+                        directories listed in here will be excluded from backups. Wildcards are supported by using an
+                        asterisk (<code className={'rounded bg-black px-1 py-px font-mono'}>*</code>). You can negate a
+                        prior rule by prepending an exclamation point (
+                        <code className={'rounded bg-black px-1 py-px font-mono'}>!</code>).
                     </p>
                 </div>
             )}
@@ -169,8 +170,8 @@ export default () => {
                     onContentChanged={action === 'new' ? saveDraft : undefined}
                 />
             </div>
-            <div className={'flex justify-end mt-4'}>
-                <div className={'flex-1 sm:flex-none rounded bg-neutral-900 mr-4'}>
+            <div className={'mt-4 flex justify-end'}>
+                <div className={'mr-4 flex-1 rounded bg-neutral-900 sm:flex-none'}>
                     <Select value={mode} onChange={(e) => setMode(e.currentTarget.value)}>
                         {modes.map((mode) => (
                             <option key={`${mode.name}_${mode.mime}`} value={mode.mime}>

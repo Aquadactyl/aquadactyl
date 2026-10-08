@@ -69,7 +69,7 @@ export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
                         >
                             <Field data-sensitive name={'allowedIps'} as={Textarea} className={'h-32'} />
                         </FormikFieldWrapper>
-                        <div className={'flex justify-end mt-6'}>
+                        <div className={'mt-6 flex justify-end'}>
                             <Button>Create</Button>
                         </div>
                     </Form>

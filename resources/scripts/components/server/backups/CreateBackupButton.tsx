@@ -27,7 +27,7 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
         <Modal {...props} showSpinnerOverlay={isSubmitting}>
             <Form>
                 <FlashMessageRender byKey={'backups:create'} className={'mb-4'} />
-                <h2 className={'text-2xl mb-6'}>Create server backup</h2>
+                <h2 className={'mb-6 text-2xl'}>Create server backup</h2>
                 <Field
                     name={'name'}
                     label={'Backup name'}
@@ -48,7 +48,7 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
                     </FormikFieldWrapper>
                 </div>
                 <Can action={'backup.delete'}>
-                    <div className={'mt-6 bg-neutral-700 border border-neutral-800 shadow-inner p-4 rounded'}>
+                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
                         <FormikSwitch
                             name={'isLocked'}
                             label={'Locked'}
@@ -56,7 +56,7 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
                         />
                     </div>
                 </Can>
-                <div className={'flex justify-end mt-6'}>
+                <div className={'mt-6 flex justify-end'}>
                     <Button type={'submit'} disabled={isSubmitting}>
                         Start backup
                     </Button>
@@ -86,7 +86,7 @@ export default ({ className }: Props) => {
             .then((backup) => {
                 mutate(
                     (data) => ({ ...data, items: data.items.concat(backup), backupCount: data.backupCount + 1 }),
-                    false
+                    false,
                 );
                 setVisible(false);
             })

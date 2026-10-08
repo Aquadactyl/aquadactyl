@@ -15,13 +15,13 @@ const ConfirmationModal: React.FC<Props> = ({ title, children, buttonText, onCon
 
     return (
         <>
-            <h2 className={'text-2xl mb-6'}>{title}</h2>
+            <h2 className={'mb-6 text-2xl'}>{title}</h2>
             <div className={'text-neutral-300'}>{children}</div>
-            <div className={'flex flex-wrap items-center justify-end mt-8'}>
-                <Button isSecondary onClick={() => dismiss()} className={'w-full sm:w-auto border-transparent'}>
+            <div className={'mt-8 flex flex-wrap items-center justify-end'}>
+                <Button isSecondary onClick={() => dismiss()} className={'w-full border-transparent sm:w-auto'}>
                     Cancel
                 </Button>
-                <Button color={'red'} className={'w-full sm:w-auto mt-4 sm:mt-0 sm:ml-4'} onClick={() => onConfirmed()}>
+                <Button color={'red'} className={'mt-4 w-full sm:ml-4 sm:mt-0 sm:w-auto'} onClick={() => onConfirmed()}>
                     {buttonText}
                 </Button>
             </div>

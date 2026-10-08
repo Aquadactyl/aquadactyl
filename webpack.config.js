@@ -13,7 +13,9 @@ module.exports = {
     performance: {
         hints: false,
     },
-    entry: isProduction ? ['./resources/scripts/index.tsx'] : ['react-hot-loader/patch', './resources/scripts/index.tsx'],
+    entry: isProduction
+        ? ['./resources/scripts/index.tsx']
+        : ['react-hot-loader/patch', './resources/scripts/index.tsx'],
     output: {
         path: path.join(__dirname, '/public/assets'),
         filename: isProduction ? 'bundle.[chunkhash:8].js' : 'bundle.[fullhash:8].js',

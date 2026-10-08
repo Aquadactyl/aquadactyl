@@ -79,16 +79,20 @@ const ProfilePictureForm = () => {
     };
 
     return (
-        <div className={'flex flex-col sm:flex-row items-start sm:items-center gap-6'}>
+        <div className={'flex flex-col items-start gap-6 sm:flex-row sm:items-center'}>
             <div className={'flex-shrink-0'}>
                 {preview ? (
-                    <img src={preview} alt={'Profile picture preview'} className={'w-24 h-24 rounded-full object-cover'} />
+                    <img
+                        src={preview}
+                        alt={'Profile picture preview'}
+                        className={'h-24 w-24 rounded-full object-cover'}
+                    />
                 ) : (
                     <Avatar.User size={96} />
                 )}
             </div>
             <div className={'w-full sm:flex-1'}>
-                <label htmlFor={'profile_picture'} className={'block mb-2 text-sm font-medium'}>
+                <label htmlFor={'profile_picture'} className={'mb-2 block text-sm font-medium'}>
                     Choose a profile picture
                 </label>
                 <input

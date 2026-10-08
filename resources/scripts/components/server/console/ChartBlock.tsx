@@ -14,7 +14,7 @@ export default ({ title, legend, children }: ChartBlockProps) => (
             <h3 className={'font-header font-medium transition-colors duration-100 group-hover:text-gray-50'}>
                 {title}
             </h3>
-            {legend && <p className={'text-sm flex items-center'}>{legend}</p>}
+            {legend && <p className={'flex items-center text-sm'}>{legend}</p>}
         </div>
         <div className={'z-10 ml-2'}>{children}</div>
     </div>

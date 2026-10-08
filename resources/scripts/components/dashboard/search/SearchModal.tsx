@@ -37,7 +37,7 @@ export default ({ ...props }: Props) => {
     const isAdmin = useStoreState((state) => state.user.data!.rootAdmin);
     const [servers, setServers] = useState<Server[]>([]);
     const { clearAndAddHttpError, clearFlashes } = useStoreActions(
-        (actions: Actions<ApplicationStore>) => actions.flashes
+        (actions: Actions<ApplicationStore>) => actions.flashes,
     );
 
     const search = debounce(({ term }: Values, { setSubmitting }: FormikHelpers<Values>) => {
@@ -93,10 +93,10 @@ export default ({ ...props }: Props) => {
                                     to={`/server/${server.id}`}
                                     onClick={() => props.onDismissed()}
                                     className={
-                                        'flex items-center bg-neutral-900 p-4 rounded border-l-4 border-neutral-900 no-underline transition-all duration-150 hover:shadow hover:border-cyan-500 [&:not(:last-of-type)]:mb-2'
+                                        'flex items-center rounded border-l-4 border-neutral-900 bg-neutral-900 p-4 no-underline transition-all duration-150 hover:border-cyan-500 hover:shadow [&:not(:last-of-type)]:mb-2'
                                     }
                                 >
-                                    <div className={'flex-1 mr-4'}>
+                                    <div className={'mr-4 flex-1'}>
                                         <p className={'text-sm'}>{server.name}</p>
                                         <p className={'mt-1 text-xs text-neutral-400'}>
                                             {server.allocations
@@ -111,7 +111,7 @@ export default ({ ...props }: Props) => {
                                         </p>
                                     </div>
                                     <div className={'flex-none text-right'}>
-                                        <span className={'text-xs py-1 px-2 bg-cyan-800 text-cyan-100 rounded'}>
+                                        <span className={'rounded bg-cyan-800 px-2 py-1 text-xs text-cyan-100'}>
                                             {server.node}
                                         </span>
                                     </div>

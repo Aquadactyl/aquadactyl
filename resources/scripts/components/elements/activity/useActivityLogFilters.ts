@@ -22,7 +22,7 @@ export default () => {
                 source: hash.source,
             },
         }),
-        [hash]
+        [hash],
     );
     const update = (values: Record<string, string | undefined>, resetPage = true) => {
         history.push({ ...location, hash: pathTo({ ...(resetPage ? { page: undefined } : {}), ...values }) });

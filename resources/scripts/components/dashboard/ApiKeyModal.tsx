@@ -15,18 +15,18 @@ const ApiKeyModal = ({ apiKey }: Props) => {
     return (
         <>
             <h3 className={'mb-6 text-2xl'}>Your API Key</h3>
-            <p className={'text-sm mb-6'}>
+            <p className={'mb-6 text-sm'}>
                 The API key you have requested is shown below. Please store this in a safe location, it will not be
                 shown again.
             </p>
-            <pre className={'overflow-x-scroll text-sm bg-neutral-900 rounded py-2 px-4 font-mono'}>
+            <pre className={'overflow-x-scroll rounded bg-neutral-900 px-4 py-2 font-mono text-sm'}>
                 <CopyOnClick text={apiKey}>
                     <code className={'font-mono'}>
                         <SensitiveValue>{apiKey}</SensitiveValue>
                     </code>
                 </CopyOnClick>
             </pre>
-            <div className={'flex justify-end mt-6'}>
+            <div className={'mt-6 flex justify-end'}>
                 <Button type={'button'} onClick={() => dismiss()}>
                     Close
                 </Button>

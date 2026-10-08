@@ -42,22 +42,22 @@ const getBackground = (type?: FlashMessageType): string => {
 const MessageBox = ({ title, children, type }: Props) => (
     <div
         className={classNames(
-            'p-2 border items-center leading-normal rounded flex w-full text-sm text-white lg:inline-flex',
-            styling(type)
+            'flex w-full items-center rounded border p-2 text-sm leading-normal text-white lg:inline-flex',
+            styling(type),
         )}
         role={'alert'}
     >
         {title && (
             <span
                 className={classNames(
-                    'title flex rounded-full uppercase px-2 py-1 text-xs font-bold mr-3 leading-none',
-                    getBackground(type)
+                    'title mr-3 flex rounded-full px-2 py-1 text-xs font-bold uppercase leading-none',
+                    getBackground(type),
                 )}
             >
                 {title}
             </span>
         )}
-        <span className={'mr-2 text-left flex-auto'}>{children}</span>
+        <span className={'mr-2 flex-auto text-left'}>{children}</span>
     </div>
 );
 MessageBox.displayName = 'MessageBox';

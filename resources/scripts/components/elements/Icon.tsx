@@ -15,7 +15,7 @@ const Icon = ({ icon, className, style }: Props) => {
         <svg
             xmlns={'http://www.w3.org/2000/svg'}
             viewBox={`0 0 ${width} ${height}`}
-            className={classNames('fill-current inline-block', className)}
+            className={classNames('inline-block fill-current', className)}
             style={style}
         >
             {(Array.isArray(paths) ? paths : [paths]).map((path, index) => (

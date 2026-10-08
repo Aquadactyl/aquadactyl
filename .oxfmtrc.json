@@ -1,23 +1,15 @@
 {
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
-  "printWidth": 120,
-  "tabWidth": 4,
-  "useTabs": false,
-  "semi": true,
-  "singleQuote": true,
-  "jsxSingleQuote": true,
-  "endOfLine": "lf",
-  "sortPackageJson": false,
-  "sortTailwindcss": {
-    "functions": [
-      "classNames"
-    ]
-  },
-  "ignorePatterns": [
-    "public/**",
-    "vendor/**",
-    "storage/**",
-    "resources/views/**",
-    "scripts/**"
-  ]
+    "$schema": "./node_modules/oxfmt/configuration_schema.json",
+    "printWidth": 120,
+    "tabWidth": 4,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "endOfLine": "lf",
+    "sortPackageJson": true,
+    "sortTailwindcss": {
+        "functions": ["classNames"]
+    },
+    "ignorePatterns": ["public/**", "vendor/**", "storage/**", "resources/views/**", "scripts/**"]
 }

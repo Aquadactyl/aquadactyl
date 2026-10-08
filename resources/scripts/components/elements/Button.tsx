@@ -16,23 +16,23 @@ const getButtonClass = ({
     className,
 }: Omit<Props, 'isLoading'> & { className?: string }): string => {
     return classNames(
-        'relative inline-block rounded font-medium text-sm transition-all duration-150 border disabled:opacity-55 disabled:cursor-default',
+        'relative inline-block rounded border text-sm font-medium transition-all duration-150 disabled:cursor-default disabled:opacity-55',
         size === 'xsmall' && 'px-2 py-1 text-xs',
         (!size || size === 'small') && 'px-4 py-2',
         size === 'large' && 'p-4 text-sm',
-        size === 'xlarge' && 'p-4 w-full',
+        size === 'xlarge' && 'w-full p-4',
         !isSecondary && {
-            'bg-primary-500 border-primary-600 text-primary-50 hover:not-disabled:bg-primary-600 hover:not-disabled:border-primary-700':
+            'hover:not-disabled:bg-primary-600 hover:not-disabled:border-primary-700 border-primary-600 bg-primary-500 text-primary-50':
                 !color || color === 'primary',
-            'border-neutral-500 bg-neutral-700 text-neutral-50 hover:not-disabled:bg-neutral-600 hover:not-disabled:border-neutral-500':
+            'hover:not-disabled:bg-neutral-600 hover:not-disabled:border-neutral-500 border-neutral-500 bg-neutral-700 text-neutral-50':
                 color === 'grey',
-            'border-green-600 bg-green-500 text-green-50 hover:not-disabled:bg-green-600 hover:not-disabled:border-green-700':
+            'hover:not-disabled:bg-green-600 hover:not-disabled:border-green-700 border-green-600 bg-green-500 text-green-50':
                 color === 'green',
-            'border-red-600 bg-red-500 text-red-50 hover:not-disabled:bg-red-600 hover:not-disabled:border-red-700':
+            'hover:not-disabled:bg-red-600 hover:not-disabled:border-red-700 border-red-600 bg-red-500 text-red-50':
                 color === 'red',
         },
         isSecondary && [
-            'border-neutral-600 bg-transparent text-neutral-200 hover:not-disabled:border-neutral-500 hover:not-disabled:text-neutral-100',
+            'hover:not-disabled:border-neutral-500 hover:not-disabled:text-neutral-100 border-neutral-600 bg-transparent text-neutral-200',
             color === 'red' &&
                 'hover:not-disabled:bg-red-500 hover:not-disabled:border-red-600 hover:not-disabled:text-red-50 active:not-disabled:bg-red-600 active:not-disabled:border-red-700',
             color === 'primary' &&
@@ -40,7 +40,7 @@ const getButtonClass = ({
             color === 'green' &&
                 'hover:not-disabled:bg-green-500 hover:not-disabled:border-green-600 hover:not-disabled:text-green-50 active:not-disabled:bg-green-600 active:not-disabled:border-green-700',
         ],
-        className
+        className,
     );
 };
 
@@ -71,7 +71,7 @@ type ComponentProps = Omit<JSX.IntrinsicElements['button'], 'ref' | keyof Props>
 const Button: React.FC<ComponentProps> = ({ children, isLoading, ...props }) => (
     <ButtonStyle {...props}>
         {isLoading && (
-            <div className={'flex absolute justify-center items-center w-full h-full left-0 top-0'}>
+            <div className={'absolute left-0 top-0 flex h-full w-full items-center justify-center'}>
                 <Spinner size={'small'} />
             </div>
         )}

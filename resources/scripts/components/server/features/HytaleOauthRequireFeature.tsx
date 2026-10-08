@@ -54,16 +54,16 @@ const HytaleOauthRequireFeature = () => {
             showSpinnerOverlay={false}
         >
             <FlashMessageRender key={'feature:hytaleOauth'} className={'mb-4'} />
-            <h2 className={'text-2xl mb-4 text-neutral-100'}>Authentication Required</h2>
+            <h2 className={'mb-4 text-2xl text-neutral-100'}>Authentication Required</h2>
             <p className={'text-neutral-200'}>
                 You need to authenticate with your Hytale account to download or update server files. Please log in to
                 continue.
             </p>
-            <div className={'mt-8 sm:flex items-center justify-end'}>
-                <Button isSecondary onClick={() => setVisible(false)} className={'w-full sm:w-auto border-transparent'}>
+            <div className={'mt-8 items-center justify-end sm:flex'}>
+                <Button isSecondary onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                     Cancel
                 </Button>
-                <Button onClick={handleLogin} className={'mt-4 sm:mt-0 sm:ml-4 w-full sm:w-auto'}>
+                <Button onClick={handleLogin} className={'mt-4 w-full sm:ml-4 sm:mt-0 sm:w-auto'}>
                     Log in
                 </Button>
             </div>

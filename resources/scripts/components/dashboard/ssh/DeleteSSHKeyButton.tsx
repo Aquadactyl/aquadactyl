@@ -37,7 +37,7 @@ export default ({ name, fingerprint }: { name: string; fingerprint: string }) =>
             <button className={'ml-4 p-2 text-sm'} onClick={() => setVisible(true)}>
                 <FontAwesomeIcon
                     icon={faTrashAlt}
-                    className={'text-neutral-400 hover:text-red-400 transition-colors duration-150'}
+                    className={'text-neutral-400 transition-colors duration-150 hover:text-red-400'}
                 />
             </button>
         </>

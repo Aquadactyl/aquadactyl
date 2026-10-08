@@ -14,7 +14,7 @@ export default ({ meta }: { meta: Record<string, unknown> }) => {
                     data-sensitive
                     tabIndex={0}
                     className={
-                        'bg-gray-900 rounded p-2 font-mono text-sm leading-relaxed overflow-x-scroll whitespace-pre-wrap'
+                        'overflow-x-scroll whitespace-pre-wrap rounded bg-gray-900 p-2 font-mono text-sm leading-relaxed'
                     }
                 >
                     {JSON.stringify(meta, null, 2)}
@@ -29,7 +29,7 @@ export default ({ meta }: { meta: Record<string, unknown> }) => {
                 className={style.metadata}
                 onClick={() => setOpen(true)}
             >
-                <ClipboardListIcon className={'w-5 h-5'} />
+                <ClipboardListIcon className={'h-5 w-5'} />
             </button>
         </div>
     );

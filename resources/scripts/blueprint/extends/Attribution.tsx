@@ -4,7 +4,7 @@ import { ApplicationStore } from '@/state';
 
 export default () => {
     const disable_attribution = useStoreState(
-        (state: ApplicationStore) => state.settings.data!.blueprint.disable_attribution
+        (state: ApplicationStore) => state.settings.data!.blueprint.disable_attribution,
     );
 
     return (
@@ -16,7 +16,7 @@ export default () => {
                         rel={'noopener nofollow noreferrer'}
                         href={'https://blueprint.zip'}
                         target={'_blank'}
-                        className={`no-underline text-neutral-400 hover:text-neutral-200`}
+                        className={`text-neutral-400 no-underline hover:text-neutral-200`}
                     >
                         Blueprint
                     </a>

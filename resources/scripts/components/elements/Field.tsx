@@ -55,7 +55,7 @@ const Field = forwardRef<HTMLInputElement, Props>(
                 )}
             </FormikField>
         );
-    }
+    },
 );
 Field.displayName = 'Field';
 

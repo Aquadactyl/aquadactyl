@@ -65,13 +65,13 @@ export default () => {
                         <Can action={'database.create'}>
                             <div className={'mt-6 flex items-center justify-end'}>
                                 {databaseLimit > 0 && databases.length > 0 && (
-                                    <p className={'text-sm text-neutral-300 mb-4 sm:mr-6 sm:mb-0'}>
+                                    <p className={'mb-4 text-sm text-neutral-300 sm:mb-0 sm:mr-6'}>
                                         {databases.length} of {databaseLimit} databases have been allocated to this
                                         server.
                                     </p>
                                 )}
                                 {databaseLimit > 0 && databaseLimit !== databases.length && (
-                                    <CreateDatabaseButton className={'flex justify-end mt-6'} />
+                                    <CreateDatabaseButton className={'mt-6 flex justify-end'} />
                                 )}
                             </div>
                         </Can>

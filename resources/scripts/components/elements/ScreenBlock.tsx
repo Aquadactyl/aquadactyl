@@ -29,7 +29,7 @@ export type ScreenBlockProps = PropsWithBack | PropsWithRetry;
 
 const ActionButton: React.FC<React.ComponentProps<typeof Button>> = ({ className, ...props }) => (
     <Button
-        className={classNames('!rounded-full w-8 h-8 flex items-center justify-center !p-0', className)}
+        className={classNames('flex h-8 w-8 items-center justify-center !rounded-full !p-0', className)}
         {...props}
     />
 );
@@ -39,7 +39,7 @@ const ScreenBlock = ({ title, image, message, onBack, onRetry }: ScreenBlockProp
         <div className={'flex justify-center'}>
             <div
                 className={
-                    'w-full sm:w-3/4 md:w-1/2 p-12 md:p-20 bg-neutral-700 border border-neutral-600 rounded-lg shadow-lg text-center relative'
+                    'relative w-full rounded-lg border border-neutral-600 bg-neutral-700 p-12 text-center shadow-lg sm:w-3/4 md:w-1/2 md:p-20'
                 }
             >
                 {(typeof onBack === 'function' || typeof onRetry === 'function') && (
@@ -52,9 +52,9 @@ const ScreenBlock = ({ title, image, message, onBack, onRetry }: ScreenBlockProp
                         </ActionButton>
                     </div>
                 )}
-                <img src={image} className={'w-2/3 h-auto select-none mx-auto'} />
-                <h2 className={'mt-10 text-neutral-50 font-bold text-4xl'}>{title}</h2>
-                <p className={'text-sm text-neutral-400 mt-2'}>{message}</p>
+                <img src={image} className={'mx-auto h-auto w-2/3 select-none'} />
+                <h2 className={'mt-10 text-4xl font-bold text-neutral-50'}>{title}</h2>
+                <p className={'mt-2 text-sm text-neutral-400'}>{message}</p>
             </div>
         </div>
     </PageContentBlock>

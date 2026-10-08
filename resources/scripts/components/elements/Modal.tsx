@@ -19,10 +19,7 @@ export interface ModalProps extends RequiredModalProps {
 }
 
 export const ModalMask: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => (
-    <div
-        className={classNames('fixed z-50 overflow-auto flex w-full inset-0 bg-black/70', className)}
-        {...props}
-    />
+    <div className={classNames('fixed inset-0 z-50 flex w-full overflow-auto bg-black/70', className)} {...props} />
 );
 
 const ModalContainer: React.FC<React.HTMLAttributes<HTMLDivElement> & { alignTop?: boolean }> = ({
@@ -33,9 +30,9 @@ const ModalContainer: React.FC<React.HTMLAttributes<HTMLDivElement> & { alignTop
 }) => (
     <div
         className={classNames(
-            'max-w-[95%] md:max-w-[75%] lg:max-w-[50%] max-h-[calc(100vh-8rem)] relative flex flex-col w-full m-auto mb-auto',
+            'relative m-auto mb-auto flex max-h-[calc(100vh-8rem)] w-full max-w-[95%] flex-col md:max-w-[75%] lg:max-w-[50%]',
             alignTop && 'mt-[20%] md:mt-[10%]',
-            className
+            className,
         )}
         {...props}
     >
@@ -93,7 +90,7 @@ const Modal: React.FC<ModalProps> = ({
                     {isDismissable && (
                         <div
                             className={
-                                'close-icon absolute right-0 -top-10 p-2 text-white cursor-pointer opacity-50 transition-all duration-150 ease-linear hover:opacity-100 hover:rotate-90 [&>svg]:w-6 [&>svg]:h-6'
+                                'close-icon absolute -top-10 right-0 cursor-pointer p-2 text-white opacity-50 transition-all duration-150 ease-linear hover:rotate-90 hover:opacity-100 [&>svg]:h-6 [&>svg]:w-6'
                             }
                             onClick={() => setRender(false)}
                         >
@@ -115,7 +112,7 @@ const Modal: React.FC<ModalProps> = ({
                     {showSpinnerOverlay && (
                         <Fade timeout={150} appear in>
                             <div
-                                className={'absolute w-full h-full rounded flex items-center justify-center'}
+                                className={'absolute flex h-full w-full items-center justify-center rounded'}
                                 style={{ background: 'hsla(211, 10%, 53%, 0.35)', zIndex: 9999 }}
                             >
                                 <Spinner />
@@ -124,7 +121,7 @@ const Modal: React.FC<ModalProps> = ({
                     )}
                     <div
                         className={
-                            'bg-neutral-800 p-3 sm:p-4 md:p-6 rounded shadow-md overflow-y-scroll transition-all duration-150'
+                            'overflow-y-scroll rounded bg-neutral-800 p-3 shadow-md transition-all duration-150 sm:p-4 md:p-6'
                         }
                     >
                         {children}

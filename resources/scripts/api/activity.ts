@@ -9,7 +9,7 @@ export interface ActivityLogResult extends PaginatedResult<ActivityLog> {
 }
 
 export const toActivityLogResult = (
-    data: FractalPaginatedResponse & { meta: { available_events?: string[] } }
+    data: FractalPaginatedResponse & { meta: { available_events?: string[] } },
 ): ActivityLogResult => ({
     ...toPaginatedSet(data, Transformers.toActivityLog),
     availableEvents: data.meta.available_events ?? [],

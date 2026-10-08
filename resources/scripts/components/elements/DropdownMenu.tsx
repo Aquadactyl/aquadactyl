@@ -14,9 +14,9 @@ export const DropdownButtonRow: React.FC<React.ButtonHTMLAttributes<HTMLButtonEl
 }) => (
     <button
         className={classNames(
-            'p-2 flex items-center rounded w-full text-neutral-200 transition-all duration-150 ease-linear',
-            danger ? 'hover:text-red-200 hover:bg-red-900' : 'hover:text-neutral-50 hover:bg-neutral-600',
-            className
+            'flex w-full items-center rounded p-2 text-neutral-200 transition-all duration-150 ease-linear',
+            danger ? 'hover:bg-red-900 hover:text-red-200' : 'hover:bg-neutral-600 hover:text-neutral-50',
+            className,
         )}
         {...props}
     />
@@ -99,7 +99,9 @@ class DropdownMenu extends React.PureComponent<Props, State> {
                             this.setState({ visible: false });
                         }}
                         style={{ width: '12rem' }}
-                        className={'absolute bg-neutral-700 p-2 rounded-lg border border-neutral-600 shadow-lg text-neutral-200 z-50'}
+                        className={
+                            'absolute z-50 rounded-lg border border-neutral-600 bg-neutral-700 p-2 text-neutral-200 shadow-lg'
+                        }
                     >
                         {this.props.children}
                     </div>

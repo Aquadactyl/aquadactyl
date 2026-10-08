@@ -20,7 +20,7 @@ interface Props<T> {
 }
 
 const Block: React.FC<React.ComponentProps<typeof Button>> = ({ className, ...props }) => (
-    <Button className={classNames('!p-0 w-10 h-10 [&:not(:last-of-type)]:mr-2', className)} {...props} />
+    <Button className={classNames('h-10 w-10 !p-0 [&:not(:last-of-type)]:mr-2', className)} {...props} />
 );
 
 function Pagination<T>({ data: { items, pagination }, onPageSelect, children }: Props<T>) {

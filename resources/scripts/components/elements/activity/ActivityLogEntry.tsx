@@ -27,12 +27,15 @@ function wrapProperties(value: unknown, key = ''): any {
     }
 
     if (isObject(value)) {
-        return getObjectKeys(value).reduce((obj, key) => {
-            if (key === 'count' || (typeof key === 'string' && key.endsWith('_count'))) {
-                return { ...obj, [key]: value[key] };
-            }
-            return { ...obj, [key]: wrapProperties(value[key], String(key)) };
-        }, {} as Record<string, unknown>);
+        return getObjectKeys(value).reduce(
+            (obj, key) => {
+                if (key === 'count' || (typeof key === 'string' && key.endsWith('_count'))) {
+                    return { ...obj, [key]: value[key] };
+                }
+                return { ...obj, [key]: wrapProperties(value[key], String(key)) };
+            },
+            {} as Record<string, unknown>,
+        );
     }
 
     if (Array.isArray(value)) {

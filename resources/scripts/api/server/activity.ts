@@ -10,7 +10,7 @@ export type { ActivityLogFilters } from '@/api/activity';
 
 const useActivityLogs = (
     filters?: ActivityLogFilters,
-    config?: ConfigInterface<ActivityLogResult, AxiosError>
+    config?: ConfigInterface<ActivityLogResult, AxiosError>,
 ): responseInterface<ActivityLogResult, AxiosError> => {
     const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
     const key = useServerSWRKey(['activity', useFilteredObject(filters || {})]);
@@ -27,7 +27,7 @@ const useActivityLogs = (
 
             return toActivityLogResult(data);
         },
-        { revalidateOnMount: false, ...(config || {}) }
+        { revalidateOnMount: false, ...(config || {}) },
     );
 };
 

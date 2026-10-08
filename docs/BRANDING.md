@@ -56,17 +56,17 @@ Panel rebrand does not resolve that separate Blueprint artwork permission issue.
 
 The following Pterodactyl identifiers remain intentionally:
 
-| Identifier | Reason |
-| --- | --- |
-| `Pterodactyl\` PHP namespaces and class names | Existing Blueprint extensions, Composer autoloading and application classes |
-| `config/pterodactyl.php`, `pterodactyl.*` and `settings::pterodactyl:*` | Existing configuration, saved settings and extension APIs |
-| `PTERODACTYL_*` environment variables and `PTERODACTYL_DIRECTORY` | Existing environment settings and Blueprint extension scripts |
-| `window.PterodactylUser` and the `Pterodactyl` JavaScript namespace | Existing frontend and admin integrations |
-| `/themes/pterodactyl/`, `pterodactyl.css` and legacy asset filenames | Extension stylesheets and asset URLs |
-| `application/vnd.pterodactyl.v1+json` and Wings identifiers | API clients and the existing Wings protocol |
-| `/etc/pterodactyl`, game image URLs and egg author addresses | The separately installed Wings daemon and upstream egg provenance |
-| `pteroq.service` and `p:*` Artisan commands | Existing services, deployment scripts and administration workflows |
-| Upstream URLs, author details, changelog history and license notices | Accurate provenance, troubleshooting references and license obligations |
+| Identifier                                                              | Reason                                                                      |
+| ----------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `Pterodactyl\` PHP namespaces and class names                           | Existing Blueprint extensions, Composer autoloading and application classes |
+| `config/pterodactyl.php`, `pterodactyl.*` and `settings::pterodactyl:*` | Existing configuration, saved settings and extension APIs                   |
+| `PTERODACTYL_*` environment variables and `PTERODACTYL_DIRECTORY`       | Existing environment settings and Blueprint extension scripts               |
+| `window.PterodactylUser` and the `Pterodactyl` JavaScript namespace     | Existing frontend and admin integrations                                    |
+| `/themes/pterodactyl/`, `pterodactyl.css` and legacy asset filenames    | Extension stylesheets and asset URLs                                        |
+| `application/vnd.pterodactyl.v1+json` and Wings identifiers             | API clients and the existing Wings protocol                                 |
+| `/etc/pterodactyl`, game image URLs and egg author addresses            | The separately installed Wings daemon and upstream egg provenance           |
+| `pteroq.service` and `p:*` Artisan commands                             | Existing services, deployment scripts and administration workflows          |
+| Upstream URLs, author details, changelog history and license notices    | Accurate provenance, troubleshooting references and license obligations     |
 
 The admin overview links to Aquadactyl releases. The upstream CDN is still used
 by the existing version service, including Wings checks; its Panel version is not

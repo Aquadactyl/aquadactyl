@@ -64,16 +64,16 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
             <div
                 data-sensitive
                 tabIndex={0}
-                className={'flex items-center justify-center w-56 h-56 p-2 bg-gray-50 shadow mx-auto mt-6'}
+                className={'mx-auto mt-6 flex h-56 w-56 items-center justify-center bg-gray-50 p-2 shadow'}
             >
                 {!token ? (
                     <Spinner />
                 ) : (
-                    <QRCode renderAs={'svg'} value={token.image_url_data} className={'w-full h-full shadow-none'} />
+                    <QRCode renderAs={'svg'} value={token.image_url_data} className={'h-full w-full shadow-none'} />
                 )}
             </div>
             <CopyOnClick text={token?.secret}>
-                <p className={'font-mono text-sm text-gray-100 text-center mt-2'}>
+                <p className={'mt-2 text-center font-mono text-sm text-gray-100'}>
                     <SensitiveValue>{token?.secret.match(/.{1,4}/g)!.join(' ') || 'Loading...'}</SensitiveValue>
                 </p>
             </CopyOnClick>
@@ -93,7 +93,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
                 autoComplete={'one-time-code'}
                 pattern={'\\d{6}'}
             />
-            <label htmlFor={'totp-password'} className={'block mt-3'}>
+            <label htmlFor={'totp-password'} className={'mt-3 block'}>
                 Account Password
             </label>
             <Input.Text

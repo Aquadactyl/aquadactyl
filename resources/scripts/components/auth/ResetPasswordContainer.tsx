@@ -60,7 +60,7 @@ export default ({ match, location }: RouteComponentProps<{ token: string }>) => 
             })}
         >
             {({ isSubmitting }) => (
-                <LoginFormContainer title={'Reset Password'} className={'w-full flex'}>
+                <LoginFormContainer title={'Reset Password'} className={'flex w-full'}>
                     <div>
                         <label>Email</label>
                         <Input value={email} disabled />
@@ -84,7 +84,9 @@ export default ({ match, location }: RouteComponentProps<{ token: string }>) => 
                     <div className={'mt-6 text-center'}>
                         <Link
                             to={'/auth/login'}
-                            className={'text-xs text-neutral-400 tracking-wide no-underline uppercase hover:text-neutral-200'}
+                            className={
+                                'text-xs uppercase tracking-wide text-neutral-400 no-underline hover:text-neutral-200'
+                            }
                         >
                             Return to Login
                         </Link>

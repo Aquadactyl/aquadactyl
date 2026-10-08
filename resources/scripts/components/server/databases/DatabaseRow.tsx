@@ -73,7 +73,7 @@ export default ({ database, className }: Props) => {
                         }}
                     >
                         <FlashMessageRender byKey={'database:delete'} className={'mb-6'} />
-                        <h2 className={'text-2xl mb-6'}>Confirm database deletion</h2>
+                        <h2 className={'mb-6 text-2xl'}>Confirm database deletion</h2>
                         <p className={'text-sm'}>
                             Deleting a database is a permanent action, it cannot be undone. This will permanently delete
                             the <strong>{database.name}</strong> database and remove all associated data.
@@ -87,7 +87,12 @@ export default ({ database, className }: Props) => {
                                 description={'Enter the database name to confirm deletion.'}
                             />
                             <div className={'mt-6 text-right'}>
-                                <Button type={'button'} isSecondary className={'mr-2'} onClick={() => setVisible(false)}>
+                                <Button
+                                    type={'button'}
+                                    isSecondary
+                                    className={'mr-2'}
+                                    onClick={() => setVisible(false)}
+                                >
                                     Cancel
                                 </Button>
                                 <Button type={'submit'} color={'red'} disabled={!isValid}>
@@ -144,32 +149,32 @@ export default ({ database, className }: Props) => {
                 <div className={'hidden md:block'}>
                     <FontAwesomeIcon icon={faDatabase} fixedWidth />
                 </div>
-                <div className={'flex-1 ml-4'}>
+                <div className={'ml-4 flex-1'}>
                     <CopyOnClick text={database.name}>
                         <p className={'text-lg'}>{database.name}</p>
                     </CopyOnClick>
                 </div>
-                <div className={'ml-8 text-center hidden md:block'}>
+                <div className={'ml-8 hidden text-center md:block'}>
                     <CopyOnClick text={database.connectionString}>
                         <p className={'text-sm'}>
                             <SensitiveValue>{database.connectionString}</SensitiveValue>
                         </p>
                     </CopyOnClick>
-                    <p className={'mt-1 text-2xs text-neutral-500 uppercase select-none'}>Endpoint</p>
+                    <p className={'mt-1 select-none text-2xs uppercase text-neutral-500'}>Endpoint</p>
                 </div>
-                <div className={'ml-8 text-center hidden md:block'}>
+                <div className={'ml-8 hidden text-center md:block'}>
                     <p className={'text-sm'}>
                         <SensitiveValue>{database.allowConnectionsFrom}</SensitiveValue>
                     </p>
-                    <p className={'mt-1 text-2xs text-neutral-500 uppercase select-none'}>Connections from</p>
+                    <p className={'mt-1 select-none text-2xs uppercase text-neutral-500'}>Connections from</p>
                 </div>
-                <div className={'ml-8 text-center hidden md:block'}>
+                <div className={'ml-8 hidden text-center md:block'}>
                     <CopyOnClick text={database.username}>
                         <p className={'text-sm'}>
                             <SensitiveValue>{database.username}</SensitiveValue>
                         </p>
                     </CopyOnClick>
-                    <p className={'mt-1 text-2xs text-neutral-500 uppercase select-none'}>Username</p>
+                    <p className={'mt-1 select-none text-2xs uppercase text-neutral-500'}>Username</p>
                 </div>
                 <div className={'ml-8'}>
                     <Button isSecondary className={'mr-2'} onClick={() => setConnectionVisible(true)}>

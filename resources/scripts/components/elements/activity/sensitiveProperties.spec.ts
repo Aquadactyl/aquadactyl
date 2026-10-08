@@ -16,7 +16,7 @@ describe('activity sensitive properties', () => {
         'recognizes sensitive data in unlabeled properties',
         (value) => {
             expect(isSensitiveProperty('old', value)).toBe(true);
-        }
+        },
     );
     it('leaves ordinary filenames and counts visible', () => {
         expect(isSensitiveProperty('file', '/server.properties')).toBe(false);

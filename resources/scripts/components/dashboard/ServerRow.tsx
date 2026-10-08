@@ -34,7 +34,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
             refreshInterval: 30000,
             revalidateOnFocus: false,
             errorRetryInterval: 30000,
-        }
+        },
     );
     const unavailable = Boolean(error);
     const isSuspended = server.status === 'suspended' || !!stats?.isSuspended;
@@ -42,7 +42,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
         () => () => {
             if (refreshTimer.current) clearTimeout(refreshTimer.current);
         },
-        []
+        [],
     );
 
     const allocation = server.allocations.find((allocation) => allocation.isDefault);
@@ -52,14 +52,14 @@ export default ({ server, className }: { server: Server; className?: string }) =
     const state = isSuspended
         ? 'suspended'
         : server.isNodeUnderMaintenance
-        ? 'maintenance'
-        : server.isTransferring
-        ? 'transferring'
-        : server.status
-        ? server.status
-        : unavailable
-        ? 'unavailable'
-        : stats?.status || 'loading';
+          ? 'maintenance'
+          : server.isTransferring
+            ? 'transferring'
+            : server.status
+              ? server.status
+              : unavailable
+                ? 'unavailable'
+                : stats?.status || 'loading';
     const statusLabels: Record<string, string> = {
         suspended: 'Suspended',
         maintenance: 'Maintenance',
@@ -174,7 +174,7 @@ export default ({ server, className }: { server: Server; className?: string }) =
                         mutate(
                             (value) =>
                                 value ? { ...value, status: action === 'stop' ? 'stopping' : 'starting' } : value,
-                            false
+                            false,
                         )
                     }
                     onRefresh={() => {

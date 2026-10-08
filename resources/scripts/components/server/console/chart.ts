@@ -94,8 +94,8 @@ function getEmptyData(label: string, sets = 1, callback?: ChartDatasetCallback |
                         borderColor: theme('colors.cyan.400'),
                         backgroundColor: hexToRgba(theme('colors.cyan.700'), 0.5),
                     },
-                    index
-                )
+                    index,
+                ),
             ),
     };
 }
@@ -110,7 +110,7 @@ interface UseChartOptions {
 
 function useChart(label: string, opts?: UseChartOptions) {
     const options = getOptions(
-        typeof opts?.options === 'number' ? { scales: { y: { min: 0, suggestedMax: opts.options } } } : opts?.options
+        typeof opts?.options === 'number' ? { scales: { y: { min: 0, suggestedMax: opts.options } } } : opts?.options,
     );
     const [data, setData] = useState(getEmptyData(label, opts?.sets || 1, opts?.callback));
 
@@ -123,7 +123,7 @@ function useChart(label: string, opts?: UseChartOptions) {
                         .slice(1)
                         .concat(typeof item === 'number' ? Number(item.toFixed(2)) : item),
                 })),
-            })
+            }),
         );
 
     const clear = () =>
@@ -133,7 +133,7 @@ function useChart(label: string, opts?: UseChartOptions) {
                     ...value,
                     data: Array(20).fill(-5),
                 })),
-            })
+            }),
         );
 
     return { props: { data, options }, push, clear };

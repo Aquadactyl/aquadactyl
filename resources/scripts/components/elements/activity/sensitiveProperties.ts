@@ -2,7 +2,7 @@ export const isSensitiveProperty = (key: string, value: unknown): boolean => {
     const normalized = key.replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase();
     if (
         /(?:^|[._-])(?:email|ip|address|password|token|secret|authorization|credential|identifier|connection)(?:$|[._-])/.test(
-            normalized
+            normalized,
         )
     )
         return true;

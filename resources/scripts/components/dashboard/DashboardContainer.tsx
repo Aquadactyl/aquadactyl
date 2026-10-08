@@ -34,7 +34,7 @@ export default () => {
         mutate,
         isValidating,
     } = useSWR<PaginatedResult<Server>>(['/api/client/servers', showOnlyAdmin && rootAdmin, page, query], () =>
-        getServers({ page, query: query || undefined, type: showOnlyAdmin && rootAdmin ? 'admin' : undefined })
+        getServers({ page, query: query || undefined, type: showOnlyAdmin && rootAdmin ? 'admin' : undefined }),
     );
 
     useEffect(() => {
@@ -162,8 +162,8 @@ export default () => {
                                         {query
                                             ? 'No matching servers'
                                             : showOnlyAdmin
-                                            ? 'No other servers'
-                                            : 'No servers yet'}
+                                              ? 'No other servers'
+                                              : 'No servers yet'}
                                     </h2>
                                     <p>
                                         {query
@@ -171,10 +171,10 @@ export default () => {
                                               query +
                                               '”. Try a different name or address.'
                                             : showOnlyAdmin
-                                            ? 'Servers belonging to other users will appear here.'
-                                            : rootAdmin
-                                            ? 'Create a server in the admin panel, or assign an existing server to your account.'
-                                            : 'When a server is assigned to your account, you’ll find it here. Contact your administrator to get started.'}
+                                              ? 'Servers belonging to other users will appear here.'
+                                              : rootAdmin
+                                                ? 'Create a server in the admin panel, or assign an existing server to your account.'
+                                                : 'When a server is assigned to your account, you’ll find it here. Contact your administrator to get started.'}
                                     </p>
                                     {query ? (
                                         <button

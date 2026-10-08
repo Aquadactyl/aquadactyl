@@ -25,13 +25,16 @@ module.exports = function (api) {
         plugins,
         presets: [
             '@babel/typescript',
-            ['@babel/env', {
-                modules: false,
-                useBuiltIns: 'entry',
-                corejs: 3,
-                targets,
-            }],
+            [
+                '@babel/env',
+                {
+                    modules: false,
+                    useBuiltIns: 'entry',
+                    corejs: 3,
+                    targets,
+                },
+            ],
             '@babel/react',
-        ]
+        ],
     };
 };

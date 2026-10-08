@@ -26,8 +26,8 @@ interface Params {
 }
 
 const CronBox = ({ title, value }: { title: string; value: string }) => (
-    <div className={'bg-neutral-700 rounded p-3'}>
-        <p className={'text-neutral-300 text-sm'}>{title}</p>
+    <div className={'rounded bg-neutral-700 p-3'}>
+        <p className={'text-sm text-neutral-300'}>{title}</p>
         <p className={'text-xl font-medium text-neutral-100'}>{value}</p>
     </div>
 );
@@ -35,8 +35,8 @@ const CronBox = ({ title, value }: { title: string; value: string }) => (
 const ActivePill = ({ active }: { active: boolean }) => (
     <span
         className={classNames(
-            'rounded-full px-2 py-px text-xs ml-4 uppercase',
-            active ? 'bg-green-600 text-green-100' : 'bg-red-600 text-red-100'
+            'ml-4 rounded-full px-2 py-px text-xs uppercase',
+            active ? 'bg-green-600 text-green-100' : 'bg-red-600 text-red-100',
         )}
     >
         {active ? 'Active' : 'Inactive'}
@@ -56,7 +56,7 @@ export default () => {
 
     const schedule = ServerContext.useStoreState(
         (state) => state.schedules.data.find((s) => s.id === parseInt(scheduleId, 10)),
-        isEqual
+        isEqual,
     );
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
 
@@ -88,23 +88,23 @@ export default () => {
             ) : (
                 <>
                     <BeforeEdit />
-                    <ScheduleCronRow cron={schedule.cron} className={'sm:hidden bg-neutral-700 rounded mb-4 p-3'} />
+                    <ScheduleCronRow cron={schedule.cron} className={'mb-4 rounded bg-neutral-700 p-3 sm:hidden'} />
                     <div className={'rounded shadow'}>
                         <div
                             className={
-                                'sm:flex items-center bg-neutral-900 p-3 sm:p-6 border-b-4 border-neutral-600 rounded-t'
+                                'items-center rounded-t border-b-4 border-neutral-600 bg-neutral-900 p-3 sm:flex sm:p-6'
                             }
                         >
                             <div className={'flex-1'}>
-                                <h3 className={'flex items-center text-neutral-100 text-2xl'}>
+                                <h3 className={'flex items-center text-2xl text-neutral-100'}>
                                     {schedule.name}
                                     {schedule.isProcessing ? (
                                         <span
                                             className={
-                                                'flex items-center rounded-full px-2 py-px text-xs ml-4 uppercase bg-neutral-600 text-white'
+                                                'ml-4 flex items-center rounded-full bg-neutral-600 px-2 py-px text-xs uppercase text-white'
                                             }
                                         >
-                                            <Spinner className={'!w-3 !h-3 mr-2'} />
+                                            <Spinner className={'mr-2 !h-3 !w-3'} />
                                             Processing
                                         </span>
                                     ) : (
@@ -118,7 +118,7 @@ export default () => {
                                     ) : (
                                         <span className={'text-neutral-300'}>n/a</span>
                                     )}
-                                    <span className={'ml-4 pl-4 border-l-4 border-neutral-600 py-px'}>
+                                    <span className={'ml-4 border-l-4 border-neutral-600 py-px pl-4'}>
                                         Next run at:&nbsp;
                                         {schedule.nextRunAt ? (
                                             format(schedule.nextRunAt, "MMM do 'at' h:mma")
@@ -128,27 +128,27 @@ export default () => {
                                     </span>
                                 </p>
                             </div>
-                            <div className={'flex sm:block mt-3 sm:mt-0'}>
+                            <div className={'mt-3 flex sm:mt-0 sm:block'}>
                                 <Can action={'schedule.update'}>
-                                    <Button.Text className={'flex-1 mr-4'} onClick={toggleEditModal}>
+                                    <Button.Text className={'mr-4 flex-1'} onClick={toggleEditModal}>
                                         Edit
                                     </Button.Text>
                                     <NewTaskButton schedule={schedule} />
                                 </Can>
                             </div>
                         </div>
-                        <div className={'hidden sm:grid grid-cols-5 md:grid-cols-5 gap-4 mb-4 mt-4'}>
+                        <div className={'mb-4 mt-4 hidden grid-cols-5 gap-4 sm:grid md:grid-cols-5'}>
                             <CronBox title={'Minute'} value={schedule.cron.minute} />
                             <CronBox title={'Hour'} value={schedule.cron.hour} />
                             <CronBox title={'Day (Month)'} value={schedule.cron.dayOfMonth} />
                             <CronBox title={'Month'} value={schedule.cron.month} />
                             <CronBox title={'Day (Week)'} value={schedule.cron.dayOfWeek} />
                         </div>
-                        <div className={'bg-neutral-700 rounded-b'}>
+                        <div className={'rounded-b bg-neutral-700'}>
                             {schedule.tasks.length > 0
                                 ? schedule.tasks
                                       .sort((a, b) =>
-                                          a.sequenceId === b.sequenceId ? 0 : a.sequenceId > b.sequenceId ? 1 : -1
+                                          a.sequenceId === b.sequenceId ? 0 : a.sequenceId > b.sequenceId ? 1 : -1,
                                       )
                                       .map((task) => (
                                           <ScheduleTaskRow

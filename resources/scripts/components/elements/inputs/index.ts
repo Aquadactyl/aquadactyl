@@ -6,7 +6,7 @@ const Input: { Text: typeof InputField; Checkbox: typeof Checkbox } = Object.ass
     {
         Text: InputField,
         Checkbox: Checkbox,
-    }
+    },
 );
 
 export { Input };

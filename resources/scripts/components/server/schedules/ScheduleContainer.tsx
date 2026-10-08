@@ -48,7 +48,7 @@ export default () => {
                 <>
                     <BeforeContent />
                     {schedules.length === 0 ? (
-                        <p className={'text-sm text-center text-neutral-300'}>
+                        <p className={'text-center text-sm text-neutral-300'}>
                             There are no schedules configured for this server.
                         </p>
                     ) : (
@@ -57,7 +57,7 @@ export default () => {
                                 as={'a'}
                                 key={schedule.id}
                                 href={`${match.url}/${schedule.id}`}
-                                className={'cursor-pointer mb-2 flex-wrap'}
+                                className={'mb-2 cursor-pointer flex-wrap'}
                                 onClick={(e: any) => {
                                     e.preventDefault();
                                     history.push(`${match.url}/${schedule.id}`);

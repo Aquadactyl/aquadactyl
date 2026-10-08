@@ -63,9 +63,9 @@ const BackupContainer = () => {
                 </p>
             )}
             <Can action={'backup.create'}>
-                <div className={'mt-6 sm:flex items-center justify-end'}>
+                <div className={'mt-6 items-center justify-end sm:flex'}>
                     {backupLimit > 0 && backups.backupCount > 0 && (
-                        <p className={'text-sm text-neutral-300 mb-4 sm:mr-6 sm:mb-0'}>
+                        <p className={'mb-4 text-sm text-neutral-300 sm:mb-0 sm:mr-6'}>
                             {backups.backupCount} of {backupLimit} backups have been created for this server.
                         </p>
                     )}

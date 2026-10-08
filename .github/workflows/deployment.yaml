@@ -1,15 +1,15 @@
 name: Deployment checks
 on:
-  pull_request:
-    branches: [main, 1.0-develop]
-  push:
-    branches: [main, 1.0-develop]
+    pull_request:
+        branches: [main, 1.0-develop]
+    push:
+        branches: [main, 1.0-develop]
 permissions:
-  contents: read
+    contents: read
 jobs:
-  deployment:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-      - run: shellcheck scripts/deploy/common.sh scripts/panel-install.sh scripts/panel-update.sh tests/Deployment/update-guards.sh tests/Deployment/smoke.sh
-      - run: bash tests/Deployment/update-guards.sh
+    deployment:
+        runs-on: ubuntu-24.04
+        steps:
+            - uses: actions/checkout@v4
+            - run: shellcheck scripts/deploy/common.sh scripts/panel-install.sh scripts/panel-update.sh tests/Deployment/update-guards.sh tests/Deployment/smoke.sh
+            - run: bash tests/Deployment/update-guards.sh
