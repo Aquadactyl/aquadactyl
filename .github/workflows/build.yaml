@@ -31,7 +31,7 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
             - run: pnpm audit --prod
-            - run: pnpm run tsc
+            - run: pnpm run types
             - run: pnpm run lint
             - run: pnpm exec jest --runInBand
             - run: node --test scripts/game-query.test.cjs

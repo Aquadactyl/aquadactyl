@@ -17,7 +17,7 @@ jobs:
                   node-version: 22
                   cache: pnpm
             - run: pnpm install --frozen-lockfile
-            - run: pnpm run tsc
+            - run: pnpm run types
             - run: pnpm run build
             - name: create release branch and bump version
               env:
