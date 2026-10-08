@@ -1,16 +1,16 @@
 /* Aquadactyl's charcoal palette. Match these surfaces to tailwind.config.js. */
 :root {
     color-scheme: dark;
-    --aqua-background: #232428;
-    --aqua-chrome: #1e1f22;
-    --aqua-surface: #313338;
-    --aqua-raised: #41444c;
-    --aqua-hover: #383b42;
-    --aqua-text: #d6d9df;
-    --aqua-heading: #f2f3f5;
-    --aqua-muted: #b0b5bf;
-    --aqua-border: #41444c;
-    --aqua-control-border: #8a909d;
+    --aqua-background: #171c21;
+    --aqua-chrome: #11161b;
+    --aqua-surface: #1c232a;
+    --aqua-raised: #272e35;
+    --aqua-hover: #29333d;
+    --aqua-text: #d7dce1;
+    --aqua-heading: #f5f6f7;
+    --aqua-muted: #9ca5af;
+    --aqua-border: #303942;
+    --aqua-control-border: #39424b;
     --aqua-accent: #78d4cc;
     --aqua-accent-hover: #a4e3dc;
     --aqua-primary: #237c7f;

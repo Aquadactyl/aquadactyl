@@ -34,6 +34,10 @@ export interface Server {
     uuid: string;
     name: string;
     node: string;
+    nodeCountry?: string | null;
+    nodeCountryName?: string | null;
+    userPermissions?: string[];
+    gameQueryType?: string | null;
     isNodeUnderMaintenance: boolean;
     status: ServerStatus;
     sftpDetails: {
@@ -72,6 +76,10 @@ export const rawDataToServerObject = ({ attributes: data }: FractalResponseData)
     uuid: data.uuid,
     name: data.name,
     node: data.node,
+    nodeCountry: data.node_country ?? null,
+    nodeCountryName: data.node_country_name ?? null,
+    userPermissions: data.user_permissions || [],
+    gameQueryType: data.game_query_type ?? null,
     isNodeUnderMaintenance: data.is_node_under_maintenance,
     status: data.status,
     invocation: data.invocation,

@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useContext, useEffect, useState } from 'react';
 import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
 import getTwoFactorTokenData, { TwoFactorTokenData } from '@/api/account/getTwoFactorTokenData';
@@ -61,7 +62,11 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
     return (
         <form id={'enable-totp-form'} onSubmit={submit}>
             <FlashMessageRender byKey={'account:two-step'} className={'mt-4'} />
-            <div className={'flex items-center justify-center w-56 h-56 p-2 bg-gray-50 shadow mx-auto mt-6'}>
+            <div
+                data-sensitive
+                tabIndex={0}
+                className={'flex items-center justify-center w-56 h-56 p-2 bg-gray-50 shadow mx-auto mt-6'}
+            >
                 {!token ? (
                     <Spinner />
                 ) : (
@@ -70,7 +75,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
             </div>
             <CopyOnClick text={token?.secret}>
                 <p className={'font-mono text-sm text-gray-100 text-center mt-2'}>
-                    {token?.secret.match(/.{1,4}/g)!.join(' ') || 'Loading...'}
+                    <SensitiveValue>{token?.secret.match(/.{1,4}/g)!.join(' ') || 'Loading...'}</SensitiveValue>
                 </p>
             </CopyOnClick>
             <p id={'totp-code-description'} className={'mt-6'}>

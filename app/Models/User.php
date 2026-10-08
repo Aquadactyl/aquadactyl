@@ -41,6 +41,9 @@ use Pterodactyl\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
  * @property bool $gravatar
+ * @property string|null $avatar
+ * @property string|null $avatar_url
+ * @property bool $blur_sensitive_data
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Database\Eloquent\Collection|\Pterodactyl\Models\ApiKey[] $apiKeys
@@ -143,13 +146,16 @@ class User extends Model implements
         'root_admin' => 'boolean',
         'use_totp' => 'boolean',
         'gravatar' => 'boolean',
+        'blur_sensitive_data' => 'boolean',
         'totp_authenticated_at' => 'datetime',
     ];
 
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'avatar'];
+
+    protected $appends = ['avatar_url'];
 
     /**
      * Default values for specific fields in the database.
@@ -160,6 +166,7 @@ class User extends Model implements
         'language' => 'en',
         'use_totp' => false,
         'totp_secret' => null,
+        'blur_sensitive_data' => false,
     ];
 
     /**
@@ -177,6 +184,8 @@ class User extends Model implements
         'language' => 'string',
         'use_totp' => 'boolean',
         'totp_secret' => 'nullable|string',
+        'avatar' => 'nullable|string|max:255',
+        'blur_sensitive_data' => 'boolean',
     ];
 
     /**
@@ -232,6 +241,11 @@ class User extends Model implements
     public function getNameAttribute(): string
     {
         return trim($this->name_first . ' ' . $this->name_last);
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar ? '/storage/' . $this->avatar : null;
     }
 
     /**

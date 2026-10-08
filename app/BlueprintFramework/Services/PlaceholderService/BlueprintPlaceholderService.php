@@ -7,7 +7,8 @@ class BlueprintPlaceholderService
     public function version(): string
     {
         $ver = '::v';
-        if ($ver == '::v') {
+        // Keep this check intact when the installer replaces the version token.
+        if (str_starts_with($ver, '::')) {
             return 'unknown';
         }
 

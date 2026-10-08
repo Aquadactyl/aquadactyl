@@ -27,6 +27,9 @@ return [
         'account' => [
             'email-changed' => 'Changed email from :old to :new',
             'password-changed' => 'Changed password',
+            'avatar-updated' => 'Updated profile picture',
+            'avatar-removed' => 'Removed profile picture',
+            'privacy-updated' => 'Updated privacy settings',
         ],
         'api-key' => [
             'create' => 'Created new API key :identifier',

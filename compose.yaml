@@ -33,6 +33,9 @@ services:
       dockerfile: Dockerfile
     image: aquadactyl:test
     restart: unless-stopped
+    networks:
+      - default
+      - servers
     ports:
       - "127.0.0.1:${AQUADACTYL_PORT:-8081}:80"
     depends_on:

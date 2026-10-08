@@ -23,6 +23,12 @@
                 </div>
                 <div class="box-body">
                     <div class="form-group">
+                        <label class="control-label">Profile Picture</label>
+                        <div>
+                            <img src="{{ $user->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower($user->email)) . '?s=160' }}" style="width:80px;height:80px;object-fit:cover;" class="img-circle" alt="{{ $user->username }}'s profile picture" />
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="email" class="control-label">Email</label>
                         <div>
                             <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">

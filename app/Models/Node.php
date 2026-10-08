@@ -4,6 +4,8 @@ namespace Pterodactyl\Models;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Yaml\Yaml;
+use Pterodactyl\Rules\CountryCode;
+use Pterodactyl\Support\Countries;
 use Illuminate\Container\Container;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Encryption\Encrypter;
@@ -19,6 +21,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $uuid
  * @property bool $public
  * @property string $name
+ * @property string|null $country_code
+ * @property string|null $query_address
  * @property string|null $description
  * @property int $location_id
  * @property string $fqdn
@@ -93,6 +97,8 @@ class Node extends Model implements Identifiable
         'disk_overallocate', 'upload_size', 'daemonBase',
         'daemonSFTP', 'daemonListen',
         'description', 'maintenance_mode',
+        'country_code',
+        'query_address',
     ];
 
     public static array $validationRules = [
@@ -112,6 +118,8 @@ class Node extends Model implements Identifiable
         'daemonListen' => 'required|numeric|between:1,65535',
         'maintenance_mode' => 'boolean',
         'upload_size' => 'int|min:1',
+        'country_code' => 'sometimes|nullable|string|size:2',
+        'query_address' => ['sometimes', 'nullable', 'string', 'max:253', 'regex:/^(?:[a-zA-Z0-9][a-zA-Z0-9.-]*|[a-fA-F0-9:]+)$/'],
     ];
 
     /**
@@ -134,6 +142,19 @@ class Node extends Model implements Identifiable
     public function getConnectionAddress(): string
     {
         return sprintf('%s://%s:%s', $this->scheme, $this->fqdn, $this->daemonListen);
+    }
+
+    public static function getRules(): array
+    {
+        $rules = parent::getRules();
+        $rules['country_code'][] = new CountryCode();
+
+        return $rules;
+    }
+
+    public function setCountryCodeAttribute(?string $code): void
+    {
+        $this->attributes['country_code'] = Countries::normalize($code);
     }
 
     /**

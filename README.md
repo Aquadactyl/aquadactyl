@@ -38,6 +38,20 @@ Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprin
 See [validation results](docs/VALIDATION.md) for the checks performed and remaining
 build dependency advisories.
 
+## Try it locally
+
+With Docker and Compose installed, start the current checkout with:
+
+```bash
+docker compose up -d --build --wait --wait-timeout 600
+```
+
+Open [localhost:8081](http://localhost:8081) and sign in as
+`admin@aquadactyl.test` with password `AquadactylLocal123!`. The local-only stack
+initializes MariaDB, Redis, the panel, Blueprint and a connected Wings node
+automatically. See
+[local setup and reset instructions](BUILDING.md#instant-local-setup-with-docker).
+
 ## Linux installation
 
 Prepare a Linux host with PHP 8.5 and PHP-FPM (PHP 8.4 is also supported), Composer 2,

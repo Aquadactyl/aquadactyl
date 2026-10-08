@@ -7,7 +7,7 @@ export default ({ ns, children, ...props }: Props) => {
     const { t } = useTranslation(ns);
 
     return (
-        <Trans t={t} {...props}>
+        <Trans ns={ns} t={t} {...props}>
             {children}
         </Trans>
     );

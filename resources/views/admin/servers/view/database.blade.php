@@ -40,7 +40,7 @@
                             <td>{{ $database->database }}</td>
                             <td>{{ $database->username }}</td>
                             <td>{{ $database->remote }}</td>
-                            <td><code>{{ $database->host->host }}:{{ $database->host->port }}</code></td>
+                            <td><code data-sensitive tabindex="0">{{ $database->host->host }}:{{ $database->host->port }}</code></td>
                             @if($database->max_connections != null)
                                 <td>{{ $database->max_connections }}</td>
                             @else
@@ -81,7 +81,7 @@
                     </div>
                     <div class="form-group">
                         <label for="pRemote" class="control-label">Connections</label>
-                        <input id="pRemote" type="text" name="remote" class="form-control" value="%" />
+                        <input id="pRemote" type="text" data-sensitive name="remote" class="form-control" value="%" />
                         <p class="text-muted small">This should reflect the IP address that connections are allowed from. Uses standard MySQL notation. If unsure leave as <code>%</code>.</p>
                     </div>
                     <div class="form-group">

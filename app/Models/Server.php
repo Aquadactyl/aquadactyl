@@ -36,6 +36,8 @@ use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
  * @property string|null $threads
  * @property bool $oom_disabled
  * @property int $allocation_id
+ * @property string $game_query_type
+ * @property int|null $game_query_allocation_id
  * @property int $nest_id
  * @property int $egg_id
  * @property string $startup
@@ -138,6 +140,7 @@ class Server extends Model implements Identifiable
         'status' => self::STATUS_INSTALLING,
         'oom_disabled' => true,
         'installed_at' => null,
+        'game_query_type' => 'auto',
     ];
 
     /**
@@ -173,6 +176,8 @@ class Server extends Model implements Identifiable
         'database_limit' => 'present|nullable|integer|min:0',
         'allocation_limit' => 'sometimes|nullable|integer|min:0',
         'backup_limit' => 'present|nullable|integer|min:0',
+        'game_query_type' => 'sometimes|string|max:40',
+        'game_query_allocation_id' => 'sometimes|nullable|integer|exists:allocations,id',
     ];
 
     /**
@@ -198,6 +203,7 @@ class Server extends Model implements Identifiable
         self::UPDATED_AT => 'datetime',
         'deleted_at' => 'datetime',
         'installed_at' => 'datetime',
+        'game_query_allocation_id' => 'integer',
     ];
 
     /**
@@ -261,6 +267,11 @@ class Server extends Model implements Identifiable
     public function allocation(): HasOne
     {
         return $this->hasOne(Allocation::class, 'id', 'allocation_id');
+    }
+
+    public function gameQueryAllocation(): BelongsTo
+    {
+        return $this->belongsTo(Allocation::class, 'game_query_allocation_id');
     }
 
     /**

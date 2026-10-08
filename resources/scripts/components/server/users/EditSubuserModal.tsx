@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useContext, useEffect, useRef } from 'react';
 import { Subuser } from '@/state/server/subusers';
 import { Form, Formik } from 'formik';
@@ -105,9 +106,14 @@ const EditSubuserModal = ({ subuser }: Props) => {
             <Form>
                 <div css={tw`flex justify-between`}>
                     <h2 css={tw`text-2xl`} ref={ref}>
-                        {subuser
-                            ? `${canEditUser ? 'Modify' : 'View'} permissions for ${subuser.email}`
-                            : 'Create new subuser'}
+                        {subuser ? (
+                            <>
+                                {canEditUser ? 'Modify' : 'View'} permissions for{' '}
+                                <SensitiveValue>{subuser.email}</SensitiveValue>
+                            </>
+                        ) : (
+                            'Create new subuser'
+                        )}
                     </h2>
                     <div>
                         <Button type={'submit'} css={tw`w-full sm:w-auto`}>
@@ -128,6 +134,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
                     <div css={tw`mt-6`}>
                         <Field
                             name={'email'}
+                            type={'email'}
                             label={'User Email'}
                             description={
                                 'Enter the email address of the user you wish to invite as a subuser for this server.'

@@ -38,7 +38,7 @@
                             <tr>
                                 <td><code>{{ $host->id }}</code></td>
                                 <td><a href="{{ route('admin.databases.view', $host->id) }}">{{ $host->name }}</a></td>
-                                <td><code>{{ $host->host }}</code></td>
+                                <td><code data-sensitive tabindex="0">{{ $host->host }}</code></td>
                                 <td><code>{{ $host->port }}</code></td>
                                 <td>{{ $host->username }}</td>
                                 <td class="text-center">{{ $host->databases_count }}</td>
@@ -86,7 +86,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <label for="pUsername" class="form-label">Username</label>
-                            <input type="text" name="username" id="pUsername" class="form-control" />
+                            <input data-sensitive type="text" name="username" id="pUsername" class="form-control" />
                             <p class="text-muted small">The username of an account that has enough permissions to create new users and databases on the system.</p>
                         </div>
                         <div class="col-md-6">

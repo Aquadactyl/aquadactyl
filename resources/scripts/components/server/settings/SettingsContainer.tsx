@@ -36,13 +36,18 @@ export default () => {
                             <div>
                                 <Label>Server Address</Label>
                                 <CopyOnClick text={`sftp://${ip(sftp.ip)}:${sftp.port}`}>
-                                    <Input type={'text'} value={`sftp://${ip(sftp.ip)}:${sftp.port}`} readOnly />
+                                    <Input
+                                        data-sensitive
+                                        type={'text'}
+                                        value={`sftp://${ip(sftp.ip)}:${sftp.port}`}
+                                        readOnly
+                                    />
                                 </CopyOnClick>
                             </div>
                             <div css={tw`mt-6`}>
                                 <Label>Username</Label>
                                 <CopyOnClick text={`${username}.${id}`}>
-                                    <Input type={'text'} value={`${username}.${id}`} readOnly />
+                                    <Input data-sensitive type={'text'} value={`${username}.${id}`} readOnly />
                                 </CopyOnClick>
                             </div>
                             <div css={tw`mt-6 flex items-center`}>

@@ -1,4 +1,5 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
+import { v4 } from 'uuid';
 import { Field as FormikField, FieldProps } from 'formik';
 import Input from '@/components/elements/Input';
 import Label from '@/components/elements/Label';
@@ -14,34 +15,47 @@ interface OwnProps {
 type Props = OwnProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'>;
 
 const Field = forwardRef<HTMLInputElement, Props>(
-    ({ id, name, light = false, label, description, validate, ...props }, ref) => (
-        <FormikField innerRef={ref} name={name} validate={validate}>
-            {({ field, form: { errors, touched } }: FieldProps) => (
-                <div>
-                    {label && (
-                        <Label htmlFor={id} isLight={light}>
-                            {label}
-                        </Label>
-                    )}
-                    <Input
-                        id={id}
-                        {...field}
-                        {...props}
-                        isLight={light}
-                        hasError={!!(touched[field.name] && errors[field.name])}
-                    />
-                    {touched[field.name] && errors[field.name] ? (
-                        <p className={'input-help error'}>
-                            {(errors[field.name] as string).charAt(0).toUpperCase() +
-                                (errors[field.name] as string).slice(1)}
-                        </p>
-                    ) : description ? (
-                        <p className={'input-help'}>{description}</p>
-                    ) : null}
-                </div>
-            )}
-        </FormikField>
-    )
+    ({ id, name, light = false, label, description, validate, ...props }, ref) => {
+        const generatedId = useMemo(() => 'field-' + v4(), []);
+        const fieldId = id || generatedId;
+        return (
+            <FormikField name={name} validate={validate}>
+                {({ field, form: { errors, touched } }: FieldProps) => (
+                    <div>
+                        {label && (
+                            <Label htmlFor={fieldId} isLight={light}>
+                                {label}
+                            </Label>
+                        )}
+                        <Input
+                            id={fieldId}
+                            ref={ref}
+                            {...field}
+                            {...props}
+                            isLight={light}
+                            hasError={!!(touched[field.name] && errors[field.name])}
+                            aria-invalid={!!(touched[field.name] && errors[field.name])}
+                            aria-describedby={
+                                description || (touched[field.name] && errors[field.name])
+                                    ? fieldId + '-help'
+                                    : undefined
+                            }
+                        />
+                        {touched[field.name] && errors[field.name] ? (
+                            <p id={fieldId + '-help'} className={'input-help error'}>
+                                {(errors[field.name] as string).charAt(0).toUpperCase() +
+                                    (errors[field.name] as string).slice(1)}
+                            </p>
+                        ) : description ? (
+                            <p id={fieldId + '-help'} className={'input-help'}>
+                                {description}
+                            </p>
+                        ) : null}
+                    </div>
+                )}
+            </FormikField>
+        );
+    }
 );
 Field.displayName = 'Field';
 

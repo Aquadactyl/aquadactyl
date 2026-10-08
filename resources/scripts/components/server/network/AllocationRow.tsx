@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { memo, useCallback, useState } from 'react';
 import isEqual from 'react-fast-compare';
 import tw from 'twin.macro';
@@ -69,12 +70,14 @@ const AllocationRow = ({ allocation }: Props) => {
                     {allocation.alias ? (
                         <CopyOnClick text={allocation.alias}>
                             <Code dark className={'w-40 truncate'}>
-                                {allocation.alias}
+                                <SensitiveValue>{allocation.alias}</SensitiveValue>
                             </Code>
                         </CopyOnClick>
                     ) : (
                         <CopyOnClick text={ip(allocation.ip)}>
-                            <Code dark>{ip(allocation.ip)}</Code>
+                            <Code dark>
+                                <SensitiveValue>{ip(allocation.ip)}</SensitiveValue>
+                            </Code>
                         </CopyOnClick>
                     )}
                     <Label>{allocation.alias ? 'Hostname' : 'IP Address'}</Label>

@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDatabase, faEye, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
@@ -103,31 +104,31 @@ export default ({ database, className }: Props) => {
                 <div>
                     <Label>Endpoint</Label>
                     <CopyOnClick text={database.connectionString}>
-                        <Input type={'text'} readOnly value={database.connectionString} />
+                        <Input data-sensitive type={'text'} readOnly value={database.connectionString} />
                     </CopyOnClick>
                 </div>
                 <div css={tw`mt-6`}>
                     <Label>Connections from</Label>
-                    <Input type={'text'} readOnly value={database.allowConnectionsFrom} />
+                    <Input data-sensitive type={'text'} readOnly value={database.allowConnectionsFrom} />
                 </div>
                 <div css={tw`mt-6`}>
                     <Label>Username</Label>
                     <CopyOnClick text={database.username}>
-                        <Input type={'text'} readOnly value={database.username} />
+                        <Input data-sensitive type={'text'} readOnly value={database.username} />
                     </CopyOnClick>
                 </div>
                 <Can action={'database.view_password'}>
                     <div css={tw`mt-6`}>
                         <Label>Password</Label>
                         <CopyOnClick text={database.password} showInNotification={false}>
-                            <Input type={'text'} readOnly value={database.password} />
+                            <Input data-sensitive type={'text'} readOnly value={database.password} />
                         </CopyOnClick>
                     </div>
                 </Can>
                 <div css={tw`mt-6`}>
                     <Label>JDBC Connection String</Label>
                     <CopyOnClick text={jdbcConnectionString} showInNotification={false}>
-                        <Input type={'text'} readOnly value={jdbcConnectionString} />
+                        <Input data-sensitive type={'text'} readOnly value={jdbcConnectionString} />
                     </CopyOnClick>
                 </div>
                 <div css={tw`mt-6 text-right`}>
@@ -150,17 +151,23 @@ export default ({ database, className }: Props) => {
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>
                     <CopyOnClick text={database.connectionString}>
-                        <p css={tw`text-sm`}>{database.connectionString}</p>
+                        <p css={tw`text-sm`}>
+                            <SensitiveValue>{database.connectionString}</SensitiveValue>
+                        </p>
                     </CopyOnClick>
                     <p css={tw`mt-1 text-2xs text-neutral-500 uppercase select-none`}>Endpoint</p>
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>
-                    <p css={tw`text-sm`}>{database.allowConnectionsFrom}</p>
+                    <p css={tw`text-sm`}>
+                        <SensitiveValue>{database.allowConnectionsFrom}</SensitiveValue>
+                    </p>
                     <p css={tw`mt-1 text-2xs text-neutral-500 uppercase select-none`}>Connections from</p>
                 </div>
                 <div css={tw`ml-8 text-center hidden md:block`}>
                     <CopyOnClick text={database.username}>
-                        <p css={tw`text-sm`}>{database.username}</p>
+                        <p css={tw`text-sm`}>
+                            <SensitiveValue>{database.username}</SensitiveValue>
+                        </p>
                     </CopyOnClick>
                     <p css={tw`mt-1 text-2xs text-neutral-500 uppercase select-none`}>Username</p>
                 </div>

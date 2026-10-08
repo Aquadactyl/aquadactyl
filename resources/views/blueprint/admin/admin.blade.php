@@ -19,11 +19,9 @@
 
 @section("blueprint.navigation")
   <li>
-    <li>
-      <a href="{{ route('admin.extensions') }}" data-toggle="tooltip" data-placement="bottom" title="Extensions">
-        <i class='fa fa-puzzle-piece'></i>
-      </a>
-    </li>
+    <a href="{{ route('admin.extensions') }}" data-toggle="tooltip" data-placement="bottom" title="Extensions">
+      <i class='fa fa-puzzle-piece'></i>
+    </a>
   </li>
 @endsection
 

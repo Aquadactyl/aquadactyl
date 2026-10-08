@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect, useState } from 'react';
 import ContentBox from '@/components/elements/ContentBox';
 import CreateApiKeyForm from '@/components/dashboard/forms/CreateApiKeyForm';
@@ -82,7 +83,9 @@ export default () => {
                                     </p>
                                 </div>
                                 <p css={tw`text-sm ml-4 hidden md:block`}>
-                                    <code css={tw`font-mono py-1 px-2 bg-neutral-900 rounded`}>{key.identifier}</code>
+                                    <code css={tw`font-mono py-1 px-2 bg-neutral-900 rounded`}>
+                                        <SensitiveValue>{key.identifier}</SensitiveValue>
+                                    </code>
                                 </p>
                                 <button css={tw`ml-4 p-2 text-sm`} onClick={() => setDeleteIdentifier(key.identifier)}>
                                     <FontAwesomeIcon

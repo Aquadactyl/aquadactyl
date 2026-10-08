@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect } from 'react';
 import ContentBox from '@/components/elements/ContentBox';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
@@ -50,7 +51,9 @@ export default () => {
                                 <FontAwesomeIcon icon={faKey} css={tw`text-neutral-300`} />
                                 <div css={tw`flex-1`}>
                                     <p css={tw`text-sm break-words font-medium`}>{key.name}</p>
-                                    <p css={tw`text-xs mt-1 font-mono truncate`}>SHA256:{key.fingerprint}</p>
+                                    <p css={tw`text-xs mt-1 font-mono truncate`}>
+                                        <SensitiveValue>SHA256:{key.fingerprint}</SensitiveValue>
+                                    </p>
                                     <p css={tw`text-xs mt-1 text-neutral-300 uppercase`}>
                                         Added on:&nbsp;
                                         {format(key.createdAt, 'MMM do, yyyy HH:mm')}

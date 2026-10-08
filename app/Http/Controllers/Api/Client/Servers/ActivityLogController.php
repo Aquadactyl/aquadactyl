@@ -7,10 +7,10 @@ use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Permission;
 use Pterodactyl\Models\ActivityLog;
 use Spatie\QueryBuilder\QueryBuilder;
-use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
+use Pterodactyl\Services\Activity\ActivityLogFilterService;
+use Pterodactyl\Http\Requests\Api\Client\ActivityLogRequest;
 use Pterodactyl\Transformers\Api\Client\ActivityLogTransformer;
 use Pterodactyl\Http\Controllers\Api\Client\ClientApiController;
 
@@ -19,14 +19,11 @@ class ActivityLogController extends ClientApiController
     /**
      * Returns the activity logs for a server.
      */
-    public function __invoke(ClientApiRequest $request, Server $server): array
+    public function __invoke(ActivityLogRequest $request, Server $server, ActivityLogFilterService $filters): array
     {
         $this->authorize(Permission::ACTION_ACTIVITY_READ, $server);
 
-        $activity = QueryBuilder::for($server->activity())
-            ->with('actor')
-            ->allowedSorts(['timestamp'])
-            ->allowedFilters([AllowedFilter::partial('event')])
+        $query = $server->activity()
             ->whereNotIn('activity_logs.event', ActivityLog::DISABLED_EVENTS)
             ->when(config('activity.hide_admin_activity'), function (Builder $builder) use ($server) {
                 // We could do this with a query and a lot of joins, but that gets pretty
@@ -43,12 +40,21 @@ class ActivityLogController extends ClientApiController
                             ->orWhere('users.root_admin', 0)
                             ->orWhereIn('users.id', $subusers);
                     });
-            })
+            });
+        $events = $filters->availableEvents($query->getQuery());
+
+        $activity = QueryBuilder::for($query)
+            ->with('actor')
+            ->allowedSorts(['timestamp'])
+            ->defaultSort('-timestamp')
+            ->orderBy('activity_logs.id', 'desc')
+            ->allowedFilters($filters->allowedFilters($request->user()))
             ->paginate(min($request->query('per_page', 25), 100))
             ->appends($request->query());
 
         return $this->fractal->collection($activity)
             ->transformWith($this->getTransformer(ActivityLogTransformer::class))
+            ->addMeta(['available_events' => $events])
             ->toArray();
     }
 }

@@ -1,3 +1,4 @@
+import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useState } from 'react';
 import { Subuser } from '@/state/server/subusers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,7 +25,9 @@ export default ({ subuser }: Props) => {
                 <img css={tw`w-full h-full`} src={`${subuser.image}?s=400`} />
             </div>
             <div css={tw`ml-4 flex-1 overflow-hidden`}>
-                <p css={tw`text-sm truncate`}>{subuser.email}</p>
+                <p css={tw`text-sm truncate`}>
+                    <SensitiveValue>{subuser.email}</SensitiveValue>
+                </p>
             </div>
             <div css={tw`ml-4`}>
                 <p css={tw`font-medium text-center`}>

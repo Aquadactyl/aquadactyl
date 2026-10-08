@@ -23,8 +23,8 @@
                         <div class="input-group input-group-sm">
                             <input type="text" name="filter[*]" class="form-control pull-right" value="{{ request()->input()['filter']['*'] ?? '' }}" placeholder="Search Servers">
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                <a href="{{ route('admin.servers.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">Create New</button></a>
+                                <button type="submit" class="btn btn-default" aria-label="Search servers"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                <a href="{{ route('admin.servers.new') }}" class="btn btn-sm btn-primary">Create New</a>
                             </div>
                         </div>
                     </form>
@@ -49,7 +49,7 @@
                                 <td><a href="{{ route('admin.users.view', $server->user->id) }}">{{ $server->user->username }}</a></td>
                                 <td><a href="{{ route('admin.nodes.view', $server->node->id) }}">{{ $server->node->name }}</a></td>
                                 <td>
-                                    <code>{{ $server->allocation->alias }}:{{ $server->allocation->port }}</code>
+                                    <code data-sensitive tabindex="0">{{ $server->allocation->alias }}:{{ $server->allocation->port }}</code>
                                 </td>
                                 <td class="text-center">
                                     @if($server->isSuspended())

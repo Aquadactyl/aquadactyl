@@ -32,6 +32,12 @@ class SetSecurityHeaders
     {
         $response = $next($request);
 
+        // Theme customisers can preview the dashboard within the same origin.
+        if ($request->is('/') && $request->query('theme-preview') === '1' && $request->user()?->root_admin
+            && !$response->headers->has('X-Frame-Options')) {
+            $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
+        }
+
         foreach (static::$headers as $key => $value) {
             if (! $response->headers->has($key)) {
                 $response->headers->set($key, $value);

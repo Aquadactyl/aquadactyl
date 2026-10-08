@@ -148,13 +148,6 @@ p.small {
     white-space: nowrap;
 }
 
-@media (max-width:767px) {
-    .box-header > .box-tools {
-        position: relative !important;
-        padding: 0px 10px 10px;
-    }
-}
-
 .middle, .align-middle {
     vertical-align: middle !important;
 }
@@ -232,7 +225,7 @@ li.select2-results__option--highlighted[aria-selected="false"] > .user-block > .
 }
 
 .select2-selection.select2-selection--multiple {
-    min-height: 36px !important;
+    min-height: 42px !important;
 }
 
 .select2-search--inline .select2-search__field:focus {
@@ -488,7 +481,8 @@ label.control-label > span.field-optional:before {
 }
 
 .search01 {
-    width: 30%;
+    width: 360px;
+    max-width: 100%;
 }
 
 .number-info-box-content {
@@ -864,10 +858,278 @@ pre {
     flex: 1;
 }
 
-/* Comfortable surfaces and controls for the default admin theme. */
+/* Shared spacing and surfaces for the admin panel. */
 body {
     background: var(--aqua-background);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.content-header {
+    padding: 28px 24px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 14px 24px;
+}
+
+.content-header > h1 {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.5px;
+    flex: 1 1 300px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.content-header > h1 > small {
+    display: block;
+    margin-top: 9px;
+    padding-left: 0;
+    color: var(--aqua-muted);
+    font-size: 14px;
+    letter-spacing: 0;
+    line-height: 1.6;
+}
+
+.content-header > .breadcrumb {
+    position: static;
+    float: none;
+    margin: 0;
+    padding: 6px 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.content {
+    padding: 24px;
+}
+
+.sidebar-menu > li > a {
+    padding-top: 14px;
+    padding-bottom: 14px;
+}
+
+.box-header {
+    padding: 16px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 16px;
+}
+
+.box-header::before,
+.box-header::after {
+    display: none;
+}
+
+.box-header .box-title {
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.4;
+    min-width: 0;
+}
+
+.box-header > .box-tools {
+    position: static;
+    float: none !important;
+    margin-left: auto;
+    max-width: 100%;
+}
+
+.box-header > .box-tools.search01 {
+    flex: 0 1 360px;
+}
+
+.box-tools.search01 .input-group {
+    display: flex;
+    width: 100%;
+}
+
+.box-tools.search01 .form-control {
+    flex: 1;
+    min-width: 0;
+    width: 0;
+    float: none;
+}
+
+.box-tools.search01 .input-group-btn {
+    display: flex;
+    width: auto;
+}
+
+.box-tools.search01 .input-group-btn > .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 6px 11px;
+    white-space: nowrap;
+}
+
+.box-body {
+    padding: 20px;
+}
+
+.box-body:not(.table-responsive) {
+    container-type: inline-size;
+}
+
+.box-body > .row,
+.box-body.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+:where(.box-body > .row, .box-body.row) > :where([class*='col-']) {
+    width: 100%;
+}
+
+.box-body > .row::before,
+.box-body > .row::after,
+.box-body.row::before,
+.box-body.row::after {
+    display: none;
+}
+
+.box-body > .form-group[class*='col-'] {
+    float: none;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+@container (max-width: 420px) {
+    .row > .form-group.col-sm-6,
+    .row > .form-group.col-md-6,
+    .row > .form-group.col-md-4 {
+        width: 100%;
+    }
+}
+
+.box-body.table-responsive {
+    padding: 0;
+}
+
+.box-footer {
+    padding: 14px 20px;
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tbody > tr > td,
+.table > tfoot > tr > th,
+.table > tfoot > tr > td {
+    padding: 13px 16px;
+    vertical-align: middle;
+}
+
+.table-responsive th {
+    white-space: nowrap;
+}
+
+.table [data-action='set-alias'] {
+    min-width: 140px;
+}
+
+.form-control {
+    height: 42px;
+    min-height: 42px;
+    box-shadow: none;
+}
+
+textarea.form-control {
+    height: auto;
+}
+
+.form-control.input-sm,
+.input-group-sm > .form-control {
+    height: 36px;
+    min-height: 36px;
+}
+
+.select2-container .select2-selection--single {
+    height: 42px;
+    padding: 8px 12px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    padding-left: 0;
+    line-height: 24px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 40px;
+}
+
+.radio-inline + .radio-inline {
+    margin-left: 0;
+}
+
+.radio-inline {
+    margin-right: 12px;
+}
+
+.btn-group[data-toggle='buttons'] {
+    display: inline-flex;
+    max-width: 100%;
+    vertical-align: middle;
+}
+
+.btn-group[data-toggle='buttons'] > .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    float: none;
+    min-height: 42px;
+}
+
+.main-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+    padding: 14px 24px;
+}
+
+.main-footer::before,
+.main-footer::after {
+    display: none;
+}
+
+.admin-footer-copyright {
+    flex: 1 1 300px;
+}
+
+.admin-footer-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+}
+
+.help-block {
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.btn {
+    padding: 9px 14px;
+    font-weight: 500;
+    white-space: normal;
+}
+
+.btn-sm { padding: 6px 11px; }
+.btn-xs { padding: 3px 8px; }
+
+@media (max-width: 767px) {
+    .content-header { padding: 22px 16px 0; }
+    .content { padding: 20px 16px; }
+    .content-header > .breadcrumb { flex-basis: 100%; }
+    .content-header > h1 { font-size: 25px; }
+    .box-body { padding: 16px; }
+    .box-header { padding: 16px; }
+    .box-header > .box-tools.search01 { flex-basis: 100%; }
+    .main-footer { padding: 14px 16px; }
 }
 
 ::selection {
@@ -901,7 +1163,7 @@ body {
 .box {
     border: 1px solid var(--aqua-border);
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 12%) !important;
+    box-shadow: none !important;
 }
 
 .box-header {

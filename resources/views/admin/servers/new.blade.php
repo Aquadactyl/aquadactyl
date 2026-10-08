@@ -32,7 +32,7 @@
 
                         <div class="form-group">
                             <label for="pUserId">Server Owner</label>
-                            <select id="pUserId" name="owner_id" class="form-control" style="padding-left:0;"></select>
+                            <select data-sensitive id="pUserId" name="owner_id" class="form-control" style="padding-left:0;"></select>
                             <p class="small text-muted no-margin">Email address of the Server Owner.</p>
                         </div>
                     </div>
@@ -86,13 +86,13 @@
 
                     <div class="form-group col-sm-4">
                         <label for="pAllocation">Default Allocation</label>
-                        <select id="pAllocation" name="allocation_id" class="form-control"></select>
+                        <select data-sensitive id="pAllocation" name="allocation_id" class="form-control"></select>
                         <p class="small text-muted no-margin">The main allocation that will be assigned to this server.</p>
                     </div>
 
                     <div class="form-group col-sm-4">
                         <label for="pAllocationAdditional">Additional Allocation(s)</label>
-                        <select id="pAllocationAdditional" name="allocation_additional[]" class="form-control" multiple></select>
+                        <select data-sensitive id="pAllocationAdditional" name="allocation_additional[]" class="form-control" multiple></select>
                         <p class="small text-muted no-margin">Additional allocations to assign to this server on creation.</p>
                     </div>
                 </div>

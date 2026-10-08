@@ -333,11 +333,15 @@ if [[ $1 != "-bash" ]]; then
 
     # Link directories.
     PRINT INFO "Linking directories and filesystems.."
-    {
-      ln -s -r -T "$FOLDER/.blueprint/extensions/blueprint/public" "$FOLDER/public/extensions/blueprint"
-      ln -s -r -T "$FOLDER/.blueprint/extensions/blueprint/assets" "$FOLDER/public/assets/extensions/blueprint"
-      ln -s -r -T "$FOLDER/scripts/libraries" "$FOLDER/.blueprint/lib"
-    } 2>> "$BLUEPRINT__DEBUG"
+    if ! {
+      mkdir -p "$FOLDER/public/extensions" "$FOLDER/public/assets/extensions" &&
+      ln -s -r -f -n -T "$FOLDER/.blueprint/extensions/blueprint/public" "$FOLDER/public/extensions/blueprint" &&
+      ln -s -r -f -n -T "$FOLDER/.blueprint/extensions/blueprint/assets" "$FOLDER/public/assets/extensions/blueprint" &&
+      ln -s -r -f -n -T "$FOLDER/scripts/libraries" "$FOLDER/.blueprint/lib"
+    } 2>> "$BLUEPRINT__DEBUG"; then
+      PRINT FATAL "Could not create Blueprint's public asset and library links. GNU coreutils is required."
+      exit 1
+    fi
     php artisan storage:link &>> "$BLUEPRINT__DEBUG"
 
     ((PROGRESS_NOW++))

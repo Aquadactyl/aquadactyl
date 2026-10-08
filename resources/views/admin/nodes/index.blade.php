@@ -28,8 +28,8 @@
                         <div class="input-group input-group-sm">
                             <input type="text" name="filter[name]" class="form-control pull-right" value="{{ request()->input('filter.name') }}" placeholder="Search Nodes">
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
-                                <a href="{{ route('admin.nodes.new') }}"><button type="button" class="btn btn-sm btn-primary" style="border-radius: 0 3px 3px 0;margin-left:-1px;">Create New</button></a>
+                                <button type="submit" class="btn btn-default" aria-label="Search nodes"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                <a href="{{ route('admin.nodes.new') }}" class="btn btn-sm btn-primary">Create New</a>
                             </div>
                         </div>
                     </form>
@@ -52,7 +52,12 @@
                             <tr>
                                 <td class="text-center text-muted left-icon" data-action="ping" data-secret="{{ $node->getDecryptedKey() }}" data-location="{{ $node->scheme }}://{{ $node->fqdn }}:{{ $node->daemonListen }}/api/system"><i class="fa fa-fw fa-refresh fa-spin"></i></td>
                                 <td>{!! $node->maintenance_mode ? '<span class="label label-warning"><i class="fa fa-wrench"></i></span> ' : '' !!}<a href="{{ route('admin.nodes.view', $node->id) }}">{{ $node->name }}</a></td>
-                                <td>{{ $node->location->short }}</td>
+                                <td>
+                                    @if($node->country_code)
+                                        <img src="/flags/{{ strtolower($node->country_code) }}.svg" alt="{{ \Pterodactyl\Support\Countries::name($node->country_code) }}" title="{{ \Pterodactyl\Support\Countries::name($node->country_code) }}" width="20" height="15" style="margin-right:6px;vertical-align:middle;" />
+                                    @endif
+                                    {{ $node->location->short }}
+                                </td>
                                 <td>{{ $node->memory }} MiB</td>
                                 <td>{{ $node->disk }} MiB</td>
                                 <td class="text-center">{{ $node->servers_count }}</td>

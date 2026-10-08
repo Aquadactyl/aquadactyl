@@ -61,7 +61,7 @@
                 <div class="box-body">
                     <div class="form-group">
                         <label for="pUsername" class="form-label">Username</label>
-                        <input type="text" name="username" id="pUsername" class="form-control" value="{{ old('username', $host->username) }}" />
+                        <input data-sensitive type="text" name="username" id="pUsername" class="form-control" value="{{ old('username', $host->username) }}" />
                         <p class="text-muted small">The username of an account that has enough permissions to create new users and databases on the system.</p>
                     </div>
                     <div class="form-group">

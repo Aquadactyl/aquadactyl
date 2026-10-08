@@ -3,7 +3,8 @@ FROM composer:2 AS composer
 FROM node:22-bookworm-slim AS node
 FROM php:${PHP_VERSION}-cli-bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git zip unzip rsync shellcheck mariadb-client libonig-dev libzip-dev libpng-dev libsqlite3-dev \
+    git zip unzip rsync shellcheck mariadb-client libonig-dev libzip-dev libpng-dev libjpeg62-turbo-dev libwebp-dev libsqlite3-dev \
+    && docker-php-ext-configure gd --with-jpeg --with-webp \
     && docker-php-ext-install mbstring bcmath zip gd pdo_mysql pdo_sqlite \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer

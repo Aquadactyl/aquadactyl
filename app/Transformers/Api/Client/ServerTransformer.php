@@ -8,11 +8,14 @@ use Pterodactyl\Models\Subuser;
 use League\Fractal\Resource\Item;
 use Pterodactyl\Models\Allocation;
 use Pterodactyl\Models\Permission;
+use Pterodactyl\Support\Countries;
 use Illuminate\Container\Container;
 use Pterodactyl\Models\EggVariable;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\NullResource;
 use Pterodactyl\Services\Servers\StartupCommandService;
+use Pterodactyl\Services\Servers\GetUserPermissionsService;
+use Pterodactyl\Services\Servers\GameQuery\GameQuerySettingsService;
 
 class ServerTransformer extends BaseClientTransformer
 {
@@ -47,6 +50,10 @@ class ServerTransformer extends BaseClientTransformer
             'uuid' => $server->uuid,
             'name' => $server->name,
             'node' => $server->node->name,
+            'node_country' => $server->node->country_code,
+            'node_country_name' => Countries::name($server->node->country_code),
+            'user_permissions' => Container::getInstance()->make(GetUserPermissionsService::class)->handle($server, $user),
+            'game_query_type' => Container::getInstance()->make(GameQuerySettingsService::class)->game($server),
             'is_node_under_maintenance' => $server->node->isUnderMaintenance(),
             'sftp_details' => [
                 'ip' => $server->node->fqdn,
