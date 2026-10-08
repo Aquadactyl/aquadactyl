@@ -52,6 +52,7 @@ const terminalProps: ITerminalOptions = {
     fontSize: 12,
     fontFamily: th('fontFamily.mono'),
     theme: theme,
+    allowProposedApi: true,
 };
 
 export default () => {

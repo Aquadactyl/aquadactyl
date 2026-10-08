@@ -1,7 +1,7 @@
 import { Terminal, ITerminalAddon } from '@xterm/xterm';
 
 export class ScrollDownHelperAddon implements ITerminalAddon {
-    private terminal: Terminal = new Terminal();
+    private terminal!: Terminal;
     private element?: HTMLDivElement;
 
     activate(terminal: Terminal): void {
