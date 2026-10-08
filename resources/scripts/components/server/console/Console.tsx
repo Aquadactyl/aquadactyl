@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ITerminalOptions, Terminal } from 'xterm';
-import { FitAddon } from 'xterm-addon-fit';
-import { SearchAddon } from 'xterm-addon-search';
-import { SearchBarAddon } from 'xterm-addon-search-bar';
-import { WebLinksAddon } from 'xterm-addon-web-links';
-import { Unicode11Addon } from 'xterm-addon-unicode11';
+import { ITerminalOptions, Terminal } from '@xterm/xterm';
+import { FitAddon } from '@xterm/addon-fit';
+import { SearchAddon } from '@xterm/addon-search';
+import { SearchBarAddon } from '@kingironman2011/xterm-addon-search-bar';
+import { WebLinksAddon } from '@xterm/addon-web-links';
+import { Unicode11Addon } from '@xterm/addon-unicode11';
 import { ScrollDownHelperAddon } from '@/plugins/XtermScrollDownHelperAddon';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import { ServerContext } from '@/state/server';
@@ -18,7 +18,7 @@ import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
 
 import CommandRow from '@blueprint/components/Server/Terminal/CommandRow';
 
-import 'xterm/css/xterm.css';
+import '@xterm/xterm/css/xterm.css';
 import styles from './style.module.css';
 import { th } from '@/lib/theme';
 
@@ -51,7 +51,6 @@ const terminalProps: ITerminalOptions = {
     allowTransparency: true,
     fontSize: 12,
     fontFamily: th('fontFamily.mono'),
-    rows: 30,
     theme: theme,
 };
 

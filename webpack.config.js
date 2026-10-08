@@ -52,6 +52,9 @@ module.exports = {
                             },
                             sourceMap: !isProduction,
                             importLoaders: 1,
+                            url: {
+                                filter: (url) => !url.includes('data:'),
+                            },
                         },
                     },
                     {

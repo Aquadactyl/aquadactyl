@@ -78,7 +78,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         let stats: any = {};
         try {
             stats = JSON.parse(data);
-        } catch (e) {
+        } catch {
             return;
         }
 

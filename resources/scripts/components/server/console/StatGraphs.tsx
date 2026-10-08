@@ -53,7 +53,7 @@ export default () => {
         let values: any = {};
         try {
             values = JSON.parse(data);
-        } catch (e) {
+        } catch {
             return;
         }
         cpu.push(values.cpu_absolute);

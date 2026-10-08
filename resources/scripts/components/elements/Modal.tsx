@@ -54,7 +54,7 @@ const Modal: React.FC<ModalProps> = ({
     const [render, setRender] = useState(visible);
 
     const isDismissable = useMemo(() => {
-        return (dismissable || true) && !(showSpinnerOverlay || false);
+        return (dismissable ?? true) && !showSpinnerOverlay;
     }, [dismissable, showSpinnerOverlay]);
 
     useEffect(() => {
