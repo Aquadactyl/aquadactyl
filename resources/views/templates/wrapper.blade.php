@@ -2,7 +2,7 @@
 @yield('blueprint.lib')
 
 <!DOCTYPE html>
-<html class="{{ Auth::user()?->blur_sensitive_data ? 'privacy-mode' : '' }}">
+<html class="{{ Auth::user()?->shouldBlurSensitiveData() ? 'privacy-mode' : '' }}">
     <head>
         <title>{{ config('app.name', 'Aquadactyl') }}</title>
 

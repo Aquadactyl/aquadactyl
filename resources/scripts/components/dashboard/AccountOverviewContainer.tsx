@@ -8,12 +8,14 @@ import ConfigureTwoFactorForm from '@/components/dashboard/forms/ConfigureTwoFac
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import MessageBox from '@/components/MessageBox';
 import { useLocation } from 'react-router-dom';
+import { useStoreState } from '@/state/hooks';
 
 import BeforeContent from '@blueprint/components/Account/Overview/BeforeContent';
 import AfterContent from '@blueprint/components/Account/Overview/AfterContent';
 
 export default () => {
     const { state } = useLocation<undefined | { twoFactorRedirect?: boolean }>();
+    const features = useStoreState((state) => state.settings.data?.features);
 
     return (
         <PageContentBlock title={'Account settings'}>
@@ -36,7 +38,13 @@ export default () => {
                 description={'Personalize your account with a picture.'}
                 showFlashes={'account:avatar'}
             >
-                <ProfilePictureForm />
+                {features?.customProfilePictures !== false ? (
+                    <ProfilePictureForm />
+                ) : (
+                    <p className={'text-sm text-neutral-400'}>
+                        Custom profile pictures have been disabled by your administrator.
+                    </p>
+                )}
             </ContentBox>
             <ContentBox
                 style={{ marginBottom: 24 }}
@@ -44,7 +52,13 @@ export default () => {
                 description={'Control what appears while sharing your screen.'}
                 showFlashes={'account:privacy'}
             >
-                <PrivacySettingsForm />
+                {features?.privacyMode !== false ? (
+                    <PrivacySettingsForm />
+                ) : (
+                    <p className={'text-sm text-neutral-400'}>
+                        Sensitive data blur has been disabled by your administrator.
+                    </p>
+                )}
             </ContentBox>
             <div className={'account-grid'}>
                 <ContentBox

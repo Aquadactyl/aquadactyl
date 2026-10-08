@@ -1,8 +1,11 @@
-<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png?v=2">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png?v=2">
-<link rel="shortcut icon" href="/favicons/favicon.ico?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png?v=2">
-<link rel="mask-icon" href="/favicons/safari-pinned-tab.svg?v=3" color="#00bfff">
-<link rel="manifest" href="/favicons/manifest.json?v=2">
-<meta name="msapplication-config" content="/favicons/browserconfig.xml?v=2">
-<meta name="msapplication-TileColor" content="#1e1f22">
+@inject('branding', 'Pterodactyl\Services\Settings\SiteBrandingService')
+<link rel="icon" type="image/png" sizes="32x32" href="{{ $branding->iconUrl(32) }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ $branding->iconUrl(16) }}">
+<link rel="shortcut icon" type="image/vnd.microsoft.icon" href="{{ $branding->url('favicon.ico') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ $branding->iconUrl(180) }}">
+<link rel="mask-icon" href="{{ $branding->url('mask-icon.svg') }}" color="#00bfff">
+<link rel="manifest" href="{{ $branding->url('manifest.webmanifest') }}">
+<meta name="application-name" content="{{ config('app.name', 'Aquadactyl') }}">
+<meta name="apple-mobile-web-app-title" content="{{ config('app.name', 'Aquadactyl') }}">
+<meta name="msapplication-config" content="{{ $branding->url('browserconfig.xml') }}">
+<meta name="msapplication-TileColor" content="#11161b">

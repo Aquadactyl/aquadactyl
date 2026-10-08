@@ -71,7 +71,7 @@ export default () => {
     };
 
     return (
-        <PageContentBlock title={'Servers'} showFlashKey={'dashboard'}>
+        <PageContentBlock title={'Servers'} includeAppUrl showFlashKey={'dashboard'}>
             <BeforeContent />
             <div className={'page-heading'}>
                 <div>

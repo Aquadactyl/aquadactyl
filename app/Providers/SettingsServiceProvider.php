@@ -19,6 +19,12 @@ class SettingsServiceProvider extends ServiceProvider
     protected array $keys = [
         'app:name',
         'app:locale',
+        'aquadactyl:branding:logo_path',
+        'aquadactyl:branding:show_name',
+        'aquadactyl:features:player_counts',
+        'aquadactyl:features:custom_profile_pictures',
+        'aquadactyl:features:privacy_mode',
+        'aquadactyl:features:server_quick_actions',
         'recaptcha:enabled',
         'recaptcha:secret_key',
         'recaptcha:website_key',
@@ -84,7 +90,7 @@ class SettingsServiceProvider extends ServiceProvider
                 }
             }
 
-            switch (strtolower($value)) {
+            switch (strtolower((string) $value)) {
                 case 'true':
                 case '(true)':
                     $value = true;

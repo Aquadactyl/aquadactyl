@@ -66,6 +66,8 @@ Route::group(['prefix' => 'databases'], function () {
 */
 Route::group(['prefix' => 'settings'], function () {
     Route::get('/', [Admin\Settings\IndexController::class, 'index'])->name('admin.settings');
+    Route::post('/logo', [Admin\Settings\LogoController::class, 'store'])->name('admin.settings.logo');
+    Route::delete('/logo', [Admin\Settings\LogoController::class, 'destroy']);
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
 

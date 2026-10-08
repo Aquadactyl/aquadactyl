@@ -51,7 +51,7 @@ class IndexController extends Controller
         }
 
         $this->kernel->call('queue:restart');
-        $this->alert->success('Panel settings have been updated successfully and the queue worker was restarted to apply these changes.')->flash();
+        $this->alert->success('Site settings have been updated successfully. Reload open pages to apply these changes.')->flash();
 
         return redirect()->route('admin.settings');
     }

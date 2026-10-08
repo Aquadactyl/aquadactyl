@@ -15,6 +15,9 @@ import AfterNavigation from '@blueprint/components/Navigation/NavigationBar/Afte
 
 export default () => {
     const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
+    const logoUrl = useStoreState((state: ApplicationStore) => state.settings.data?.logoUrl);
+    const showNameWithLogo = useStoreState((state: ApplicationStore) => state.settings.data?.showNameWithLogo);
+    const pairedLogo = Boolean(logoUrl && showNameWithLogo);
     const user = useStoreState((state: ApplicationStore) => state.user.data!);
     const isAquadactyl = name.trim().toLowerCase() === 'aquadactyl';
     const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -29,9 +32,18 @@ export default () => {
             <BeforeNavigation />
             <SpinnerOverlay visible={isLoggingOut} />
             <div className={'navigation-inner'}>
-                <div id={'logo'} className={'navigation-brand'}>
-                    <Link to={'/'} aria-label={name + ' home'}>
-                        {isAquadactyl ? (
+                <div id={'logo'} className={'navigation-brand' + (pairedLogo ? ' navigation-brand-with-name' : '')}>
+                    <Link to={'/'} aria-label={name + ' home'} className={pairedLogo ? 'brand-with-name' : undefined}>
+                        {logoUrl ? (
+                            <>
+                                <img className={'custom-site-logo'} src={logoUrl} alt={''} />
+                                {showNameWithLogo && (
+                                    <span className={'custom-site-name'} title={name}>
+                                        {name}
+                                    </span>
+                                )}
+                            </>
+                        ) : isAquadactyl ? (
                             <img src={'/branding/aquadactyl-wordmark.png'} alt={''} />
                         ) : (
                             <>
