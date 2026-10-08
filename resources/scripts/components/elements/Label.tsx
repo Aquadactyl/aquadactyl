@@ -1,9 +1,22 @@
-import styled from 'styled-components/macro';
-import tw from 'twin.macro';
+import React from 'react';
+import classNames from 'classnames';
 
-const Label = styled.label<{ isLight?: boolean }>`
-    ${tw`block text-sm font-medium text-neutral-300 mb-2`};
-    ${(props) => props.isLight && tw`text-neutral-700`};
-`;
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+    isLight?: boolean;
+    as?: any;
+}
+
+const Label: React.FC<LabelProps> = ({ isLight, className, as: Component = 'label', ...props }) => {
+    return (
+        <Component
+            className={classNames(
+                'block text-sm font-medium text-neutral-300 mb-2',
+                isLight && 'text-neutral-700',
+                className
+            )}
+            {...props}
+        />
+    );
+};
 
 export default Label;

@@ -1,18 +1,14 @@
 import React from 'react';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import { ServerContext } from '@/state/server';
-import styled from 'styled-components/macro';
 import Input from '@/components/elements/Input';
 
-export const FileActionCheckbox = styled(Input)`
-    && {
-        ${tw`border-neutral-500 bg-transparent`};
-
-        &:not(:checked) {
-            ${tw`hover:border-neutral-300`};
-        }
-    }
-`;
+export const FileActionCheckbox: React.FC<React.ComponentProps<typeof Input>> = ({ className, ...props }) => (
+    <Input
+        {...props}
+        className={classNames('!border-neutral-500 !bg-transparent [&&:not(:checked)]:hover:!border-neutral-300', className)}
+    />
+);
 
 export default ({ name }: { name: string }) => {
     const isChecked = ServerContext.useStoreState((state) => state.files.selectedFiles.indexOf(name) >= 0);
@@ -20,7 +16,7 @@ export default ({ name }: { name: string }) => {
     const removeSelectedFile = ServerContext.useStoreActions((actions) => actions.files.removeSelectedFile);
 
     return (
-        <label css={tw`flex-none px-4 py-2 absolute self-center z-30 cursor-pointer`}>
+        <label className={'flex-none px-4 py-2 absolute self-center z-30 cursor-pointer'}>
             <FileActionCheckbox
                 name={'selectedFiles'}
                 value={name}

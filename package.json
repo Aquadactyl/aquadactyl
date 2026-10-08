@@ -80,7 +80,6 @@
         "@babel/runtime": "^7.12.1",
         "@fontsource-variable/ibm-plex-sans": "^5.2.8",
         "@tailwindcss/forms": "^0.5.2",
-        "@tailwindcss/line-clamp": "^0.4.0",
         "@testing-library/dom": "^8.14.0",
         "@testing-library/jest-dom": "^5.16.4",
         "@testing-library/react": "12.1.5",
@@ -135,7 +134,6 @@
         "terser-webpack-plugin": "^5.3.14",
         "ts-essentials": "^9.1.2",
         "ts-jest": "^28.0.5",
-        "twin.macro": "^2.8.2",
         "typescript": "~5.1.0",
         "webpack": "^5.103.0",
         "webpack-assets-manifest": "^6.4.0",
@@ -160,9 +158,6 @@
         "not dead"
     ],
     "babelMacros": {
-        "twin": {
-            "preset": "styled-components"
-        },
         "styledComponents": {
             "pure": true,
             "displayName": true,

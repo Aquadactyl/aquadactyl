@@ -4,7 +4,7 @@ import ContentBox from '@/components/elements/ContentBox';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import PageContentBlock from '@/components/elements/PageContentBlock';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 import { useSSHKeys } from '@/api/account/ssh-keys';
 import { useFlashKey } from '@/plugins/useFlash';
@@ -32,29 +32,29 @@ export default () => {
         <PageContentBlock title={'SSH Keys'}>
             <FlashMessageRender byKey={'account'} />
             <BeforeContent />
-            <div css={tw`md:flex flex-nowrap my-10`}>
-                <ContentBox title={'Add SSH Key'} css={tw`flex-none w-full md:w-1/2`}>
+            <div className={'md:flex flex-nowrap my-10'}>
+                <ContentBox title={'Add SSH Key'} className={'flex-none w-full md:w-1/2'}>
                     <CreateSSHKeyForm />
                 </ContentBox>
-                <ContentBox title={'SSH Keys'} css={tw`flex-1 overflow-hidden mt-8 md:mt-0 md:ml-8`}>
+                <ContentBox title={'SSH Keys'} className={'flex-1 overflow-hidden mt-8 md:mt-0 md:ml-8'}>
                     <SpinnerOverlay visible={!data && isValidating} />
                     {!data || !data.length ? (
-                        <p css={tw`text-center text-sm`}>
+                        <p className={'text-center text-sm'}>
                             {!data ? 'Loading...' : 'No SSH Keys exist for this account.'}
                         </p>
                     ) : (
                         data.map((key, index) => (
                             <GreyRowBox
                                 key={key.fingerprint}
-                                css={[tw`bg-neutral-600 flex space-x-4 items-center`, index > 0 && tw`mt-2`]}
+                                className={classNames('bg-neutral-600 flex space-x-4 items-center', index > 0 && 'mt-2')}
                             >
-                                <FontAwesomeIcon icon={faKey} css={tw`text-neutral-300`} />
-                                <div css={tw`flex-1`}>
-                                    <p css={tw`text-sm break-words font-medium`}>{key.name}</p>
-                                    <p css={tw`text-xs mt-1 font-mono truncate`}>
+                                <FontAwesomeIcon icon={faKey} className={'text-neutral-300'} />
+                                <div className={'flex-1'}>
+                                    <p className={'text-sm break-words font-medium'}>{key.name}</p>
+                                    <p className={'text-xs mt-1 font-mono truncate'}>
                                         <SensitiveValue>SHA256:{key.fingerprint}</SensitiveValue>
                                     </p>
-                                    <p css={tw`text-xs mt-1 text-neutral-300 uppercase`}>
+                                    <p className={'text-xs mt-1 text-neutral-300 uppercase'}>
                                         Added on:&nbsp;
                                         {format(key.createdAt, 'MMM do, yyyy HH:mm')}
                                     </p>

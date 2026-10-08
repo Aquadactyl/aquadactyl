@@ -10,7 +10,6 @@ import getServerSubusers from '@/api/server/users/getServerSubusers';
 import { httpErrorToHuman } from '@/api/http';
 import Can from '@/components/elements/Can';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import tw from 'twin.macro';
 
 import BeforeContent from '@blueprint/components/Server/Users/BeforeContent';
 import AfterContent from '@blueprint/components/Server/Users/AfterContent';
@@ -52,15 +51,15 @@ export default () => {
 
     return (
         <ServerContentBlock title={'Users'}>
-            <FlashMessageRender byKey={'users'} css={tw`mb-4`} />
+            <FlashMessageRender byKey={'users'} className={'mb-4'} />
             <BeforeContent />
             {!subusers.length ? (
-                <p css={tw`text-center text-sm text-neutral-300`}>It looks like you don&apos;t have any subusers.</p>
+                <p className={'text-center text-sm text-neutral-300'}>It looks like you don&apos;t have any subusers.</p>
             ) : (
                 subusers.map((subuser) => <UserRow key={subuser.uuid} subuser={subuser} />)
             )}
             <Can action={'user.create'}>
-                <div css={tw`flex justify-end mt-6`}>
+                <div className={'flex justify-end mt-6'}>
                     <AddSubuserButton />
                 </div>
             </Can>

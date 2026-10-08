@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import tw from 'twin.macro';
 import Avatar from '@/components/Avatar';
 import { Button } from '@/components/elements/button/index';
 import { useStoreActions, useStoreState } from '@/state/hooks';
@@ -80,16 +79,16 @@ const ProfilePictureForm = () => {
     };
 
     return (
-        <div css={tw`flex flex-col sm:flex-row items-start sm:items-center gap-6`}>
-            <div css={tw`flex-shrink-0`}>
+        <div className={'flex flex-col sm:flex-row items-start sm:items-center gap-6'}>
+            <div className={'flex-shrink-0'}>
                 {preview ? (
-                    <img src={preview} alt={'Profile picture preview'} css={tw`w-24 h-24 rounded-full object-cover`} />
+                    <img src={preview} alt={'Profile picture preview'} className={'w-24 h-24 rounded-full object-cover'} />
                 ) : (
                     <Avatar.User size={96} />
                 )}
             </div>
-            <div css={tw`w-full sm:flex-1`}>
-                <label htmlFor={'profile_picture'} css={tw`block mb-2 text-sm font-medium`}>
+            <div className={'w-full sm:flex-1'}>
+                <label htmlFor={'profile_picture'} className={'block mb-2 text-sm font-medium'}>
                     Choose a profile picture
                 </label>
                 <input
@@ -100,12 +99,12 @@ const ProfilePictureForm = () => {
                     disabled={busy}
                     onChange={selectFile}
                     aria-describedby={'profile_picture_help'}
-                    css={tw`block w-full text-sm`}
+                    className={'block w-full text-sm'}
                 />
-                <p id={'profile_picture_help'} css={tw`mt-2 text-xs text-neutral-400`}>
+                <p id={'profile_picture_help'} className={'mt-2 text-xs text-neutral-400'}>
                     PNG, JPEG or WebP up to 2 MB and 4096 × 4096 pixels. Pictures are cropped to a square.
                 </p>
-                <div css={tw`mt-4 flex flex-wrap gap-3`}>
+                <div className={'mt-4 flex flex-wrap gap-3'}>
                     <Button type={'button'} disabled={!file || busy} onClick={save}>
                         {busy ? 'Saving…' : 'Upload Picture'}
                     </Button>

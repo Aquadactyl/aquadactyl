@@ -1,6 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components/macro';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import Spinner from '@/components/elements/Spinner';
 
 interface Props {
@@ -10,99 +9,73 @@ interface Props {
     isSecondary?: boolean;
 }
 
-const ButtonStyle = styled.button<Omit<Props, 'isLoading'>>`
-    ${tw`relative inline-block rounded p-2 font-medium text-sm transition-all duration-150 border`};
+const getButtonClass = ({
+    size,
+    color,
+    isSecondary,
+    className,
+}: Omit<Props, 'isLoading'> & { className?: string }): string => {
+    return classNames(
+        'relative inline-block rounded font-medium text-sm transition-all duration-150 border disabled:opacity-55 disabled:cursor-default',
+        size === 'xsmall' && 'px-2 py-1 text-xs',
+        (!size || size === 'small') && 'px-4 py-2',
+        size === 'large' && 'p-4 text-sm',
+        size === 'xlarge' && 'p-4 w-full',
+        !isSecondary && {
+            'bg-primary-500 border-primary-600 text-primary-50 hover:not-disabled:bg-primary-600 hover:not-disabled:border-primary-700':
+                !color || color === 'primary',
+            'border-neutral-500 bg-neutral-700 text-neutral-50 hover:not-disabled:bg-neutral-600 hover:not-disabled:border-neutral-500':
+                color === 'grey',
+            'border-green-600 bg-green-500 text-green-50 hover:not-disabled:bg-green-600 hover:not-disabled:border-green-700':
+                color === 'green',
+            'border-red-600 bg-red-500 text-red-50 hover:not-disabled:bg-red-600 hover:not-disabled:border-red-700':
+                color === 'red',
+        },
+        isSecondary && [
+            'border-neutral-600 bg-transparent text-neutral-200 hover:not-disabled:border-neutral-500 hover:not-disabled:text-neutral-100',
+            color === 'red' &&
+                'hover:not-disabled:bg-red-500 hover:not-disabled:border-red-600 hover:not-disabled:text-red-50 active:not-disabled:bg-red-600 active:not-disabled:border-red-700',
+            color === 'primary' &&
+                'hover:not-disabled:bg-primary-500 hover:not-disabled:border-primary-600 hover:not-disabled:text-primary-50',
+            color === 'green' &&
+                'hover:not-disabled:bg-green-500 hover:not-disabled:border-green-600 hover:not-disabled:text-green-50 active:not-disabled:bg-green-600 active:not-disabled:border-green-700',
+        ],
+        className
+    );
+};
 
-    ${(props) =>
-        ((!props.isSecondary && !props.color) || props.color === 'primary') &&
-        css<Props>`
-            ${(props) => !props.isSecondary && tw`bg-primary-500 border-primary-600 border text-primary-50`};
+type ButtonStyleProps = Omit<Props, 'isLoading'> &
+    React.HTMLAttributes<HTMLElement> & {
+        as?: any;
+        href?: string;
+        type?: any;
+        disabled?: boolean;
+    };
 
-            &:hover:not(:disabled) {
-                ${tw`bg-primary-600 border-primary-700`};
-            }
-        `};
-
-    ${(props) =>
-        props.color === 'grey' &&
-        css`
-            ${tw`border-neutral-500 bg-neutral-700 text-neutral-50`};
-
-            &:hover:not(:disabled) {
-                ${tw`bg-neutral-600 border-neutral-500`};
-            }
-        `};
-
-    ${(props) =>
-        props.color === 'green' &&
-        css<Props>`
-            ${tw`border-green-600 bg-green-500 text-green-50`};
-
-            &:hover:not(:disabled) {
-                ${tw`bg-green-600 border-green-700`};
-            }
-
-            ${(props) =>
-                props.isSecondary &&
-                css`
-                    &:active:not(:disabled) {
-                        ${tw`bg-green-600 border-green-700`};
-                    }
-                `};
-        `};
-
-    ${(props) =>
-        props.color === 'red' &&
-        css<Props>`
-            ${tw`border-red-600 bg-red-500 text-red-50`};
-
-            &:hover:not(:disabled) {
-                ${tw`bg-red-600 border-red-700`};
-            }
-
-            ${(props) =>
-                props.isSecondary &&
-                css`
-                    &:active:not(:disabled) {
-                        ${tw`bg-red-600 border-red-700`};
-                    }
-                `};
-        `};
-
-    ${(props) => props.size === 'xsmall' && tw`px-2 py-1 text-xs`};
-    ${(props) => (!props.size || props.size === 'small') && tw`px-4 py-2`};
-    ${(props) => props.size === 'large' && tw`p-4 text-sm`};
-    ${(props) => props.size === 'xlarge' && tw`p-4 w-full`};
-
-    ${(props) =>
-        props.isSecondary &&
-        css<Props>`
-            ${tw`border-neutral-600 bg-transparent text-neutral-200`};
-
-            &:hover:not(:disabled) {
-                ${tw`border-neutral-500 text-neutral-100`};
-                ${(props) => props.color === 'red' && tw`bg-red-500 border-red-600 text-red-50`};
-                ${(props) => props.color === 'primary' && tw`bg-primary-500 border-primary-600 text-primary-50`};
-                ${(props) => props.color === 'green' && tw`bg-green-500 border-green-600 text-green-50`};
-            }
-        `};
-
-    &:disabled {
-        opacity: 0.55;
-        cursor: default;
-    }
-`;
+const ButtonStyle: React.FC<ButtonStyleProps> = ({
+    as: Component = 'button',
+    size,
+    color,
+    isSecondary,
+    className,
+    children,
+    ...props
+}) => (
+    <Component className={getButtonClass({ size, color, isSecondary, className })} {...props}>
+        {children}
+    </Component>
+);
 
 type ComponentProps = Omit<JSX.IntrinsicElements['button'], 'ref' | keyof Props> & Props;
 
 const Button: React.FC<ComponentProps> = ({ children, isLoading, ...props }) => (
     <ButtonStyle {...props}>
         {isLoading && (
-            <div css={tw`flex absolute justify-center items-center w-full h-full left-0 top-0`}>
+            <div className={'flex absolute justify-center items-center w-full h-full left-0 top-0'}>
                 <Spinner size={'small'} />
             </div>
         )}
-        <span css={isLoading ? tw`text-transparent` : undefined}>{children}</span>
+        <span className={isLoading ? 'text-transparent' : undefined}>{children}</span>
     </ButtonStyle>
 );
 

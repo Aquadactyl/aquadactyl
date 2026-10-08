@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import isEqual from 'react-fast-compare';
 
 interface Props {
@@ -12,18 +12,18 @@ interface Props {
 }
 
 const TitledGreyBox = ({ icon, title, children, className }: Props) => (
-    <div css={tw`rounded-lg border border-neutral-600 shadow-sm bg-neutral-700`} className={className}>
-        <div css={tw`bg-neutral-700 rounded-t-lg p-3 border-b border-neutral-600`}>
+    <div className={classNames('rounded-lg border border-neutral-600 shadow-sm bg-neutral-700', className)}>
+        <div className={'bg-neutral-700 rounded-t-lg p-3 border-b border-neutral-600'}>
             {typeof title === 'string' ? (
-                <p css={tw`text-sm uppercase`}>
-                    {icon && <FontAwesomeIcon icon={icon} css={tw`mr-2 text-neutral-300`} />}
+                <p className={'text-sm uppercase'}>
+                    {icon && <FontAwesomeIcon icon={icon} className={'mr-2 text-neutral-300'} />}
                     {title}
                 </p>
             ) : (
                 title
             )}
         </div>
-        <div css={tw`p-3`}>{children}</div>
+        <div className={'p-3'}>{children}</div>
     </div>
 );
 

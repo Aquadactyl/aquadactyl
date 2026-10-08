@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Spinner from '@/components/elements/Spinner';
-import tw from 'twin.macro';
-import styled, { css } from 'styled-components/macro';
-import { breakpoint } from '@/theme';
+import classNames from 'classnames';
 import Fade from '@/components/elements/Fade';
 import { createPortal } from 'react-dom';
 
@@ -20,40 +18,30 @@ export interface ModalProps extends RequiredModalProps {
     showSpinnerOverlay?: boolean;
 }
 
-export const ModalMask = styled.div`
-    ${tw`fixed z-50 overflow-auto flex w-full inset-0`};
-    background: rgba(0, 0, 0, 0.7);
-`;
+export const ModalMask: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => (
+    <div
+        className={classNames('fixed z-50 overflow-auto flex w-full inset-0 bg-black/70', className)}
+        {...props}
+    />
+);
 
-const ModalContainer = styled.div<{ alignTop?: boolean }>`
-    max-width: 95%;
-    max-height: calc(100vh - 8rem);
-    ${breakpoint('md')`max-width: 75%`};
-    ${breakpoint('lg')`max-width: 50%`};
-
-    ${tw`relative flex flex-col w-full m-auto`};
-    ${(props) =>
-        props.alignTop &&
-        css`
-            margin-top: 20%;
-            ${breakpoint('md')`margin-top: 10%`};
-        `};
-
-    margin-bottom: auto;
-
-    & > .close-icon {
-        ${tw`absolute right-0 p-2 text-white cursor-pointer opacity-50 transition-all duration-150 ease-linear hover:opacity-100`};
-        top: -2.5rem;
-
-        &:hover {
-            ${tw`transform rotate-90`}
-        }
-
-        & > svg {
-            ${tw`w-6 h-6`};
-        }
-    }
-`;
+const ModalContainer: React.FC<React.HTMLAttributes<HTMLDivElement> & { alignTop?: boolean }> = ({
+    alignTop,
+    className,
+    children,
+    ...props
+}) => (
+    <div
+        className={classNames(
+            'max-w-[95%] md:max-w-[75%] lg:max-w-[50%] max-h-[calc(100vh-8rem)] relative flex flex-col w-full m-auto mb-auto',
+            alignTop && 'mt-[20%] md:mt-[10%]',
+            className
+        )}
+        {...props}
+    >
+        {children}
+    </div>
+);
 
 const Modal: React.FC<ModalProps> = ({
     visible,
@@ -103,7 +91,12 @@ const Modal: React.FC<ModalProps> = ({
             >
                 <ModalContainer alignTop={top}>
                     {isDismissable && (
-                        <div className={'close-icon'} onClick={() => setRender(false)}>
+                        <div
+                            className={
+                                'close-icon absolute right-0 -top-10 p-2 text-white cursor-pointer opacity-50 transition-all duration-150 ease-linear hover:opacity-100 hover:rotate-90 [&>svg]:w-6 [&>svg]:h-6'
+                            }
+                            onClick={() => setRender(false)}
+                        >
                             <svg
                                 xmlns={'http://www.w3.org/2000/svg'}
                                 fill={'none'}
@@ -122,7 +115,7 @@ const Modal: React.FC<ModalProps> = ({
                     {showSpinnerOverlay && (
                         <Fade timeout={150} appear in>
                             <div
-                                css={tw`absolute w-full h-full rounded flex items-center justify-center`}
+                                className={'absolute w-full h-full rounded flex items-center justify-center'}
                                 style={{ background: 'hsla(211, 10%, 53%, 0.35)', zIndex: 9999 }}
                             >
                                 <Spinner />
@@ -130,7 +123,9 @@ const Modal: React.FC<ModalProps> = ({
                         </Fade>
                     )}
                     <div
-                        css={tw`bg-neutral-800 p-3 sm:p-4 md:p-6 rounded shadow-md overflow-y-scroll transition-all duration-150`}
+                        className={
+                            'bg-neutral-800 p-3 sm:p-4 md:p-6 rounded shadow-md overflow-y-scroll transition-all duration-150'
+                        }
                     >
                         {children}
                     </div>

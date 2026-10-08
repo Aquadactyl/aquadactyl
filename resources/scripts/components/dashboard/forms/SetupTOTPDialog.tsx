@@ -3,7 +3,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
 import getTwoFactorTokenData, { TwoFactorTokenData } from '@/api/account/getTwoFactorTokenData';
 import { useFlashKey } from '@/plugins/useFlash';
-import tw from 'twin.macro';
 import QRCode from 'qrcode.react';
 import { Button } from '@/components/elements/button/index';
 import Spinner from '@/components/elements/Spinner';
@@ -70,7 +69,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
                 {!token ? (
                     <Spinner />
                 ) : (
-                    <QRCode renderAs={'svg'} value={token.image_url_data} css={tw`w-full h-full shadow-none`} />
+                    <QRCode renderAs={'svg'} value={token.image_url_data} className={'w-full h-full shadow-none'} />
                 )}
             </div>
             <CopyOnClick text={token?.secret}>

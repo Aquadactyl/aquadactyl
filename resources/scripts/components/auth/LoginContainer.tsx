@@ -6,7 +6,6 @@ import { useStoreState } from 'easy-peasy';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import Field from '@/components/elements/Field';
-import tw from 'twin.macro';
 import Button from '@/components/elements/Button';
 import Reaptcha from 'reaptcha';
 import useFlash from '@/plugins/useFlash';
@@ -86,7 +85,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                         spellCheck={false}
                         disabled={isSubmitting}
                     />
-                    <div css={tw`mt-5`} className={'password-field'}>
+                    <div className={'mt-5 password-field'}>
                         <Field
                             type={showPassword ? 'text' : 'password'}
                             label={'Password'}
@@ -105,7 +104,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
                             {showPassword ? <EyeOff size={18} aria-hidden /> : <Eye size={18} aria-hidden />}
                         </button>
                     </div>
-                    <div css={tw`mt-6`}>
+                    <div className={'mt-6'}>
                         <Button type={'submit'} size={'xlarge'} isLoading={isSubmitting} disabled={isSubmitting}>
                             Sign in
                         </Button>

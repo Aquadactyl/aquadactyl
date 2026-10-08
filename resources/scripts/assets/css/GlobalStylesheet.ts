@@ -1,5 +1,4 @@
-import tw, { theme } from 'twin.macro';
-import { createGlobalStyle } from 'styled-components/macro';
+import { createGlobalStyle } from 'styled-components';
 // @ts-expect-error untyped font file
 import font from '@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2';
 
@@ -15,39 +14,46 @@ export default createGlobalStyle`
 
     :root {
         color-scheme: dark;
-        scrollbar-color: ${theme`colors.gray.600`} ${theme`colors.gray.900`};
+        scrollbar-color: #39424b #11161b;
     }
 
     body {
-        ${tw`font-sans bg-neutral-800 text-neutral-200`};
+        font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+        background-color: #171c21;
+        color: #d7dce1;
         letter-spacing: 0;
         -webkit-font-smoothing: antialiased;
         min-width: 320px;
     }
 
     h1, h2, h3, h4, h5, h6 {
-        ${tw`font-medium tracking-normal font-header`};
+        font-weight: 500;
+        letter-spacing: normal;
+        font-family: "IBM Plex Sans", "Roboto", system-ui, sans-serif;
     }
 
     p {
-        ${tw`text-neutral-200 leading-relaxed font-sans`};
+        color: #d7dce1;
+        line-height: 1.625;
+        font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
     }
 
     form {
-        ${tw`m-0`};
+        margin: 0;
     }
 
     ::selection {
-        background: ${theme`colors.blue.700`};
-        color: ${theme`colors.blue.50`};
+        background: #1d5558;
+        color: #effcfa;
     }
 
     textarea, select, input, button, button:focus, button:focus-visible {
-        ${tw`outline-none`};
+        outline: 2px solid transparent;
+        outline-offset: 2px;
     }
 
     a:focus-visible, button:focus-visible, [role=button]:focus-visible {
-        outline: 2px solid ${theme`colors.blue.300`};
+        outline: 2px solid #78d4cc;
         outline-offset: 3px;
     }
 
@@ -73,7 +79,7 @@ export default createGlobalStyle`
         border-right-width: 4px;
         border-left-width: 4px;
         -webkit-border-radius: 9px 4px;
-        -webkit-box-shadow: inset 0 0 0 1px ${theme`colors.gray.500`}, inset 0 0 0 4px ${theme`colors.gray.600`};
+        -webkit-box-shadow: inset 0 0 0 1px #78838f, inset 0 0 0 4px #39424b;
     }
 
     ::-webkit-scrollbar-track-piece {

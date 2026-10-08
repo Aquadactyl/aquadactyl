@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/elements/ContentContainer';
 import { CSSTransition } from 'react-transition-group';
-import tw from 'twin.macro';
+import classNames from 'classnames';
 import PanelBranding from '@/components/elements/PanelBranding';
 import FlashMessageRender from '@/components/FlashMessageRender';
 
@@ -26,13 +26,13 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({ title, showFlashKey
         <CSSTransition timeout={150} classNames={'fade'} appear in>
             <>
                 <BeforeSection />
-                <ContentContainer css={tw`my-8 sm:my-10`} className={className}>
-                    {showFlashKey && <FlashMessageRender byKey={showFlashKey} css={tw`mb-4`} />}
+                <ContentContainer className={classNames('my-8 sm:my-10', className)}>
+                    {showFlashKey && <FlashMessageRender byKey={showFlashKey} className={'mb-4'} />}
                     {children}
                 </ContentContainer>
                 <AfterSection />
-                <ContentContainer css={tw`mb-8`}>
-                    <p css={tw`text-center text-neutral-500 text-xs leading-relaxed`}>
+                <ContentContainer className={'mb-8'}>
+                    <p className={'text-center text-neutral-500 text-xs leading-relaxed'}>
                         <PanelBranding />
                         <Attribution />
                     </p>

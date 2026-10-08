@@ -1,15 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components/macro';
+import classNames from 'classnames';
 import { useStoreActions, useStoreState } from 'easy-peasy';
 import { randomInt } from '@/helpers';
 import { CSSTransition } from 'react-transition-group';
-import tw from 'twin.macro';
 
-const BarFill = styled.div`
-    ${tw`h-full bg-cyan-400`};
-    transition: 250ms ease-in-out;
-    box-shadow: 0 0 6px rgb(85 192 183 / 25%);
-`;
+const BarFill: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, style, ...props }) => (
+    <div
+        className={classNames(
+            'h-full bg-cyan-400 transition-all duration-250 ease-in-out shadow-[0_0_6px_rgb(85_192_183/25%)]',
+            className
+        )}
+        style={style}
+        {...props}
+    />
+);
 
 type Timer = ReturnType<typeof setTimeout>;
 
@@ -59,7 +63,7 @@ export default () => {
     }, [progress, continuous]);
 
     return (
-        <div css={tw`w-full fixed`} style={{ height: '2px' }}>
+        <div className={'w-full fixed'} style={{ height: '2px' }}>
             <CSSTransition timeout={150} appear in={visible} unmountOnExit classNames={'fade'}>
                 <BarFill style={{ width: progress === undefined ? '100%' : `${progress}%` }} />
             </CSSTransition>
