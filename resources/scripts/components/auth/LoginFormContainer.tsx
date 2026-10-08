@@ -4,6 +4,7 @@ import styled from 'styled-components/macro';
 import { breakpoint } from '@/theme';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import tw from 'twin.macro';
+import PanelBranding from '@/components/elements/PanelBranding';
 
 import Attribution from '@blueprint/extends/Attribution';
 import BeforeContent from '@blueprint/components/Authentication/Container/BeforeContent';
@@ -34,34 +35,22 @@ const Container = styled.div`
 
 export default forwardRef<HTMLFormElement, Props>(({ title, ...props }, ref) => (
     <Container>
+        <img
+            src={'/branding/aquadactyl-wordmark.png'}
+            alt={'Aquadactyl'}
+            css={tw`block w-72 max-w-full h-auto mx-auto mb-6`}
+        />
         {title && <h2 css={tw`text-3xl text-center text-neutral-100 font-medium py-4`}>{title}</h2>}
         <FlashMessageRender css={tw`mb-2 px-1`} />
         <BeforeContent />
         <Form {...props} ref={ref}>
-            <div
-                css={tw`md:flex w-full bg-neutral-700 border border-neutral-600 shadow-lg rounded-xl p-6 md:p-8 mx-1 gap-8`}
-            >
-                <div css={tw`flex-none select-none mb-6 md:mb-0 self-center`}>
-                    <img
-                        src={'/assets/svgs/pterodactyl.svg'}
-                        alt={'Game server management'}
-                        css={tw`block w-40 md:w-48 mx-auto`}
-                    />
-                </div>
-                <div css={tw`flex-1`}>{props.children}</div>
+            <div css={tw`w-full bg-neutral-700 border border-neutral-600 shadow-lg rounded-xl p-6 md:p-8`}>
+                {props.children}
             </div>
         </Form>
         <AfterContent />
         <p css={tw`text-center text-neutral-400 text-xs mt-4`}>
-            <a
-                rel={'noopener nofollow noreferrer'}
-                href={'https://pterodactyl.io'}
-                target={'_blank'}
-                css={tw`no-underline text-neutral-400 hover:text-neutral-200`}
-            >
-                Pterodactyl&reg;
-            </a>
-            &copy; 2015 - {new Date().getFullYear()}&nbsp;
+            <PanelBranding />
             <Attribution />
         </p>
     </Container>

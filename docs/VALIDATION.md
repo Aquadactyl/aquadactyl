@@ -1,5 +1,40 @@
 # Validation results
 
+## Hosted documentation links — 8 October 2026
+
+Panel documentation and in-app links use `https://aquadactyl.uk` and the website
+repository's `/docs`, `/docs/updating` and `/docs/blueprint` routes. Public routes
+returned HTTP 200. Website build, TypeScript, lint and formatting checks passed;
+browser checks verified the updated guides and section links at desktop and phone
+widths. The panel production build, Blade compilation, Composer validation and
+lint for its changed frontend component also passed. Website guide changes are
+prepared in the local website checkout and require deployment to appear online.
+
+## Supplied Aquadactyl logos — 8 October 2026
+
+The supplied Desktop artwork was copied without changing the original PNGs.
+Trimmed logos and PNG/ICO icon sizes were generated with PHP GD; all manifest
+and Windows tile paths resolve to existing files. The production build,
+TypeScript, ESLint, Blade compilation and PHP style checks passed. Browser
+previews checked login and client headers at desktop and phone sizes, custom
+panel names, and expanded/collapsed admin logos. Logos loaded successfully,
+and the client pages had no horizontal page overflow or browser errors.
+These previews used fixture data rather than a live deployment.
+
+## Aquadactyl naming changes — 8 October 2026
+
+PHP 8.5 unit tests passed: 96 tests and 173 assertions, including the legacy
+upgrade command redirect. All 52 frontend tests passed, as did TypeScript,
+ESLint on changed frontend files, the production frontend build, Blade template
+compilation, Composer validation, PHP style checks on changed PHP files with
+PHP 8.4, ShellCheck on changed shell scripts and the existing updater guard tests.
+Original license files and Composer dependency versions were verified unchanged.
+The full integration and deployment smoke suites below were not rerun for this
+naming change. The separate Blueprint artwork restriction is documented in
+[BRANDING.md](BRANDING.md#names-and-artwork).
+
+## Previous full validation
+
 Validated on 7 October 2026 with PHP 8.4.26 and 8.5.11, Laravel 12.69.3,
 pnpm 12.10.1 and Node.js 22.23.3 in the Linux deployment fixture. Local frontend
 checks also passed with Node.js 24.14.0.

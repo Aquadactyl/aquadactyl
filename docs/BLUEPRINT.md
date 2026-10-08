@@ -1,19 +1,26 @@
 # Bundled Blueprint
 
+The [hosted Blueprint guide](https://aquadactyl.uk/docs/blueprint) covers extension
+installation and maintenance. This reference records the bundled framework's
+provenance and integration details. Website content is maintained in the
+[website repository](https://github.com/Aquadactyl/website).
+
 The framework source comes from
 [Blueprint beta-2026-08](https://github.com/BlueprintFramework/framework/releases/tag/beta-2026-08).
 Its release ZIP was verified against SHA256
 `38bcee33b19abcbb3460578236ead74668ec39a7861200bbc6902a9152ac118d`.
 The provenance is recorded in `deploy/blueprint-release.json`; the upstream MIT
 license is included in `deploy/BLUEPRINT-LICENSE.md`. Artwork retains its upstream
-license files under `.blueprint/assets/`.
+license files under `.blueprint/assets/`. Those artwork terms prohibit general
+redistribution; the code's MIT license does not override them. See the
+[licensing review](BRANDING.md#names-and-artwork) for the separate permission issue.
 
 The panel includes Blueprint's backend, extension routes, admin pages, client
 hooks, components, migrations and CLI. Installation initializes links, settings
 and placeholders from the bundled files. Once installed:
 
 ```bash
-cd /var/www/pterodactyl
+cd /var/www/aquadactyl
 sudo blueprint -version
 sudo blueprint -i myextension
 ```

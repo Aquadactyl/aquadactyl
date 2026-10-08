@@ -26,7 +26,7 @@ InstallExtension() {
 
   ((PROGRESS_NOW++))
 
-  # Return to the Pterodactyl installation folder.
+  # Return to the Aquadactyl installation folder.
   cd "$FOLDER" || cdhalt
 
   # Get all strings from the conf.yml file and make them accessible as variables.
@@ -1435,7 +1435,7 @@ Command() {
     ((PROGRESS_NOW++))
 
     # Make sure all files have correct permissions.
-    PRINT INFO "Changing Pterodactyl file ownership to '$OWNERSHIP'.."
+    PRINT INFO "Changing Aquadactyl file ownership to '$OWNERSHIP'.."
     find "$FOLDER/" \
     -path "$FOLDER/node_modules" -prune \
     -o -exec chown "$OWNERSHIP" {} + &>> "$BLUEPRINT__DEBUG"

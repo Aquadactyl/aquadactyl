@@ -1,10 +1,13 @@
 # Aquadactyl
 
+[Website](https://aquadactyl.uk) · [Documentation](https://aquadactyl.uk/docs) ·
+[Source](https://github.com/Aquadactyl/aquadactyl)
+
 Aquadactyl is a game server management panel built on Pterodactyl, with Blueprint
 bundled and tools for installing and updating the panel on Linux with Nginx and
 PHP-FPM.
 
-Manage your servers through Pterodactyl's familiar interface, extend the panel
+Manage your servers through Aquadactyl's interface, extend the panel
 with Blueprint, and deploy updates using pinned dependencies and automatic backups.
 Game servers run on separate Wings nodes using Docker containers.
 
@@ -40,14 +43,14 @@ build dependency advisories.
 Prepare a Linux host with PHP 8.5 and PHP-FPM (PHP 8.4 is also supported), Composer 2,
 Node.js 22.13 or later, pnpm 12.10.1, Nginx, MariaDB or MySQL, Redis and systemd. Required PHP
 extensions and command-line utilities are listed in the
-[deployment guide](docs/DEPLOYMENT.md).
+[installation guide](https://aquadactyl.uk/docs#requirements).
 
-Place an Aquadactyl release or source checkout in `/var/www/pterodactyl`.
-The deployment scripts retain this path for compatibility with existing panel
-installations and service templates.
+Place an Aquadactyl release or source checkout in `/var/www/aquadactyl`.
+The scripts also work from an existing installation directory, including
+`/var/www/pterodactyl`; match your Nginx, queue and scheduler paths to that directory.
 
 ```bash
-cd /var/www/pterodactyl
+cd /var/www/aquadactyl
 sudo cp .env.example .env
 sudo chmod 640 .env
 sudo nano .env
@@ -66,7 +69,7 @@ sudo -u www-data php artisan db:seed --class=DatabaseSeeder --force
 sudo -u www-data php artisan p:user:make
 ```
 
-Complete the [deployment guide](docs/DEPLOYMENT.md) to configure TLS, the supplied
+Complete the [installation guide](https://aquadactyl.uk/docs#web-server) to configure TLS, the supplied
 Nginx and PHP settings, the queue service and the scheduler. Configure
 [Wings](https://pterodactyl.io/wings/1.0/installing.html) separately to host game servers.
 
@@ -76,28 +79,28 @@ Update the panel and bundled Blueprint together using a reviewed release of this
 fork. Replace `vRELEASE_TAG` with a published release tag:
 
 ```bash
-cd /var/www/pterodactyl
-sudo bash scripts/panel-update.sh vRELEASE_TAG EuphoriaTheme/panel
+cd /var/www/aquadactyl
+sudo bash scripts/panel-update.sh vRELEASE_TAG Aquadactyl/aquadactyl
 ```
 
 If you publish Aquadactyl under a different GitHub repository, replace
-`EuphoriaTheme/panel` with that repository's `owner/name`.
+`Aquadactyl/aquadactyl` with that repository's `owner/name`.
 
 The updater verifies the archive, enables maintenance mode, pauses the queue and
-creates database and filesystem backups in `/var/backups/pterodactyl`. It then
+creates database and filesystem backups in `/var/backups/aquadactyl`. It then
 installs locked dependencies, applies migrations, restores extension hooks and
 rebuilds assets and caches before bringing the panel online.
 
 Keep each installed extension's original `identifier.blueprint` package in the
 panel root so its hooks can be reapplied during updates. Read the
-[update and recovery instructions](docs/DEPLOYMENT.md#updates) before deploying.
+[update and recovery instructions](https://aquadactyl.uk/docs/updating) before deploying.
 
 ## Blueprint extensions
 
 Blueprint is included in Aquadactyl and initialized during installation:
 
 ```bash
-cd /var/www/pterodactyl
+cd /var/www/aquadactyl
 sudo blueprint -version
 sudo blueprint -i myextension
 ```
@@ -108,20 +111,28 @@ before updating production.
 
 The stock `blueprint -upgrade` command is disabled in Aquadactyl. Use the managed
 panel updater to keep the framework, dependencies and panel changes compatible.
-See the [Blueprint integration notes](docs/BLUEPRINT.md) for extension maintenance
-and framework provenance.
+See the [Blueprint guide](https://aquadactyl.uk/docs/blueprint) for extension
+maintenance and the [integration reference](docs/BLUEPRINT.md) for framework provenance.
 
 ## Documentation
 
+Operator guides are hosted at [aquadactyl.uk/docs](https://aquadactyl.uk/docs).
+Their source lives in the [website repository](https://github.com/Aquadactyl/website).
+The local guides retain deployment details, developer references and validation records.
+
 | Guide | Covers |
 | --- | --- |
-| [Deployment](docs/DEPLOYMENT.md) | Requirements, installation, Nginx/PHP setup, updates, backups and recovery |
-| [Blueprint](docs/BLUEPRINT.md) | Bundled framework, extension installation and maintenance |
+| [Installation](https://aquadactyl.uk/docs) | Requirements, source checkout, environment, Nginx/TLS, queue, scheduler and Wings |
+| [Updates](https://aquadactyl.uk/docs/updating) | Reviewed releases, managed updates, backups and recovery |
+| [Blueprint](https://aquadactyl.uk/docs/blueprint) | Bundled framework, extension installation and maintenance |
+| [Deployment reference](docs/DEPLOYMENT.md) | Deployment scripts, permissions, compatibility settings and recovery details |
+| [Blueprint integration reference](docs/BLUEPRINT.md) | Framework provenance and implementation details |
 | [Addon development](docs/ADDONS.md) | Shared libraries, imports and dependency management for extensions and themes |
 | [Default theme](docs/THEME.md) | Charcoal palette, shared colour tokens and theme customisation |
 | [Validation](docs/VALIDATION.md) | Test results and dependency audit limitations |
 | [Building](BUILDING.md) | Frontend development and production builds |
-| [Upstream security policy](SECURITY.md) | Pterodactyl's security reporting policy |
+| [Security policy](SECURITY.md) | Reporting vulnerabilities in Aquadactyl and its upstream projects |
+| [Branding and licensing](docs/BRANDING.md) | Rebranding permissions, attribution and compatibility identifiers |
 | [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration |
 
 ## Credits and license
@@ -135,3 +146,8 @@ Panel code is distributed under the [MIT License](LICENSE.md). Blueprint's
 [MIT license](deploy/BLUEPRINT-LICENSE.md) is included separately; bundled artwork
 retains its upstream license files. Existing upstream copyright notices remain
 in their respective files.
+
+The Panel's MIT terms permit modified and commercially distributed forks while
+requiring the original copyright and license notices to accompany copies. They
+contain no explicit trademark license. Blueprint branding artwork has separate,
+restrictive terms; see the [licensing review](docs/BRANDING.md) before redistribution.

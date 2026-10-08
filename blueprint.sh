@@ -92,7 +92,7 @@ fi
 # Set internal variables.
 __BuildDir=".blueprint/extensions/blueprint/private/build"
 
-# Automatically navigate to the Pterodactyl directory when running the script.
+# Automatically navigate to the Aquadactyl directory when running the script.
 cd "$FOLDER" || return
 
 # Import libraries.
@@ -407,7 +407,7 @@ if [[ $1 != "-bash" ]]; then
 
     # Make sure all files have correct permissions.
     if [[ $BLUEPRINT_ENVIRONMENT != "ci" ]]; then
-      PRINT INFO "Changing Pterodactyl file ownership to '$OWNERSHIP'.."
+      PRINT INFO "Changing Aquadactyl file ownership to '$OWNERSHIP'.."
       find "$FOLDER/" \
         -path "$FOLDER/node_modules" -prune \
         -o -exec chown "$OWNERSHIP" {} + &>> "$BLUEPRINT__DEBUG"

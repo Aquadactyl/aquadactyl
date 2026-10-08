@@ -6,17 +6,11 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>{{ config('app.name', 'Pterodactyl') }} - @yield('title')</title>
+        <title>{{ config('app.name', 'Aquadactyl') }} - @yield('title')</title>
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <meta name="_token" content="{{ csrf_token() }}">
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png">
-        <link rel="icon" type="image/png" href="/favicons/favicon-32x32.png" sizes="32x32">
-        <link rel="icon" type="image/png" href="/favicons/favicon-16x16.png" sizes="16x16">
-        <link rel="manifest" href="/favicons/manifest.json">
-        <link rel="mask-icon" href="/favicons/safari-pinned-tab.svg" color="#bc6e3c">
-        <link rel="shortcut icon" href="/favicons/favicon.ico">
-        <meta name="msapplication-config" content="/favicons/browserconfig.xml">
+        @include('partials.favicons')
         <meta name="theme-color" content="#1e1f22">
         <meta name="color-scheme" content="dark">
 
@@ -45,8 +39,15 @@
         @yield('blueprint.cache')
         <div class="wrapper">
             <header class="main-header">
-                <a href="{{ route('index') }}" class="logo">
-                    <span>{{ config('app.name', 'Pterodactyl') }}</span>
+                <a href="{{ route('index') }}" class="logo" aria-label="{{ config('app.name', 'Aquadactyl') }}">
+                    <span class="logo-mini"><img src="/branding/aquadactyl-emblem.png" alt=""></span>
+                    <span class="logo-lg">
+                        @if(strtolower(trim(config('app.name', 'Aquadactyl'))) === 'aquadactyl')
+                            <img src="/branding/aquadactyl-wordmark.png" alt="Aquadactyl">
+                        @else
+                            {{ config('app.name', 'Aquadactyl') }}
+                        @endif
+                    </span>
                 </a>
                 <nav class="navbar navbar-static-top">
                     <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
@@ -165,6 +166,7 @@
                 </section>
             </div>
             <footer class="main-footer">
+                <a href="https://aquadactyl.uk">Aquadactyl</a> &middot;
                 <div class="pull-right small text-gray" style="margin-right:10px;margin-top:-7px;">
                     <strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}<br />
                     <strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - LARAVEL_START, 3) }}s
