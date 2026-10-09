@@ -1,157 +1,103 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Services\Databases;
-
-use Mockery\MockInterface;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Models\Database;
 use Pterodactyl\Models\DatabaseHost;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
 use Pterodactyl\Services\Databases\DatabaseManagementService;
 use Pterodactyl\Services\Databases\DeployServerDatabaseService;
 use Pterodactyl\Exceptions\Service\Database\NoSuitableDatabaseHostException;
 
-class DeployServerDatabaseServiceTest extends IntegrationTestCase
-{
-    private MockInterface $managementService;
+beforeEach(function () {
+    $this->managementService = Mockery::mock(DatabaseManagementService::class);
+    $this->swap(DatabaseManagementService::class, $this->managementService);
+});
 
-    /**
-     * Setup tests.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+afterEach(function () {
+    config()->set('pterodactyl.client_features.databases.allow_random', true);
 
-        $this->managementService = \Mockery::mock(DatabaseManagementService::class);
-        $this->swap(DatabaseManagementService::class, $this->managementService);
-    }
+    Database::query()->delete();
+    DatabaseHost::query()->delete();
+});
 
-    /**
-     * Ensure we reset the config to the expected value.
-     */
-    protected function tearDown(): void
-    {
-        config()->set('pterodactyl.client_features.databases.allow_random', true);
+test('error is thrown if database name is empty', function (array $data) {
+    $server = $this->createServerModel();
 
-        Database::query()->delete();
-        DatabaseHost::query()->delete();
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessageMatches('/^Expected a non-empty value\. Got: /');
 
-        parent::tearDown();
-    }
+    app(DeployServerDatabaseService::class)->handle($server, $data);
+})->with([
+    [['remote' => '%']],
+    [['database' => null, 'remote' => '%']],
+    [['database' => '', 'remote' => '%']],
+    [['database' => '']],
+    [['database' => '', 'remote' => '']],
+]);
 
-    /**
-     * Test that an error is thrown if either the database name or the remote host are empty.
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidDataProvider')]
-    public function testErrorIsThrownIfDatabaseNameIsEmpty(array $data)
-    {
-        $server = $this->createServerModel();
+test('error is thrown if no database hosts exist on node', function () {
+    $server = $this->createServerModel();
 
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessageMatches('/^Expected a non-empty value\. Got: /');
-        $this->getService()->handle($server, $data);
-    }
+    $node = Node::factory()->create(['location_id' => $server->location->id]);
+    DatabaseHost::factory()->create(['node_id' => $node->id]);
 
-    /**
-     * Test that an error is thrown if there are no database hosts on the same node as the
-     * server and the allow_random config value is false.
-     */
-    public function testErrorIsThrownIfNoDatabaseHostsExistOnNode()
-    {
-        $server = $this->createServerModel();
+    config()->set('pterodactyl.client_features.databases.allow_random', false);
 
-        $node = Node::factory()->create(['location_id' => $server->location->id]);
-        DatabaseHost::factory()->create(['node_id' => $node->id]);
+    $this->expectException(NoSuitableDatabaseHostException::class);
 
-        config()->set('pterodactyl.client_features.databases.allow_random', false);
+    app(DeployServerDatabaseService::class)->handle($server, [
+        'database' => 'something',
+        'remote' => '%',
+    ]);
+});
 
-        $this->expectException(NoSuitableDatabaseHostException::class);
+test('error is thrown if no database hosts exist on system', function () {
+    $server = $this->createServerModel();
 
-        $this->getService()->handle($server, [
-            'database' => 'something',
-            'remote' => '%',
-        ]);
-    }
+    $this->expectException(NoSuitableDatabaseHostException::class);
 
-    /**
-     * Test that an error is thrown if no database hosts exist at all on the system.
-     */
-    public function testErrorIsThrownIfNoDatabaseHostsExistOnSystem()
-    {
-        $server = $this->createServerModel();
+    app(DeployServerDatabaseService::class)->handle($server, [
+        'database' => 'something',
+        'remote' => '%',
+    ]);
+});
 
-        $this->expectException(NoSuitableDatabaseHostException::class);
+test('database host on same node is preferred', function () {
+    $server = $this->createServerModel();
 
-        $this->getService()->handle($server, [
-            'database' => 'something',
-            'remote' => '%',
-        ]);
-    }
+    $node = Node::factory()->create(['location_id' => $server->location->id]);
+    DatabaseHost::factory()->create(['node_id' => $node->id]);
+    $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
 
-    /**
-     * Test that a database host on the same node as the server is preferred.
-     */
-    public function testDatabaseHostOnSameNodeIsPreferred()
-    {
-        $server = $this->createServerModel();
+    $this->managementService->expects('create')->with($server, [
+        'database_host_id' => $host->id,
+        'database' => "s{$server->id}_something",
+        'remote' => '%',
+    ])->andReturns(new Database());
 
-        $node = Node::factory()->create(['location_id' => $server->location->id]);
-        DatabaseHost::factory()->create(['node_id' => $node->id]);
-        $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
+    $response = app(DeployServerDatabaseService::class)->handle($server, [
+        'database' => 'something',
+        'remote' => '%',
+    ]);
 
-        $this->managementService->expects('create')->with($server, [
-            'database_host_id' => $host->id,
-            'database' => "s{$server->id}_something",
-            'remote' => '%',
-        ])->andReturns(new Database());
+    expect($response)->toBeInstanceOf(Database::class);
+});
 
-        $response = $this->getService()->handle($server, [
-            'database' => 'something',
-            'remote' => '%',
-        ]);
+test('database host is selected if no suitable host exists on same node', function () {
+    $server = $this->createServerModel();
 
-        $this->assertInstanceOf(Database::class, $response);
-    }
+    $node = Node::factory()->create(['location_id' => $server->location->id]);
+    $host = DatabaseHost::factory()->create(['node_id' => $node->id]);
 
-    /**
-     * Test that a database host not assigned to the same node as the server is used if
-     * there are no same-node hosts and the allow_random configuration value is set to
-     * true.
-     */
-    public function testDatabaseHostIsSelectedIfNoSuitableHostExistsOnSameNode()
-    {
-        $server = $this->createServerModel();
+    $this->managementService->expects('create')->with($server, [
+        'database_host_id' => $host->id,
+        'database' => "s{$server->id}_something",
+        'remote' => '%',
+    ])->andReturns(new Database());
 
-        $node = Node::factory()->create(['location_id' => $server->location->id]);
-        $host = DatabaseHost::factory()->create(['node_id' => $node->id]);
+    $response = app(DeployServerDatabaseService::class)->handle($server, [
+        'database' => 'something',
+        'remote' => '%',
+    ]);
 
-        $this->managementService->expects('create')->with($server, [
-            'database_host_id' => $host->id,
-            'database' => "s{$server->id}_something",
-            'remote' => '%',
-        ])->andReturns(new Database());
-
-        $response = $this->getService()->handle($server, [
-            'database' => 'something',
-            'remote' => '%',
-        ]);
-
-        $this->assertInstanceOf(Database::class, $response);
-    }
-
-    public static function invalidDataProvider(): array
-    {
-        return [
-            [['remote' => '%']],
-            [['database' => null, 'remote' => '%']],
-            [['database' => '', 'remote' => '%']],
-            [['database' => '']],
-            [['database' => '', 'remote' => '']],
-        ];
-    }
-
-    private function getService(): DeployServerDatabaseService
-    {
-        return $this->app->make(DeployServerDatabaseService::class);
-    }
-}
+    expect($response)->toBeInstanceOf(Database::class);
+});

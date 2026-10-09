@@ -1,71 +1,48 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Services\Servers;
-
-use Mockery\MockInterface;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Services\Servers\SuspensionService;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 
-class SuspensionServiceTest extends IntegrationTestCase
-{
-    private MockInterface $repository;
+beforeEach(function () {
+    $this->repository = Mockery::mock(DaemonServerRepository::class);
+    $this->app->instance(DaemonServerRepository::class, $this->repository);
+});
 
-    /**
-     * Setup test instance.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+test('server is suspended and unsuspended', function () {
+    $server = $this->createServerModel();
 
-        $this->repository = \Mockery::mock(DaemonServerRepository::class);
-        $this->app->instance(DaemonServerRepository::class, $this->repository);
-    }
+    $this->repository->expects('setServer->sync')->twice()->andReturnSelf();
 
-    public function testServerIsSuspendedAndUnsuspended()
-    {
-        $server = $this->createServerModel();
+    app(SuspensionService::class)->toggle($server);
 
-        $this->repository->expects('setServer->sync')->twice()->andReturnSelf();
+    expect($server->refresh()->isSuspended())->toBeTrue();
 
-        $this->getService()->toggle($server);
+    app(SuspensionService::class)->toggle($server, SuspensionService::ACTION_UNSUSPEND);
 
-        $this->assertTrue($server->refresh()->isSuspended());
+    expect($server->refresh()->isSuspended())->toBeFalse();
+});
 
-        $this->getService()->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+test('no action is taken if suspension status is unchanged', function () {
+    $server = $this->createServerModel();
 
-        $this->assertFalse($server->refresh()->isSuspended());
-    }
+    app(SuspensionService::class)->toggle($server, SuspensionService::ACTION_UNSUSPEND);
 
-    public function testNoActionIsTakenIfSuspensionStatusIsUnchanged()
-    {
-        $server = $this->createServerModel();
+    $server->refresh();
+    expect($server->isSuspended())->toBeFalse();
 
-        $this->getService()->toggle($server, SuspensionService::ACTION_UNSUSPEND);
+    $server->update(['status' => Server::STATUS_SUSPENDED]);
+    app(SuspensionService::class)->toggle($server);
 
-        $server->refresh();
-        $this->assertFalse($server->isSuspended());
+    $server->refresh();
+    expect($server->isSuspended())->toBeTrue();
+});
 
-        $server->update(['status' => Server::STATUS_SUSPENDED]);
-        $this->getService()->toggle($server);
+test('exception is thrown if invalid actions are passed', function () {
+    $server = $this->createServerModel();
 
-        $server->refresh();
-        $this->assertTrue($server->isSuspended());
-    }
+    $this->expectException(\InvalidArgumentException::class);
+    $this->expectExceptionMessage('Expected one of: "suspend", "unsuspend". Got: "foo"');
 
-    public function testExceptionIsThrownIfInvalidActionsArePassed()
-    {
-        $server = $this->createServerModel();
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expected one of: "suspend", "unsuspend". Got: "foo"');
-
-        $this->getService()->toggle($server, 'foo');
-    }
-
-    private function getService(): SuspensionService
-    {
-        return $this->app->make(SuspensionService::class);
-    }
-}
+    app(SuspensionService::class)->toggle($server, 'foo');
+});
