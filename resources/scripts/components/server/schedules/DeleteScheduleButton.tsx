@@ -18,12 +18,14 @@ export default ({ scheduleId, onDeleted }: Props) => {
     const [isLoading, setIsLoading] = useState(false);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const removeSchedule = ServerContext.useStoreActions((actions) => actions.schedules.removeSchedule);
 
     const onDelete = () => {
         setIsLoading(true);
         clearFlashes('schedules');
         deleteSchedule(uuid, scheduleId)
             .then(() => {
+                removeSchedule(scheduleId);
                 setIsLoading(false);
                 onDeleted();
             })
@@ -46,7 +48,7 @@ export default ({ scheduleId, onDeleted }: Props) => {
                 onConfirmed={onDelete}
             >
                 <SpinnerOverlay visible={isLoading} />
-                All tasks will be removed and any running processes will be terminated.
+                This deletes the schedule and all its steps. Your server will keep running.
             </Dialog.Confirm>
             <Button.Danger
                 variant={Button.Variants.Secondary}

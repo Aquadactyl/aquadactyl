@@ -1,190 +1,186 @@
 import React, { useContext, useEffect } from 'react';
 import { Schedule, Task } from '@/api/server/schedules/getServerSchedules';
-import { Field as FormikField, Form, Formik, FormikHelpers, useField } from 'formik';
+import { Field as FormikField, Form, Formik, FormikHelpers } from 'formik';
 import { ServerContext } from '@/state/server';
 import createOrUpdateScheduleTask from '@/api/server/schedules/createOrUpdateScheduleTask';
 import { httpErrorToHuman } from '@/api/http';
 import Field from '@/components/elements/Field';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import { boolean, number, object, string } from 'yup';
 import useFlash from '@/plugins/useFlash';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import Label from '@/components/elements/Label';
 import { Textarea } from '@/components/elements/Input';
 import { Button } from '@/components/elements/button/index';
-import Select from '@/components/elements/Select';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
 import FormikSwitch from '@/components/elements/FormikSwitch';
+import { ScheduleSelect } from './ScheduleTimingFields';
+import {
+    DelayUnit,
+    TaskKind,
+    delayFromSeconds,
+    delayToSeconds,
+    taskData,
+    taskKind,
+    taskKinds,
+} from './scheduleHelpers';
 
 interface Props {
     schedule: Schedule;
-    // If a task is provided we can assume we're editing it. If not provided,
-    // we are creating a new one.
     task?: Task;
 }
 
 interface Values {
-    action: string;
+    kind: TaskKind;
     payload: string;
-    timeOffset: string;
+    delay: string;
+    delayUnit: DelayUnit;
     continueOnFailure: boolean;
 }
-
-const schema = object().shape({
-    action: string().required().oneOf(['command', 'power', 'backup']),
-    payload: string().when('action', {
-        is: (v) => v !== 'backup',
-        then: string().required('A task payload must be provided.'),
-        otherwise: string(),
-    }),
-    continueOnFailure: boolean(),
-    timeOffset: number()
-        .typeError('The time offset must be a valid number between 0 and 900.')
-        .required('A time offset value must be provided.')
-        .min(0, 'The time offset must be at least 0 seconds.')
-        .max(900, 'The time offset must be less than 900 seconds.'),
-});
-
-const ActionListener = () => {
-    const [{ value }, { initialValue: initialAction }] = useField<string>('action');
-    const [, { initialValue: initialPayload }, { setValue, setTouched }] = useField<string>('payload');
-
-    useEffect(() => {
-        if (value !== initialAction) {
-            setValue(value === 'power' ? 'start' : '');
-            setTouched(false);
-        } else {
-            setValue(initialPayload || '');
-            setTouched(false);
-        }
-    }, [value]);
-
-    return null;
-};
 
 const TaskDetailsModal = ({ schedule, task }: Props) => {
     const { dismiss } = useContext(ModalContext);
     const { clearFlashes, addError } = useFlash();
-
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
     const backupLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.backups);
+    const firstStep = task
+        ? task.id === [...schedule.tasks].sort((a, b) => a.sequenceId - b.sequenceId)[0]?.id
+        : schedule.tasks.length === 0;
 
-    useEffect(() => {
-        return () => {
-            clearFlashes('schedule:task');
-        };
-    }, []);
+    useEffect(() => () => clearFlashes('schedule:task'), []);
 
     const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('schedule:task');
-        if (backupLimit === 0 && values.action === 'backup') {
+        if (backupLimit === 0 && values.kind === 'backup') {
             setSubmitting(false);
             addError({
-                message: "A backup task cannot be created when the server's backup limit is set to 0.",
+                message: 'Backups are unavailable because this server has no backup slots.',
                 key: 'schedule:task',
             });
-        } else {
-            createOrUpdateScheduleTask(uuid, schedule.id, task?.id, values)
-                .then((task) => {
-                    let tasks = schedule.tasks.map((t) => (t.id === task.id ? task : t));
-                    if (!schedule.tasks.find((t) => t.id === task.id)) {
-                        tasks = [...tasks, task];
-                    }
-
-                    appendSchedule({ ...schedule, tasks });
-                    dismiss();
-                })
-                .catch((error) => {
-                    console.error(error);
-                    setSubmitting(false);
-                    addError({ message: httpErrorToHuman(error), key: 'schedule:task' });
-                });
+            return;
         }
+        createOrUpdateScheduleTask(uuid, schedule.id, task?.id, {
+            ...taskData(values.kind, values.payload),
+            timeOffset: delayToSeconds(values.delay, values.delayUnit),
+            continueOnFailure: values.continueOnFailure,
+        })
+            .then((saved) => {
+                const tasks = schedule.tasks.some((t) => t.id === saved.id)
+                    ? schedule.tasks.map((t) => (t.id === saved.id ? saved : t))
+                    : [...schedule.tasks, saved];
+                appendSchedule({ ...schedule, tasks });
+                dismiss();
+            })
+            .catch((error) => {
+                setSubmitting(false);
+                addError({ message: httpErrorToHuman(error), key: 'schedule:task' });
+            });
     };
 
     return (
-        <Formik
+        <Formik<Values>
             onSubmit={submit}
-            validationSchema={schema}
+            validate={(values) => {
+                const errors: Partial<Record<keyof Values, string>> = {};
+                if (!(values.kind in taskKinds)) errors.kind = 'Choose what this step should do.';
+                if (values.kind === 'command' && !values.payload.trim())
+                    errors.payload = 'Enter the console command to send.';
+                try {
+                    delayToSeconds(values.delay, values.delayUnit);
+                } catch (error) {
+                    errors.delay = (error as Error).message;
+                }
+                return errors;
+            }}
             initialValues={{
-                action: task?.action || 'command',
-                payload: task?.payload || '',
-                timeOffset: task?.timeOffset.toString() || '0',
-                continueOnFailure: task?.continueOnFailure || false,
+                kind: task ? taskKind(task) : 'restart',
+                payload: task && task.action !== 'power' ? task.payload : '',
+                ...delayFromSeconds(task?.timeOffset ?? 0),
+                continueOnFailure: task?.continueOnFailure ?? false,
             }}
         >
-            {({ isSubmitting, values }) => (
+            {({ isSubmitting, values, setValues }) => (
                 <Form className={'m-0'}>
+                    <h2 className={'mb-2 text-2xl'}>{task ? 'Edit step' : 'Add a step'}</h2>
+                    <p className={'mb-6 text-sm text-neutral-300'}>
+                        Steps run in order. Add a wait if the previous action needs time to finish.
+                    </p>
                     <FlashMessageRender byKey={'schedule:task'} className={'mb-4'} />
-                    <h2 className={'mb-6 text-2xl'}>{task ? 'Edit Task' : 'Create Task'}</h2>
-                    <div className={'flex'}>
-                        <div className={'mr-2 w-1/3'}>
-                            <Label>Action</Label>
-                            <ActionListener />
-                            <FormikFieldWrapper name={'action'}>
-                                <FormikField as={Select} name={'action'}>
-                                    <option value={'command'}>Send command</option>
-                                    <option value={'power'}>Send power action</option>
-                                    <option value={'backup'}>Create backup</option>
-                                </FormikField>
-                            </FormikFieldWrapper>
-                        </div>
-                        <div className={'ml-6 flex-1'}>
-                            <Field
-                                name={'timeOffset'}
-                                label={'Time offset (in seconds)'}
-                                description={
-                                    'The amount of time to wait after the previous task executes before running this one. If this is the first task on a schedule this will not be applied.'
-                                }
-                            />
-                        </div>
+                    <ScheduleSelect
+                        name={'kind'}
+                        label={'What should happen?'}
+                        onChange={(event) => {
+                            const kind = event.target.value as TaskKind;
+                            void setValues({ ...values, kind, payload: task?.action === kind ? task.payload : '' });
+                        }}
+                    >
+                        {Object.entries(taskKinds).map(([value, label]) => (
+                            <option key={value} value={value} disabled={value === 'backup' && backupLimit === 0}>
+                                {label}
+                            </option>
+                        ))}
+                    </ScheduleSelect>
+                    {backupLimit === 0 && (
+                        <p className={'mt-2 text-xs text-neutral-400'}>
+                            Backups need at least one backup slot on this server.
+                        </p>
+                    )}
+                    {values.kind === 'start' && schedule.onlyWhenOnline && (
+                        <p className={'mt-3 text-sm text-yellow-200'}>
+                            To start an offline server, edit this schedule&apos;s timing and turn off &ldquo;Skip when
+                            server is offline&rdquo;.
+                        </p>
+                    )}
+                    {values.kind === 'kill' && (
+                        <p className={'mt-3 text-sm text-yellow-200'}>
+                            Stops the server immediately. Use this when it is unresponsive.
+                        </p>
+                    )}
+                    {(values.kind === 'command' || values.kind === 'backup') && (
+                        <FormikFieldWrapper
+                            id={'schedule-payload'}
+                            name={'payload'}
+                            label={values.kind === 'command' ? 'Console command' : 'Files to leave out (optional)'}
+                            className={'mt-6'}
+                            description={
+                                values.kind === 'command'
+                                    ? 'Enter the command as you would in the server console.'
+                                    : 'One file or folder pattern per line. Leave empty to use .pteroignore. If all backup slots are full, the oldest backup is replaced.'
+                            }
+                        >
+                            <FormikField as={Textarea} id={'schedule-payload'} name={'payload'} rows={4} />
+                        </FormikFieldWrapper>
+                    )}
+                    <div className={'mt-6 grid gap-4 sm:grid-cols-2'}>
+                        <Field
+                            name={'delay'}
+                            label={'Wait before this step'}
+                            type={'number'}
+                            min={0}
+                            max={values.delayUnit === 'minutes' ? 15 : 900}
+                            step={1}
+                        />
+                        <ScheduleSelect name={'delayUnit'} label={'Wait unit'}>
+                            <option value={'seconds'}>Seconds</option>
+                            <option value={'minutes'}>Minutes</option>
+                        </ScheduleSelect>
                     </div>
-                    <div className={'mt-6'}>
-                        {values.action === 'command' ? (
-                            <div>
-                                <Label>Payload</Label>
-                                <FormikFieldWrapper name={'payload'}>
-                                    <FormikField as={Textarea} name={'payload'} rows={6} />
-                                </FormikFieldWrapper>
-                            </div>
-                        ) : values.action === 'power' ? (
-                            <div>
-                                <Label>Payload</Label>
-                                <FormikFieldWrapper name={'payload'}>
-                                    <FormikField as={Select} name={'payload'}>
-                                        <option value={'start'}>Start the server</option>
-                                        <option value={'restart'}>Restart the server</option>
-                                        <option value={'stop'}>Stop the server</option>
-                                        <option value={'kill'}>Terminate the server</option>
-                                    </FormikField>
-                                </FormikFieldWrapper>
-                            </div>
-                        ) : (
-                            <div>
-                                <Label>Ignored Files</Label>
-                                <FormikFieldWrapper
-                                    name={'payload'}
-                                    description={
-                                        'Optional. Include the files and folders to be excluded in this backup. By default, the contents of your .pteroignore file will be used. If you have reached your backup limit, the oldest backup will be rotated.'
-                                    }
-                                >
-                                    <FormikField as={Textarea} name={'payload'} rows={6} />
-                                </FormikFieldWrapper>
-                            </div>
-                        )}
-                    </div>
-                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
+                    <p className={'mt-2 text-xs text-neutral-400'}>
+                        {firstStep
+                            ? '0 starts at the scheduled time. Run now starts the first step immediately, ignoring this wait.'
+                            : '0 sends this action straight after the previous step. Waiting starts when the previous action is sent, not when it finishes.'}{' '}
+                        Maximum wait: 15 minutes.
+                    </p>
+                    <div className={'mt-6 rounded border border-neutral-600 bg-neutral-800 p-4'}>
                         <FormikSwitch
                             name={'continueOnFailure'}
-                            description={'Future tasks will be run when this task fails.'}
-                            label={'Continue on Failure'}
+                            description={'Allow later steps to run if this action fails to reach the server daemon.'}
+                            label={'Keep going if this step fails'}
                         />
                     </div>
                     <div className={'mt-6 flex justify-end'}>
-                        <Button type={'submit'} disabled={isSubmitting}>
-                            {task ? 'Save Changes' : 'Create Task'}
+                        <Button type={'submit'} disabled={isSubmitting} className={'w-full sm:w-auto'}>
+                            {task ? 'Save step' : 'Add step'}
                         </Button>
                     </div>
                 </Form>

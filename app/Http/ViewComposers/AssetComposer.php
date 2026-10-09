@@ -30,6 +30,7 @@ class AssetComposer
             'name' => config('app.name') ?? 'Aquadactyl',
             'appUrl' => config('app.url') ?? '',
             'locale' => config('app.locale') ?? 'en',
+            'timezone' => config('app.timezone') ?? 'UTC',
             'logoUrl' => config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : null,
             'showNameWithLogo' => (bool) config('aquadactyl.branding.show_name', false),
             'features' => [

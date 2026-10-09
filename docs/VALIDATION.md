@@ -1,5 +1,30 @@
 # Validation results
 
+## Friendly server schedules — 9 October 2026
+
+The timing editor now offers minute/hour intervals and daily, weekly, and monthly
+choices, with advanced cron available for existing complex expressions. New
+schedules start paused and lead directly to adding steps. The schedule page has
+enable/pause controls, readable actions and waits, and next-run dates formatted
+in the panel's configured timezone.
+
+All 131 frontend tests, type checking, lint, formatting, and the changed PHP
+file's style check passed. New tests cover cron conversion, preserving advanced
+expressions, interval boundaries, timezone/daylight saving formatting, delay
+limits, and switching between basic and advanced editing. The production Docker
+image built and the local panel was recreated successfully.
+
+Live browser checks created, edited, and removed one temporary paused schedule.
+Weekly, minute, hour, and advanced timings round-tripped through the real API;
+command and restart steps preserved their payloads and five-minute waits. No
+schedule executed. Separate API mocks verified enable/pause controls, next-run
+timezone display, invalid-wait validation, and dropdown Escape behaviour at
+390px and 320px. Neither mobile width had horizontal page overflow.
+
+The persisted environment checksum, user/server/node/settings/migration counts,
+and original schedule/task counts were preserved. The running Minecraft
+container retained its original start time. Euphoria remained removed.
+
 ## CI repair — 9 October 2026
 
 The PHP workflow now invokes Pest for both suites and supplies a minimal Vite

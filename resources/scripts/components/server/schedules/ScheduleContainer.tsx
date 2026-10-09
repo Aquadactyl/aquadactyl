@@ -47,9 +47,13 @@ export default () => {
             ) : (
                 <>
                     <BeforeContent />
+                    <p className={'mb-6 text-sm text-neutral-300'}>
+                        Automate restarts, backups, and console commands. Choose when to run, then add the steps to
+                        follow.
+                    </p>
                     {schedules.length === 0 ? (
                         <p className={'text-center text-sm text-neutral-300'}>
-                            There are no schedules configured for this server.
+                            No schedules yet. Create one to automate a daily restart or a regular backup.
                         </p>
                     ) : (
                         schedules.map((schedule) => (
@@ -69,7 +73,11 @@ export default () => {
                     )}
                     <Can action={'schedule.create'}>
                         <div className={'mt-8 flex justify-end'}>
-                            <EditScheduleModal visible={visible} onModalDismissed={() => setVisible(false)} />
+                            <EditScheduleModal
+                                visible={visible}
+                                onModalDismissed={() => setVisible(false)}
+                                onCreated={(schedule) => history.push(`${match.url}/${schedule.id}`)}
+                            />
                             <Button type={'button'} onClick={() => setVisible(true)}>
                                 Create schedule
                             </Button>
