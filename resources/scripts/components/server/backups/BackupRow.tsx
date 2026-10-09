@@ -83,7 +83,7 @@ export default ({ backup, className }: Props) => {
                 </div>
             </div>
             <div className={'mt-4 flex-1 md:ml-8 md:mt-0 md:w-48 md:flex-none md:text-center'}>
-                <p title={format(backup.createdAt, 'ddd, MMMM do, yyyy HH:mm:ss')} className={'text-sm'}>
+                <p title={format(backup.createdAt, 'EEE, MMMM do, yyyy HH:mm:ss')} className={'text-sm'}>
                     {formatDistanceToNow(backup.createdAt, { includeSeconds: true, addSuffix: true })}
                 </p>
                 <p className={'mt-1 text-2xs uppercase text-neutral-500'}>Created</p>

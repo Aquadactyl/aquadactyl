@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { ServerContext } from '@/state/server';
-import { CloudUploadIcon, XIcon } from '@heroicons/react/solid';
+import { CloudUpload, X } from 'lucide-react';
 import asDialog from '@/hoc/asDialog';
 import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
 import { Button } from '@/components/elements/button/index';
@@ -52,7 +52,7 @@ const FileUploadList = () => {
                         onClick={cancelFileUpload.bind(this, name)}
                         className={'text-gray-500 transition-colors duration-75 hover:text-gray-200'}
                     >
-                        <XIcon className={'h-5 w-5'} />
+                        <X className={'h-5 w-5'} />
                     </button>
                 </div>
             ))}
@@ -95,7 +95,7 @@ export default () => {
                         onClick={() => (open.value = true)}
                     >
                         <Spinner progress={(progress.uploaded / progress.total) * 100} className={'h-8 w-8'} />
-                        <CloudUploadIcon className={'absolute mx-auto h-3 animate-pulse'} />
+                        <CloudUpload className={'absolute mx-auto h-3 w-3 animate-pulse'} />
                     </button>
                 </Tooltip>
             )}

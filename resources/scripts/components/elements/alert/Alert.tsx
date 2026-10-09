@@ -1,4 +1,4 @@
-import { ExclamationIcon, ShieldExclamationIcon } from '@heroicons/react/outline';
+import { AlertTriangle, ShieldAlert } from 'lucide-react';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -21,9 +21,9 @@ export default ({ type, className, children }: AlertProps) => {
             )}
         >
             {type === 'danger' ? (
-                <ShieldExclamationIcon className={'mr-2 h-6 w-6 text-red-400'} />
+                <ShieldAlert className={'mr-2 h-6 w-6 text-red-400'} />
             ) : (
-                <ExclamationIcon className={'mr-2 h-6 w-6 text-yellow-500'} />
+                <AlertTriangle className={'mr-2 h-6 w-6 text-yellow-500'} />
             )}
             {children}
         </div>

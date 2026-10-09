@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClipboardListIcon } from '@heroicons/react/outline';
+import { ClipboardList } from 'lucide-react';
 import { Dialog } from '@/components/elements/dialog';
 import { Button } from '@/components/elements/button/index';
 import style from './style.module.css';
@@ -29,7 +29,7 @@ export default ({ meta }: { meta: Record<string, unknown> }) => {
                 className={style.metadata}
                 onClick={() => setOpen(true)}
             >
-                <ClipboardListIcon className={'h-5 w-5'} />
+                <ClipboardList className={'h-5 w-5'} />
             </button>
         </div>
     );

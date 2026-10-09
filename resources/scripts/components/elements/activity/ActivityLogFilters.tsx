@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Select from '@/components/elements/Select';
 import Input from '@/components/elements/Input';
-import { XIcon } from '@heroicons/react/solid';
+import { X } from 'lucide-react';
 import { activityCategory, activityEventLabel } from './events';
 
 interface Props {
@@ -125,7 +125,7 @@ export default ({ events, hash, hasFilters, onChange, onClear }: Props) => {
                 </form>
                 {hasFilters && (
                     <button type={'button'} className={'activity-clear'} onClick={onClear}>
-                        <XIcon className={'h-4 w-4'} /> Clear filters
+                        <X className={'h-4 w-4'} /> Clear filters
                     </button>
                 )}
             </div>

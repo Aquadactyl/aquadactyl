@@ -255,9 +255,6 @@ importers:
       '@headlessui/react':
         specifier: ^1.7.19
         version: 1.7.19(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
-      '@heroicons/react':
-        specifier: ^1.0.6
-        version: 1.0.6(react@16.14.0)
       '@hookform/resolvers':
         specifier: ^3.10.0
         version: 3.10.0(react-hook-form@7.89.0(@types/react@16.14.70)(react@16.14.0))
@@ -295,14 +292,14 @@ importers:
         specifier: ^2.5.1
         version: 2.5.1
       copy-to-clipboard:
-        specifier: ^3.3.3
-        version: 3.3.3
+        specifier: ^4.0.2
+        version: 4.0.2
       date-fns:
-        specifier: ^2.30.0
-        version: 2.30.0
+        specifier: ^4.4.0
+        version: 4.4.0
       debounce:
-        specifier: ^1.2.1
-        version: 1.2.1
+        specifier: ^3.0.0
+        version: 3.0.0
       deepmerge-ts:
         specifier: ^8.0.2
         version: 8.0.2
@@ -386,7 +383,7 @@ importers:
         version: 5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0)
       styled-components-breakpoint:
         specifier: ^3.0.0-preview.20
-        version: 3.0.0-preview.20(@types/styled-components@5.1.7)(styled-components@5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0))
+        version: 3.0.0-preview.20(@types/styled-components@5.1.36)(styled-components@5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0))
       swr:
         specifier: ^0.2.3
         version: 0.2.3(react@16.14.0)
@@ -415,9 +412,6 @@ importers:
       '@testing-library/jest-dom':
         specifier: ^5.17.0
         version: 5.17.0
-      '@types/debounce':
-        specifier: ^1.2.4
-        version: 1.2.4
       '@types/events':
         specifier: ^3.0.3
         version: 3.0.3
@@ -446,8 +440,8 @@ importers:
         specifier: ^4.4.12
         version: 4.4.12(@types/react@16.14.70)
       '@types/styled-components':
-        specifier: 5.1.7
-        version: 5.1.7
+        specifier: ^5.1.36
+        version: 5.1.36
       '@types/yup':
         specifier: ^0.29.14
         version: 0.29.14
@@ -1235,11 +1229,6 @@ packages:
       react: ^16 || ^17 || ^18
       react-dom: ^16 || ^17 || ^18
 
-  '@heroicons/react@1.0.6':
-    resolution: {integrity: sha512-JJCXydOFWMDpCP4q13iEplA503MQO3xLoZiKum+955ZCtHINWnx26CUxVxxFQu/uLb4LW3ge15ZpzIkXKkJ8oQ==}
-    peerDependencies:
-      react: '>= 16'
-
   '@hookform/resolvers@3.10.0':
     resolution: {integrity: sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==}
     peerDependencies:
@@ -1763,9 +1752,6 @@ packages:
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
 
-  '@types/debounce@1.2.4':
-    resolution: {integrity: sha512-jBqiORIzKDOToaF63Fm//haOCHuwQuLa2202RK4MozpA6lh93eCBc+/8+wZn5OzjJt3ySdc+74SXWXB55Ewtyw==}
-
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
@@ -1838,8 +1824,8 @@ packages:
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==}
 
-  '@types/styled-components@5.1.7':
-    resolution: {integrity: sha512-BJzPhFygYspyefAGFZTZ/8lCEY4Tk+Iqktvnko3xmJf9LrLqs3+grxPeU3O0zLl6yjbYBopD0/VikbHgXDbJtA==}
+  '@types/styled-components@5.1.36':
+    resolution: {integrity: sha512-pGMRNY5G2rNDKEv2DOiFYa7Ft1r0jrhmgBwHhOMzPTgCjO76bCot0/4uEfqj7K0Jf1KdQmDtAuaDk9EAs9foSw==}
 
   '@types/testing-library__jest-dom@5.14.9':
     resolution: {integrity: sha512-FSYhIjFlfOpGSRyVoMBMuS3ws5ehFQODymf3vlI7U1K8c7PHwWwFY7VREfmsuzHSOnoKs/9/Y983ayOs7eRzqw==}
@@ -2075,8 +2061,8 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  copy-to-clipboard@3.3.3:
-    resolution: {integrity: sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==}
+  copy-to-clipboard@4.0.2:
+    resolution: {integrity: sha512-gklSft7IuhriZKHKpuoA1fpJSLPNgvUMWMo5BlnzAJm0zNKnznoSv23IjtNqclx8eKi6ZcdvFFzYEER/+U1LoQ==}
 
   core-js@3.50.0:
     resolution: {integrity: sha512-BRWgOLKkFeCgRudR6zrs8p9XJZcE14grzKMMssoYrk6krtuEZ7MTKPIY5RzOnqsEKIR9kst7wNzphttraT+Yqw==}
@@ -2130,12 +2116,12 @@ packages:
   csstype@3.2.3:
     resolution: {integrity: sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==}
 
-  date-fns@2.30.0:
-    resolution: {integrity: sha512-fnULvOpxnC5/Vg3NCiWelDsLiUc9bRwAPs/+LfTLNvetFCtCTN+yQz15C/fs4AwX1R9K5GLtLfn8QW+dWisaAw==}
-    engines: {node: '>=0.11'}
+  date-fns@4.4.0:
+    resolution: {integrity: sha512-+1UMbeh68lH1SegH83CGWwpb6OHHbpSgr3+s5Eww5M4CAgswBpoWS0AjTOfEJ33HiYKz1hdj/KTFprzXHmq/6w==}
 
-  debounce@1.2.1:
-    resolution: {integrity: sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==}
+  debounce@3.0.0:
+    resolution: {integrity: sha512-64byRbF0/AirwbuHqB3/ZpMG9/nckDa6ZA0yd6UnaQNwbbemCOwvz2sL5sjXLHhZHADyiwLm0M5qMhltUUx+TA==}
+    engines: {node: '>=20'}
 
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
@@ -3366,9 +3352,6 @@ packages:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
 
-  toggle-selection@1.0.6:
-    resolution: {integrity: sha512-BiZS+C1OS8g/q2RRbJmy59xpyghNBqrr6k5L/uKBGRsTfxmu3ffiRnd8mlGPUVayg8pvfi5urfnu8TU7DVOkLQ==}
-
   toposort@2.0.2:
     resolution: {integrity: sha512-0a5EOkAUp8D4moMi2W8ZF8jcga7BgZd91O/yabJCFY8az+XSzeGyTKs0Aoo897iV1Nj6guFq8orWDS96z91oGg==}
 
@@ -4420,10 +4403,6 @@ snapshots:
       react: 16.14.0
       react-dom: 16.14.0(react@16.14.0)
 
-  '@heroicons/react@1.0.6(react@16.14.0)':
-    dependencies:
-      react: 16.14.0
-
   '@hookform/resolvers@3.10.0(react-hook-form@7.89.0(@types/react@16.14.70)(react@16.14.0))':
     dependencies:
       react-hook-form: 7.89.0(@types/react@16.14.70)(react@16.14.0)
@@ -4826,8 +4805,6 @@ snapshots:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
 
-  '@types/debounce@1.2.4': {}
-
   '@types/deep-eql@4.0.2': {}
 
   '@types/estree@1.0.9': {}
@@ -4901,7 +4878,7 @@ snapshots:
 
   '@types/stack-utils@2.0.3': {}
 
-  '@types/styled-components@5.1.7':
+  '@types/styled-components@5.1.36':
     dependencies:
       '@types/hoist-non-react-statics': 3.3.7(@types/react@16.14.70)
       '@types/react': 16.14.70
@@ -5124,9 +5101,7 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  copy-to-clipboard@3.3.3:
-    dependencies:
-      toggle-selection: 1.0.6
+  copy-to-clipboard@4.0.2: {}
 
   core-js@3.50.0: {}
 
@@ -5174,11 +5149,9 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  date-fns@2.30.0:
-    dependencies:
-      '@babel/runtime': 7.29.10
+  date-fns@4.4.0: {}
 
-  debounce@1.2.1: {}
+  debounce@3.0.0: {}
 
   debug@4.4.3(supports-color@5.5.0):
     dependencies:
@@ -6410,9 +6383,9 @@ snapshots:
       hey-listen: 1.0.8
       tslib: 2.8.1
 
-  styled-components-breakpoint@3.0.0-preview.20(@types/styled-components@5.1.7)(styled-components@5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0)):
+  styled-components-breakpoint@3.0.0-preview.20(@types/styled-components@5.1.36)(styled-components@5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0)):
     dependencies:
-      '@types/styled-components': 5.1.7
+      '@types/styled-components': 5.1.36
       styled-components: 5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0)
 
   styled-components@5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@16.14.0(react@16.14.0))(react-is@19.3.0)(react@16.14.0):
@@ -6523,8 +6496,6 @@ snapshots:
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
-
-  toggle-selection@1.0.6: {}
 
   toposort@2.0.2: {}
 

@@ -10,11 +10,11 @@ import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import { ServerContext } from '@/state/server';
 import { usePermissions } from '@/plugins/usePermissions';
 import useEventListener from '@/plugins/useEventListener';
-import { debounce } from 'debounce';
+import debounce from 'debounce';
 import { usePersistedState } from '@/plugins/usePersistedState';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
 import classNames from 'classnames';
-import { ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import { ChevronsRight } from 'lucide-react';
 
 import CommandRow from '@blueprint/components/Server/Terminal/CommandRow';
 
@@ -229,7 +229,7 @@ export default () => {
                             styles.command_icon,
                         )}
                     >
-                        <ChevronDoubleRightIcon className={'h-4 w-4'} />
+                        <ChevronsRight className={'h-4 w-4'} />
                     </div>
                     <CommandRow />
                 </div>

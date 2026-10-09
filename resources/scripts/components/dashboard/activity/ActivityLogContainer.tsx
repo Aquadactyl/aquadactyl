@@ -3,7 +3,7 @@ import { useActivityLogs } from '@/api/account/activity';
 import { useFlashKey } from '@/plugins/useFlash';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import { DesktopComputerIcon } from '@heroicons/react/solid';
+import { Monitor } from 'lucide-react';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import ActivityLogList from '@/components/elements/activity/ActivityLogList';
 import useActivityLogFilters from '@/components/elements/activity/useActivityLogFilters';
@@ -37,7 +37,7 @@ export default () => {
                     typeof activity.properties.useragent === 'string' && (
                         <Tooltip content={activity.properties.useragent} placement={'top'}>
                             <span tabIndex={0} aria-label={'Browser details'}>
-                                <DesktopComputerIcon />
+                                <Monitor />
                             </span>
                         </Tooltip>
                     )

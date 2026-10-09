@@ -6,7 +6,7 @@ import { Line } from 'react-chartjs-2';
 import { useChart, useChartTickLabel } from '@/components/server/console/chart';
 import { hexToRgba } from '@/lib/helpers';
 import { bytesToString } from '@/lib/formatters';
-import { CloudDownloadIcon, CloudUploadIcon } from '@heroicons/react/solid';
+import { CloudDownload, CloudUpload } from 'lucide-react';
 import { theme } from '@/lib/theme';
 import ChartBlock from '@/components/server/console/ChartBlock';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
@@ -79,10 +79,10 @@ export default () => {
                 legend={
                     <>
                         <Tooltip arrow content={'Inbound'}>
-                            <CloudDownloadIcon className={'mr-2 h-4 w-4 text-yellow-400'} />
+                            <CloudDownload className={'mr-2 h-4 w-4 text-yellow-400'} />
                         </Tooltip>
                         <Tooltip arrow content={'Outbound'}>
-                            <CloudUploadIcon className={'h-4 w-4 text-cyan-400'} />
+                            <CloudUpload className={'h-4 w-4 text-cyan-400'} />
                         </Tooltip>
                     </>
                 }

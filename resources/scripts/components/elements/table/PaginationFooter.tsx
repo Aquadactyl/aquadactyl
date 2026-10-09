@@ -2,7 +2,7 @@ import React from 'react';
 import { PaginationDataSet } from '@/api/http';
 import classNames from 'classnames';
 import { Button } from '@/components/elements/button/index';
-import { ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/solid';
+import { ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 interface Props {
     className?: string;
@@ -49,7 +49,7 @@ const PaginationFooter = ({ pagination, className, onPageSelect }: Props) => {
             {pagination.totalPages > 1 && (
                 <div className={'flex space-x-1'}>
                     <Button.Text {...buttonProps(1)} disabled={current === 1} aria-label={'First page'}>
-                        <ChevronDoubleLeftIcon className={'h-3 w-3'} />
+                        <ChevronsLeft className={'h-3 w-3'} />
                     </Button.Text>
                     {pages.previous.reverse().map((value) => (
                         <Button.Text key={`previous-${value}`} {...buttonProps(value)} aria-label={`Page ${value}`}>
@@ -70,7 +70,7 @@ const PaginationFooter = ({ pagination, className, onPageSelect }: Props) => {
                         </Button.Text>
                     ))}
                     <Button.Text {...buttonProps(total)} disabled={current === total} aria-label={'Last page'}>
-                        <ChevronDoubleRightIcon className={'h-3 w-3'} />
+                        <ChevronsRight className={'h-3 w-3'} />
                     </Button.Text>
                 </div>
             )}

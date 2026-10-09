@@ -6,7 +6,7 @@ import Translate from '@/components/elements/Translate';
 import { format, formatDistanceToNowStrict } from 'date-fns';
 import { ActivityLog } from '@definitions/user';
 import ActivityLogMetaButton from '@/components/elements/activity/ActivityLogMetaButton';
-import { FolderOpenIcon, TerminalIcon } from '@heroicons/react/solid';
+import { FolderOpen, Terminal } from 'lucide-react';
 import style from './style.module.css';
 import Avatar from '@/components/Avatar';
 import useLocationHash from '@/plugins/useLocationHash';
@@ -106,14 +106,14 @@ export default ({ activity, children }: Props) => {
                         {activity.isApi && (
                             <Tooltip placement={'top'} content={'Using API Key'}>
                                 <span tabIndex={0} aria-label={'API activity'}>
-                                    <TerminalIcon />
+                                    <Terminal />
                                 </span>
                             </Tooltip>
                         )}
                         {(activity.event.startsWith('server:sftp.') || activity.event.startsWith('auth:sftp.')) && (
                             <Tooltip placement={'top'} content={'Using SFTP'}>
                                 <span tabIndex={0} aria-label={'SFTP activity'}>
-                                    <FolderOpenIcon />
+                                    <FolderOpen />
                                 </span>
                             </Tooltip>
                         )}

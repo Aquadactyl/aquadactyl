@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityLog } from '@definitions/user';
 import { ActivityLogResult } from '@/api/activity';
-import { ClockIcon, RefreshIcon } from '@heroicons/react/outline';
+import { Clock, RefreshCw } from 'lucide-react';
 import classNames from 'classnames';
 import Spinner from '@/components/elements/Spinner';
 import PaginationFooter from '@/components/elements/table/PaginationFooter';
@@ -34,7 +34,7 @@ export default ({ title, description, scope, data, isValidating, hasError, contr
                     <p className={'page-description'}>{description}</p>
                 </div>
                 <button type={'button'} className={'panel-link-button'} disabled={isValidating} onClick={onRefresh}>
-                    <RefreshIcon className={classNames('h-4 w-4', { 'is-refreshing': isValidating })} /> Refresh
+                    <RefreshCw className={classNames('h-4 w-4', { 'is-refreshing': isValidating })} /> Refresh
                 </button>
             </div>
             <ActivityLogFilters
@@ -64,7 +64,7 @@ export default ({ title, description, scope, data, isValidating, hasError, contr
                 ) : !data?.items.length ? (
                     <div className={'activity-empty'}>
                         <span className={'activity-empty-icon'}>
-                            <ClockIcon />
+                            <Clock />
                         </span>
                         <h3>
                             {hasError
