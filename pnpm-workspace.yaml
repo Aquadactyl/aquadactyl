@@ -7,7 +7,7 @@ allowBuilds:
     core-js-pure: true
     esbuild: true
 minimumReleaseAgeExclude:
-  - framer-motion@14.1.0
-  - motion-dom@14.1.0
-  - motion-utils@14.1.0
-  - motion@14.1.0
+    - framer-motion@14.1.0
+    - motion-dom@14.1.0
+    - motion-utils@14.1.0
+    - motion@14.1.0
