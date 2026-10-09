@@ -10,6 +10,7 @@ use Pterodactyl\Models\Allocation;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
+use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Http\Controllers\Controller;
 use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Services\Nodes\NodeUpdateService;

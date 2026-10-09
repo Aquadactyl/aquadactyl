@@ -8,6 +8,7 @@ import disableAccountTwoFactor from '@/api/account/disableAccountTwoFactor';
 import { useFlashKey } from '@/plugins/useFlash';
 import { useStoreActions } from '@/state/hooks';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import Label from '@/components/elements/Label';
 
 const DisableTOTPDialog = () => {
     const [submitting, setSubmitting] = useState(false);
@@ -40,12 +41,11 @@ const DisableTOTPDialog = () => {
     return (
         <form id={'disable-totp-form'} className={'mt-6'} onSubmit={submit}>
             <FlashMessageRender byKey={'account:two-step'} className={'-mt-2 mb-6'} />
-            <label className={'block pb-1'} htmlFor={'totp-password'}>
-                Password
-            </label>
+            <Label htmlFor={'totp-password'}>Password</Label>
             <Input.Text
                 id={'totp-password'}
                 type={'password'}
+                autoComplete={'current-password'}
                 variant={Input.Text.Variants.Loose}
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.currentTarget.value)}

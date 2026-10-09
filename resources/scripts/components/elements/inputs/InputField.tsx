@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import classNames from 'classnames';
-import styles from './styles.module.css';
+import ThemedInput from '@/components/elements/Input';
 
 enum Variant {
     Normal,
@@ -8,16 +8,11 @@ enum Variant {
     Loose,
 }
 
-const Component = forwardRef<HTMLInputElement, React.ComponentProps<'input'> & { variant?: Variant }>(
+const Component = forwardRef<HTMLInputElement, React.ComponentPropsWithoutRef<'input'> & { variant?: Variant }>(
     ({ className, variant, ...props }, ref) => (
-        <input
+        <ThemedInput
             ref={ref}
-            className={classNames(
-                'form-input',
-                styles.text_input,
-                { [styles.loose]: variant === Variant.Loose },
-                className,
-            )}
+            className={classNames(variant === Variant.Loose ? 'px-6 py-3' : 'px-4 py-2', className)}
             {...props}
         />
     ),
