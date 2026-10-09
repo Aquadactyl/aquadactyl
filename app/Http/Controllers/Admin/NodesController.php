@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\View\Factory as ViewFactory;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Exceptions\DisplayException;
 use Pterodactyl\Services\Nodes\NodeUpdateService;
 use Illuminate\Cache\Repository as CacheRepository;
 use Pterodactyl\Services\Nodes\NodeCreationService;
@@ -85,8 +86,12 @@ class NodesController extends Controller
      */
     public function updateSettings(NodeFormRequest $request, Node $node): RedirectResponse
     {
-        $this->updateService->handle($node, $request->normalize(), $request->input('reset_secret') === 'on');
-        $this->alert->success(trans('admin/node.notices.node_updated'))->flash();
+        try {
+            $this->updateService->handle($node, $request->normalize(), $request->input('reset_secret') === 'on');
+            $this->alert->success(trans('admin/node.notices.node_updated'))->flash();
+        } catch (DisplayException $exception) {
+            $this->alert->danger($exception->getMessage())->flash();
+        }
 
         return redirect()->route('admin.nodes.view.settings', $node->id)->withInput();
     }
