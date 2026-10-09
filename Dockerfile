@@ -1,7 +1,7 @@
 # Stage 0:
 # Build frontend assets and retain the dependency tree used by Blueprint for
 # extension installs and rebuilds at runtime.
-FROM --platform=$BUILDPLATFORM node:22-alpine AS frontend
+FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend
 WORKDIR /app
 RUN npm install --global pnpm@12.10.1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
@@ -50,6 +50,7 @@ RUN composer install --no-dev --no-interaction --no-scripts --no-autoloader
 
 COPY --chown=nginx:nginx . ./
 COPY --from=frontend --chown=nginx:nginx /app/public/assets ./public/assets
+COPY --from=frontend --chown=nginx:nginx /app/public/build ./public/build
 COPY --from=frontend --chown=nginx:nginx /app/node_modules ./node_modules
 
 RUN cp .env.example .env \
