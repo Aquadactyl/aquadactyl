@@ -23,7 +23,7 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
 | `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
 | `formik`, `yup`                                            | The panel's existing form and validation libraries     |
-| `react-hook-form`, `@hookform/resolvers`, `zod`              | Addon forms and schema validation                      |
+| `react-hook-form`, `@hookform/resolvers`, `zod`            | Addon forms and schema validation                      |
 | `zustand`                                                  | Lightweight addon state stores                         |
 | `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |
 | `i18next`, `react-i18next`                                 | Translation                                            |

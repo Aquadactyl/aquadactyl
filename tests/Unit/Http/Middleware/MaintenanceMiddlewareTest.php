@@ -1,65 +1,39 @@
 <?php
 
-namespace Pterodactyl\Tests\Unit\Http\Middleware;
-
 use Mockery as m;
-use Mockery\MockInterface;
 use Pterodactyl\Models\Node;
 use Illuminate\Http\Response;
 use Pterodactyl\Models\Server;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Pterodactyl\Http\Middleware\MaintenanceMiddleware;
 
-class MaintenanceMiddlewareTest extends MiddlewareTestCase
-{
-    private MockInterface $response;
+beforeEach(function () {
+    $this->response = m::mock(ResponseFactory::class);
+});
 
-    /**
-     * Setup tests.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+test('node not in maintenance mode continues through request cycle', function () {
+    $server = Server::factory()->make();
+    $node = Node::factory()->make(['maintenance' => 0]);
 
-        $this->response = m::mock(ResponseFactory::class);
-    }
+    $server->setRelation('node', $node);
+    $this->setRequestAttribute('server', $server);
 
-    /**
-     * Test that a node not in maintenance mode continues through the request cycle.
-     */
-    public function testHandle()
-    {
-        $server = Server::factory()->make();
-        $node = Node::factory()->make(['maintenance' => 0]);
+    (new MaintenanceMiddleware($this->response))->handle($this->request, $this->getClosureAssertions());
+});
 
-        $server->setRelation('node', $node);
-        $this->setRequestAttribute('server', $server);
+test('node in maintenance mode returns error view', function () {
+    $server = Server::factory()->make();
+    $node = Node::factory()->make(['maintenance_mode' => 1]);
 
-        $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
-    }
+    $server->setRelation('node', $node);
+    $this->setRequestAttribute('server', $server);
 
-    /**
-     * Test that a node in maintenance mode returns an error view.
-     */
-    public function testHandleInMaintenanceMode()
-    {
-        $server = Server::factory()->make();
-        $node = Node::factory()->make(['maintenance_mode' => 1]);
+    $this->response->shouldReceive('view')
+        ->once()
+        ->with('errors.maintenance')
+        ->andReturn(new Response());
 
-        $server->setRelation('node', $node);
-        $this->setRequestAttribute('server', $server);
+    $response = (new MaintenanceMiddleware($this->response))->handle($this->request, $this->getClosureAssertions());
 
-        $this->response->shouldReceive('view')
-            ->once()
-            ->with('errors.maintenance')
-            ->andReturn(new Response());
-
-        $response = $this->getMiddleware()->handle($this->request, $this->getClosureAssertions());
-        $this->assertInstanceOf(Response::class, $response);
-    }
-
-    private function getMiddleware(): MaintenanceMiddleware
-    {
-        return new MaintenanceMiddleware($this->response);
-    }
-}
+    expect($response)->toBeInstanceOf(Response::class);
+});
