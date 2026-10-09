@@ -1,26 +1,15 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Application\Servers;
+test('skip scripts state is returned', function () {
+    $server = $this->createServerModel(['skip_scripts' => true]);
 
-use Pterodactyl\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase;
+    $this->getJson('/api/application/servers/' . $server->id)
+        ->assertOk()
+        ->assertJsonPath('attributes.container.skip_scripts', true);
 
-class ServerControllerTest extends ApplicationApiIntegrationTestCase
-{
-    /**
-     * Test that the "skip scripts" state is returned for a server.
-     */
-    public function testSkipScriptsStateIsReturned()
-    {
-        $server = $this->createServerModel(['skip_scripts' => true]);
+    $server->update(['skip_scripts' => false]);
 
-        $this->getJson('/api/application/servers/' . $server->id)
-            ->assertOk()
-            ->assertJsonPath('attributes.container.skip_scripts', true);
-
-        $server->update(['skip_scripts' => false]);
-
-        $this->getJson('/api/application/servers/' . $server->id)
-            ->assertOk()
-            ->assertJsonPath('attributes.container.skip_scripts', false);
-    }
-}
+    $this->getJson('/api/application/servers/' . $server->id)
+        ->assertOk()
+        ->assertJsonPath('attributes.container.skip_scripts', false);
+});

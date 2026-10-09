@@ -1,100 +1,70 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client\Server\Schedule;
-
 use Pterodactyl\Models\Task;
 use Pterodactyl\Models\Schedule;
 use Pterodactyl\Models\Permission;
-use Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase;
 
-class GetServerSchedulesTest extends ClientApiIntegrationTestCase
-{
-    /**
-     * Cleanup after tests run.
-     */
-    protected function tearDown(): void
-    {
-        Task::query()->forceDelete();
-        Schedule::query()->forceDelete();
+afterEach(function () {
+    Task::query()->forceDelete();
+    Schedule::query()->forceDelete();
+});
 
-        parent::tearDown();
+test('server schedules are returned', function (array $permissions, bool $individual) {
+    [$user, $server] = $this->generateTestAccount($permissions);
+
+    /** @var Schedule $schedule */
+    $schedule = Schedule::factory()->create(['server_id' => $server->id]);
+    /** @var Task $task */
+    $task = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1, 'time_offset' => 0]);
+
+    $response = $this->actingAs($user)
+        ->getJson(
+            $individual
+                ? "/api/client/servers/$server->uuid/schedules/$schedule->id"
+                : "/api/client/servers/$server->uuid/schedules"
+        )
+        ->assertOk();
+
+    $prefix = $individual ? '' : 'data.0.';
+    if (!$individual) {
+        $response->assertJsonCount(1, 'data');
     }
 
-    /**
-     * Test that schedules for a server are returned.
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('permissionsDataProvider')]
-    public function testServerSchedulesAreReturned(array $permissions, bool $individual)
-    {
-        [$user, $server] = $this->generateTestAccount($permissions);
+    $response->assertJsonCount(1, $prefix . 'attributes.relationships.tasks.data');
 
-        /** @var Schedule $schedule */
-        $schedule = Schedule::factory()->create(['server_id' => $server->id]);
-        /** @var Task $task */
-        $task = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1, 'time_offset' => 0]);
+    $response->assertJsonPath($prefix . 'object', Schedule::RESOURCE_NAME);
+    $response->assertJsonPath($prefix . 'attributes.relationships.tasks.data.0.object', Task::RESOURCE_NAME);
 
-        $response = $this->actingAs($user)
-            ->getJson(
-                $individual
-                    ? "/api/client/servers/$server->uuid/schedules/$schedule->id"
-                    : "/api/client/servers/$server->uuid/schedules"
-            )
-            ->assertOk();
+    $this->assertJsonTransformedWith($response->json($prefix . 'attributes'), $schedule);
+    $this->assertJsonTransformedWith($response->json($prefix . 'attributes.relationships.tasks.data.0.attributes'), $task);
+})->with([
+    [[], false],
+    [[], true],
+    [[Permission::ACTION_SCHEDULE_READ], false],
+    [[Permission::ACTION_SCHEDULE_READ], true],
+]);
 
-        $prefix = $individual ? '' : 'data.0.';
-        if (!$individual) {
-            $response->assertJsonCount(1, 'data');
-        }
+test('schedule belonging to another server cannot be viewed', function () {
+    [$user, $server] = $this->generateTestAccount();
+    $server2 = $this->createServerModel(['owner_id' => $user->id]);
 
-        $response->assertJsonCount(1, $prefix . 'attributes.relationships.tasks.data');
+    $schedule = Schedule::factory()->create(['server_id' => $server2->id]);
 
-        $response->assertJsonPath($prefix . 'object', Schedule::RESOURCE_NAME);
-        $response->assertJsonPath($prefix . 'attributes.relationships.tasks.data.0.object', Task::RESOURCE_NAME);
+    $this->actingAs($user)
+        ->getJson("/api/client/servers/$server->uuid/schedules/$schedule->id")
+        ->assertNotFound();
+});
 
-        $this->assertJsonTransformedWith($response->json($prefix . 'attributes'), $schedule);
-        $this->assertJsonTransformedWith($response->json($prefix . 'attributes.relationships.tasks.data.0.attributes'), $task);
-    }
+test('user without permission cannot view schedules', function () {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
 
-    /**
-     * Test that a schedule belonging to another server cannot be viewed.
-     */
-    public function testScheduleBelongingToAnotherServerCannotBeViewed()
-    {
-        [$user, $server] = $this->generateTestAccount();
-        $server2 = $this->createServerModel(['owner_id' => $user->id]);
+    $this->actingAs($user)
+        ->getJson("/api/client/servers/$server->uuid/schedules")
+        ->assertForbidden();
 
-        $schedule = Schedule::factory()->create(['server_id' => $server2->id]);
+    $schedule = Schedule::factory()->create(['server_id' => $server->id]);
 
-        $this->actingAs($user)
-            ->getJson("/api/client/servers/$server->uuid/schedules/$schedule->id")
-            ->assertNotFound();
-    }
-
-    /**
-     * Test that a subuser without the required permissions is unable to access the schedules endpoint.
-     */
-    public function testUserWithoutPermissionCannotViewSchedules()
-    {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_WEBSOCKET_CONNECT]);
-
-        $this->actingAs($user)
-            ->getJson("/api/client/servers/$server->uuid/schedules")
-            ->assertForbidden();
-
-        $schedule = Schedule::factory()->create(['server_id' => $server->id]);
-
-        $this->actingAs($user)
-            ->getJson("/api/client/servers/$server->uuid/schedules/$schedule->id")
-            ->assertForbidden();
-    }
-
-    public static function permissionsDataProvider(): array
-    {
-        return [
-            [[], false],
-            [[], true],
-            [[Permission::ACTION_SCHEDULE_READ], false],
-            [[Permission::ACTION_SCHEDULE_READ], true],
-        ];
-    }
-}
+    $this->actingAs($user)
+        ->getJson("/api/client/servers/$server->uuid/schedules/$schedule->id")
+        ->assertForbidden();
+});

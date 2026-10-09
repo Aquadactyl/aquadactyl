@@ -1,164 +1,11 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Client;
-
 use phpseclib3\Crypt\EC;
 use Pterodactyl\Models\User;
 use Pterodactyl\Models\UserSSHKey;
 
-class SSHKeyControllerTest extends ClientApiIntegrationTestCase
-{
-    /**
-     * Test that only the SSH keys for the authenticated user are returned.
-     */
-    public function testSSHKeysAreReturned()
-    {
-        $user = User::factory()->create();
-        $user2 = User::factory()->create();
-
-        $key = UserSSHKey::factory()->for($user)->create();
-        UserSSHKey::factory()->for($user2)->rsa()->create();
-
-        $this->actingAs($user);
-        $response = $this->getJson('/api/client/account/ssh-keys')
-            ->assertOk()
-            ->assertJsonPath('object', 'list')
-            ->assertJsonPath('data.0.object', UserSSHKey::RESOURCE_NAME);
-
-        $this->assertJsonTransformedWith($response->json('data.0.attributes'), $key);
-    }
-
-    /**
-     * Test that a user's SSH key can be deleted, and that passing the fingerprint
-     * of another user's SSH key won't delete that key.
-     */
-    public function testSSHKeyCanBeDeleted()
-    {
-        $user = User::factory()->create();
-        $user2 = User::factory()->create();
-
-        $key = UserSSHKey::factory()->for($user)->create();
-        $key2 = UserSSHKey::factory()->for($user2)->create();
-
-        $endpoint = '/api/client/account/ssh-keys/remove';
-
-        $this->actingAs($user);
-        $this->postJson($endpoint)
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.meta', ['source_field' => 'fingerprint', 'rule' => 'required']);
-
-        $this->postJson($endpoint, ['fingerprint' => $key->fingerprint])->assertNoContent();
-
-        $this->assertSoftDeleted($key);
-        $this->assertNotSoftDeleted($key2);
-
-        $this->postJson($endpoint, ['fingerprint' => $key->fingerprint])->assertNoContent();
-        $this->postJson($endpoint, ['fingerprint' => $key2->fingerprint])->assertNoContent();
-
-        $this->assertNotSoftDeleted($key2);
-    }
-
-    public function testDSAKeyIsRejected()
-    {
-        $user = User::factory()->create();
-        $key = UserSSHKey::factory()->dsa()->make();
-
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => $key->public_key,
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.detail', 'DSA keys are not supported.');
-
-        $this->assertEquals(0, $user->sshKeys()->count());
-    }
-
-    public function testWeakRSAKeyIsRejected()
-    {
-        $user = User::factory()->create();
-        $key = UserSSHKey::factory()->rsa(true)->make();
-
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => $key->public_key,
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.detail', 'RSA keys must be at least 2048 bytes in length.');
-
-        $this->assertEquals(0, $user->sshKeys()->count());
-    }
-
-    public function testInvalidOrPrivateKeyIsRejected()
-    {
-        $user = User::factory()->create();
-
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => 'invalid',
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
-
-        $this->assertEquals(0, $user->sshKeys()->count());
-
-        $key = EC::createKey('Ed25519');
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => $key->toString('PKCS8'),
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
-    }
-
-    public function testCertificateCannotBeStoredAsSSHKey()
-    {
-        $user = User::factory()->create();
-
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => $this->makeCertificate(),
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
-
-        $this->assertEquals(0, $user->sshKeys()->count());
-    }
-
-    public function testPublicKeyCanBeStored()
-    {
-        $user = User::factory()->create();
-        $key = UserSSHKey::factory()->make();
-
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => $key->public_key,
-        ])
-            ->assertOk()
-            ->assertJsonPath('object', UserSSHKey::RESOURCE_NAME)
-            ->assertJsonPath('attributes.public_key', $key->public_key);
-
-        $this->assertCount(1, $user->sshKeys);
-        $this->assertEquals($key->public_key, $user->sshKeys[0]->public_key);
-    }
-
-    public function testPublicKeyThatAlreadyExistsCannotBeAddedASecondTime()
-    {
-        $user = User::factory()->create();
-        $key = UserSSHKey::factory()->for($user)->create();
-
-        $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
-            'name' => 'Name',
-            'public_key' => $key->public_key,
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.detail', 'The public key provided already exists on your account.');
-
-        $this->assertEquals(1, $user->sshKeys()->count());
-    }
-
-    protected function makeCertificate(): string
-    {
-        return <<<'PEM'
+$makeCertificate = function (): string {
+    return <<<'PEM'
 -----BEGIN CERTIFICATE-----
 MIIClzCCAX+gAwIBAgIBADANBgkqhkiG9w0BAQUFADAPMQ0wCwYDVQQDDAR0ZXN0
 MB4XDTI2MDYyODIxMzQzMFoXDTI2MDYyOTIxMzQzMFowDzENMAsGA1UEAwwEdGVz
@@ -176,5 +23,139 @@ iiZwIndK2bAsME622kuPgfx/osJ/8zuQhBeRsiLfUT44j2RJNRj99gXRfKAA0vyG
 LaKfKLpXnF7mm6UuShG/HRt07bxu6Ayan/SJnv3E5ZkinR5lX0upcmM/gQ==
 -----END CERTIFICATE-----
 PEM;
-    }
-}
+};
+
+test('ssh keys are returned', function () {
+    $user = User::factory()->create();
+    $user2 = User::factory()->create();
+
+    $key = UserSSHKey::factory()->for($user)->create();
+    UserSSHKey::factory()->for($user2)->rsa()->create();
+
+    $this->actingAs($user);
+    $response = $this->getJson('/api/client/account/ssh-keys')
+        ->assertOk()
+        ->assertJsonPath('object', 'list')
+        ->assertJsonPath('data.0.object', UserSSHKey::RESOURCE_NAME);
+
+    $this->assertJsonTransformedWith($response->json('data.0.attributes'), $key);
+});
+
+test('ssh key can be deleted', function () {
+    $user = User::factory()->create();
+    $user2 = User::factory()->create();
+
+    $key = UserSSHKey::factory()->for($user)->create();
+    $key2 = UserSSHKey::factory()->for($user2)->create();
+
+    $endpoint = '/api/client/account/ssh-keys/remove';
+
+    $this->actingAs($user);
+    $this->postJson($endpoint)
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.meta', ['source_field' => 'fingerprint', 'rule' => 'required']);
+
+    $this->postJson($endpoint, ['fingerprint' => $key->fingerprint])->assertNoContent();
+
+    $this->assertSoftDeleted($key);
+    $this->assertNotSoftDeleted($key2);
+
+    $this->postJson($endpoint, ['fingerprint' => $key->fingerprint])->assertNoContent();
+    $this->postJson($endpoint, ['fingerprint' => $key2->fingerprint])->assertNoContent();
+
+    $this->assertNotSoftDeleted($key2);
+});
+
+test('dsa key is rejected', function () {
+    $user = User::factory()->create();
+    $key = UserSSHKey::factory()->dsa()->make();
+
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => $key->public_key,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.detail', 'DSA keys are not supported.');
+
+    expect($user->sshKeys()->count())->toBe(0);
+});
+
+test('weak rsa key is rejected', function () {
+    $user = User::factory()->create();
+    $key = UserSSHKey::factory()->rsa(true)->make();
+
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => $key->public_key,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.detail', 'RSA keys must be at least 2048 bytes in length.');
+
+    expect($user->sshKeys()->count())->toBe(0);
+});
+
+test('invalid or private key is rejected', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => 'invalid',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
+
+    expect($user->sshKeys()->count())->toBe(0);
+
+    $key = EC::createKey('Ed25519');
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => $key->toString('PKCS8'),
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
+
+    expect($user->sshKeys()->count())->toBe(0);
+});
+
+test('certificate cannot be stored as ssh key', function () use ($makeCertificate) {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => $makeCertificate(),
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.detail', 'The public key provided is not valid.');
+
+    expect($user->sshKeys()->count())->toBe(0);
+});
+
+test('public key can be stored', function () {
+    $user = User::factory()->create();
+    $key = UserSSHKey::factory()->make();
+
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => $key->public_key,
+    ])
+        ->assertOk()
+        ->assertJsonPath('object', UserSSHKey::RESOURCE_NAME)
+        ->assertJsonPath('attributes.public_key', $key->public_key);
+
+    expect($user->sshKeys)->toHaveCount(1)
+        ->and($user->sshKeys[0]->public_key)->toBe($key->public_key);
+});
+
+test('public key that already exists cannot be added a second time', function () {
+    $user = User::factory()->create();
+    $key = UserSSHKey::factory()->for($user)->create();
+
+    $this->actingAs($user)->postJson('/api/client/account/ssh-keys', [
+        'name' => 'Name',
+        'public_key' => $key->public_key,
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.detail', 'The public key provided already exists on your account.');
+
+    expect($user->sshKeys()->count())->toBe(1);
+});

@@ -1,7 +1,5 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Services\Backups;
-
 use Carbon\CarbonImmutable;
 use Pterodactyl\Enum\JwtScope;
 use Pterodactyl\Models\Backup;
@@ -10,46 +8,35 @@ use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Pterodactyl\Services\Backups\DownloadLinkService;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
 
-class DownloadLinkServiceTest extends IntegrationTestCase
-{
-    /**
-     * Test that a valid wings URL is generated and returned to the caller when not
-     * making use of an S3 driver for backups.
-     */
-    public function testItGeneratesLocalUrlWithJwt(): void
-    {
-        $server = $this->createServerModel();
-        $backup = Backup::factory()->for($server)->create([
-            'disk' => Backup::ADAPTER_WINGS,
-        ]);
+test('it generates local url with jwt', function () {
+    $server = $this->createServerModel();
+    $backup = Backup::factory()->for($server)->create([
+        'disk' => Backup::ADAPTER_WINGS,
+    ]);
 
-        $url = $this->app->make(DownloadLinkService::class)->handle($backup, $server->user);
+    $url = app(DownloadLinkService::class)->handle($backup, $server->user);
 
-        $this->assertStringStartsWith($prefix = $server->node->getConnectionAddress() . '/download/backup?token=', $url);
+    $prefix = $server->node->getConnectionAddress() . '/download/backup?token=';
+    expect($url)->toStartWith($prefix);
 
-        $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->getDecryptedKey()));
-        $config = $config->withValidationConstraints(new SignedWith(new Sha256(), $key));
+    $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->getDecryptedKey()));
+    $config = $config->withValidationConstraints(new SignedWith(new Sha256(), $key));
 
-        /** @var \Lcobucci\JWT\Token\Plain $token */
-        $token = $config->parser()->parse(substr($url, strlen($prefix)));
+    /** @var \Lcobucci\JWT\Token\Plain $token */
+    $token = $config->parser()->parse(substr($url, strlen($prefix)));
 
-        $this->assertTrue(
-            $config->validator()->validate($token, ...$config->validationConstraints()),
-            'Failed to validate that the JWT data returned was signed using the Node\'s secret key.'
-        );
+    expect($config->validator()->validate($token, ...$config->validationConstraints()))->toBeTrue();
 
-        $timestamp = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC');
+    $timestamp = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC');
 
-        // Check that the claims are generated correctly.
-        $this->assertTrue($token->hasBeenIssuedBy(config('app.url')));
-        $this->assertTrue($token->isPermittedFor($server->node->getConnectionAddress()));
-        $this->assertEquals($timestamp, $token->claims()->get('iat'));
-        $this->assertEquals($timestamp->subMinutes(5), $token->claims()->get('nbf'));
-        $this->assertEquals($timestamp->addMinutes(15), $token->claims()->get('exp'));
-        $this->assertSame($backup->uuid, $token->claims()->get('backup_uuid'));
-        $this->assertSame($server->uuid, $token->claims()->get('server_uuid'));
-        $this->assertEquals(JwtScope::BackupDownload->value, $token->claims()->get('scope'));
-    }
-}
+    // Check that the claims are generated correctly.
+    expect($token->hasBeenIssuedBy(config('app.url')))->toBeTrue()
+        ->and($token->isPermittedFor($server->node->getConnectionAddress()))->toBeTrue()
+        ->and($token->claims()->get('iat'))->toEqual($timestamp)
+        ->and($token->claims()->get('nbf'))->toEqual($timestamp->subMinutes(5))
+        ->and($token->claims()->get('exp'))->toEqual($timestamp->addMinutes(15))
+        ->and($token->claims()->get('backup_uuid'))->toBe($backup->uuid)
+        ->and($token->claims()->get('server_uuid'))->toBe($server->uuid)
+        ->and($token->claims()->get('scope'))->toBe(JwtScope::BackupDownload->value);
+});

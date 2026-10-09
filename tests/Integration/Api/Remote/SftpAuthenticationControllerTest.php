@@ -1,266 +1,29 @@
 <?php
 
-namespace Pterodactyl\Tests\Integration\Api\Remote;
-
 use phpseclib3\Crypt\EC;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Permission;
 use Pterodactyl\Models\UserSSHKey;
-use Pterodactyl\Tests\Integration\IntegrationTestCase;
 
-class SftpAuthenticationControllerTest extends IntegrationTestCase
-{
-    protected User $user;
+beforeEach(function () {
+    [$user, $server] = $this->generateTestAccount();
 
-    protected Server $server;
+    $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
 
-    /**
-     * Sets up the tests.
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
+    $this->user = $user;
+    $this->server = $server;
 
-        [$user, $server] = $this->generateTestAccount();
+    $this->withHeader('Authorization', 'Bearer ' . $server->node->daemon_token_id . '.' . decrypt($server->node->daemon_token));
+});
 
-        $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
+$getUsername = function ($user, $server, bool $long = false): string {
+    return $user->username . '.' . ($long ? $server->uuid : $server->identifier);
+};
 
-        $this->user = $user;
-        $this->server = $server;
-
-        $this->setAuthorization();
-    }
-
-    /**
-     * Test that a public key is validated correctly.
-     */
-    public function testPublicKeyIsValidatedCorrectly()
-    {
-        $key = UserSSHKey::factory()->for($this->user)->create();
-
-        $this->postJson('/api/remote/sftp/auth', [])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.meta.source_field', 'username')
-            ->assertJsonPath('errors.0.meta.rule', 'required')
-            ->assertJsonPath('errors.1.meta.source_field', 'password')
-            ->assertJsonPath('errors.1.meta.rule', 'required');
-
-        $data = [
-            'type' => 'public_key',
-            'username' => $this->getUsername(),
-            'password' => $key->public_key,
-        ];
-
-        $this->postJson('/api/remote/sftp/auth', $data)
-            ->assertOk()
-            ->assertJsonPath('server', $this->server->uuid)
-            ->assertJsonPath('permissions', ['*']);
-
-        $key->delete();
-        $this->postJson('/api/remote/sftp/auth', $data)->assertForbidden();
-        $this->postJson('/api/remote/sftp/auth', array_merge($data, ['type' => null]))->assertForbidden();
-    }
-
-    /**
-     * Test that an account password is validated correctly.
-     */
-    public function testPasswordIsValidatedCorrectly()
-    {
-        $this->postJson('/api/remote/sftp/auth', [
-            'username' => $this->getUsername(),
-            'password' => '',
-        ])
-            ->assertUnprocessable()
-            ->assertJsonPath('errors.0.meta.source_field', 'password')
-            ->assertJsonPath('errors.0.meta.rule', 'required');
-
-        $this->postJson('/api/remote/sftp/auth', [
-            'username' => $this->getUsername(),
-            'password' => 'wrong password',
-        ])
-            ->assertForbidden();
-
-        $this->user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
-
-        $this->postJson('/api/remote/sftp/auth', [
-            'username' => $this->getUsername(),
-            'password' => 'foobar',
-        ])
-            ->assertOk();
-    }
-
-    /**
-     * Test that providing an invalid key and/or invalid username triggers the throttle on
-     * the endpoint.
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('authorizationTypeDataProvider')]
-    public function testUserIsThrottledIfInvalidCredentialsAreProvided()
-    {
-        for ($i = 0; $i <= 10; ++$i) {
-            $this->postJson('/api/remote/sftp/auth', [
-                'type' => 'public_key',
-                'username' => $i % 2 === 0 ? $this->user->username : $this->getUsername(),
-                'password' => 'invalid key',
-            ])
-                ->assertStatus($i === 10 ? 429 : 403);
-        }
-    }
-
-    /**
-     * Test that the user is not throttled so long as a valid public key is provided, even
-     * if it doesn't actually exist in the database for the user.
-     */
-    public function testUserIsNotThrottledIfNoPublicKeyMatches()
-    {
-        for ($i = 0; $i <= 10; ++$i) {
-            $this->postJson('/api/remote/sftp/auth', [
-                'type' => 'public_key',
-                'username' => $this->getUsername(),
-                'password' => EC::createKey('Ed25519')->getPublicKey()->toString('OpenSSH'),
-            ])
-                ->assertForbidden();
-        }
-    }
-
-    public function testCertificatePublicKeyAuthenticationIsRejectedAsInvalidKey()
-    {
-        $certificate = $this->makeCertificate();
-
-        for ($i = 0; $i <= 5; ++$i) {
-            $this->postJson('/api/remote/sftp/auth', [
-                'type' => 'public_key',
-                'username' => $this->getUsername(),
-                'password' => $certificate,
-            ])
-                ->assertStatus($i === 5 ? 429 : 403);
-        }
-    }
-
-    /**
-     * Test that a request is rejected if the credentials are valid but the username indicates
-     * a server on a different node.
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('authorizationTypeDataProvider')]
-    public function testRequestIsRejectedIfServerBelongsToDifferentNode(string $type)
-    {
-        $node2 = $this->createServerModel()->node;
-
-        $this->setAuthorization($node2);
-
-        $password = $type === 'public_key'
-            ? UserSSHKey::factory()->for($this->user)->create()->public_key
-            : 'foobar';
-
-        $this->postJson('/api/remote/sftp/auth', [
-            'type' => 'public_key',
-            'username' => $this->getUsername(),
-            'password' => $password,
-        ])
-            ->assertForbidden();
-    }
-
-    public function testRequestIsDeniedIfUserLacksSftpPermission()
-    {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ]);
-
-        $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
-
-        $this->setAuthorization($server->node);
-
-        $this->postJson('/api/remote/sftp/auth', [
-            'username' => $user->username . '.' . $server->identifier,
-            'password' => 'foobar',
-        ])
-            ->assertForbidden()
-            ->assertJsonPath('errors.0.detail', 'You do not have permission to access SFTP for this server.');
-    }
-
-    #[\PHPUnit\Framework\Attributes\DataProvider('serverStateDataProvider')]
-    public function testInvalidServerStateReturnsConflictError(string $status)
-    {
-        $this->server->update(['status' => $status]);
-
-        $this->postJson('/api/remote/sftp/auth', ['username' => $this->getUsername(), 'password' => 'foobar'])
-            ->assertStatus(409);
-    }
-
-    /**
-     * Test that permissions are returned for the user account correctly.
-     */
-    public function testUserPermissionsAreReturnedCorrectly()
-    {
-        [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
-
-        $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
-
-        $this->setAuthorization($server->node);
-
-        $data = [
-            'username' => $user->username . '.' . $server->identifier,
-            'password' => 'foobar',
-        ];
-
-        $this->postJson('/api/remote/sftp/auth', $data)
-            ->assertOk()
-            ->assertJsonPath('permissions', [Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
-
-        $user->update(['root_admin' => true]);
-
-        $this->postJson('/api/remote/sftp/auth', $data)
-            ->assertOk()
-            ->assertJsonPath('permissions.0', '*');
-
-        $this->setAuthorization();
-        $data['username'] = $user->username . '.' . $this->server->identifier;
-
-        $this->post('/api/remote/sftp/auth', $data)
-            ->assertOk()
-            ->assertJsonPath('permissions.0', '*');
-
-        $user->update(['root_admin' => false]);
-        $this->post('/api/remote/sftp/auth', $data)->assertForbidden();
-    }
-
-    public static function authorizationTypeDataProvider(): array
-    {
-        return [
-            'password auth' => ['password'],
-            'public key auth' => ['public_key'],
-        ];
-    }
-
-    public static function serverStateDataProvider(): array
-    {
-        return [
-            'installing' => [Server::STATUS_INSTALLING],
-            'suspended' => [Server::STATUS_SUSPENDED],
-            'restoring a backup' => [Server::STATUS_RESTORING_BACKUP],
-        ];
-    }
-
-    /**
-     * Returns the username for connecting to SFTP.
-     */
-    protected function getUsername(bool $long = false): string
-    {
-        return $this->user->username . '.' . ($long ? $this->server->uuid : $this->server->identifier);
-    }
-
-    /**
-     * Sets the authorization header for the rest of the test.
-     */
-    protected function setAuthorization(?Node $node = null): void
-    {
-        $node = $node ?? $this->server->node;
-
-        $this->withHeader('Authorization', 'Bearer ' . $node->daemon_token_id . '.' . decrypt($node->daemon_token));
-    }
-
-    protected function makeCertificate(): string
-    {
-        return <<<'PEM'
+$makeCertificate = function (): string {
+    return <<<'PEM'
 -----BEGIN CERTIFICATE-----
 MIIClzCCAX+gAwIBAgIBADANBgkqhkiG9w0BAQUFADAPMQ0wCwYDVQQDDAR0ZXN0
 MB4XDTI2MDYyODIxMzQzMFoXDTI2MDYyOTIxMzQzMFowDzENMAsGA1UEAwwEdGVz
@@ -278,5 +41,171 @@ iiZwIndK2bAsME622kuPgfx/osJ/8zuQhBeRsiLfUT44j2RJNRj99gXRfKAA0vyG
 LaKfKLpXnF7mm6UuShG/HRt07bxu6Ayan/SJnv3E5ZkinR5lX0upcmM/gQ==
 -----END CERTIFICATE-----
 PEM;
+};
+
+test('public key is validated correctly', function () use ($getUsername) {
+    $key = UserSSHKey::factory()->for($this->user)->create();
+
+    $this->postJson('/api/remote/sftp/auth', [])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.meta.source_field', 'username')
+        ->assertJsonPath('errors.0.meta.rule', 'required')
+        ->assertJsonPath('errors.1.meta.source_field', 'password')
+        ->assertJsonPath('errors.1.meta.rule', 'required');
+
+    $data = [
+        'type' => 'public_key',
+        'username' => $getUsername($this->user, $this->server),
+        'password' => $key->public_key,
+    ];
+
+    $this->postJson('/api/remote/sftp/auth', $data)
+        ->assertOk()
+        ->assertJsonPath('server', $this->server->uuid)
+        ->assertJsonPath('permissions', ['*']);
+
+    $key->delete();
+    $this->postJson('/api/remote/sftp/auth', $data)->assertForbidden();
+    $this->postJson('/api/remote/sftp/auth', array_merge($data, ['type' => null]))->assertForbidden();
+});
+
+test('password is validated correctly', function () use ($getUsername) {
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $getUsername($this->user, $this->server),
+        'password' => '',
+    ])
+        ->assertUnprocessable()
+        ->assertJsonPath('errors.0.meta.source_field', 'password')
+        ->assertJsonPath('errors.0.meta.rule', 'required');
+
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $getUsername($this->user, $this->server),
+        'password' => 'wrong password',
+    ])
+        ->assertForbidden();
+
+    $this->user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
+
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $getUsername($this->user, $this->server),
+        'password' => 'foobar',
+    ])
+        ->assertOk();
+});
+
+test('user is throttled if invalid credentials are provided', function () use ($getUsername) {
+    for ($i = 0; $i <= 10; ++$i) {
+        $this->postJson('/api/remote/sftp/auth', [
+            'type' => 'public_key',
+            'username' => $i % 2 === 0 ? $this->user->username : $getUsername($this->user, $this->server),
+            'password' => 'invalid key',
+        ])
+            ->assertStatus($i === 10 ? 429 : 403);
     }
-}
+})->with([
+    'password auth' => ['password'],
+    'public key auth' => ['public_key'],
+]);
+
+test('user is not throttled if no public key matches', function () use ($getUsername) {
+    for ($i = 0; $i <= 10; ++$i) {
+        $this->postJson('/api/remote/sftp/auth', [
+            'type' => 'public_key',
+            'username' => $getUsername($this->user, $this->server),
+            'password' => EC::createKey('Ed25519')->getPublicKey()->toString('OpenSSH'),
+        ])
+            ->assertForbidden();
+    }
+});
+
+test('certificate public key authentication is rejected as invalid key', function () use ($getUsername, $makeCertificate) {
+    $certificate = $makeCertificate();
+
+    for ($i = 0; $i <= 5; ++$i) {
+        $this->postJson('/api/remote/sftp/auth', [
+            'type' => 'public_key',
+            'username' => $getUsername($this->user, $this->server),
+            'password' => $certificate,
+        ])
+            ->assertStatus($i === 5 ? 429 : 403);
+    }
+});
+
+test('request is rejected if server belongs to different node', function (string $type) use ($getUsername) {
+    $node2 = $this->createServerModel()->node;
+
+    $this->withHeader('Authorization', 'Bearer ' . $node2->daemon_token_id . '.' . decrypt($node2->daemon_token));
+
+    $password = $type === 'public_key'
+        ? UserSSHKey::factory()->for($this->user)->create()->public_key
+        : 'foobar';
+
+    $this->postJson('/api/remote/sftp/auth', [
+        'type' => 'public_key',
+        'username' => $getUsername($this->user, $this->server),
+        'password' => $password,
+    ])
+        ->assertForbidden();
+})->with([
+    'password auth' => ['password'],
+    'public key auth' => ['public_key'],
+]);
+
+test('request is denied if user lacks sftp permission', function () {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ]);
+
+    $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
+
+    $this->withHeader('Authorization', 'Bearer ' . $server->node->daemon_token_id . '.' . decrypt($server->node->daemon_token));
+
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $user->username . '.' . $server->identifier,
+        'password' => 'foobar',
+    ])
+        ->assertForbidden()
+        ->assertJsonPath('errors.0.detail', 'You do not have permission to access SFTP for this server.');
+});
+
+test('invalid server state returns conflict error', function (string $status) use ($getUsername) {
+    $this->server->update(['status' => $status]);
+
+    $this->postJson('/api/remote/sftp/auth', ['username' => $getUsername($this->user, $this->server), 'password' => 'foobar'])
+        ->assertStatus(409);
+})->with([
+    'installing' => [Server::STATUS_INSTALLING],
+    'suspended' => [Server::STATUS_SUSPENDED],
+    'restoring a backup' => [Server::STATUS_RESTORING_BACKUP],
+]);
+
+test('user permissions are returned correctly', function () {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
+
+    $user->update(['password' => password_hash('foobar', PASSWORD_DEFAULT)]);
+
+    $this->withHeader('Authorization', 'Bearer ' . $server->node->daemon_token_id . '.' . decrypt($server->node->daemon_token));
+
+    $data = [
+        'username' => $user->username . '.' . $server->identifier,
+        'password' => 'foobar',
+    ];
+
+    $this->postJson('/api/remote/sftp/auth', $data)
+        ->assertOk()
+        ->assertJsonPath('permissions', [Permission::ACTION_FILE_READ, Permission::ACTION_FILE_SFTP]);
+
+    $user->update(['root_admin' => true]);
+
+    $this->postJson('/api/remote/sftp/auth', $data)
+        ->assertOk()
+        ->assertJsonPath('permissions.0', '*');
+
+    $this->withHeader('Authorization', 'Bearer ' . $this->server->node->daemon_token_id . '.' . decrypt($this->server->node->daemon_token));
+    $data['username'] = $user->username . '.' . $this->server->identifier;
+
+    $this->post('/api/remote/sftp/auth', $data)
+        ->assertOk()
+        ->assertJsonPath('permissions.0', '*');
+
+    $user->update(['root_admin' => false]);
+    $this->post('/api/remote/sftp/auth', $data)->assertForbidden();
+});

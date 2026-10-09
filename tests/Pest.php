@@ -12,7 +12,15 @@
 */
 
 pest()->extend(Pterodactyl\Tests\TestCase::class)->in('Unit');
-pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in('Integration');
+pest()->extend(Pterodactyl\Tests\Integration\Api\Application\ApplicationApiIntegrationTestCase::class)->in('Integration/Api/Application');
+pest()->extend(Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase::class)->in('Integration/Api/Client');
+pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in(
+    'Integration/Blueprint',
+    'Integration/Http',
+    'Integration/Jobs',
+    'Integration/Services',
+    'Integration/Api/Remote'
+);
 
 uses(
     Pterodactyl\Tests\Assertions\MiddlewareAttributeAssertionsTrait::class,
