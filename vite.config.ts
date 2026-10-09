@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
@@ -26,6 +26,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
+            'react/jsx-runtime': 'react/jsx-runtime.js',
+            'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
             '@': path.resolve(import.meta.dirname, 'resources/scripts'),
             '@definitions': path.resolve(import.meta.dirname, 'resources/scripts/api/definitions'),
             '@feature': path.resolve(import.meta.dirname, 'resources/scripts/components/server/features'),
@@ -48,5 +50,17 @@ export default defineConfig({
     },
     build: {
         chunkSizeWarningLimit: 2000,
+    },
+    test: {
+        globals: true,
+        environment: 'happy-dom',
+        setupFiles: ['resources/scripts/setup-tests.ts'],
+        include: ['resources/scripts/**/*.{test,spec}.{ts,tsx}'],
+        exclude: ['**/node_modules/**', '**/.blueprint/dist/**'],
+        server: {
+            deps: {
+                inline: ['boring-avatars'],
+            },
+        },
     },
 });
