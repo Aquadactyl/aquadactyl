@@ -21,8 +21,11 @@ const ProfilePictureForm = () => {
         }
 
         const url = URL.createObjectURL(file);
-        setPreview(url);
-        return () => URL.revokeObjectURL(url);
+        const safeUrl = url.startsWith('blob:') ? encodeURI(url) : undefined;
+        setPreview(safeUrl);
+        return () => {
+            if (url) URL.revokeObjectURL(url);
+        };
     }, [file]);
 
     const clearSelection = () => {
@@ -81,9 +84,9 @@ const ProfilePictureForm = () => {
     return (
         <div className={'flex flex-col items-start gap-6 sm:flex-row sm:items-center'}>
             <div className={'flex-shrink-0'}>
-                {preview ? (
+                {preview && preview.startsWith('blob:') ? (
                     <img
-                        src={preview}
+                        src={encodeURI(preview)}
                         alt={'Profile picture preview'}
                         className={'h-24 w-24 rounded-full object-cover'}
                     />

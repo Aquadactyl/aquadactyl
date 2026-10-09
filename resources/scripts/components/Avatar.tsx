@@ -12,7 +12,7 @@ const _Avatar = ({ src, alt = 'Profile picture', variant = 'beam', size = 40, sq
 
     return src && !failed ? (
         <img
-            src={src}
+            src={encodeURI(src)}
             alt={alt}
             width={size}
             height={size}
