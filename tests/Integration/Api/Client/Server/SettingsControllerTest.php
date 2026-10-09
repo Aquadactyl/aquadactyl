@@ -57,11 +57,11 @@ test('server can be reinstalled', function (array $permissions) {
     [$user, $server] = $this->generateTestAccount($permissions);
     $this->assertTrue($server->isInstalled());
 
-    $service = \Mockery::mock(DaemonServerRepository::class);
+    $service = Mockery::mock(DaemonServerRepository::class);
     $this->app->instance(DaemonServerRepository::class, $service);
 
     $service->expects('setServer')
-        ->with(\Mockery::on(function ($value) use ($server) {
+        ->with(Mockery::on(function ($value) use ($server) {
             return $value->uuid === $server->uuid;
         }))
         ->andReturnSelf()
@@ -94,7 +94,7 @@ test('server cannot be reinstalled if configured to skip scripts', function (arr
     [$user, $server] = $this->generateTestAccount($permissions);
     $server->update(['skip_scripts' => true]);
 
-    $service = \Mockery::mock(DaemonServerRepository::class);
+    $service = Mockery::mock(DaemonServerRepository::class);
     $this->app->instance(DaemonServerRepository::class, $service);
 
     $service->expects('setServer')->never();

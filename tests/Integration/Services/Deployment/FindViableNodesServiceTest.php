@@ -15,14 +15,14 @@ beforeEach(function () {
 });
 
 test('exception is thrown if no disk space has been set', function () {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Disk space must be an int, got NULL');
 
     app(FindViableNodesService::class)->handle();
 });
 
 test('exception is thrown if no memory has been set', function () {
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Memory usage must be an int, got NULL');
 
     app(FindViableNodesService::class)->setDisk(10)->handle();
@@ -37,16 +37,16 @@ test('no exception is thrown if stringified integers are passed for locations', 
     try {
         $service->setLocations(['a']);
         $this->fail('This expectation should not be called.');
-    } catch (\Exception $exception) {
-        expect($exception)->toBeInstanceOf(\InvalidArgumentException::class)
+    } catch (Exception $exception) {
+        expect($exception)->toBeInstanceOf(InvalidArgumentException::class)
             ->and($exception->getMessage())->toBe('An array of location IDs should be provided when calling setLocations.');
     }
 
     try {
         $service->setLocations(['1.2', '1', 2]);
         $this->fail('This expectation should not be called.');
-    } catch (\Exception $exception) {
-        expect($exception)->toBeInstanceOf(\InvalidArgumentException::class)
+    } catch (Exception $exception) {
+        expect($exception)->toBeInstanceOf(InvalidArgumentException::class)
             ->and($exception->getMessage())->toBe('An array of location IDs should be provided when calling setLocations.');
     }
 });

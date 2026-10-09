@@ -4,6 +4,7 @@ export interface SiteSettings {
     name: string;
     appUrl?: string;
     locale: string;
+    timezone?: string;
     logoUrl?: string | null;
     showNameWithLogo?: boolean;
     features?: {

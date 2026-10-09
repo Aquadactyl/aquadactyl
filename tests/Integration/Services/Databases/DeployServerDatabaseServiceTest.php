@@ -22,7 +22,7 @@ afterEach(function () {
 test('error is thrown if database name is empty', function (array $data) {
     $server = $this->createServerModel();
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessageMatches('/^Expected a non-empty value\. Got: /');
 
     app(DeployServerDatabaseService::class)->handle($server, $data);

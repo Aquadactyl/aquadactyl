@@ -5,7 +5,7 @@ use Pterodactyl\Models\Subuser;
 use Illuminate\Support\Facades\Bus;
 use Pterodactyl\Jobs\RevokeSftpAccessJob;
 
-/**
+/*
  * Test that mismatched subusers are not accessible to a server.
  */
 test('user cannot access resource belonging to other servers', function (string $method) {

@@ -26,7 +26,7 @@ test('job releases back to queue on failure', function () {
         );
     });
 
-    $job = \Mockery::mock(RevokeSftpAccessJob::class, ['user-1', $node])->makePartial();
+    $job = Mockery::mock(RevokeSftpAccessJob::class, ['user-1', $node])->makePartial();
     $job->expects('release')->with(10);
 
     $job->handle($mock);
@@ -48,7 +48,7 @@ test('job dispatches for individual server', function () {
     $server = Server::factory()->make(['uuid' => 'server-1234'])->setRelation('node', $node);
 
     $mock = $this->mock(DaemonRevocationRepository::class, function ($mock) {
-        $mock->expects('setNode')->with(\Mockery::on(fn (Node $node) => $node->uuid === 'node-1234'))->andReturnSelf();
+        $mock->expects('setNode')->with(Mockery::on(fn (Node $node) => $node->uuid === 'node-1234'))->andReturnSelf();
         $mock->expects('deauthorize')->with('user-1', ['server-1234'])->andReturnUndefined();
     });
 

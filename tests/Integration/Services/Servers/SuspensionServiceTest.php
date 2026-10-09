@@ -41,7 +41,7 @@ test('no action is taken if suspension status is unchanged', function () {
 test('exception is thrown if invalid actions are passed', function () {
     $server = $this->createServerModel();
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Expected one of: "suspend", "unsuspend". Got: "foo"');
 
     app(SuspensionService::class)->toggle($server, 'foo');

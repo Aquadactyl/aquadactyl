@@ -26,7 +26,7 @@ const RunScheduleButton = ({ schedule }: { schedule: Schedule }) => {
                 clearAndAddHttpError({ error, key: 'schedules' });
             })
             .then(() => setLoading(false));
-    }, []);
+    }, [id, schedule, appendSchedule, clearFlashes, clearAndAddHttpError]);
 
     return (
         <>
@@ -37,7 +37,7 @@ const RunScheduleButton = ({ schedule }: { schedule: Schedule }) => {
                 disabled={schedule.isProcessing}
                 onClick={onTriggerExecute}
             >
-                Run Now
+                Run now
             </Button>
         </>
     );

@@ -7,11 +7,11 @@ use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 test('server can be reinstalled', function () {
     $server = $this->createServerModel();
 
-    $service = \Mockery::mock(DaemonServerRepository::class);
+    $service = Mockery::mock(DaemonServerRepository::class);
     $this->app->instance(DaemonServerRepository::class, $service);
 
     $service->expects('setServer')
-        ->with(\Mockery::on(fn ($value) => $value->uuid === $server->uuid))
+        ->with(Mockery::on(fn ($value) => $value->uuid === $server->uuid))
         ->andReturnSelf()
         ->getMock()
         ->expects('reinstall')
@@ -28,7 +28,7 @@ test('server can be reinstalled', function () {
 test('server configured to skip scripts cannot be reinstalled', function () {
     $server = $this->createServerModel(['skip_scripts' => true]);
 
-    $service = \Mockery::mock(DaemonServerRepository::class);
+    $service = Mockery::mock(DaemonServerRepository::class);
     $this->app->instance(DaemonServerRepository::class, $service);
 
     $service->expects('setServer')->never();

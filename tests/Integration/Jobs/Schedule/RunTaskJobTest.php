@@ -36,7 +36,7 @@ test('inactive job is not run', function () {
     expect($task->is_queued)->toBeFalse()
         ->and($schedule->is_processing)->toBeFalse()
         ->and($schedule->is_active)->toBeFalse()
-        ->and(CarbonImmutable::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
+        ->and(CarbonImmutable::now()->isSameAs(DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
 });
 
 test('job with invalid action throws exception', function () {
@@ -50,7 +50,7 @@ test('job with invalid action throws exception', function () {
     $job = new RunTaskJob($task);
 
     Bus::dispatchSync($job);
-})->throws(\InvalidArgumentException::class, 'Invalid task action provided: foobar');
+})->throws(InvalidArgumentException::class, 'Invalid task action provided: foobar');
 
 test('job is executed', function (bool $isManualRun) {
     $server = $this->createServerModel();
@@ -71,10 +71,10 @@ test('job is executed', function (bool $isManualRun) {
         'continue_on_failure' => false,
     ]);
 
-    $mock = \Mockery::mock(DaemonPowerRepository::class);
+    $mock = Mockery::mock(DaemonPowerRepository::class);
     $this->instance(DaemonPowerRepository::class, $mock);
 
-    $mock->expects('setServer')->with(\Mockery::on(function ($value) use ($server) {
+    $mock->expects('setServer')->with(Mockery::on(function ($value) use ($server) {
         return $value instanceof Server && $value->id === $server->id;
     }))->andReturnSelf();
     $mock->expects('send')->with('start')->andReturn(new Response());
@@ -86,7 +86,7 @@ test('job is executed', function (bool $isManualRun) {
 
     expect($task->is_queued)->toBeFalse()
         ->and($schedule->is_processing)->toBeFalse()
-        ->and(CarbonImmutable::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
+        ->and(CarbonImmutable::now()->isSameAs(DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
 })->with([true, false]);
 
 test('exception during run is handled correctly', function (bool $continueOnFailure) {
@@ -102,7 +102,7 @@ test('exception during run is handled correctly', function (bool $continueOnFail
         'continue_on_failure' => $continueOnFailure,
     ]);
 
-    $mock = \Mockery::mock(DaemonPowerRepository::class);
+    $mock = Mockery::mock(DaemonPowerRepository::class);
     $this->instance(DaemonPowerRepository::class, $mock);
 
     $mock->expects('setServer->send')->andThrow(
@@ -121,7 +121,7 @@ test('exception during run is handled correctly', function (bool $continueOnFail
 
         expect($task->is_queued)->toBeFalse()
             ->and($schedule->is_processing)->toBeFalse()
-            ->and(CarbonImmutable::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
+            ->and(CarbonImmutable::now()->isSameAs(DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
     }
 })->with([true, false]);
 
@@ -146,5 +146,5 @@ test('task is not run if server is suspended', function () {
 
     expect($task->is_queued)->toBeFalse()
         ->and($schedule->is_processing)->toBeFalse()
-        ->and(Carbon::now()->isSameAs(\DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
+        ->and(Carbon::now()->isSameAs(DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
 });

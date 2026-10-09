@@ -45,7 +45,7 @@ test('site wide player count setting stops new queries and queued jobs', functio
     $settings = app(GameQuerySettingsService::class);
     $key = $settings->key($server, $settings->target($server));
     config()->set('aquadactyl.features.player_counts', false);
-    $runner = \Mockery::mock(GameQueryRunner::class);
+    $runner = Mockery::mock(GameQueryRunner::class);
     $runner->shouldNotReceive('query');
     (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
     $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()
@@ -58,7 +58,7 @@ test('completed queries are cached and zero players are preserved', function () 
     [$user, $server] = $this->generateTestAccount();
     $settings = app(GameQuerySettingsService::class);
     $key = $settings->key($server, $settings->target($server));
-    $runner = \Mockery::mock(GameQueryRunner::class);
+    $runner = Mockery::mock(GameQueryRunner::class);
     $runner->shouldReceive('query')->once()->andReturn(['status' => 'available', 'players' => 0, 'max_players' => 20]);
     Cache::put($key . ':pending', true, 20);
     (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
@@ -76,7 +76,7 @@ test('query failures do not become zero players and are cached', function () {
     [$user, $server] = $this->generateTestAccount();
     $settings = app(GameQuerySettingsService::class);
     $key = $settings->key($server, $settings->target($server));
-    $runner = \Mockery::mock(GameQueryRunner::class);
+    $runner = Mockery::mock(GameQueryRunner::class);
     $runner->shouldReceive('query')->once()->andReturn(['status' => 'unavailable', 'players' => null, 'max_players' => null]);
     (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
     $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()
@@ -100,7 +100,7 @@ test('disabled and changed configurations do not run an old job', function () {
     $settings = app(GameQuerySettingsService::class);
     $key = $settings->key($server, $settings->target($server));
     $server->forceFill(['game_query_type' => 'none'])->save();
-    $runner = \Mockery::mock(GameQueryRunner::class);
+    $runner = Mockery::mock(GameQueryRunner::class);
     $runner->shouldNotReceive('query');
     (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
     $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()->assertJsonPath('attributes.status', 'unsupported');
@@ -150,7 +150,7 @@ test('successful power actions invalidate resources and player counts', function
     $key = $settings->key($server, $settings->target($server));
     Cache::put($key, ['status' => 'available', 'players' => 7], 120);
     Cache::put('resources:' . $server->uuid, ['current_state' => 'offline'], 20);
-    $repository = \Mockery::mock(DaemonPowerRepository::class);
+    $repository = Mockery::mock(DaemonPowerRepository::class);
     $repository->shouldReceive('setServer')->once()->andReturnSelf();
     $repository->shouldReceive('send')->with('start')->once();
     $this->app->instance(DaemonPowerRepository::class, $repository);

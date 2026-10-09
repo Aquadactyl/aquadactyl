@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
 import getServerSchedule from '@/api/server/schedules/getServerSchedule';
+import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
 import Spinner from '@/components/elements/Spinner';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import EditScheduleModal from '@/components/server/schedules/EditScheduleModal';
@@ -14,9 +15,10 @@ import classNames from 'classnames';
 import { Button } from '@/components/elements/button/index';
 import ScheduleTaskRow from '@/components/server/schedules/ScheduleTaskRow';
 import isEqual from 'react-fast-compare';
-import { format } from 'date-fns';
-import ScheduleCronRow from '@/components/server/schedules/ScheduleCronRow';
 import RunScheduleButton from '@/components/server/schedules/RunScheduleButton';
+import { useStoreState } from 'easy-peasy';
+import { ApplicationStore } from '@/state';
+import { cronExpression, describeCron, formatScheduleDate } from './scheduleHelpers';
 
 import BeforeEdit from '@blueprint/components/Server/Schedules/Edit/BeforeEdit';
 import AfterEdit from '@blueprint/components/Server/Schedules/Edit/AfterEdit';
@@ -25,60 +27,43 @@ interface Params {
     id: string;
 }
 
-const CronBox = ({ title, value }: { title: string; value: string }) => (
-    <div className={'rounded bg-neutral-700 p-3'}>
-        <p className={'text-sm text-neutral-300'}>{title}</p>
-        <p className={'text-xl font-medium text-neutral-100'}>{value}</p>
-    </div>
-);
-
-const ActivePill = ({ active }: { active: boolean }) => (
-    <span
-        className={classNames(
-            'ml-4 rounded-full px-2 py-px text-xs uppercase',
-            active ? 'bg-green-600 text-green-100' : 'bg-red-600 text-red-100',
-        )}
-    >
-        {active ? 'Active' : 'Inactive'}
-    </span>
-);
-
 export default () => {
     const history = useHistory();
     const { id: scheduleId } = useParams<Params>();
-
     const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-
+    const timezone = useStoreState((state: ApplicationStore) => state.settings.data?.timezone ?? 'UTC');
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const [isLoading, setIsLoading] = useState(true);
     const [showEditModal, setShowEditModal] = useState(false);
-
+    const [savingStatus, setSavingStatus] = useState(false);
     const schedule = ServerContext.useStoreState(
         (state) => state.schedules.data.find((s) => s.id === parseInt(scheduleId, 10)),
         isEqual,
     );
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
 
+    const toggleAutomaticRuns = () => {
+        if (!schedule) return;
+        clearFlashes('schedules');
+        setSavingStatus(true);
+        createOrUpdateSchedule(uuid, { ...schedule, isActive: !schedule.isActive })
+            .then((saved) => appendSchedule(saved))
+            .catch((error) => clearAndAddHttpError({ error, key: 'schedules' }))
+            .finally(() => setSavingStatus(false));
+    };
+
     useEffect(() => {
         if (schedule) {
             setIsLoading(false);
             return;
         }
-
         clearFlashes('schedules');
         getServerSchedule(uuid, parseInt(scheduleId, 10))
             .then((schedule) => appendSchedule(schedule))
-            .catch((error) => {
-                console.error(error);
-                clearAndAddHttpError({ error, key: 'schedules' });
-            })
+            .catch((error) => clearAndAddHttpError({ error, key: 'schedules' }))
             .then(() => setIsLoading(false));
     }, [scheduleId]);
-
-    const toggleEditModal = useCallback(() => {
-        setShowEditModal((s) => !s);
-    }, []);
 
     return (
         <PageContentBlock title={'Schedules'}>
@@ -88,84 +73,122 @@ export default () => {
             ) : (
                 <>
                     <BeforeEdit />
-                    <ScheduleCronRow cron={schedule.cron} className={'mb-4 rounded bg-neutral-700 p-3 sm:hidden'} />
-                    <div className={'rounded shadow'}>
-                        <div
-                            className={
-                                'items-center rounded-t border-b-4 border-neutral-600 bg-neutral-900 p-3 sm:flex sm:p-6'
-                            }
-                        >
-                            <div className={'flex-1'}>
-                                <h3 className={'flex items-center text-2xl text-neutral-100'}>
-                                    {schedule.name}
-                                    {schedule.isProcessing ? (
-                                        <span
-                                            className={
-                                                'ml-4 flex items-center rounded-full bg-neutral-600 px-2 py-px text-xs uppercase text-white'
-                                            }
-                                        >
-                                            <Spinner className={'mr-2 !h-3 !w-3'} />
-                                            Processing
-                                        </span>
-                                    ) : (
-                                        <ActivePill active={schedule.isActive} />
-                                    )}
-                                </h3>
-                                <p className={'mt-1 text-sm text-neutral-200'}>
-                                    Last run at:&nbsp;
-                                    {schedule.lastRunAt ? (
-                                        format(schedule.lastRunAt, "MMM do 'at' h:mma")
-                                    ) : (
-                                        <span className={'text-neutral-300'}>n/a</span>
-                                    )}
-                                    <span className={'ml-4 border-l-4 border-neutral-600 py-px pl-4'}>
-                                        Next run at:&nbsp;
-                                        {schedule.nextRunAt ? (
-                                            format(schedule.nextRunAt, "MMM do 'at' h:mma")
-                                        ) : (
-                                            <span className={'text-neutral-300'}>n/a</span>
-                                        )}
-                                    </span>
+                    <Link
+                        className={'mb-4 inline-block text-sm text-primary-300 hover:underline'}
+                        to={'/server/' + id + '/schedules'}
+                    >
+                        &larr; All schedules
+                    </Link>
+                    <div className={'rounded bg-neutral-900 p-4 shadow sm:p-6'}>
+                        <div className={'flex flex-wrap items-start justify-between gap-4'}>
+                            <div className={'min-w-0 flex-1'}>
+                                <h3 className={'break-words text-2xl text-neutral-100'}>{schedule.name}</h3>
+                                <p className={'mt-2 text-neutral-200'}>{describeCron(schedule.cron)}</p>
+                                <p className={'mt-1 text-sm text-neutral-400'}>Panel timezone: {timezone}</p>
+                            </div>
+                            <span
+                                className={classNames(
+                                    'rounded-full px-3 py-1 text-xs',
+                                    schedule.isProcessing
+                                        ? 'bg-primary-600 text-white'
+                                        : schedule.isActive
+                                          ? 'bg-green-700 text-white'
+                                          : 'bg-neutral-600 text-neutral-200',
+                                )}
+                            >
+                                {schedule.isProcessing ? 'Running' : schedule.isActive ? 'Enabled' : 'Paused'}
+                            </span>
+                        </div>
+                        <div className={'mt-5 grid gap-3 text-sm sm:grid-cols-2'}>
+                            <div className={'rounded bg-neutral-800 p-3'}>
+                                <p className={'text-neutral-400'}>Last run</p>
+                                <p className={'mt-1'}>
+                                    {schedule.lastRunAt ? formatScheduleDate(schedule.lastRunAt, timezone) : 'Never'}
                                 </p>
                             </div>
-                            <div className={'mt-3 flex sm:mt-0 sm:block'}>
-                                <Can action={'schedule.update'}>
-                                    <Button.Text className={'mr-4 flex-1'} onClick={toggleEditModal}>
-                                        Edit
-                                    </Button.Text>
-                                    <NewTaskButton schedule={schedule} />
-                                </Can>
+                            <div className={'rounded bg-neutral-800 p-3'}>
+                                <p className={'text-neutral-400'}>Next run</p>
+                                <p className={'mt-1'}>
+                                    {!schedule.isActive
+                                        ? 'Paused'
+                                        : schedule.nextRunAt
+                                          ? formatScheduleDate(schedule.nextRunAt, timezone)
+                                          : 'Not scheduled'}
+                                </p>
                             </div>
                         </div>
-                        <div className={'mb-4 mt-4 hidden grid-cols-5 gap-4 sm:grid md:grid-cols-5'}>
-                            <CronBox title={'Minute'} value={schedule.cron.minute} />
-                            <CronBox title={'Hour'} value={schedule.cron.hour} />
-                            <CronBox title={'Day (Month)'} value={schedule.cron.dayOfMonth} />
-                            <CronBox title={'Month'} value={schedule.cron.month} />
-                            <CronBox title={'Day (Week)'} value={schedule.cron.dayOfWeek} />
-                        </div>
-                        <div className={'rounded-b bg-neutral-700'}>
-                            {schedule.tasks.length > 0
-                                ? schedule.tasks
-                                      .sort((a, b) =>
-                                          a.sequenceId === b.sequenceId ? 0 : a.sequenceId > b.sequenceId ? 1 : -1,
-                                      )
-                                      .map((task) => (
-                                          <ScheduleTaskRow
-                                              key={`${schedule.id}_${task.id}`}
-                                              task={task}
-                                              schedule={schedule}
-                                          />
-                                      ))
-                                : null}
+                        <p className={'mt-4 text-sm text-neutral-300'}>
+                            {schedule.isActive ? 'Automatic runs are enabled.' : 'Automatic runs are paused.'}{' '}
+                            {schedule.onlyWhenOnline
+                                ? 'Runs are skipped when the server is offline.'
+                                : 'Runs can start while the server is offline.'}
+                        </p>
+                        <details className={'mt-4 text-sm text-neutral-400'}>
+                            <summary className={'cursor-pointer'}>View cron expression</summary>
+                            <code className={'mt-2 block break-all'}>{cronExpression(schedule.cron)}</code>
+                            <p className={'mt-1 text-xs'}>Minute · Hour · Day of month · Month · Day of week</p>
+                        </details>
+                        <Can action={'schedule.update'}>
+                            <div className={'mt-5 flex flex-wrap gap-3'}>
+                                <Button.Text onClick={() => setShowEditModal(true)}>Edit timing</Button.Text>
+                                {(schedule.tasks.length > 0 || schedule.isActive) && (
+                                    <Button.Text
+                                        disabled={savingStatus || schedule.isProcessing}
+                                        onClick={toggleAutomaticRuns}
+                                    >
+                                        {savingStatus
+                                            ? 'Saving…'
+                                            : schedule.isActive
+                                              ? 'Pause schedule'
+                                              : 'Enable schedule'}
+                                    </Button.Text>
+                                )}
+                                {schedule.tasks.length > 0 && <NewTaskButton schedule={schedule} />}
+                            </div>
+                        </Can>
+                    </div>
+                    <div className={'mt-6'}>
+                        <h3 className={'mb-2 text-lg'}>Steps</h3>
+                        <p className={'mb-4 text-sm text-neutral-400'}>
+                            Actions are sent in order. Add a wait between steps to give a restart or backup time to
+                            finish.
+                        </p>
+                        <div className={'rounded bg-neutral-700'}>
+                            {schedule.tasks.length > 0 ? (
+                                [...schedule.tasks]
+                                    .sort((a, b) => a.sequenceId - b.sequenceId)
+                                    .map((task, index) => (
+                                        <ScheduleTaskRow
+                                            key={task.id}
+                                            task={task}
+                                            schedule={schedule}
+                                            stepNumber={index + 1}
+                                        />
+                                    ))
+                            ) : (
+                                <div className={'p-6 text-center'}>
+                                    <h4 className={'text-lg'}>Add the first step</h4>
+                                    <p className={'mb-5 mt-2 text-sm text-neutral-300'}>
+                                        The timing is saved. Choose a restart, a backup, or a console command to give
+                                        this schedule something to do.
+                                    </p>
+                                    <Can action={'schedule.update'}>
+                                        <NewTaskButton schedule={schedule} label={'Add first step'} />
+                                    </Can>
+                                </div>
+                            )}
                         </div>
                     </div>
-                    <EditScheduleModal visible={showEditModal} schedule={schedule} onModalDismissed={toggleEditModal} />
-                    <div className={'mt-6 flex sm:justify-end'}>
+                    <EditScheduleModal
+                        visible={showEditModal}
+                        schedule={schedule}
+                        onModalDismissed={() => setShowEditModal(false)}
+                    />
+                    <div className={'mt-6 flex flex-wrap gap-y-3 sm:justify-end'}>
                         <Can action={'schedule.delete'}>
                             <DeleteScheduleButton
                                 scheduleId={schedule.id}
-                                onDeleted={() => history.push(`/server/${id}/schedules`)}
+                                onDeleted={() => history.push('/server/' + id + '/schedules')}
                             />
                         </Can>
                         {schedule.tasks.length > 0 && (
@@ -174,6 +197,11 @@ export default () => {
                             </Can>
                         )}
                     </div>
+                    {schedule.tasks.length > 0 && (
+                        <p className={'mt-3 text-sm text-neutral-400 sm:text-right'}>
+                            Run now works even when automatic runs are paused. It still respects the offline setting.
+                        </p>
+                    )}
                     <AfterEdit />
                 </>
             )}

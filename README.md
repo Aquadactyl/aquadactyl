@@ -32,6 +32,9 @@ Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprin
 - **Addon libraries:** Axios, Lucide icons, React Select and Lodash ES,
   alongside the panel's Formik, Yup, UI and chart libraries.
   See the [addon development guide](docs/ADDONS.md).
+- **Simple server schedules:** Choose daily, weekly, monthly, or regular interval
+  timings, then add restart, backup, or command steps with readable delays.
+  Advanced cron remains available. See the [schedule guide](docs/SCHEDULES.md).
 - **Dependency maintenance:** Committed Composer and pnpm lockfiles, weekly
   Dependabot checks and CI audits for production dependencies.
 

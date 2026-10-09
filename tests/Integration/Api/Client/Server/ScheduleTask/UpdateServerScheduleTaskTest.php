@@ -1,9 +1,9 @@
 <?php
 
 use Pterodactyl\Models\Task;
+use Illuminate\Http\Response;
 use Pterodactyl\Models\Schedule;
 use Pterodactyl\Models\Permission;
-use Illuminate\Http\Response;
 
 test('task can be updated', function () {
     [$user, $server] = $this->generateTestAccount([

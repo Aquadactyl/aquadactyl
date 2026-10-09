@@ -1,143 +1,121 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Schedule } from '@/api/server/schedules/getServerSchedules';
 import Field from '@/components/elements/Field';
 import { Form, Formik, FormikHelpers } from 'formik';
 import FormikSwitch from '@/components/elements/FormikSwitch';
 import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
 import { ServerContext } from '@/state/server';
+import { ApplicationStore } from '@/state';
+import { useStoreState } from 'easy-peasy';
 import { httpErrorToHuman } from '@/api/http';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
 import { Button } from '@/components/elements/button/index';
 import ModalContext from '@/context/ModalContext';
 import asModal from '@/hoc/asModal';
-import Switch from '@/components/elements/Switch';
-import ScheduleCheatsheetCards from '@/components/server/schedules/ScheduleCheatsheetCards';
+import ScheduleTimingFields, { TimingValues } from './ScheduleTimingFields';
+import { cronFromTiming, defaultTiming, timingErrors, timingFromCron } from './scheduleHelpers';
 
 interface Props {
     schedule?: Schedule;
+    onCreated?: (schedule: Schedule) => void;
 }
 
-interface Values {
+interface Values extends TimingValues {
     name: string;
-    dayOfWeek: string;
-    month: string;
-    dayOfMonth: string;
-    hour: string;
-    minute: string;
     enabled: boolean;
     onlyWhenOnline: boolean;
 }
 
-const EditScheduleModal = ({ schedule }: Props) => {
+const EditScheduleModal = ({ schedule, onCreated }: Props) => {
     const { addError, clearFlashes } = useFlash();
     const { dismiss } = useContext(ModalContext);
-
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+    const timezone = useStoreState((state: ApplicationStore) => state.settings.data?.timezone ?? 'UTC');
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
-    const [showCheatsheet, setShowCheetsheet] = useState(false);
 
-    useEffect(() => {
-        return () => {
-            clearFlashes('schedule:edit');
-        };
-    }, []);
+    useEffect(() => () => clearFlashes('schedule:edit'), []);
 
     const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('schedule:edit');
         createOrUpdateSchedule(uuid, {
             id: schedule?.id,
-            name: values.name,
-            cron: {
-                minute: values.minute,
-                hour: values.hour,
-                dayOfWeek: values.dayOfWeek,
-                month: values.month,
-                dayOfMonth: values.dayOfMonth,
-            },
+            name: values.name.trim(),
+            cron: cronFromTiming(values, values),
             onlyWhenOnline: values.onlyWhenOnline,
             isActive: values.enabled,
         })
-            .then((schedule) => {
+            .then((saved) => {
                 setSubmitting(false);
-                appendSchedule(schedule);
+                appendSchedule(saved);
                 dismiss();
+                if (!schedule) onCreated?.(saved);
             })
             .catch((error) => {
-                console.error(error);
-
                 setSubmitting(false);
                 addError({ key: 'schedule:edit', message: httpErrorToHuman(error) });
             });
     };
 
     return (
-        <Formik
+        <Formik<Values>
             onSubmit={submit}
-            initialValues={
-                {
-                    name: schedule?.name || '',
-                    minute: schedule?.cron.minute || '*/5',
-                    hour: schedule?.cron.hour || '*',
-                    dayOfMonth: schedule?.cron.dayOfMonth || '*',
-                    month: schedule?.cron.month || '*',
-                    dayOfWeek: schedule?.cron.dayOfWeek || '*',
-                    enabled: schedule?.isActive ?? true,
-                    onlyWhenOnline: schedule?.onlyWhenOnline ?? true,
-                } as Values
-            }
+            validate={(values) => ({
+                ...timingErrors(values),
+                ...(!values.name.trim() && { name: 'Give this schedule a name.' }),
+                ...(values.name.trim().length > 191 && { name: 'Use a name with no more than 191 characters.' }),
+                ...(values.frequency === 'custom' &&
+                    Object.fromEntries(
+                        ['minute', 'hour', 'dayOfMonth', 'month', 'dayOfWeek']
+                            .filter((field) => !values[field as keyof TimingValues].trim())
+                            .map((field) => [field, 'Enter a cron value, or * for any.']),
+                    )),
+            })}
+            initialValues={{
+                ...(schedule ? timingFromCron(schedule.cron) : defaultTiming),
+                ...(schedule?.cron ?? { minute: '0', hour: '3', dayOfMonth: '*', month: '*', dayOfWeek: '*' }),
+                name: schedule?.name || '',
+                enabled: schedule?.isActive ?? false,
+                onlyWhenOnline: schedule?.onlyWhenOnline ?? true,
+            }}
         >
             {({ isSubmitting }) => (
                 <Form>
-                    <h3 className={'mb-6 text-2xl'}>{schedule ? 'Edit schedule' : 'Create new schedule'}</h3>
+                    <h3 className={'mb-2 text-2xl'}>{schedule ? 'Edit schedule timing' : 'Choose when to run'}</h3>
+                    <p className={'mb-6 text-sm text-neutral-300'}>
+                        {schedule
+                            ? 'Update the timing and automatic run settings.'
+                            : 'First choose a time, then add the steps your server should follow.'}
+                    </p>
                     <FlashMessageRender byKey={'schedule:edit'} className={'mb-6'} />
                     <Field
                         name={'name'}
                         label={'Schedule name'}
-                        description={'A human readable identifier for this schedule.'}
+                        placeholder={'For example: Daily restart'}
+                        maxLength={191}
                     />
-                    <div className={'mt-6 grid grid-cols-2 gap-4 sm:grid-cols-5'}>
-                        <Field name={'minute'} label={'Minute'} />
-                        <Field name={'hour'} label={'Hour'} />
-                        <Field name={'dayOfMonth'} label={'Day of month'} />
-                        <Field name={'month'} label={'Month'} />
-                        <Field name={'dayOfWeek'} label={'Day of week'} />
-                    </div>
-                    <p className={'mt-2 text-xs text-neutral-400'}>
-                        The schedule system supports the use of Cronjob syntax when defining when tasks should begin
-                        running. Use the fields above to specify when these tasks should begin running.
-                    </p>
-                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
-                        <Switch
-                            name={'show_cheatsheet'}
-                            description={'Show the cron cheatsheet for some examples.'}
-                            label={'Show Cheatsheet'}
-                            defaultChecked={showCheatsheet}
-                            onChange={() => setShowCheetsheet((s) => !s)}
-                        />
-                        {showCheatsheet && (
-                            <div className={'block w-full md:flex'}>
-                                <ScheduleCheatsheetCards />
-                            </div>
-                        )}
-                    </div>
-                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
+                    <ScheduleTimingFields timezone={timezone} />
+                    <div className={'mt-6 rounded border border-neutral-600 bg-neutral-800 p-4'}>
                         <FormikSwitch
                             name={'onlyWhenOnline'}
-                            description={'Only execute this schedule when the server is in a running state.'}
-                            label={'Only When Server Is Online'}
+                            description={
+                                'Turn this off if one of your steps starts the server. This setting also applies to Run now.'
+                            }
+                            label={'Skip when server is offline'}
                         />
                     </div>
-                    <div className={'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'}>
+                    <div className={'mt-4 rounded border border-neutral-600 bg-neutral-800 p-4'}>
                         <FormikSwitch
                             name={'enabled'}
-                            description={'This schedule will be executed automatically if enabled.'}
-                            label={'Schedule Enabled'}
+                            description={
+                                'New schedules start paused so you can add steps first. You can enable automatic runs from the schedule page.'
+                            }
+                            label={'Run automatically'}
                         />
                     </div>
                     <div className={'mt-6 text-right'}>
                         <Button className={'w-full sm:w-auto'} type={'submit'} disabled={isSubmitting}>
-                            {schedule ? 'Save changes' : 'Create schedule'}
+                            {schedule ? 'Save changes' : 'Save timing & add steps'}
                         </Button>
                     </div>
                 </Form>
