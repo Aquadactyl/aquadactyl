@@ -22,7 +22,8 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const { clearFlashes, clearAndAddHttpError } = useFlash();
-    const { enabled: recaptchaEnabled, siteKey } = useAppStore((state) => state.settings.data!.recaptcha);
+    const recaptchaEnabled = useAppStore((state) => state.settings.data!.recaptcha.enabled);
+    const siteKey = useAppStore((state) => state.settings.data!.recaptcha.siteKey);
 
     useEffect(() => {
         clearFlashes();

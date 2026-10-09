@@ -1,5 +1,5 @@
 import { createStore } from 'zustand/vanilla';
-import { useStore as useZustandStore } from 'zustand';
+import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
 import createFlashesSlice, { FlashStore } from '@/state/flashes';
 import createUserSlice, { UserStore } from '@/state/user';
 import createPermissionsSlice, { GloablPermissionsStore } from '@/state/permissions';
@@ -22,8 +22,14 @@ export const appStore = createStore<ApplicationStore>((set, get) => ({
     progress: createProgressSlice(set),
 }));
 
-export const useAppStore = <T>(selector: (state: ApplicationStore) => T): T => {
-    return useZustandStore(appStore, selector);
+export const useAppStore = <T>(selector: (state: ApplicationStore) => T, equalityFn?: (a: T, b: T) => boolean): T => {
+    return useSyncExternalStoreWithSelector(
+        appStore.subscribe,
+        appStore.getState,
+        appStore.getInitialState,
+        selector,
+        equalityFn,
+    );
 };
 
 // Aliases for idiomatic or backward-compatible store consumption

@@ -8,6 +8,7 @@ import createDatabasesSlice, { ServerDatabaseStore } from '@/state/server/databa
 import isEqual from 'react-fast-compare';
 import { createStore } from 'zustand/vanilla';
 import { useStore as useZustandStore } from 'zustand';
+import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
 
 export type ServerStatus = 'offline' | 'starting' | 'stopping' | 'running' | null;
 
@@ -214,27 +215,51 @@ export const ServerContext = {
     Provider: ServerContextProvider,
     useStoreState: <Result,>(
         mapState: (state: ServerStore) => Result,
-        _equalityFn?: (a: Result, b: Result) => boolean,
+        equalityFn?: (a: Result, b: Result) => boolean,
     ): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
-        return useZustandStore(store, mapState);
+        return useSyncExternalStoreWithSelector(
+            store.subscribe,
+            store.getState,
+            store.getInitialState,
+            mapState,
+            equalityFn,
+        );
     },
     useStoreActions: <Result,>(mapActions: (actions: ServerStore) => Result): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
         return mapActions(store.getState());
     },
-    useStore: <Result = ServerStore,>(selector?: (state: ServerStore) => Result): Result | ServerStoreApi => {
+    useStore: <Result = ServerStore,>(
+        selector?: (state: ServerStore) => Result,
+        equalityFn?: (a: Result, b: Result) => boolean,
+    ): Result | ServerStoreApi => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
         if (selector) {
-            return useZustandStore(store, selector);
+            return useSyncExternalStoreWithSelector(
+                store.subscribe,
+                store.getState,
+                store.getInitialState,
+                selector,
+                equalityFn,
+            );
         }
         return store;
     },
 };
 
-export function useServerStore<Result>(selector: (state: ServerStore) => Result): Result {
+export function useServerStore<Result>(
+    selector: (state: ServerStore) => Result,
+    equalityFn?: (a: Result, b: Result) => boolean,
+): Result {
     const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
-    return useZustandStore(store, selector);
+    return useSyncExternalStoreWithSelector(
+        store.subscribe,
+        store.getState,
+        store.getInitialState,
+        selector,
+        equalityFn,
+    );
 }
 
 export default ServerContext;

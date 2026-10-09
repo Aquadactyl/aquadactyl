@@ -8,7 +8,8 @@ type Props = Readonly<{
 }>;
 
 const FlashMessageRender = ({ byKey, className }: Props) => {
-    const flashes = useAppStore((state) => state.flashes.items.filter((flash) => (byKey ? flash.key === byKey : true)));
+    const items = useAppStore((state) => state.flashes.items);
+    const flashes = React.useMemo(() => items.filter((flash) => (byKey ? flash.key === byKey : true)), [items, byKey]);
 
     return flashes.length ? (
         <div className={className}>

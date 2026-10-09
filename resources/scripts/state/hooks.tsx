@@ -1,4 +1,4 @@
-import { useStore as useZustandStore } from 'zustand';
+import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
 import { appStore, ApplicationStore } from '@/state';
 
 // Easy-peasy typed hooks compatibility
@@ -6,8 +6,17 @@ export type State<T = ApplicationStore> = T;
 export type Actions<T = ApplicationStore> = T;
 export type ActionCreator<T> = T extends (payload: infer P) => any ? (payload: P) => void : (payload: T) => void;
 
-export function useStoreState<Result>(mapState: (state: ApplicationStore) => Result): Result {
-    return useZustandStore(appStore, mapState);
+export function useStoreState<Result>(
+    mapState: (state: ApplicationStore) => Result,
+    equalityFn?: (a: Result, b: Result) => boolean,
+): Result {
+    return useSyncExternalStoreWithSelector(
+        appStore.subscribe,
+        appStore.getState,
+        appStore.getInitialState,
+        mapState,
+        equalityFn,
+    );
 }
 
 export function useStoreActions<Result>(mapActions: (actions: ApplicationStore) => Result): Result {
