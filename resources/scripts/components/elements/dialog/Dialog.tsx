@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Dialog as HDialog } from '@headlessui/react';
 import { Button } from '@/components/elements/button/index';
 import { X } from 'lucide-react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import { DialogContext, IconPosition, RenderDialogProps, styles } from './';
 
 const variants = {

@@ -18,7 +18,7 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `react-select`                                             | Searchable and multi-value selects                     |
 | `lodash-es`                                                | Utility functions with ES module imports               |
 | `date-fns`                                                 | Date formatting and arithmetic                         |
-| `framer-motion`                                            | Animation                                              |
+| `motion`                                                   | Animation (import from `motion/react`)                 |
 | `chart.js`, `react-chartjs-2`                              | Charts                                                 |
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
 | `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |

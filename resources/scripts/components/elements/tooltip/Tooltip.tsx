@@ -16,7 +16,7 @@ import {
     useRole,
     FloatingPortal,
 } from '@floating-ui/react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 import classNames from 'classnames';
 
 type Interaction = 'hover' | 'click' | 'focus';

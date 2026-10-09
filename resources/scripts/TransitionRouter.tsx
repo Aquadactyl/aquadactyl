@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, type Location } from 'react-router';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'motion/react';
 
 interface TransitionRouterProps {
     location?: Location;
