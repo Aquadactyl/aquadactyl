@@ -9,7 +9,7 @@ import Field from '@/components/elements/Field';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import Button from '@/components/elements/Button';
-import ReCAPTCHA from 'react-google-recaptcha';
+import Reaptcha, { ReaptchaRef } from '@/components/elements/Reaptcha';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
@@ -17,7 +17,7 @@ interface Values {
 }
 
 export default () => {
-    const ref = useRef<ReCAPTCHA>(null);
+    const ref = useRef<ReaptchaRef>(null);
     const [token, setToken] = useState('');
 
     const { clearFlashes, addFlash } = useFlash();
@@ -34,18 +34,12 @@ export default () => {
         // If there is no token in the state yet, request the token and then abort this submit request
         // since it will be re-submitted when the recaptcha data is returned by the component.
         if (recaptchaEnabled && !token) {
-            ref.current?.executeAsync()
-                ?.then((recaptchaToken) => {
-                    if (recaptchaToken) {
-                        setToken(recaptchaToken);
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
+            ref.current!.execute().catch((error) => {
+                console.error(error);
 
-                    setSubmitting(false);
-                    addFlash({ type: 'error', title: 'Error', message: httpErrorToHuman(error) });
-                });
+                setSubmitting(false);
+                addFlash({ type: 'error', title: 'Error', message: httpErrorToHuman(error) });
+            });
 
             return;
         }
@@ -93,15 +87,15 @@ export default () => {
                         </Button>
                     </div>
                     {recaptchaEnabled && (
-                        <ReCAPTCHA
+                        <Reaptcha
                             ref={ref}
                             size={'invisible'}
                             sitekey={siteKey || '_invalid_key'}
-                            onChange={(response) => {
-                                setToken(response || '');
+                            onVerify={(response) => {
+                                setToken(response);
                                 submitForm();
                             }}
-                            onExpired={() => {
+                            onExpire={() => {
                                 setSubmitting(false);
                                 setToken('');
                             }}
