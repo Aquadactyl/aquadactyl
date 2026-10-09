@@ -9,7 +9,7 @@ import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import BackupContextMenu from '@/components/server/backups/BackupContextMenu';
 import classNames from 'classnames';
 import GreyRowBox from '@/components/elements/GreyRowBox';
-import getServerBackups from '@/api/swr/getServerBackups';
+import getServerBackups from '@/api/server/backups/getServerBackups';
 import { ServerBackup } from '@/api/server/types';
 import { SocketEvent } from '@/components/server/events';
 

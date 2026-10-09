@@ -2,10 +2,10 @@ import { useTanStackQuery } from '@/lib/queryClient';
 import http, { FractalResponseList } from '@/api/http';
 import { SSHKey, Transformers } from '@definitions/user';
 import { AxiosError } from 'axios';
-import { useUserSWRKey } from '@/plugins/useSWRKey';
+import { useUserQueryKey } from '@/plugins/useQueryKey';
 
 const useSSHKeys = (config?: any) => {
-    const key = useUserSWRKey(['account', 'ssh-keys']);
+    const key = useUserQueryKey(['account', 'ssh-keys']);
 
     return useTanStackQuery<SSHKey[], AxiosError>(
         [key],

@@ -1,5 +1,5 @@
 import { fileBitsToString } from '@/helpers';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import useFileManagerQuery from '@/plugins/useFileManagerQuery';
 import React from 'react';
 import Modal, { RequiredModalProps } from '@/components/elements/Modal';
 import { Form, Formik, FormikHelpers } from 'formik';
@@ -22,7 +22,7 @@ type OwnProps = RequiredModalProps & { files: File[] };
 
 const ChmodFileModal = ({ files, ...props }: OwnProps) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { mutate } = useFileManagerSwr();
+    const { mutate } = useFileManagerQuery();
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
     const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);

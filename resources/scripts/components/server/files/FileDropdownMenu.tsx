@@ -23,7 +23,7 @@ import getFileDownloadUrl from '@/api/server/files/getFileDownloadUrl';
 import useFlash from '@/plugins/useFlash';
 import classNames from 'classnames';
 import { FileObject } from '@/api/server/files/loadDirectory';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import useFileManagerQuery from '@/plugins/useFileManagerQuery';
 import DropdownMenu from '@/components/elements/DropdownMenu';
 import useEventListener from '@/plugins/useEventListener';
 import compressFiles from '@/api/server/files/compressFiles';
@@ -63,7 +63,7 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
     const [showConfirmation, setShowConfirmation] = useState(false);
 
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { mutate } = useFileManagerSwr();
+    const { mutate } = useFileManagerQuery();
     const { clearAndAddHttpError, clearFlashes } = useFlash();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
 

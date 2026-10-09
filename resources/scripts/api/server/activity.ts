@@ -3,14 +3,14 @@ import { AxiosError } from 'axios';
 import http, { withQueryBuilderParams } from '@/api/http';
 import { ActivityLogFilters, ActivityLogResult, toActivityLogResult } from '@/api/activity';
 import useFilteredObject from '@/plugins/useFilteredObject';
-import { useServerSWRKey } from '@/plugins/useSWRKey';
+import { useServerQueryKey } from '@/plugins/useQueryKey';
 import { ServerContext } from '@/state/server';
 
 export type { ActivityLogFilters } from '@/api/activity';
 
 const useActivityLogs = (filters?: ActivityLogFilters, config?: any): QueryResponse<ActivityLogResult, AxiosError> => {
     const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
-    const key = useServerSWRKey(['activity', useFilteredObject(filters || {})]);
+    const key = useServerQueryKey(['activity', useFilteredObject(filters || {})]);
 
     return useTanStackQuery<ActivityLogResult, AxiosError>(
         [key],

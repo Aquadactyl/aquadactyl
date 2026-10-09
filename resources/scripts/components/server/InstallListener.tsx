@@ -2,7 +2,7 @@ import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import { ServerContext } from '@/state/server';
 import { SocketEvent } from '@/components/server/events';
 import { mutateGlobal } from '@/lib/queryClient';
-import { getDirectorySwrKey } from '@/plugins/useFileManagerSwr';
+import { getDirectoryQueryKey } from '@/plugins/useFileManagerQuery';
 
 const InstallListener = () => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -10,7 +10,7 @@ const InstallListener = () => {
     const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
 
     useWebsocketEvent(SocketEvent.BACKUP_RESTORE_COMPLETED, () => {
-        mutateGlobal(getDirectorySwrKey(uuid, '/'));
+        mutateGlobal(getDirectoryQueryKey(uuid, '/'));
         setServerFromState((s) => ({ ...s, status: null }));
     });
 

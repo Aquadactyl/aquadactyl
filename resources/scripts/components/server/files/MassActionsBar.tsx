@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/elements/button/index';
 import Fade from '@/components/elements/Fade';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import useFileManagerQuery from '@/plugins/useFileManagerQuery';
 import useFlash from '@/plugins/useFlash';
 import compressFiles from '@/api/server/files/compressFiles';
 import { ServerContext } from '@/state/server';
@@ -14,7 +14,7 @@ import { Dialog } from '@/components/elements/dialog';
 const MassActionsBar = () => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
 
-    const { mutate } = useFileManagerSwr();
+    const { mutate } = useFileManagerQuery();
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const [loading, setLoading] = useState(false);
     const [loadingMessage, setLoadingMessage] = useState('');

@@ -14,7 +14,7 @@ import useFlash from '@/plugins/useFlash';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import deleteBackup from '@/api/server/backups/deleteBackup';
 import Can from '@/components/elements/Can';
-import getServerBackups from '@/api/swr/getServerBackups';
+import getServerBackups from '@/api/server/backups/getServerBackups';
 import { ServerBackup } from '@/api/server/types';
 import { ServerContext } from '@/state/server';
 import Input from '@/components/elements/Input';

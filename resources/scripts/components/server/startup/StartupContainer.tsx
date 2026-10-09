@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import VariableBox from '@/components/server/startup/VariableBox';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import getServerStartup from '@/api/swr/getServerStartup';
+import getServerStartup from '@/api/server/startup/getServerStartup';
 import Spinner from '@/components/elements/Spinner';
 import { ServerError } from '@/components/elements/ScreenBlock';
 import { httpErrorToHuman } from '@/api/http';

@@ -11,7 +11,7 @@ import Can from '@/components/elements/Can';
 import { ServerError } from '@/components/elements/ScreenBlock';
 import { Button } from '@/components/elements/button/index';
 import { ServerContext } from '@/state/server';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import useFileManagerQuery from '@/plugins/useFileManagerQuery';
 import FileManagerStatus from '@/components/server/files/FileManagerStatus';
 import MassActionsBar from '@/components/server/files/MassActionsBar';
 import UploadButton from '@/components/server/files/UploadButton';
@@ -36,7 +36,7 @@ const sortFiles = (files: FileObject[]): FileObject[] => {
 export default () => {
     const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const { hash } = useLocation();
-    const { data: files, error, mutate } = useFileManagerSwr();
+    const { data: files, error, mutate } = useFileManagerQuery();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
     const clearFlashes = useStoreActions((actions) => actions.flashes.clearFlashes);
     const setDirectory = ServerContext.useStoreActions((actions) => actions.files.setDirectory);

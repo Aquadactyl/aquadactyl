@@ -7,7 +7,7 @@ import renameFiles from '@/api/server/files/renameFiles';
 import { ServerContext } from '@/state/server';
 import classNames from 'classnames';
 import Button from '@/components/elements/Button';
-import useFileManagerSwr from '@/plugins/useFileManagerSwr';
+import useFileManagerQuery from '@/plugins/useFileManagerQuery';
 import useFlash from '@/plugins/useFlash';
 
 interface FormikValues {
@@ -18,7 +18,7 @@ type OwnProps = RequiredModalProps & { files: string[]; useMoveTerminology?: boo
 
 const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { mutate } = useFileManagerSwr();
+    const { mutate } = useFileManagerQuery();
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
     const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);

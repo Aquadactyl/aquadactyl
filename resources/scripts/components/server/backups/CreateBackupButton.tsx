@@ -9,7 +9,7 @@ import createServerBackup from '@/api/server/backups/createServerBackup';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import Button from '@/components/elements/Button';
 import { Textarea } from '@/components/elements/Input';
-import getServerBackups from '@/api/swr/getServerBackups';
+import getServerBackups from '@/api/server/backups/getServerBackups';
 import { ServerContext } from '@/state/server';
 import FormikSwitch from '@/components/elements/FormikSwitch';
 import Can from '@/components/elements/Can';

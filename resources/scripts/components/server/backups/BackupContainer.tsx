@@ -5,7 +5,7 @@ import Can from '@/components/elements/Can';
 import CreateBackupButton from '@/components/server/backups/CreateBackupButton';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import BackupRow from '@/components/server/backups/BackupRow';
-import getServerBackups, { Context as ServerBackupContext } from '@/api/swr/getServerBackups';
+import getServerBackups, { Context as ServerBackupContext } from '@/api/server/backups/getServerBackups';
 import { ServerContext } from '@/state/server';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
 import Pagination from '@/components/elements/Pagination';

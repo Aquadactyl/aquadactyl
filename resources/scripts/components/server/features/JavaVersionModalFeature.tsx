@@ -9,7 +9,7 @@ import { SocketEvent, SocketRequest } from '@/components/server/events';
 import Select from '@/components/elements/Select';
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import Can from '@/components/elements/Can';
-import getServerStartup from '@/api/swr/getServerStartup';
+import getServerStartup from '@/api/server/startup/getServerStartup';
 import InputSpinner from '@/components/elements/InputSpinner';
 
 const MATCH_ERRORS = [

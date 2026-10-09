@@ -17,7 +17,7 @@ import { ServerContext } from '@/state/server';
 import CopyOnClick from '@/components/elements/CopyOnClick';
 import DeleteAllocationButton from '@/components/server/network/DeleteAllocationButton';
 import setPrimaryServerAllocation from '@/api/server/network/setPrimaryServerAllocation';
-import getServerAllocations from '@/api/swr/getServerAllocations';
+import getServerAllocations from '@/api/server/network/getServerAllocations';
 import { ip } from '@/lib/formatters';
 import Code from '@/components/elements/Code';
 

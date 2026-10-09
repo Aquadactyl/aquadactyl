@@ -9,7 +9,7 @@ import debounce from 'debounce';
 import updateStartupVariable from '@/api/server/updateStartupVariable';
 import useFlash from '@/plugins/useFlash';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import getServerStartup from '@/api/swr/getServerStartup';
+import getServerStartup from '@/api/server/startup/getServerStartup';
 import Select from '@/components/elements/Select';
 import isEqual from 'react-fast-compare';
 import { ServerContext } from '@/state/server';
