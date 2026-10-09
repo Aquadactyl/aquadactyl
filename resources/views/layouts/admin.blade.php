@@ -142,6 +142,11 @@
                                 <i class="fa fa-th-large"></i> <span>Nests</span>
                             </a>
                         </li>
+                        <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.egg-library') ?: 'active' }}">
+                            <a href="{{ route('admin.egg-library.index') }}">
+                                <i class="fa fa-download"></i> <span>Egg Library</span>
+                            </a>
+                        </li>
                     </ul>
                 </section>
             </aside>
