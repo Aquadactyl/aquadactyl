@@ -21,7 +21,7 @@ test('non-admin can modify server variables', function () {
         ]);
 
         $this->fail('This assertion should not be called.');
-    } catch (\Exception $exception) {
+    } catch (Exception $exception) {
         expect($exception)->toBeInstanceOf(ValidationException::class);
 
         /** @var ValidationException $exception */

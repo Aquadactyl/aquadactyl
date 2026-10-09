@@ -110,8 +110,8 @@ test('exception is thrown if start or end range is not numeric', function () {
     try {
         app(FindAssignableAllocationService::class)->handle($server);
         $this->fail('This assertion should not be reached.');
-    } catch (\Exception $exception) {
-        expect($exception)->toBeInstanceOf(\InvalidArgumentException::class)
+    } catch (Exception $exception) {
+        expect($exception)->toBeInstanceOf(InvalidArgumentException::class)
             ->and($exception->getMessage())->toBe('Expected an integerish value. Got: string');
     }
 
@@ -121,8 +121,8 @@ test('exception is thrown if start or end range is not numeric', function () {
     try {
         app(FindAssignableAllocationService::class)->handle($server);
         $this->fail('This assertion should not be reached.');
-    } catch (\Exception $exception) {
-        expect($exception)->toBeInstanceOf(\InvalidArgumentException::class)
+    } catch (Exception $exception) {
+        expect($exception)->toBeInstanceOf(InvalidArgumentException::class)
             ->and($exception->getMessage())->toBe('Expected an integerish value. Got: string');
     }
 });

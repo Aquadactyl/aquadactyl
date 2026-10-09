@@ -35,7 +35,7 @@ test('command can send to server', function () {
 
     $mock = $this->mock(DaemonCommandRepository::class);
     $mock->expects('setServer')
-        ->with(\Mockery::on(fn (Server $value) => $value->is($server)))
+        ->with(Mockery::on(fn (Server $value) => $value->is($server)))
         ->andReturnSelf();
 
     $mock->expects('send')->with('say Test')->andReturn(new GuzzleResponse());

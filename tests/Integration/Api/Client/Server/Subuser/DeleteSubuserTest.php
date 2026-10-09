@@ -7,7 +7,7 @@ use Pterodactyl\Models\Permission;
 use Illuminate\Support\Facades\Bus;
 use Pterodactyl\Jobs\RevokeSftpAccessJob;
 
-/**
+/*
  * Guards against PHP's exciting behavior where a string can be cast to an int and only
  * the first numeric digits are returned. This causes UUIDs to be returned as an int when
  * looking up users, thus returning the wrong subusers (or no subuser at all).

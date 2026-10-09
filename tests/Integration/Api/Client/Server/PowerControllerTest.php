@@ -31,13 +31,13 @@ test('invalid power signal results in error', function () {
 });
 
 test('action can be sent to server', function (string $action, string $permission) {
-    $service = \Mockery::mock(DaemonPowerRepository::class);
+    $service = Mockery::mock(DaemonPowerRepository::class);
     $this->app->instance(DaemonPowerRepository::class, $service);
 
     [$user, $server] = $this->generateTestAccount([$permission]);
 
     $service->expects('setServer')
-        ->with(\Mockery::on(function ($value) use ($server) {
+        ->with(Mockery::on(function ($value) use ($server) {
             return $server->uuid === $value->uuid;
         }))
         ->andReturnSelf()

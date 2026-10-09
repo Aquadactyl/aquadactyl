@@ -42,7 +42,7 @@ test('database cannot be created if server has reached limit', function () {
 test('empty database name or invalid name triggers an exception', function (array $data) {
     $server = $this->createServerModel();
 
-    $this->expectException(\InvalidArgumentException::class);
+    $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('The database name passed to DatabaseManagementService::handle MUST be prefixed with "s{server_id}_".');
 
     app(DatabaseManagementService::class)->create($server, $data);
@@ -136,15 +136,15 @@ test('exception encountered while creating database attempts to cleanup', functi
 
     $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
 
-    $this->repository->expects('createDatabase')->with($name)->andThrows(new \BadMethodCallException());
+    $this->repository->expects('createDatabase')->with($name)->andThrows(new BadMethodCallException());
     $this->repository->expects('dropDatabase')->with($name);
-    $this->repository->expects('dropUser')->withAnyArgs()->andThrows(new \InvalidArgumentException());
+    $this->repository->expects('dropUser')->withAnyArgs()->andThrows(new InvalidArgumentException());
 
     expect(fn () => app(DatabaseManagementService::class)->create($server, [
         'remote' => '%',
         'database' => $name,
         'database_host_id' => $host->id,
-    ]))->toThrow(\BadMethodCallException::class);
+    ]))->toThrow(BadMethodCallException::class);
 
     $this->assertDatabaseMissing('databases', ['server_id' => $server->id]);
 });

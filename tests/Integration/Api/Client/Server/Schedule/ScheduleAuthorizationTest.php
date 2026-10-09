@@ -3,7 +3,7 @@
 use Pterodactyl\Models\Subuser;
 use Pterodactyl\Models\Schedule;
 
-/**
+/*
  * Tests that a subuser with access to two servers cannot improperly access a resource
  * on Server A when providing a URL that points to Server B. This prevents a regression
  * in the code where controllers didn't properly validate that a resource was assigned

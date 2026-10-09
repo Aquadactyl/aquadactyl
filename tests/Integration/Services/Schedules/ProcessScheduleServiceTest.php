@@ -32,7 +32,7 @@ test('error during schedule data update does not persist changes', function () {
     $task = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1]);
 
     expect(fn () => app(ProcessScheduleService::class)->handle($schedule))
-        ->toThrow(\InvalidArgumentException::class);
+        ->toThrow(InvalidArgumentException::class);
 
     $this->assertDatabaseMissing('schedules', ['id' => $schedule->id, 'is_processing' => true]);
     $this->assertDatabaseMissing('tasks', ['id' => $task->id, 'is_queued' => true]);
