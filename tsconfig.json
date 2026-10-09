@@ -20,11 +20,6 @@
             "@feature/*": ["./resources/scripts/components/server/features/*"],
             "@blueprint/*": ["./resources/scripts/blueprint/*"]
         },
-        "plugins": [
-            {
-                "name": "typescript-plugin-tw-template"
-            }
-        ],
         "types": ["node", "vitest/globals"]
     },
     "include": ["./resources/scripts/**/*"],
