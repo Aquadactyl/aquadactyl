@@ -54,7 +54,7 @@ YAML
 cp tests/Deployment/fixtures/AddonDependencies.tsx /tmp/panel-smoke-extension/components/AfterName.tsx
 (cd /tmp/panel-smoke-extension && zip -qr /app/smoke.blueprint .)
 bash blueprint.sh -bash -i smoke < /dev/null
-pnpm run tsc
+pnpm run types
 printf 'preserved-extension-data\n' > .blueprint/extensions/smoke/private/preserved.txt
 ENV_BEFORE=$(sha256sum .env | cut -d ' ' -f 1)
 tar -C /source --exclude='./.git' --exclude='./node_modules' --exclude='./vendor' \
