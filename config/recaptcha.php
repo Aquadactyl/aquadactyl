@@ -4,7 +4,7 @@ return [
     /*
      * Enable or disable captchas
      */
-    'enabled' => env('RECAPTCHA_ENABLED', true),
+    'enabled' => env('RECAPTCHA_ENABLED', false),
 
     /*
      * API endpoint for recaptcha checks. You should not edit this.
@@ -12,20 +12,17 @@ return [
     'domain' => env('RECAPTCHA_DOMAIN', 'https://www.google.com/recaptcha/api/siteverify'),
 
     /*
-     * Use a custom secret key, we use our public one by default
+     * Secret key for reCAPTCHA verification.
      */
-    'secret_key' => env('RECAPTCHA_SECRET_KEY', '6LcJcjwUAAAAALOcDJqAEYKTDhwELCkzUkNDQ0J5'),
-    '_shipped_secret_key' => '6LcJcjwUAAAAALOcDJqAEYKTDhwELCkzUkNDQ0J5',
+    'secret_key' => env('RECAPTCHA_SECRET_KEY', ''),
 
     /*
-     * Use a custom website key, we use our public one by default
+     * Website site key for reCAPTCHA frontend.
      */
-    'website_key' => env('RECAPTCHA_WEBSITE_KEY', '6LcJcjwUAAAAAO_Xqjrtj9wWufUpYRnK6BW8lnfn'),
-    '_shipped_website_key' => '6LcJcjwUAAAAAO_Xqjrtj9wWufUpYRnK6BW8lnfn',
+    'website_key' => env('RECAPTCHA_WEBSITE_KEY', ''),
 
     /*
-     * Domain verification is enabled by default and compares the domain used when solving the captcha
-     * as public keys can't have domain verification on google's side enabled (obviously).
+     * Domain verification compares the domain used when solving the captcha.
      */
-    'verify_domain' => true,
+    'verify_domain' => false,
 ];
