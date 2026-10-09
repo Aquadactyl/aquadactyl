@@ -1,5 +1,21 @@
 # Validation results
 
+## CI repair — 9 October 2026
+
+The PHP workflow now invokes Pest for both suites and supplies a minimal Vite
+manifest with the real entrypoint's `src` field for rendered views. Vitest omits
+the Laravel server plugin, so `CI=true` does not start or bypass the development
+server. The test configuration gives the large image fixtures a 512 MiB memory
+budget, and the five PHP formatting failures were corrected.
+
+Both PHP 8.4 and 8.5 passed all 102 unit tests (196 assertions each) with database
+access disabled. The full PHP 8.5 integration suite passed against isolated
+MariaDB 11: 427 tests and 2,599 assertions, including JPEG and WebP uploads.
+PHP style checks passed across all 984 files, and the locked production Composer
+audit reported no advisories. All 74 Vitest tests passed with `CI=true` on Linux
+Node 22 and Windows Node 24, and the production frontend build passed with CI
+enabled. The database fixtures were separate from the running panel.
+
 ## Pull request branch on current main — 9 October 2026
 
 The Blueprint, Docker and UI changes were rebased onto the latest main branch,
@@ -9,8 +25,8 @@ files, all 74 Vitest tests, six game-query protocol tests, ShellCheck and the
 deployment and Blueprint failure guards passed. Production frontend and Docker
 image builds passed, including rebuilding the frontend inside the Docker runtime.
 The production dependency audit reported no known vulnerabilities. The build
-workflow now uses `pnpm run test` so CI runs the configured Vitest runner. Full
-PHP unit and integration suites were not rerun for this PR branch.
+workflow now uses `pnpm run test` so CI runs the configured Vitest runner.
+Subsequent PHP suite results are recorded in the CI repair section above.
 
 ## Console prompts, dropdowns and server creation — 9 October 2026
 

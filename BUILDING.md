@@ -211,8 +211,8 @@ Linux deployment builds the frontend and refreshes backend caches automatically.
 ```bash
 composer validate --strict
 composer audit --locked --no-dev
-vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Unit
-vendor/bin/phpunit tests/Integration
+vendor/bin/pest --bootstrap vendor/autoload.php tests/Unit
+vendor/bin/pest tests/Integration
 composer cs:check
 ```
 

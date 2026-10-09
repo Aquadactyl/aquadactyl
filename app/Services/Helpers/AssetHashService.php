@@ -5,7 +5,6 @@ namespace Pterodactyl\Services\Helpers;
 use Illuminate\Support\Arr;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Contracts\Filesystem\Filesystem;
-use Pterodactyl\Exceptions\ManifestDoesNotExistException;
 
 class AssetHashService
 {
