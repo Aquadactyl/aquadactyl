@@ -96,6 +96,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
         React.useImperativeHandle(forwardedRef, () => native.current!);
         useEffect(() => {
+            if (autoFocus) custom.current?.focus();
+        }, [autoFocus]);
+        useEffect(() => {
             setPortal(
                 native.current?.closest<HTMLElement>(
                     '[id^="headlessui-dialog-panel-"], [role="dialog"], #modal-portal',
@@ -139,31 +142,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
         return (
             <div className={classNames('panel-select', className)} style={style} {...dataAttributes}>
-                <select
-                    {...props}
-                    ref={native}
-                    id={id ? `${id}-native` : undefined}
-                    value={value}
-                    defaultValue={defaultValue}
-                    tabIndex={-1}
-                    autoFocus={false}
-                    aria-hidden
-                    className={'panel-select-native'}
-                    onChange={(event) => {
-                        if (value === undefined) {
-                            setUncontrolled(Array.from(event.currentTarget.selectedOptions, (option) => option.value));
-                        }
-                        props.onChange?.(event);
-                    }}
-                    onFocus={() => custom.current?.focus()}
-                    onInvalid={(event) => {
-                        event.preventDefault();
-                        custom.current?.focus();
-                        onInvalid?.(event);
-                    }}
-                >
-                    {children}
-                </select>
                 <DescriptionContext.Provider
                     value={{
                         description: props['aria-describedby'],
@@ -179,7 +157,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         value={props.multiple ? selected : (selected[0] ?? null)}
                         isMulti={!!props.multiple}
                         isDisabled={props.disabled}
-                        autoFocus={autoFocus}
                         tabIndex={props.tabIndex}
                         aria-label={props['aria-label']}
                         aria-labelledby={props['aria-labelledby']}
@@ -221,6 +198,32 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                         onKeyDown={(event) => onKeyDown?.(eventTarget(event))}
                     />
                 </DescriptionContext.Provider>
+                {/* Labels must target the visible input before this hidden form control. */}
+                <select
+                    {...props}
+                    ref={native}
+                    id={id ? `${id}-native` : undefined}
+                    value={value}
+                    defaultValue={defaultValue}
+                    tabIndex={-1}
+                    autoFocus={false}
+                    aria-hidden
+                    className={'panel-select-native'}
+                    onChange={(event) => {
+                        if (value === undefined) {
+                            setUncontrolled(Array.from(event.currentTarget.selectedOptions, (option) => option.value));
+                        }
+                        props.onChange?.(event);
+                    }}
+                    onFocus={() => custom.current?.focus()}
+                    onInvalid={(event) => {
+                        event.preventDefault();
+                        custom.current?.focus();
+                        onInvalid?.(event);
+                    }}
+                >
+                    {children}
+                </select>
             </div>
         );
     },
