@@ -20,8 +20,8 @@ test('server name can be changed', function (array $permissions) {
     $response->assertJsonPath('errors.0.meta.rule', 'required');
 
     $server = $server->refresh();
-    $this->assertSame($originalName, $server->name);
-    $this->assertSame($originalDescription, $server->description);
+    expect($server->name)->toBe($originalName)
+        ->and($server->description)->toBe($originalDescription);
 
     $this->actingAs($user)
         ->postJson("/api/client/servers/$server->uuid/settings/rename", [
@@ -31,8 +31,8 @@ test('server name can be changed', function (array $permissions) {
         ->assertStatus(Response::HTTP_NO_CONTENT);
 
     $server = $server->refresh();
-    $this->assertSame('Test Server Name', $server->name);
-    $this->assertSame('This is a test server.', $server->description);
+    expect($server->name)->toBe('Test Server Name')
+        ->and($server->description)->toBe('This is a test server.');
 })->with([
     [[]],
     [[Permission::ACTION_SETTINGS_RENAME]],
@@ -49,13 +49,13 @@ test('subuser cannot change server name without permission', function () {
         ->assertStatus(Response::HTTP_FORBIDDEN);
 
     $server = $server->refresh();
-    $this->assertSame($originalName, $server->name);
+    expect($server->name)->toBe($originalName);
 });
 
 test('server can be reinstalled', function (array $permissions) {
     /** @var Server $server */
     [$user, $server] = $this->generateTestAccount($permissions);
-    $this->assertTrue($server->isInstalled());
+    expect($server->isInstalled())->toBeTrue();
 
     $service = Mockery::mock(DaemonServerRepository::class);
     $this->app->instance(DaemonServerRepository::class, $service);
@@ -73,7 +73,7 @@ test('server can be reinstalled', function (array $permissions) {
         ->assertStatus(Response::HTTP_ACCEPTED);
 
     $server = $server->refresh();
-    $this->assertSame(Server::STATUS_INSTALLING, $server->status);
+    expect($server->status)->toBe(Server::STATUS_INSTALLING);
 })->with([
     [[]],
     [[Permission::ACTION_SETTINGS_REINSTALL]],
@@ -87,7 +87,7 @@ test('subuser cannot reinstall server without permission', function () {
         ->assertStatus(Response::HTTP_FORBIDDEN);
 
     $server = $server->refresh();
-    $this->assertTrue($server->isInstalled());
+    expect($server->isInstalled())->toBeTrue();
 });
 
 test('server cannot be reinstalled if configured to skip scripts', function (array $permissions) {
@@ -104,7 +104,7 @@ test('server cannot be reinstalled if configured to skip scripts', function (arr
         ->assertStatus(Response::HTTP_BAD_REQUEST)
         ->assertJsonPath('errors.0.detail', trans('admin/server.exceptions.skipping_install_script'));
 
-    $this->assertNull($server->refresh()->status);
+    expect($server->refresh()->status)->toBeNull();
 })->with([
     [[]],
     [[Permission::ACTION_SETTINGS_REINSTALL]],

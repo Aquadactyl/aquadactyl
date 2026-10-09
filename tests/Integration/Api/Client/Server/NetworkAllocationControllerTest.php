@@ -37,7 +37,7 @@ test('allocation notes can be updated', function (array $permissions) {
     [$user, $server] = $this->generateTestAccount($permissions);
     $allocation = $server->allocation;
 
-    $this->assertNull($allocation->notes);
+    expect($allocation->notes)->toBeNull();
 
     $this->actingAs($user)->postJson($this->link($allocation), [])
         ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY)
@@ -50,7 +50,7 @@ test('allocation notes can be updated', function (array $permissions) {
 
     $allocation = $allocation->refresh();
 
-    $this->assertSame('Test notes', $allocation->notes);
+    expect($allocation->notes)->toBe('Test notes');
 
     $this->actingAs($user)->postJson($this->link($allocation), ['notes' => null])
         ->assertOk()
@@ -59,7 +59,7 @@ test('allocation notes can be updated', function (array $permissions) {
 
     $allocation = $allocation->refresh();
 
-    $this->assertNull($allocation->notes);
+    expect($allocation->notes)->toBeNull();
 })->with([
     [[]],
     [[Permission::ACTION_ALLOCATION_UPDATE]],
@@ -92,7 +92,7 @@ test('primary allocation can be modified', function (array $permissions) {
 
     $server = $server->refresh();
 
-    $this->assertSame($allocation2->id, $server->allocation_id);
+    expect($server->allocation_id)->toBe($allocation2->id);
 })->with([
     [[]],
     [[Permission::ACTION_ALLOCATION_UPDATE]],

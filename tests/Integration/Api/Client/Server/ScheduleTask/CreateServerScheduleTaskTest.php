@@ -10,7 +10,7 @@ test('task can be created', function (array $permissions) {
 
     /** @var Schedule $schedule */
     $schedule = Schedule::factory()->create(['server_id' => $server->id]);
-    $this->assertEmpty($schedule->tasks);
+    expect($schedule->tasks)->toBeEmpty();
 
     $response = $this->actingAs($user)->postJson($this->link($schedule, '/tasks'), [
         'action' => 'command',
@@ -23,11 +23,11 @@ test('task can be created', function (array $permissions) {
     /** @var Task $task */
     $task = Task::query()->findOrFail($response->json('attributes.id'));
 
-    $this->assertSame($schedule->id, $task->schedule_id);
-    $this->assertSame(1, $task->sequence_id);
-    $this->assertSame('command', $task->action);
-    $this->assertSame('say Test', $task->payload);
-    $this->assertSame(10, $task->time_offset);
+    expect($task->schedule_id)->toBe($schedule->id)
+        ->and($task->sequence_id)->toBe(1)
+        ->and($task->action)->toBe('command')
+        ->and($task->payload)->toBe('say Test')
+        ->and($task->time_offset)->toBe(10);
     $this->assertJsonTransformedWith($response->json('attributes'), $task);
 })->with([
     [[]],

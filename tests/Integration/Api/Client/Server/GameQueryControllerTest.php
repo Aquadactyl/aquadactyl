@@ -24,7 +24,7 @@ test('known games are detected and non games do not dispatch queries', function 
     $server->forceFill(['egg_id' => $server->egg->id])->save();
     foreach (['Paper' => 'protocol-minecraftvanilla', 'Minecraft Bedrock' => 'protocol-minecraftbedrock', 'Rust' => 'rust', 'Counter-Strike 2' => 'counterstrike2', 'Garry\'s Mod' => 'garrysmod'] as $name => $game) {
         $server->egg->name = $name;
-        $this->assertSame($game, $settings->game($server));
+        expect($settings->game($server))->toBe($game);
     }
     $server->egg->forceFill(['name' => 'Generic PHP Application'])->save();
     $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()
@@ -62,7 +62,7 @@ test('completed queries are cached and zero players are preserved', function () 
     $runner->shouldReceive('query')->once()->andReturn(['status' => 'available', 'players' => 0, 'max_players' => 20]);
     Cache::put($key . ':pending', true, 20);
     (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
-    $this->assertFalse(Cache::has($key . ':pending'));
+    expect(Cache::has($key . ':pending'))->toBeFalse();
     $this->actingAs($user)->getJson($this->link($server, 'query'))
         ->assertOk()->assertJsonPath('attributes.status', 'available')
         ->assertJsonPath('attributes.players', 0)->assertJsonPath('attributes.max_players', 20);
@@ -104,7 +104,7 @@ test('disabled and changed configurations do not run an old job', function () {
     $runner->shouldNotReceive('query');
     (new QueryGameServerJob($server->id, $key))->handle($settings, $runner);
     $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()->assertJsonPath('attributes.status', 'unsupported');
-    $this->assertFalse(Cache::has($key));
+    expect(Cache::has($key))->toBeFalse();
     Bus::assertNotDispatched(QueryGameServerJob::class);
 });
 
@@ -122,10 +122,10 @@ test('server list includes country game and only the viewers permissions', funct
 test('country codes are optional validated and normalized', function () {
     $rules = ['country_code' => Node::getRules()['country_code']];
     foreach (['GB', 'gb', 'UK', 'US', null] as $code) {
-        $this->assertTrue(Validator::make(['country_code' => $code], $rules)->passes());
+        expect(Validator::make(['country_code' => $code], $rules)->passes())->toBeTrue();
     }
     foreach (['XX', '../GB', 'England'] as $code) {
-        $this->assertFalse(Validator::make(['country_code' => $code], $rules)->passes());
+        expect(Validator::make(['country_code' => $code], $rules)->passes())->toBeFalse();
     }
 });
 
@@ -138,10 +138,10 @@ test('only admins can change query settings and allocations must belong to the s
     $this->actingAs($admin)->patchJson($path, ['game_query_type' => 'rust', 'game_query_allocation_id' => $other->id])->assertUnprocessable();
     $this->patchJson($path, ['game_query_type' => 'fake-game'])->assertUnprocessable();
     $this->patchJson($path, ['game_query_type' => 'rust', 'game_query_allocation_id' => $server->allocation_id])->assertRedirect();
-    $this->assertSame('rust', $server->refresh()->game_query_type);
-    $this->assertSame($server->allocation_id, $server->game_query_allocation_id);
+    expect($server->refresh()->game_query_type)->toBe('rust')
+        ->and($server->game_query_allocation_id)->toBe($server->allocation_id);
     $target = app(GameQuerySettingsService::class)->target($server);
-    $this->assertTrue($target['givenPortOnly']);
+    expect($target['givenPortOnly'])->toBeTrue();
 });
 
 test('successful power actions invalidate resources and player counts', function () {
@@ -155,6 +155,6 @@ test('successful power actions invalidate resources and player counts', function
     $repository->shouldReceive('send')->with('start')->once();
     $this->app->instance(DaemonPowerRepository::class, $repository);
     $this->actingAs($user)->postJson($this->link($server, 'power'), ['signal' => 'start'])->assertNoContent();
-    $this->assertFalse(Cache::has($key));
-    $this->assertFalse(Cache::has('resources:' . $server->uuid));
+    expect(Cache::has($key))->toBeFalse()
+        ->and(Cache::has('resources:' . $server->uuid))->toBeFalse();
 });

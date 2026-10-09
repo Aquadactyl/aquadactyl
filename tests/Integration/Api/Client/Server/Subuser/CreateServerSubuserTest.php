@@ -98,9 +98,9 @@ test('subuser with excessively long email cannot be created', function () {
     // Make sure we're within the column limit
     $email = "$local@$label.$label.au";
 
-    $this->assertSame(64, strlen($local));
-    $this->assertSame(61, strlen($label));
-    $this->assertSame(191, strlen($email));
+    expect(strlen($local))->toBe(64)
+        ->and(strlen($label))->toBe(61)
+        ->and(strlen($email))->toBe(191);
 
     $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
         'email' => $email,
@@ -114,7 +114,7 @@ test('subuser with excessively long email cannot be created', function () {
     // Exceed column limit of 1 >= and <= 191
     $email = "$local@$label.$label.com";
 
-    $this->assertSame(192, strlen($email));
+    expect(strlen($email))->toBe(192);
 
     $response = $this->actingAs($user)->postJson($this->link($server) . '/users', [
         'email' => $email,

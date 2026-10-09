@@ -73,9 +73,8 @@ test('permissions are saved to account', function () {
         ->assertOk();
 
     $subuser->refresh();
-    $this->assertEqualsCanonicalizing(
-        ['control.start', 'control.stop', 'websocket.connect'],
-        $subuser->permissions
+    expect($subuser->permissions)->toEqualCanonicalizing(
+        ['control.start', 'control.stop', 'websocket.connect']
     );
 
     Bus::assertDispatchedTimes(function (RevokeSftpAccessJob $job) use ($server, $subuser) {
@@ -99,7 +98,7 @@ test('user cannot assign permissions they do not have', function () {
         ])
         ->assertForbidden();
 
-    $this->assertEqualsCanonicalizing(['foo.bar'], $subuser->refresh()->permissions);
+    expect($subuser->refresh()->permissions)->toEqualCanonicalizing(['foo.bar']);
 
     Bus::assertNothingDispatched();
 });

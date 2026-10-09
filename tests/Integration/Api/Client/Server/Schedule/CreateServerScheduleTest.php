@@ -19,18 +19,19 @@ test('schedule can be created for server', function (array $permissions) {
 
     $response->assertOk();
 
-    $this->assertNotNull($id = $response->json('attributes.id'));
+    $id = $response->json('attributes.id');
+    expect($id)->not->toBeNull();
 
     /** @var Schedule $schedule */
     $schedule = Schedule::query()->findOrFail($id);
-    $this->assertFalse($schedule->is_active);
-    $this->assertFalse($schedule->is_processing);
-    $this->assertSame('0', $schedule->cron_minute);
-    $this->assertSame('*/2', $schedule->cron_hour);
-    $this->assertSame('2', $schedule->cron_day_of_week);
-    $this->assertSame('1', $schedule->cron_month);
-    $this->assertSame('*', $schedule->cron_day_of_month);
-    $this->assertSame('Test Schedule', $schedule->name);
+    expect($schedule->is_active)->toBeFalse()
+        ->and($schedule->is_processing)->toBeFalse()
+        ->and($schedule->cron_minute)->toBe('0')
+        ->and($schedule->cron_hour)->toBe('*/2')
+        ->and($schedule->cron_day_of_week)->toBe('2')
+        ->and($schedule->cron_month)->toBe('1')
+        ->and($schedule->cron_day_of_month)->toBe('*')
+        ->and($schedule->name)->toBe('Test Schedule');
 
     $this->assertJsonTransformedWith($response->json('attributes'), $schedule);
     $response->assertJsonCount(0, 'attributes.relationships.tasks.data');

@@ -42,8 +42,8 @@ test('jwt and websocket url are returned for server owner', function () {
         ->assertJsonStructure(['data' => ['token', 'socket']]);
 
     $connection = $response->json('data.socket');
-    $this->assertStringStartsWith('wss://', $connection, 'Failed asserting that websocket connection address has expected "wss://" prefix.');
-    $this->assertStringEndsWith("/api/servers/$server->uuid/ws", $connection, 'Failed asserting that websocket connection address uses expected Wings endpoint.');
+    expect($connection)->toStartWith('wss://')
+        ->and($connection)->toEndWith("/api/servers/$server->uuid/ws");
 
     $config = Configuration::forSymmetricSigner(new Sha256(), $key = InMemory::plainText($server->node->getDecryptedKey()));
     $config = $config->withValidationConstraints(new SignedWith(new Sha256(), $key));
@@ -51,10 +51,7 @@ test('jwt and websocket url are returned for server owner', function () {
     /** @var \Lcobucci\JWT\Token\Plain $token */
     $token = $config->parser()->parse($response->json('data.token'));
 
-    $this->assertTrue(
-        $config->validator()->validate($token, ...$config->validationConstraints()),
-        'Failed to validate that the JWT data returned was signed using the Node\'s secret key.'
-    );
+    expect($config->validator()->validate($token, ...$config->validationConstraints()))->toBeTrue();
 
     // The way we generate times for the JWT will truncate the microseconds from the
     // time, but CarbonImmutable::now() will include them, thus causing test failures.
@@ -65,15 +62,15 @@ test('jwt and websocket url are returned for server owner', function () {
     $expect = CarbonImmutable::createFromTimestamp(CarbonImmutable::now()->getTimestamp())->timezone('UTC');
 
     // Check that the claims are generated correctly.
-    $this->assertTrue($token->hasBeenIssuedBy(config('app.url')));
-    $this->assertTrue($token->isPermittedFor($server->node->getConnectionAddress()));
-    $this->assertEquals($expect, $token->claims()->get('iat'));
-    $this->assertEquals($expect->subMinutes(5), $token->claims()->get('nbf'));
-    $this->assertEquals($expect->addMinutes(10), $token->claims()->get('exp'));
-    $this->assertSame($user->uuid, $token->claims()->get('user_uuid'));
-    $this->assertSame($server->uuid, $token->claims()->get('server_uuid'));
-    $this->assertSame(['*'], $token->claims()->get('permissions'));
-    $this->assertEquals(JwtScope::Websocket->value, $token->claims()->get('scope'));
+    expect($token->hasBeenIssuedBy(config('app.url')))->toBeTrue()
+        ->and($token->isPermittedFor($server->node->getConnectionAddress()))->toBeTrue()
+        ->and($token->claims()->get('iat'))->toEqual($expect)
+        ->and($token->claims()->get('nbf'))->toEqual($expect->subMinutes(5))
+        ->and($token->claims()->get('exp'))->toEqual($expect->addMinutes(10))
+        ->and($token->claims()->get('user_uuid'))->toBe($user->uuid)
+        ->and($token->claims()->get('server_uuid'))->toBe($server->uuid)
+        ->and($token->claims()->get('permissions'))->toBe(['*'])
+        ->and($token->claims()->get('scope'))->toBe(JwtScope::Websocket->value);
 });
 
 test('jwt is configured correctly for server subuser', function () {
@@ -95,12 +92,7 @@ test('jwt is configured correctly for server subuser', function () {
     /** @var \Lcobucci\JWT\Token\Plain $token */
     $token = $config->parser()->parse($response->json('data.token'));
 
-    $this->assertTrue(
-        $config->validator()->validate($token, ...$config->validationConstraints()),
-        'Failed to validate that the JWT data returned was signed using the Node\'s secret key.'
-    );
-
-    // Check that the claims are generated correctly.
-    $this->assertSame($permissions, $token->claims()->get('permissions'));
-    $this->assertEquals(JwtScope::Websocket->value, $token->claims()->get('scope'));
+    expect($config->validator()->validate($token, ...$config->validationConstraints()))->toBeTrue()
+        ->and($token->claims()->get('permissions'))->toBe($permissions)
+        ->and($token->claims()->get('scope'))->toBe(JwtScope::Websocket->value);
 });

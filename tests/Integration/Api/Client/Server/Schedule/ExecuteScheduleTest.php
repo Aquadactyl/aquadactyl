@@ -33,8 +33,8 @@ test('schedule is executed right away', function (array $permissions) {
 
     Bus::assertDispatched(function (RunTaskJob $job) use ($task) {
         // A task executed right now should not have any job delay associated with it.
-        $this->assertNull($job->delay);
-        $this->assertSame($task->id, $job->task->id);
+        expect($job->delay)->toBeNull()
+            ->and($job->task->id)->toBe($task->id);
 
         return true;
     });

@@ -41,8 +41,8 @@ test('icons and shortcut metadata are public and use the configured name', funct
     foreach ([16, 32, 48, 70, 150, 180, 192, 256, 310, 512] as $size) {
         $response = $this->get('/branding/site/icons/' . $size . '.png')->assertOk()->assertHeader('Content-Type', 'image/png');
         $image = getimagesizefromstring($response->getContent());
-        expect([$image[0], $image[1], $image[2]])->toBe([$size, $size, IMAGETYPE_PNG]);
-        $this->assertFalse($response->headers->has('Set-Cookie'));
+        expect([$image[0], $image[1], $image[2]])->toBe([$size, $size, IMAGETYPE_PNG])
+            ->and($response->headers->has('Set-Cookie'))->toBeFalse();
     }
     foreach (['/branding/site/manifest.webmanifest', '/favicons/manifest.json'] as $path) {
         $this->get($path)->assertOk()->assertHeader('Content-Type', 'application/manifest+json')

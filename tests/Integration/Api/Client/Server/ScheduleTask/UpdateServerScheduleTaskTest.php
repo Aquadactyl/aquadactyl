@@ -29,9 +29,9 @@ test('task can be updated', function () {
     $response->assertOk();
     $task->refresh();
 
-    $this->assertSame('command', $task->action);
-    $this->assertSame('say Test', $task->payload);
-    $this->assertSame(10, $task->time_offset);
+    expect($task->action)->toBe('command')
+        ->and($task->payload)->toBe('say Test')
+        ->and($task->time_offset)->toBe(10);
 });
 
 test('task cannot be updated without action permission', function () {
@@ -54,8 +54,8 @@ test('task cannot be updated without action permission', function () {
 
     $task->refresh();
 
-    $this->assertSame('power', $task->action);
-    $this->assertSame('start', $task->payload);
+    expect($task->action)->toBe('power')
+        ->and($task->payload)->toBe('start');
 });
 
 test('power task requires valid payload', function () {

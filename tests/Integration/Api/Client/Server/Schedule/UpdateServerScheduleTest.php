@@ -27,11 +27,11 @@ test('schedule can be updated', function (array $permissions) use ($updateData) 
     $schedule = $schedule->refresh();
 
     $response->assertOk();
-    $this->assertSame('Updated Schedule Name', $schedule->name);
-    $this->assertFalse($schedule->is_active);
+    expect($schedule->name)->toBe('Updated Schedule Name')
+        ->and($schedule->is_active)->toBeFalse();
     $this->assertJsonTransformedWith($response->json('attributes'), $schedule);
 
-    $this->assertSame($expected->toAtomString(), $schedule->next_run_at->toAtomString());
+    expect($schedule->next_run_at->toAtomString())->toBe($expected->toAtomString());
 })->with([
     [[]],
     [[Permission::ACTION_SCHEDULE_UPDATE]],
@@ -68,8 +68,8 @@ test('schedule is processing is set to false when active state changes', functio
         'is_processing' => true,
     ]);
 
-    $this->assertTrue($schedule->is_active);
-    $this->assertTrue($schedule->is_processing);
+    expect($schedule->is_active)->toBeTrue()
+        ->and($schedule->is_processing)->toBeTrue();
 
     $response = $this->actingAs($user)
         ->postJson("/api/client/servers/{$server->uuid}/schedules/{$schedule->id}", $updateData);
@@ -77,6 +77,6 @@ test('schedule is processing is set to false when active state changes', functio
     $schedule = $schedule->refresh();
 
     $response->assertOk();
-    $this->assertFalse($schedule->is_active);
-    $this->assertFalse($schedule->is_processing);
+    expect($schedule->is_active)->toBeFalse()
+        ->and($schedule->is_processing)->toBeFalse();
 });

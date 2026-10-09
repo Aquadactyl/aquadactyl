@@ -31,7 +31,7 @@ test('access to a servers schedules is restricted properly', function (string $m
     // This is the only valid call for this test, accessing the schedule for the same
     // server that the API user is the owner of.
     $response = $this->actingAs($user)->json($method, $this->link($server1, '/schedules/' . $schedule1->id . $endpoint));
-    $this->assertTrue($response->status() <= 204 || $response->status() === 400 || $response->status() === 422);
+    expect($response->status() <= 204 || $response->status() === 400 || $response->status() === 422)->toBeTrue();
 
     // This request fails because the schedule is valid for that server but the user
     // making the request is not authorized to perform that action.
