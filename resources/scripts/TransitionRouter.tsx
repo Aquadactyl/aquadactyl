@@ -12,7 +12,7 @@ const TransitionRouter: React.FC<TransitionRouterProps> = ({ location: propLocat
     const loc = propLocation || routeLocation;
 
     return (
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode='wait'>
             <motion.div
                 key={loc.pathname + loc.search}
                 initial={{ opacity: 0 }}
