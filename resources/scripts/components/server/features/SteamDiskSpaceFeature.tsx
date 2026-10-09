@@ -5,7 +5,7 @@ import Button from '@/components/elements/Button';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
 import { SocketEvent } from '@/components/server/events';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 
 const SteamDiskSpaceFeature = () => {
     const [visible, setVisible] = useState(false);

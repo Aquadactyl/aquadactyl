@@ -3,7 +3,7 @@ import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import createApiKey from '@/api/account/createApiKey';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { httpErrorToHuman } from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';

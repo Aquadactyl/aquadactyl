@@ -1,5 +1,3 @@
-import { action, Action } from 'easy-peasy';
-
 export type SubuserPermission =
     | 'websocket.connect'
     | 'control.console'
@@ -42,40 +40,55 @@ export interface Subuser {
     can(permission: SubuserPermission): boolean;
 }
 
-export interface ServerSubuserStore {
+export interface ServerSubuserState {
     data: Subuser[];
-    setSubusers: Action<ServerSubuserStore, Subuser[]>;
-    appendSubuser: Action<ServerSubuserStore, Subuser>;
-    removeSubuser: Action<ServerSubuserStore, string>;
 }
 
-const subusers: ServerSubuserStore = {
+export interface ServerSubuserActions {
+    setSubusers: (payload: Subuser[]) => void;
+    appendSubuser: (payload: Subuser) => void;
+    removeSubuser: (payload: string) => void;
+}
+
+export type ServerSubuserStore = ServerSubuserState & ServerSubuserActions;
+
+export const createSubusersSlice = (set: (fn: (state: any) => any) => void): ServerSubuserStore => ({
     data: [],
 
-    setSubusers: action((state, payload) => {
-        state.data = payload;
-    }),
+    setSubusers: (payload) =>
+        set((state) => ({
+            subusers: {
+                ...state.subusers,
+                data: payload,
+            },
+        })),
 
-    appendSubuser: action((state, payload) => {
-        let matched = false;
-        state.data = [
-            ...state.data
-                .map((user) => {
-                    if (user.uuid === payload.uuid) {
-                        matched = true;
+    appendSubuser: (payload) =>
+        set((state) => {
+            let matched = false;
+            const updated = state.subusers.data.map((user: Subuser) => {
+                if (user.uuid === payload.uuid) {
+                    matched = true;
+                    return payload;
+                }
+                return user;
+            });
 
-                        return payload;
-                    }
+            return {
+                subusers: {
+                    ...state.subusers,
+                    data: matched ? updated : [...updated, payload],
+                },
+            };
+        }),
 
-                    return user;
-                })
-                .concat(matched ? [] : [payload]),
-        ];
-    }),
+    removeSubuser: (payload) =>
+        set((state) => ({
+            subusers: {
+                ...state.subusers,
+                data: state.subusers.data.filter((user: Subuser) => user.uuid !== payload),
+            },
+        })),
+});
 
-    removeSubuser: action((state, payload) => {
-        state.data = [...state.data.filter((user) => user.uuid !== payload)];
-    }),
-};
-
-export default subusers;
+export default createSubusersSlice;

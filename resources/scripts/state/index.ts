@@ -1,9 +1,10 @@
-import { createStore } from 'easy-peasy';
-import flashes, { FlashStore } from '@/state/flashes';
-import user, { UserStore } from '@/state/user';
-import permissions, { GloablPermissionsStore } from '@/state/permissions';
-import settings, { SettingsStore } from '@/state/settings';
-import progress, { ProgressStore } from '@/state/progress';
+import { createStore } from 'zustand/vanilla';
+import { useStore as useZustandStore } from 'zustand';
+import createFlashesSlice, { FlashStore } from '@/state/flashes';
+import createUserSlice, { UserStore } from '@/state/user';
+import createPermissionsSlice, { GloablPermissionsStore } from '@/state/permissions';
+import createSettingsSlice, { SettingsStore } from '@/state/settings';
+import createProgressSlice, { ProgressStore } from '@/state/progress';
 
 export interface ApplicationStore {
     permissions: GloablPermissionsStore;
@@ -13,12 +14,23 @@ export interface ApplicationStore {
     progress: ProgressStore;
 }
 
-const state: ApplicationStore = {
-    permissions,
-    flashes,
-    user,
-    settings,
-    progress,
+export const appStore = createStore<ApplicationStore>((set, get) => ({
+    permissions: createPermissionsSlice(set, get),
+    flashes: createFlashesSlice(set),
+    user: createUserSlice(set, get),
+    settings: createSettingsSlice(set),
+    progress: createProgressSlice(set),
+}));
+
+export const useAppStore = <T>(selector: (state: ApplicationStore) => T): T => {
+    return useZustandStore(appStore, selector);
 };
 
-export const store = createStore(state);
+// Easy-peasy store compatibility facade
+export const store = {
+    getState: () => appStore.getState(),
+    getActions: () => appStore.getState(),
+    subscribe: appStore.subscribe,
+};
+
+export default appStore;

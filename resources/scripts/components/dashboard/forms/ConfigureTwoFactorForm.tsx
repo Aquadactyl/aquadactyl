@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { Button } from '@/components/elements/button/index';
 import SetupTOTPDialog from '@/components/dashboard/forms/SetupTOTPDialog';

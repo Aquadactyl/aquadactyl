@@ -1,5 +1,3 @@
-import { action, Action } from 'easy-peasy';
-
 export interface SiteSettings {
     name: string;
     appUrl?: string;
@@ -22,17 +20,26 @@ export interface SiteSettings {
     };
 }
 
-export interface SettingsStore {
+export interface SettingsState {
     data?: SiteSettings;
-    setSettings: Action<SettingsStore, SiteSettings>;
 }
 
-const settings: SettingsStore = {
+export interface SettingsActions {
+    setSettings: (payload: SiteSettings) => void;
+}
+
+export type SettingsStore = SettingsState & SettingsActions;
+
+export const createSettingsSlice = (set: (fn: (state: any) => any) => void): SettingsStore => ({
     data: undefined,
 
-    setSettings: action((state, payload) => {
-        state.data = payload;
-    }),
-};
+    setSettings: (payload) =>
+        set((state) => ({
+            settings: {
+                ...state.settings,
+                data: payload,
+            },
+        })),
+});
 
-export default settings;
+export default createSettingsSlice;

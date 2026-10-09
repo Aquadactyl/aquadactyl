@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import rotateDatabasePassword from '@/api/server/databases/rotateDatabasePassword';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { ServerContext } from '@/state/server';
 import { ServerDatabase } from '@/api/server/databases/getServerDatabases';

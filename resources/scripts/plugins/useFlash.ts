@@ -1,4 +1,4 @@
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import { FlashStore } from '@/state/flashes';
 import { ApplicationStore } from '@/state';
 

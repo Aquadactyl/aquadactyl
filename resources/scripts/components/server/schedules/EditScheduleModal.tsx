@@ -6,7 +6,7 @@ import FormikSwitch from '@/components/elements/FormikSwitch';
 import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
 import { ServerContext } from '@/state/server';
 import { ApplicationStore } from '@/state';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { httpErrorToHuman } from '@/api/http';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';

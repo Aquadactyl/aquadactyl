@@ -1,31 +1,50 @@
-import { action, Action } from 'easy-peasy';
 import { ServerDatabase } from '@/api/server/databases/getServerDatabases';
 
-export interface ServerDatabaseStore {
+export interface ServerDatabaseState {
     data: ServerDatabase[];
-    setDatabases: Action<ServerDatabaseStore, ServerDatabase[]>;
-    appendDatabase: Action<ServerDatabaseStore, ServerDatabase>;
-    removeDatabase: Action<ServerDatabaseStore, string>;
 }
 
-const databases: ServerDatabaseStore = {
+export interface ServerDatabaseActions {
+    setDatabases: (payload: ServerDatabase[]) => void;
+    appendDatabase: (payload: ServerDatabase) => void;
+    removeDatabase: (payload: string) => void;
+}
+
+export type ServerDatabaseStore = ServerDatabaseState & ServerDatabaseActions;
+
+export const createDatabasesSlice = (set: (fn: (state: any) => any) => void): ServerDatabaseStore => ({
     data: [],
 
-    setDatabases: action((state, payload) => {
-        state.data = payload;
-    }),
+    setDatabases: (payload) =>
+        set((state) => ({
+            databases: {
+                ...state.databases,
+                data: payload,
+            },
+        })),
 
-    appendDatabase: action((state, payload) => {
-        if (state.data.find((database) => database.id === payload.id)) {
-            state.data = state.data.map((database) => (database.id === payload.id ? payload : database));
-        } else {
-            state.data = [...state.data, payload];
-        }
-    }),
+    appendDatabase: (payload) =>
+        set((state) => {
+            const exists = state.databases.data.some((db: ServerDatabase) => db.id === payload.id);
+            const updated = exists
+                ? state.databases.data.map((db: ServerDatabase) => (db.id === payload.id ? payload : db))
+                : [...state.databases.data, payload];
 
-    removeDatabase: action((state, payload) => {
-        state.data = [...state.data.filter((database) => database.id !== payload)];
-    }),
-};
+            return {
+                databases: {
+                    ...state.databases,
+                    data: updated,
+                },
+            };
+        }),
 
-export default databases;
+    removeDatabase: (payload) =>
+        set((state) => ({
+            databases: {
+                ...state.databases,
+                data: state.databases.data.filter((db: ServerDatabase) => db.id !== payload),
+            },
+        })),
+});
+
+export default createDatabasesSlice;

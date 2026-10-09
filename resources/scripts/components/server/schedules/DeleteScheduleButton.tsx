@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import deleteSchedule from '@/api/server/schedules/deleteSchedule';
 import { ServerContext } from '@/state/server';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/elements/button/index';

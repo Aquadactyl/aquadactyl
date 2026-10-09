@@ -11,7 +11,7 @@ import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
 import { useLocation } from 'react-router';
 import { ServerError } from '@/components/elements/ScreenBlock';
 import { httpErrorToHuman } from '@/api/http';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import SubNavigation from '@/components/elements/SubNavigation';
 import InstallListener from '@/components/server/InstallListener';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

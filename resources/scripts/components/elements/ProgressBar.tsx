@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { useStoreActions, useStoreState } from 'easy-peasy';
+import { useStoreActions, useStoreState } from '@/state/hooks';
 import { randomInt } from '@/helpers';
 import { CSSTransition } from 'react-transition-group';
 

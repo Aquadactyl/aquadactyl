@@ -11,3 +11,14 @@ if (!reactWithUseId.useId) {
         return id;
     };
 }
+
+// Polyfill useSyncExternalStore for React 16 compatibility (Zustand 5, TanStack Query)
+const reactWithSyncStore = React as typeof React & {
+    useSyncExternalStore?: typeof import('use-sync-external-store/shim').useSyncExternalStore;
+};
+
+if (!reactWithSyncStore.useSyncExternalStore) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { useSyncExternalStore } = require('use-sync-external-store/shim');
+    reactWithSyncStore.useSyncExternalStore = useSyncExternalStore;
+}

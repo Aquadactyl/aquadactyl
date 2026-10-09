@@ -3,7 +3,7 @@ import { Schedule } from '@/api/server/schedules/getServerSchedules';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { describeCron, formatScheduleDate } from './scheduleHelpers';
 

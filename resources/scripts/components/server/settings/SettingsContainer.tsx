@@ -1,7 +1,7 @@
 import React from 'react';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { ServerContext } from '@/state/server';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import RenameServerBox from '@/components/server/settings/RenameServerBox';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import Can from '@/components/elements/Can';

@@ -5,7 +5,7 @@ import { NotFound } from '@/components/elements/ScreenBlock';
 import TransitionRouter from '@/TransitionRouter';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import Spinner from '@/components/elements/Spinner';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 
 import routes from '@/routers/routes';
 import blueprintRoutes from './routes';

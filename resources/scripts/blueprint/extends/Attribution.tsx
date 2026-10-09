@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 
 export default () => {

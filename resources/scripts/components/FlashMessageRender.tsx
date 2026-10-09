@@ -1,6 +1,6 @@
 import React from 'react';
 import MessageBox from '@/components/MessageBox';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 
 type Props = Readonly<{
     byKey?: string;

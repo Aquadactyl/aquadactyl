@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { ArrowUpRight, LogOut, Server, Settings } from 'lucide-react';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
 import http from '@/api/http';

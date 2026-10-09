@@ -8,7 +8,7 @@ import Can from '@/components/elements/Can';
 import Spinner from '@/components/elements/Spinner';
 import { NotFound } from '@/components/elements/ScreenBlock';
 import { useLocation } from 'react-router';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { ServerContext } from '@/state/server';
 
 import routes from '@/routers/routes';

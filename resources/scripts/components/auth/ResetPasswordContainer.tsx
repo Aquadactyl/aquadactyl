@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import performPasswordReset from '@/api/auth/performPasswordReset';
 import { httpErrorToHuman } from '@/api/http';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { Formik, FormikHelpers } from 'formik';
 import { object, ref, string } from 'yup';

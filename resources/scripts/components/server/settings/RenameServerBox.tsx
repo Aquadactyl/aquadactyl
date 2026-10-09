@@ -2,7 +2,7 @@ import React from 'react';
 import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import renameServer from '@/api/server/renameServer';
 import Field from '@/components/elements/Field';
 import { object, string } from 'yup';

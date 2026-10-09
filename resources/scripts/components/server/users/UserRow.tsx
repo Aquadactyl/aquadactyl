@@ -6,7 +6,7 @@ import { faPencilAlt, faUnlockAlt, faUserLock } from '@fortawesome/free-solid-sv
 import RemoveSubuserButton from '@/components/server/users/RemoveSubuserButton';
 import EditSubuserModal from '@/components/server/users/EditSubuserModal';
 import Can from '@/components/elements/Can';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 
 interface Props {

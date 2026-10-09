@@ -1,33 +1,44 @@
-import { action, Action } from 'easy-peasy';
-
-export interface ProgressStore {
+export interface ProgressState {
     continuous: boolean;
     progress?: number;
-
-    startContinuous: Action<ProgressStore>;
-    setProgress: Action<ProgressStore, number | undefined>;
-    setComplete: Action<ProgressStore>;
 }
 
-const progress: ProgressStore = {
+export interface ProgressActions {
+    startContinuous: () => void;
+    setProgress: (payload: number | undefined) => void;
+    setComplete: () => void;
+}
+
+export type ProgressStore = ProgressState & ProgressActions;
+
+export const createProgressSlice = (set: (fn: (state: any) => any) => void): ProgressStore => ({
     continuous: false,
     progress: undefined,
 
-    startContinuous: action((state) => {
-        state.continuous = true;
-    }),
+    startContinuous: () =>
+        set((state) => ({
+            progress: {
+                ...state.progress,
+                continuous: true,
+            },
+        })),
 
-    setProgress: action((state, payload) => {
-        state.progress = payload;
-    }),
+    setProgress: (payload) =>
+        set((state) => ({
+            progress: {
+                ...state.progress,
+                progress: payload,
+            },
+        })),
 
-    setComplete: action((state) => {
-        if (state.progress) {
-            state.progress = 100;
-        }
+    setComplete: () =>
+        set((state) => ({
+            progress: {
+                ...state.progress,
+                progress: state.progress.progress ? 100 : undefined,
+                continuous: false,
+            },
+        })),
+});
 
-        state.continuous = false;
-    }),
-};
-
-export default progress;
+export default createProgressSlice;

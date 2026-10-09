@@ -7,7 +7,7 @@ import ServerRow from '@/components/dashboard/ServerRow';
 import Spinner from '@/components/elements/Spinner';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import useFlash from '@/plugins/useFlash';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { usePersistedState } from '@/plugins/usePersistedState';
 import { useTanStackQuery } from '@/lib/queryClient';
 import { PaginatedResult } from '@/api/http';

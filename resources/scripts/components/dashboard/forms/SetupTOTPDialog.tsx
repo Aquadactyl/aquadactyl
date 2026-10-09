@@ -11,7 +11,7 @@ import CopyOnClick from '@/components/elements/CopyOnClick';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import enableAccountTwoFactor from '@/api/account/enableAccountTwoFactor';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import { Actions, useStoreActions } from 'easy-peasy';
+import { Actions, useStoreActions } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import asDialog from '@/hoc/asDialog';
 import Label from '@/components/elements/Label';

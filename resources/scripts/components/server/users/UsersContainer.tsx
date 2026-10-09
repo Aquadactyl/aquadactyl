@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ServerContext } from '@/state/server';
-import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
+import { Actions, useStoreActions, useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import Spinner from '@/components/elements/Spinner';
 import AddSubuserButton from '@/components/server/users/AddSubuserButton';

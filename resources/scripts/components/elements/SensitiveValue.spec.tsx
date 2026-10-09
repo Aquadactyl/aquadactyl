@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { StoreProvider } from 'easy-peasy';
+import { StoreProvider } from '@/state/hooks';
 import { store } from '@/state';
 import SensitiveValue from './SensitiveValue';
 import { SiteSettings } from '@/state/settings';

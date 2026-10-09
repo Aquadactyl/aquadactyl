@@ -1,4 +1,3 @@
-import { Action, action, Thunk, thunk } from 'easy-peasy';
 import updateAccountEmail from '@/api/account/updateAccountEmail';
 
 export interface UserData {
@@ -14,29 +13,41 @@ export interface UserData {
     blurSensitiveData?: boolean;
 }
 
-export interface UserStore {
+export interface UserState {
     data?: UserData;
-    setUserData: Action<UserStore, UserData>;
-    updateUserData: Action<UserStore, Partial<UserData>>;
-    updateUserEmail: Thunk<UserStore, { email: string; password: string }, any, UserStore, Promise<void>>;
 }
 
-const user: UserStore = {
+export interface UserActions {
+    setUserData: (payload: UserData) => void;
+    updateUserData: (payload: Partial<UserData>) => void;
+    updateUserEmail: (payload: { email: string; password: string }) => Promise<void>;
+}
+
+export type UserStore = UserState & UserActions;
+
+export const createUserSlice = (set: (fn: (state: any) => any) => void, get: () => any): UserStore => ({
     data: undefined,
-    setUserData: action((state, payload) => {
-        state.data = payload;
-    }),
 
-    updateUserData: action((state, payload) => {
-        // @ts-expect-error limitation of Typescript, can't do much about that currently unfortunately.
-        state.data = { ...state.data, ...payload };
-    }),
+    setUserData: (payload) =>
+        set((state) => ({
+            user: {
+                ...state.user,
+                data: payload,
+            },
+        })),
 
-    updateUserEmail: thunk(async (actions, payload) => {
+    updateUserData: (payload) =>
+        set((state) => ({
+            user: {
+                ...state.user,
+                data: state.user.data ? { ...state.user.data, ...payload } : payload,
+            },
+        })),
+
+    updateUserEmail: async (payload) => {
         await updateAccountEmail(payload.email, payload.password);
+        get().user.updateUserData({ email: payload.email });
+    },
+});
 
-        actions.updateUserData({ email: payload.email });
-    }),
-};
-
-export default user;
+export default createUserSlice;

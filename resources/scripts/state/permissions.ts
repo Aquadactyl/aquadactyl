@@ -1,4 +1,3 @@
-import { action, Action, thunk, Thunk } from 'easy-peasy';
 import getSystemPermissions from '@/api/getSystemPermissions';
 
 export interface PanelPermissions {
@@ -8,24 +7,35 @@ export interface PanelPermissions {
     };
 }
 
-export interface GloablPermissionsStore {
+export interface PermissionsState {
     data: PanelPermissions;
-    setPermissions: Action<GloablPermissionsStore, PanelPermissions>;
-    getPermissions: Thunk<GloablPermissionsStore, void, Record<string, unknown>, any, Promise<void>>;
 }
 
-const permissions: GloablPermissionsStore = {
+export interface PermissionsActions {
+    setPermissions: (payload: PanelPermissions) => void;
+    getPermissions: () => Promise<void>;
+}
+
+export type GloablPermissionsStore = PermissionsState & PermissionsActions;
+
+export const createPermissionsSlice = (
+    set: (fn: (state: any) => any) => void,
+    get: () => any,
+): GloablPermissionsStore => ({
     data: {},
 
-    setPermissions: action((state, payload) => {
-        state.data = payload;
-    }),
+    setPermissions: (payload) =>
+        set((state) => ({
+            permissions: {
+                ...state.permissions,
+                data: payload,
+            },
+        })),
 
-    getPermissions: thunk(async (actions) => {
+    getPermissions: async () => {
         const permissions = await getSystemPermissions();
+        get().permissions.setPermissions(permissions);
+    },
+});
 
-        actions.setPermissions(permissions);
-    }),
-};
-
-export default permissions;
+export default createPermissionsSlice;

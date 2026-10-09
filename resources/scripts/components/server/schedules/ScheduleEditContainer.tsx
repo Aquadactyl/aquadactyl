@@ -16,7 +16,7 @@ import { Button } from '@/components/elements/button/index';
 import ScheduleTaskRow from '@/components/server/schedules/ScheduleTaskRow';
 import isEqual from 'react-fast-compare';
 import RunScheduleButton from '@/components/server/schedules/RunScheduleButton';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import { ApplicationStore } from '@/state';
 import { cronExpression, describeCron, formatScheduleDate } from './scheduleHelpers';
 

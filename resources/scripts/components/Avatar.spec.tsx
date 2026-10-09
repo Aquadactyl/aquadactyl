@@ -2,7 +2,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import Avatar from '@/components/Avatar';
 import { store } from '@/state';
-import { StoreProvider } from 'easy-peasy';
+import { StoreProvider } from '@/state/hooks';
 
 describe('Avatar', () => {
     afterEach(() => store.getActions().user.updateUserData({ avatarUrl: null }));

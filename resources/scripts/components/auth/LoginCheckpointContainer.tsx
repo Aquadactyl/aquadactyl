@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import loginCheckpoint from '@/api/auth/loginCheckpoint';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { ActionCreator } from 'easy-peasy';
+import { ActionCreator } from '@/state/hooks';
 import { StaticContext } from 'react-router';
 import { useFormikContext, withFormik } from 'formik';
 import useFlash from '@/plugins/useFlash';
@@ -18,7 +18,7 @@ interface Values {
 type OwnProps = RouteComponentProps<Record<string, string | undefined>, StaticContext, { token?: string }>;
 
 type Props = OwnProps & {
-    clearAndAddHttpError: ActionCreator<FlashStore['clearAndAddHttpError']['payload']>;
+    clearAndAddHttpError: FlashStore['clearAndAddHttpError'];
 };
 
 const LoginCheckpointContainer = () => {

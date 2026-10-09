@@ -1,7 +1,7 @@
 import Checkbox from '@/components/elements/Checkbox';
 import React from 'react';
 import classNames from 'classnames';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import Label from '@/components/elements/Label';
 
 const Container: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (

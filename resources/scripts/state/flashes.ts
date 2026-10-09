@@ -1,14 +1,5 @@
-import { Action, action } from 'easy-peasy';
 import { FlashMessageType } from '@/components/MessageBox';
 import { httpErrorToHuman } from '@/api/http';
-
-export interface FlashStore {
-    items: FlashMessage[];
-    addFlash: Action<FlashStore, FlashMessage>;
-    addError: Action<FlashStore, { message: string; key?: string }>;
-    clearAndAddHttpError: Action<FlashStore, { error?: Error | any | null; key?: string }>;
-    clearFlashes: Action<FlashStore, string | void>;
-}
 
 export interface FlashMessage {
     id?: string;
@@ -18,37 +9,73 @@ export interface FlashMessage {
     message: string;
 }
 
-const flashes: FlashStore = {
+export interface FlashState {
+    items: FlashMessage[];
+}
+
+export interface FlashActions {
+    addFlash: (payload: FlashMessage) => void;
+    addError: (payload: { message: string; key?: string }) => void;
+    clearAndAddHttpError: (payload: { error?: Error | any | null; key?: string }) => void;
+    clearFlashes: (key?: string | void) => void;
+}
+
+export type FlashStore = FlashState & FlashActions;
+
+export const createFlashesSlice = (set: (fn: (state: any) => any) => void): FlashStore => ({
     items: [],
 
-    addFlash: action((state, payload) => {
-        state.items.push(payload);
-    }),
+    addFlash: (payload) =>
+        set((state) => ({
+            flashes: {
+                ...state.flashes,
+                items: [...state.flashes.items, payload],
+            },
+        })),
 
-    addError: action((state, payload) => {
-        state.items.push({ type: 'error', title: 'Error', ...payload });
-    }),
+    addError: (payload) =>
+        set((state) => ({
+            flashes: {
+                ...state.flashes,
+                items: [...state.flashes.items, { type: 'error', title: 'Error', ...payload }],
+            },
+        })),
 
-    clearAndAddHttpError: action((state, payload) => {
-        if (!payload.error) {
-            state.items = [];
-        } else {
+    clearAndAddHttpError: (payload) =>
+        set((state) => {
+            if (!payload.error) {
+                return {
+                    flashes: {
+                        ...state.flashes,
+                        items: [],
+                    },
+                };
+            }
+
             console.error(payload.error);
 
-            state.items = [
-                {
-                    type: 'error',
-                    title: 'Error',
-                    key: payload.key,
-                    message: httpErrorToHuman(payload.error),
+            return {
+                flashes: {
+                    ...state.flashes,
+                    items: [
+                        {
+                            type: 'error',
+                            title: 'Error',
+                            key: payload.key,
+                            message: httpErrorToHuman(payload.error),
+                        },
+                    ],
                 },
-            ];
-        }
-    }),
+            };
+        }),
 
-    clearFlashes: action((state, payload) => {
-        state.items = payload ? state.items.filter((flashes) => flashes.key !== payload) : [];
-    }),
-};
+    clearFlashes: (payload) =>
+        set((state) => ({
+            flashes: {
+                ...state.flashes,
+                items: payload ? state.flashes.items.filter((item: FlashMessage) => item.key !== payload) : [],
+            },
+        })),
+});
 
-export default flashes;
+export default createFlashesSlice;

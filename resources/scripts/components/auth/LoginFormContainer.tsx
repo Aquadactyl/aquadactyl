@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect } from 'react';
 import { Form } from 'formik';
-import { useStoreState } from 'easy-peasy';
+import { useStoreState } from '@/state/hooks';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import PanelBranding from '@/components/elements/PanelBranding';
 

@@ -2,7 +2,7 @@ import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect, useRef, useState } from 'react';
 import Modal, { RequiredModalProps } from '@/components/elements/Modal';
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions, useStoreState } from 'easy-peasy';
+import { Actions, useStoreActions, useStoreState } from '@/state/hooks';
 import { object, string } from 'yup';
 import debounce from 'debounce';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
