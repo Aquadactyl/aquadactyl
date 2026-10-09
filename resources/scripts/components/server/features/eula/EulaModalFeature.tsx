@@ -69,7 +69,7 @@ const EulaModalFeature = () => {
                 By pressing {'"I Accept"'} below you are indicating your agreement to the&nbsp;
                 <a
                     target={'_blank'}
-                    className={'text-primary-300 underline transition-colors duration-150 hover:text-primary-400'}
+                    className={'text-primary-300 hover:text-primary-400 underline transition-colors duration-150'}
                     rel={'noreferrer noopener'}
                     href='https://www.minecraft.net/eula'
                 >
@@ -81,7 +81,7 @@ const EulaModalFeature = () => {
                 <Button isSecondary onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                     Cancel
                 </Button>
-                <Button onClick={onAcceptEULA} className={'mt-4 w-full sm:ml-4 sm:mt-0 sm:w-auto'}>
+                <Button onClick={onAcceptEULA} className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}>
                     I Accept
                 </Button>
             </div>

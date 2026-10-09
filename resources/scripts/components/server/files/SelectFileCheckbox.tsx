@@ -7,7 +7,7 @@ export const FileActionCheckbox: React.FC<React.ComponentProps<typeof Input>> = 
     <Input
         {...props}
         className={classNames(
-            '!border-neutral-500 !bg-transparent [&&:not(:checked)]:hover:!border-neutral-300',
+            'border-neutral-500! bg-transparent! [&&:not(:checked)]:hover:border-neutral-300!',
             className,
         )}
     />

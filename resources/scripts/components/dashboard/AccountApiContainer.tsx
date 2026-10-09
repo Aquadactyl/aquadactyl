@@ -53,7 +53,7 @@ export default () => {
                 <ContentBox title={'Create API Key'} className={'w-full flex-none md:w-1/2'}>
                     <CreateApiKeyForm onKeyCreated={(key) => setKeys((s) => [...s!, key])} />
                 </ContentBox>
-                <ContentBox title={'API Keys'} className={'mt-8 flex-1 overflow-hidden md:ml-8 md:mt-0'}>
+                <ContentBox title={'API Keys'} className={'mt-8 flex-1 overflow-hidden md:mt-0 md:ml-8'}>
                     <SpinnerOverlay visible={loading} />
                     <Dialog.Confirm
                         title={'Delete API Key'}
@@ -76,8 +76,8 @@ export default () => {
                             >
                                 <FontAwesomeIcon icon={faKey} className={'text-neutral-300'} />
                                 <div className={'ml-4 flex-1 overflow-hidden'}>
-                                    <p className={'break-words text-sm'}>{key.description}</p>
-                                    <p className={'text-2xs uppercase text-neutral-300'}>
+                                    <p className={'text-sm wrap-break-word'}>{key.description}</p>
+                                    <p className={'text-2xs text-neutral-300 uppercase'}>
                                         Last used:&nbsp;
                                         {key.lastUsedAt ? format(key.lastUsedAt, 'MMM do, yyyy HH:mm') : 'Never'}
                                     </p>
@@ -88,7 +88,7 @@ export default () => {
                                     </code>
                                 </p>
                                 <button
-                                    className={'ml-4 p-2 text-sm cursor-pointer'}
+                                    className={'ml-4 cursor-pointer p-2 text-sm'}
                                     onClick={() => setDeleteIdentifier(key.identifier)}
                                 >
                                     <FontAwesomeIcon

@@ -21,7 +21,7 @@ const ConfirmationModal: React.FC<Props> = ({ title, children, buttonText, onCon
                 <Button isSecondary onClick={() => dismiss()} className={'w-full border-transparent sm:w-auto'}>
                     Cancel
                 </Button>
-                <Button color={'red'} className={'mt-4 w-full sm:ml-4 sm:mt-0 sm:w-auto'} onClick={() => onConfirmed()}>
+                <Button color={'red'} className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'} onClick={() => onConfirmed()}>
                     {buttonText}
                 </Button>
             </div>

@@ -29,7 +29,7 @@ export type ScreenBlockProps = PropsWithBack | PropsWithRetry;
 
 const ActionButton: React.FC<React.ComponentProps<typeof Button>> = ({ className, ...props }) => (
     <Button
-        className={classNames('flex h-8 w-8 items-center justify-center !rounded-full !p-0', className)}
+        className={classNames('flex h-8 w-8 items-center justify-center rounded-full! p-0!', className)}
         {...props}
     />
 );
@@ -43,7 +43,7 @@ const ScreenBlock = ({ title, image, message, onBack, onRetry }: ScreenBlockProp
                 }
             >
                 {(typeof onBack === 'function' || typeof onRetry === 'function') && (
-                    <div className={'absolute left-0 top-0 ml-4 mt-4'}>
+                    <div className={'absolute top-0 left-0 mt-4 ml-4'}>
                         <ActionButton
                             onClick={() => (onRetry ? onRetry() : onBack ? onBack() : null)}
                             className={onRetry ? 'hover:animate-spin' : undefined}

@@ -44,7 +44,7 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
     >
         <SelectFileCheckbox name={file.name} />
         <Clickable file={file}>
-            <div className={'ml-6 mr-4 flex-none pl-3 text-lg text-neutral-400'}>
+            <div className={'mr-4 ml-6 flex-none pl-3 text-lg text-neutral-400'}>
                 {file.isFile ? (
                     <FontAwesomeIcon
                         icon={file.isSymlink ? faFileImport : file.isArchiveType() ? faFileArchive : faFileAlt}

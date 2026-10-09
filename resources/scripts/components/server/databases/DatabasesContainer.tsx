@@ -65,7 +65,7 @@ export default () => {
                         <Can action={'database.create'}>
                             <div className={'mt-6 flex items-center justify-end'}>
                                 {databaseLimit > 0 && databases.length > 0 && (
-                                    <p className={'mb-4 text-sm text-neutral-300 sm:mb-0 sm:mr-6'}>
+                                    <p className={'mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0'}>
                                         {databases.length} of {databaseLimit} databases have been allocated to this
                                         server.
                                     </p>

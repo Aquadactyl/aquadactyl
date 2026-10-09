@@ -65,7 +65,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
             <div
                 data-sensitive
                 tabIndex={0}
-                className={'mx-auto mt-6 flex h-56 w-56 items-center justify-center bg-gray-50 p-2 shadow'}
+                className={'mx-auto mt-6 flex h-56 w-56 items-center justify-center bg-gray-50 p-2 shadow-sm'}
             >
                 {!token ? (
                     <Spinner />

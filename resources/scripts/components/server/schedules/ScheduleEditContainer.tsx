@@ -74,15 +74,15 @@ export default () => {
                 <>
                     <BeforeEdit />
                     <Link
-                        className={'mb-4 inline-block text-sm text-primary-300 hover:underline'}
+                        className={'text-primary-300 mb-4 inline-block text-sm hover:underline'}
                         to={'/server/' + id + '/schedules'}
                     >
                         &larr; All schedules
                     </Link>
-                    <div className={'rounded bg-neutral-900 p-4 shadow sm:p-6'}>
+                    <div className={'rounded bg-neutral-900 p-4 shadow-sm sm:p-6'}>
                         <div className={'flex flex-wrap items-start justify-between gap-4'}>
                             <div className={'min-w-0 flex-1'}>
-                                <h3 className={'break-words text-2xl text-neutral-100'}>{schedule.name}</h3>
+                                <h3 className={'text-2xl wrap-break-word text-neutral-100'}>{schedule.name}</h3>
                                 <p className={'mt-2 text-neutral-200'}>{describeCron(schedule.cron)}</p>
                                 <p className={'mt-1 text-sm text-neutral-400'}>Panel timezone: {timezone}</p>
                             </div>
@@ -168,7 +168,7 @@ export default () => {
                             ) : (
                                 <div className={'p-6 text-center'}>
                                     <h4 className={'text-lg'}>Add the first step</h4>
-                                    <p className={'mb-5 mt-2 text-sm text-neutral-300'}>
+                                    <p className={'mt-2 mb-5 text-sm text-neutral-300'}>
                                         The timing is saved. Choose a restart, a backup, or a console command to give
                                         this schedule something to do.
                                     </p>

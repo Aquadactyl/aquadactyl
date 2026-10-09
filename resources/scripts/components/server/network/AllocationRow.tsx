@@ -24,7 +24,7 @@ import Code from '@/components/elements/Code';
 const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (
     <label
         className={classNames(
-            'mt-1 block select-none px-1 text-xs uppercase text-neutral-400 transition-colors duration-150',
+            'mt-1 block px-1 text-xs text-neutral-400 uppercase transition-colors duration-150 select-none',
             className,
         )}
         {...props}
@@ -68,7 +68,7 @@ const AllocationRow = ({ allocation }: Props) => {
     return (
         <GreyRowBox $hoverable={false} className={'mt-2 flex-wrap md:flex-nowrap'}>
             <div className={'flex w-full items-center md:w-auto'}>
-                <div className={'pl-4 pr-6 text-neutral-400'}>
+                <div className={'pr-6 pl-4 text-neutral-400'}>
                     <FontAwesomeIcon icon={faNetworkWired} />
                 </div>
                 <div className={'mr-4 flex-1 md:w-40'}>
@@ -104,7 +104,7 @@ const AllocationRow = ({ allocation }: Props) => {
             </div>
             <div className={'mt-4 flex w-full justify-end space-x-4 md:mt-0 md:w-48'}>
                 {allocation.isDefault ? (
-                    <Button size={Button.Sizes.Small} className={'!bg-blue-600 !text-gray-50'} disabled>
+                    <Button size={Button.Sizes.Small} className={'bg-blue-600! text-gray-50!'} disabled>
                         Primary
                     </Button>
                 ) : (

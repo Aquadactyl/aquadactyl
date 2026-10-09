@@ -93,7 +93,7 @@ export default ({ ...props }: Props) => {
                                     to={`/server/${server.id}`}
                                     onClick={() => props.onDismissed()}
                                     className={
-                                        'flex items-center rounded border-l-4 border-neutral-900 bg-neutral-900 p-4 no-underline transition-all duration-150 hover:border-cyan-500 hover:shadow [&:not(:last-of-type)]:mb-2'
+                                        'flex items-center rounded border-l-4 border-neutral-900 bg-neutral-900 p-4 no-underline transition-all duration-150 not-last-of-type:mb-2 hover:border-cyan-500 hover:shadow-sm'
                                     }
                                 >
                                     <div className={'mr-4 flex-1'}>

@@ -13,7 +13,7 @@ export default ({ type, className, children }: AlertProps) => {
             className={
                 'UiAlert ' +
                 classNames(
-                    'flex items-center rounded-md border-l-8 px-4 py-3 text-gray-50 shadow',
+                    'flex items-center rounded-md border-l-8 px-4 py-3 text-gray-50 shadow-sm',
                     {
                         ['border-red-500 bg-red-500/25']: type === 'danger',
                         ['border-blue-500 bg-blue-500/25']: type === 'info',

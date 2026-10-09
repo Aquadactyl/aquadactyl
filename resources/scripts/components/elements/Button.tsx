@@ -16,7 +16,7 @@ const getButtonClass = ({
     className,
 }: Omit<Props, 'isLoading'> & { className?: string }): string => {
     return classNames(
-        'relative inline-block rounded border text-sm font-medium transition-all duration-150 cursor-pointer disabled:cursor-default disabled:opacity-[0.55]',
+        'relative inline-block cursor-pointer rounded border text-sm font-medium transition-all duration-150 disabled:cursor-default disabled:opacity-[0.55]',
         size === 'xsmall' && 'px-2 py-1 text-xs',
         (!size || size === 'small') && 'px-4 py-2',
         size === 'large' && 'p-4 text-sm',
@@ -71,7 +71,7 @@ type ComponentProps = Omit<JSX.IntrinsicElements['button'], 'ref' | keyof Props>
 const Button: React.FC<ComponentProps> = ({ children, isLoading, ...props }) => (
     <ButtonStyle {...props}>
         {isLoading && (
-            <div className={'absolute left-0 top-0 flex h-full w-full items-center justify-center'}>
+            <div className={'absolute top-0 left-0 flex h-full w-full items-center justify-center'}>
                 <Spinner size={'small'} />
             </div>
         )}

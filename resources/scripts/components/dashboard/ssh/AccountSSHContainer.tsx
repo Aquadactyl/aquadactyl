@@ -36,7 +36,7 @@ export default () => {
                 <ContentBox title={'Add SSH Key'} className={'w-full flex-none md:w-1/2'}>
                     <CreateSSHKeyForm />
                 </ContentBox>
-                <ContentBox title={'SSH Keys'} className={'mt-8 flex-1 overflow-hidden md:ml-8 md:mt-0'}>
+                <ContentBox title={'SSH Keys'} className={'mt-8 flex-1 overflow-hidden md:mt-0 md:ml-8'}>
                     <SpinnerOverlay visible={!data && isValidating} />
                     {!data || !data.length ? (
                         <p className={'text-center text-sm'}>
@@ -53,11 +53,11 @@ export default () => {
                             >
                                 <FontAwesomeIcon icon={faKey} className={'text-neutral-300'} />
                                 <div className={'flex-1'}>
-                                    <p className={'break-words text-sm font-medium'}>{key.name}</p>
+                                    <p className={'text-sm font-medium wrap-break-word'}>{key.name}</p>
                                     <p className={'mt-1 truncate font-mono text-xs'}>
                                         <SensitiveValue>SHA256:{key.fingerprint}</SensitiveValue>
                                     </p>
-                                    <p className={'mt-1 text-xs uppercase text-neutral-300'}>
+                                    <p className={'mt-1 text-xs text-neutral-300 uppercase'}>
                                         Added on:&nbsp;
                                         {format(key.createdAt, 'MMM do, yyyy HH:mm')}
                                     </p>

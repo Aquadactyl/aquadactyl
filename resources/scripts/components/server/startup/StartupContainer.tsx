@@ -93,7 +93,7 @@ const StartupContainer = () => {
                         <p className={'rounded bg-neutral-900 px-4 py-2 font-mono'}>{data.invocation}</p>
                     </div>
                 </TitledGreyBox>
-                <TitledGreyBox title={'Docker Image'} className={'mt-8 flex-1 md:ml-10 md:mt-0 lg:w-1/3 lg:flex-none'}>
+                <TitledGreyBox title={'Docker Image'} className={'mt-8 flex-1 md:mt-0 md:ml-10 lg:w-1/3 lg:flex-none'}>
                     {Object.keys(data.dockerImages).length > 1 && !isCustomImage ? (
                         <>
                             <InputSpinner visible={loading}>
@@ -127,7 +127,7 @@ const StartupContainer = () => {
                     )}
                 </TitledGreyBox>
             </div>
-            <h3 className={'mb-2 mt-8 text-2xl'}>Variables</h3>
+            <h3 className={'mt-8 mb-2 text-2xl'}>Variables</h3>
             <div className={'grid gap-8 md:grid-cols-2'}>
                 {data.variables.map((variable) => (
                     <VariableBox key={variable.envVariable} variable={variable} />

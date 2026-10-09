@@ -66,7 +66,7 @@ const NetworkContainer = () => {
                         <Can action={'allocation.create'}>
                             <SpinnerOverlay visible={loading} />
                             <div className={'mt-6 items-center justify-end sm:flex'}>
-                                <p className={'mb-4 text-sm text-neutral-300 sm:mb-0 sm:mr-6'}>
+                                <p className={'mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0'}>
                                     You are currently using {data.length} of {allocationLimit} allowed allocations for
                                     this server.
                                 </p>

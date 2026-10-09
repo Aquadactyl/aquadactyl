@@ -14,7 +14,7 @@ const SpinnerOverlay: React.FC<Props> = ({ size, fixed, visible, backgroundOpaci
     <Fade timeout={150} in={visible} unmountOnExit>
         <div
             className={classNames(
-                'left-0 top-0 z-40 flex h-full w-full flex-col items-center justify-center rounded',
+                'top-0 left-0 z-40 flex h-full w-full flex-col items-center justify-center rounded',
                 !fixed ? 'absolute' : 'fixed',
             )}
             style={{ background: `rgba(0, 0, 0, ${backgroundOpacity || 0.45})` }}

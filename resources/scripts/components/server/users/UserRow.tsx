@@ -42,13 +42,13 @@ export default ({ subuser }: Props) => {
                     />
                     &nbsp;
                 </p>
-                <p className={'hidden text-2xs uppercase text-neutral-500 md:block'}>2FA Enabled</p>
+                <p className={'text-2xs hidden text-neutral-500 uppercase md:block'}>2FA Enabled</p>
             </div>
             <div className={'ml-4 hidden md:block'}>
                 <p className={'text-center font-medium'}>
                     {subuser.permissions.filter((permission) => permission !== 'websocket.connect').length}
                 </p>
-                <p className={'text-2xs uppercase text-neutral-500'}>Permissions</p>
+                <p className={'text-2xs text-neutral-500 uppercase'}>Permissions</p>
             </div>
             {subuser.uuid !== uuid && (
                 <>
@@ -57,7 +57,7 @@ export default ({ subuser }: Props) => {
                             type={'button'}
                             aria-label={'Edit subuser'}
                             className={
-                                'mx-4 block p-1 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 cursor-pointer md:p-2'
+                                'mx-4 block cursor-pointer p-1 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 md:p-2'
                             }
                             onClick={() => setVisible(true)}
                         >

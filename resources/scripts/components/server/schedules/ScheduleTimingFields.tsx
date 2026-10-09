@@ -153,7 +153,7 @@ export default ({ timezone }: { timezone: string }) => {
             {values.frequency !== 'custom' && (
                 <button
                     type={'button'}
-                    className={'text-sm text-primary-300 underline hover:text-primary-200 cursor-pointer'}
+                    className={'text-primary-300 hover:text-primary-200 cursor-pointer text-sm underline'}
                     onClick={() => {
                         try {
                             void setValues({ ...values, ...cronFromTiming(values, values), frequency: 'custom' });

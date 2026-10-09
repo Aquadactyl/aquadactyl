@@ -83,7 +83,7 @@ const ProfilePictureForm = () => {
 
     return (
         <div className={'flex flex-col items-start gap-6 sm:flex-row sm:items-center'}>
-            <div className={'flex-shrink-0'}>
+            <div className={'shrink-0'}>
                 {preview && preview.startsWith('blob:') ? (
                     <img
                         src={encodeURI(preview)}

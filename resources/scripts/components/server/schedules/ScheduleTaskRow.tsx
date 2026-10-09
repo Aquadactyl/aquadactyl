@@ -97,11 +97,11 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                 {task.payload && task.action !== 'power' && (
                     <div className={'mt-2 md:ml-6'}>
                         {task.action === 'backup' && (
-                            <p className={'mb-1 text-xs uppercase text-neutral-400'}>Ignoring files & folders:</p>
+                            <p className={'mb-1 text-xs text-neutral-400 uppercase'}>Ignoring files & folders:</p>
                         )}
                         <div
                             className={
-                                'inline-block w-auto whitespace-pre-wrap break-all rounded bg-neutral-800 px-2 py-1 font-mono text-sm'
+                                'inline-block w-auto rounded bg-neutral-800 px-2 py-1 font-mono text-sm break-all whitespace-pre-wrap'
                             }
                         >
                             {task.payload}
@@ -109,7 +109,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                     </div>
                 )}
             </div>
-            <div className={'mt-3 flex w-full flex-wrap items-center gap-y-2 sm:ml-4 sm:mt-0 sm:w-auto'}>
+            <div className={'mt-3 flex w-full flex-wrap items-center gap-y-2 sm:mt-0 sm:ml-4 sm:w-auto'}>
                 {task.continueOnFailure && (
                     <div className={'mr-6'}>
                         <div
@@ -125,7 +125,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                         type={'button'}
                         aria-label={'Edit scheduled task'}
                         className={
-                            'ml-auto mr-4 block p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 cursor-pointer sm:ml-0'
+                            'mr-4 ml-auto block cursor-pointer p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 sm:ml-0'
                         }
                         onClick={() => setIsEditing(true)}
                     >
@@ -137,7 +137,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                         type={'button'}
                         aria-label={'Delete scheduled task'}
                         className={
-                            'block p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-red-600 cursor-pointer'
+                            'block cursor-pointer p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-red-600'
                         }
                         onClick={() => setVisible(true)}
                     >

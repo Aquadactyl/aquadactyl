@@ -66,13 +66,13 @@ export default ({ backup, className }: Props) => {
                         {backup.completedAt !== null && !backup.isSuccessful && (
                             <span
                                 className={
-                                    'mr-2 rounded-full border border-red-600 bg-red-500 px-2 py-px text-xs uppercase text-white'
+                                    'mr-2 rounded-full border border-red-600 bg-red-500 px-2 py-px text-xs text-white uppercase'
                                 }
                             >
                                 Failed
                             </span>
                         )}
-                        <p className={'truncate break-words'}>{backup.name}</p>
+                        <p className={'truncate wrap-break-word'}>{backup.name}</p>
                         {backup.completedAt !== null && backup.isSuccessful && (
                             <span className={'ml-3 hidden text-xs font-extralight text-neutral-300 sm:inline'}>
                                 {bytesToString(backup.bytes)}
@@ -82,14 +82,14 @@ export default ({ backup, className }: Props) => {
                     <p className={'mt-1 truncate font-mono text-xs text-neutral-400 md:mt-0'}>{backup.checksum}</p>
                 </div>
             </div>
-            <div className={'mt-4 flex-1 md:ml-8 md:mt-0 md:w-48 md:flex-none md:text-center'}>
+            <div className={'mt-4 flex-1 md:mt-0 md:ml-8 md:w-48 md:flex-none md:text-center'}>
                 <p title={format(backup.createdAt, 'EEE, MMMM do, yyyy HH:mm:ss')} className={'text-sm'}>
                     {formatDistanceToNow(backup.createdAt, { includeSeconds: true, addSuffix: true })}
                 </p>
-                <p className={'mt-1 text-2xs uppercase text-neutral-500'}>Created</p>
+                <p className={'text-2xs mt-1 text-neutral-500 uppercase'}>Created</p>
             </div>
             <Can action={['backup.download', 'backup.restore', 'backup.delete']} matchAny>
-                <div className={'ml-6 mt-4 md:mt-0'} style={{ marginRight: '-0.5rem' }}>
+                <div className={'mt-4 ml-6 md:mt-0'} style={{ marginRight: '-0.5rem' }}>
                     {!backup.completedAt ? (
                         <div className={'invisible p-2'}>
                             <FontAwesomeIcon icon={faEllipsisH} />

@@ -1,14 +1,16 @@
+@reference "../../../assets/tailwind.css";
+
 .container {
     @apply flex min-h-full items-center justify-center p-4 text-center;
 }
 
 .panel {
     @apply relative mx-auto w-full max-w-xl rounded-lg border border-gray-600 bg-gray-700 text-left shadow-lg;
-    @apply ring-4 ring-gray-800 ring-opacity-80;
+    @apply ring-4 ring-gray-800/80;
 }
 
 .title {
-    @apply mb-2 pr-4 font-header text-xl font-medium text-gray-50;
+    @apply font-header mb-2 pr-4 text-xl font-medium text-gray-50;
 }
 
 .close_icon {

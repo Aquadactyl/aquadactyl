@@ -29,8 +29,8 @@ export default ({ title, copyOnClick, icon, color, className, children }: StatBl
                     />
                 </div>
                 <div className={'flex w-full flex-col justify-center overflow-hidden'}>
-                    <p className={'font-header text-xs font-medium leading-tight text-gray-200 md:text-sm'}>{title}</p>
-                    <div className={'h-7 w-full truncate text-sm font-semibold leading-7 text-gray-50 sm:text-base'}>
+                    <p className={'font-header text-xs leading-tight font-medium text-gray-200 md:text-sm'}>{title}</p>
+                    <div className={'h-7 w-full truncate text-sm leading-7 font-semibold text-gray-50 sm:text-base'}>
                         {children}
                     </div>
                 </div>

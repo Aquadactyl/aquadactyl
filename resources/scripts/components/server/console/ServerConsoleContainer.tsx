@@ -39,10 +39,10 @@ const ServerConsoleContainer = () => {
             <BeforeContent />
             <div className={'mb-4 grid grid-cols-4 gap-4'}>
                 <div className={'col-span-4 pr-4 sm:col-span-2 lg:col-span-3'}>
-                    <h1 className={'line-clamp-1 font-header text-2xl font-medium leading-relaxed text-gray-50'}>
+                    <h1 className={'font-header line-clamp-1 text-2xl leading-relaxed font-medium text-gray-50'}>
                         {name}
                     </h1>
-                    <p className={'mb-1 break-all font-mono text-xs text-gray-400'} title={'Server UUID'}>
+                    <p className={'mb-1 font-mono text-xs break-all text-gray-400'} title={'Server UUID'}>
                         {uuid}
                     </p>
                     <p className={'line-clamp-2 text-sm text-gray-400'}>{description}</p>
@@ -59,7 +59,7 @@ const ServerConsoleContainer = () => {
                         <Console />
                     </Spinner.Suspense>
                 </div>
-                <ServerDetailsBlock className={'order-last col-span-4 lg:order-none lg:col-span-1'} />
+                <ServerDetailsBlock className={'order-last col-span-4 lg:order-0 lg:col-span-1'} />
             </div>
             <div className={'grid grid-cols-1 gap-2 sm:gap-4 md:grid-cols-3'}>
                 <Spinner.Suspense>

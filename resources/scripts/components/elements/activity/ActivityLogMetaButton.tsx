@@ -15,7 +15,7 @@ export default ({ meta }: { meta: Record<string, unknown> }) => {
                     data-sensitive
                     tabIndex={0}
                     className={
-                        'overflow-x-scroll whitespace-pre-wrap rounded bg-gray-900 p-2 font-mono text-sm leading-relaxed'
+                        'overflow-x-scroll rounded bg-gray-900 p-2 font-mono text-sm leading-relaxed whitespace-pre-wrap'
                     }
                 >
                     {JSON.stringify(meta, null, 2)}

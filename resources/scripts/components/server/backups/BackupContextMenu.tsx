@@ -139,11 +139,11 @@ export default ({ backup }: Props) => {
                     Your server will be stopped. You will not be able to control the power state, access the file
                     manager, or create additional backups until completed.
                 </p>
-                <p className={'-mb-2 mt-4 rounded bg-gray-700 p-3'}>
+                <p className={'mt-4 -mb-2 rounded bg-gray-700 p-3'}>
                     <label htmlFor={'restore_truncate'} className={'flex cursor-pointer items-center text-base'}>
                         <Input
                             type={'checkbox'}
-                            className={'text-red-500! w-5! h-5! mr-2'}
+                            className={'mr-2 h-5! w-5! text-red-500!'}
                             id={'restore_truncate'}
                             value={'true'}
                             checked={truncate}
@@ -168,7 +168,9 @@ export default ({ backup }: Props) => {
                     renderToggle={(onClick) => (
                         <button
                             onClick={onClick}
-                            className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100 cursor-pointer'}
+                            className={
+                                'cursor-pointer p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'
+                            }
                         >
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </button>
@@ -211,7 +213,7 @@ export default ({ backup }: Props) => {
             ) : (
                 <button
                     onClick={() => setModal('delete')}
-                    className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100 cursor-pointer'}
+                    className={'cursor-pointer p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'}
                 >
                     <FontAwesomeIcon icon={faTrashAlt} />
                 </button>

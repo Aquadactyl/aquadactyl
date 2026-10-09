@@ -15,7 +15,7 @@ export default ({ schedule }: { schedule: Schedule }) => {
                 <FontAwesomeIcon icon={faCalendarAlt} fixedWidth />
             </div>
             <div className={'min-w-0 flex-1 md:ml-4'}>
-                <p className={'break-words font-medium'}>{schedule.name}</p>
+                <p className={'font-medium wrap-break-word'}>{schedule.name}</p>
                 <p className={'mt-1 text-sm text-neutral-200'}>
                     {describeCron(schedule.cron)} · {timezone}
                 </p>

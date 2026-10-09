@@ -7,7 +7,7 @@ import Label from '@/components/elements/Label';
 const Container: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (
     <label
         className={classNames(
-            'flex items-center rounded border border-transparent transition-colors duration-75 [text-transform:none] md:p-2 [&:not(:first-of-type)]:mt-4 [&:not(:first-of-type)]:sm:mt-2',
+            'flex items-center rounded border border-transparent normal-case transition-colors duration-75 not-first-of-type:mt-4 sm:not-first-of-type:mt-2 md:p-2',
             '[&:not(.disabled)]:cursor-pointer [&:not(.disabled)]:hover:border-neutral-500 [&:not(.disabled)]:hover:bg-neutral-800',
             '[&.disabled]:opacity-50 [&.disabled_input[type=checkbox]:not(:checked)]:border-0',
             className,

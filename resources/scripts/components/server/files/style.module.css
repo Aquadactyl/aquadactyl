@@ -1,3 +1,5 @@
+@reference "../../../assets/tailwind.css";
+
 .manager_actions {
     @apply mb-4 grid w-full grid-cols-2 gap-4 sm:grid-cols-3;
 
@@ -5,7 +7,7 @@
         @apply w-full first:col-span-2 sm:first:col-span-1;
     }
 
-    @screen md {
+    @variant md {
         @apply mb-0 flex flex-1 justify-end;
 
         & button {
@@ -19,7 +21,7 @@
     @apply hover:bg-neutral-600 hover:text-neutral-100;
 
     & > .details {
-        @apply flex flex-1 items-center overflow-hidden truncate px-4 py-2 text-neutral-300 no-underline;
+        @apply flex flex-1 items-center truncate overflow-hidden px-4 py-2 text-neutral-300 no-underline;
 
         &:not(a) {
             @apply cursor-default;

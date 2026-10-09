@@ -119,11 +119,11 @@ export default ({ className }: WithClassname) => {
                         <div className={'pointer-events-none flex w-full items-center justify-center'}>
                             <div
                                 className={
-                                    'mx-10 flex w-full max-w-sm items-center space-x-4 rounded bg-black p-6 ring-4 ring-blue-200 ring-opacity-60'
+                                    'mx-10 flex w-full max-w-sm items-center space-x-4 rounded bg-black p-6 ring-4 ring-blue-200/60'
                                 }
                             >
-                                <CloudUpload className={'h-10 w-10 flex-shrink-0'} />
-                                <p className={'flex-1 text-center font-header text-lg text-neutral-100'}>
+                                <CloudUpload className={'h-10 w-10 shrink-0'} />
+                                <p className={'font-header flex-1 text-center text-lg text-neutral-100'}>
                                     Drag and drop files to upload.
                                 </p>
                             </div>

@@ -99,7 +99,7 @@ const JavaVersionModalFeature = () => {
                     </InputSpinner>
                 </div>
             </Can>
-            <div className={'mt-8 flex flex-col justify-end space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0'}>
+            <div className={'mt-8 flex flex-col justify-end space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4'}>
                 <Button isSecondary onClick={() => setVisible(false)} className={'w-full sm:w-auto'}>
                     Cancel
                 </Button>

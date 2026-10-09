@@ -160,13 +160,13 @@ export default ({ database, className }: Props) => {
                             <SensitiveValue>{database.connectionString}</SensitiveValue>
                         </p>
                     </CopyOnClick>
-                    <p className={'mt-1 select-none text-2xs uppercase text-neutral-500'}>Endpoint</p>
+                    <p className={'text-2xs mt-1 text-neutral-500 uppercase select-none'}>Endpoint</p>
                 </div>
                 <div className={'ml-8 hidden text-center md:block'}>
                     <p className={'text-sm'}>
                         <SensitiveValue>{database.allowConnectionsFrom}</SensitiveValue>
                     </p>
-                    <p className={'mt-1 select-none text-2xs uppercase text-neutral-500'}>Connections from</p>
+                    <p className={'text-2xs mt-1 text-neutral-500 uppercase select-none'}>Connections from</p>
                 </div>
                 <div className={'ml-8 hidden text-center md:block'}>
                     <CopyOnClick text={database.username}>
@@ -174,7 +174,7 @@ export default ({ database, className }: Props) => {
                             <SensitiveValue>{database.username}</SensitiveValue>
                         </p>
                     </CopyOnClick>
-                    <p className={'mt-1 select-none text-2xs uppercase text-neutral-500'}>Username</p>
+                    <p className={'text-2xs mt-1 text-neutral-500 uppercase select-none'}>Username</p>
                 </div>
                 <div className={'ml-8'}>
                     <Button isSecondary className={'mr-2'} onClick={() => setConnectionVisible(true)}>

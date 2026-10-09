@@ -63,7 +63,7 @@ const HytaleOauthRequireFeature = () => {
                 <Button isSecondary onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
                     Cancel
                 </Button>
-                <Button onClick={handleLogin} className={'mt-4 w-full sm:ml-4 sm:mt-0 sm:w-auto'}>
+                <Button onClick={handleLogin} className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}>
                     Log in
                 </Button>
             </div>

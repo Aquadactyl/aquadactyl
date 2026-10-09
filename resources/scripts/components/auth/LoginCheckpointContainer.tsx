@@ -54,7 +54,7 @@ const LoginCheckpointContainer = () => {
                         setIsMissingDevice((s) => !s);
                     }}
                     className={
-                        'cursor-pointer text-xs uppercase tracking-wide text-neutral-400 no-underline hover:text-neutral-200'
+                        'cursor-pointer text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200'
                     }
                 >
                     {!isMissingDevice ? "I've Lost My Device" : 'I Have My Device'}
@@ -63,7 +63,7 @@ const LoginCheckpointContainer = () => {
             <div className={'mt-6 text-center'}>
                 <Link
                     to={'/auth/login'}
-                    className={'text-xs uppercase tracking-wide text-neutral-400 no-underline hover:text-neutral-200'}
+                    className={'text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200'}
                 >
                     Return to Login
                 </Link>

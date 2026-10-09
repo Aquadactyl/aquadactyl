@@ -80,7 +80,7 @@ const NewDirectoryDialog = asDialog({
                     <FlashMessageRender key={'files:directory-modal'} />
                     <Form className={'m-0'}>
                         <Field autoFocus id={'directoryName'} name={'directoryName'} label={'Name'} />
-                        <p className={'mt-2 break-all text-sm md:text-base'}>
+                        <p className={'mt-2 text-sm break-all md:text-base'}>
                             <span className={'text-neutral-200'}>This directory will be created as&nbsp;</span>
                             <Code>
                                 /home/container/

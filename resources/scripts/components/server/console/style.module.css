@@ -1,3 +1,5 @@
+@reference "../../../assets/tailwind.css";
+
 .stat_block {
     @apply relative flex items-center rounded border border-gray-600;
     background: #1c232a;
@@ -5,7 +7,7 @@
     @apply px-3 py-2 md:p-3 lg:p-4;
 
     & > .status_bar {
-        @apply absolute left-0 top-0 h-full w-1 rounded-l sm:hidden;
+        @apply absolute top-0 left-0 h-full w-1 rounded-l sm:hidden;
     }
 
     & > .icon {
@@ -43,11 +45,11 @@
     }
 
     & .command_icon {
-        @apply absolute left-0 top-0 z-10 flex h-full select-none items-center px-3 transition-colors duration-100;
+        @apply absolute top-0 left-0 z-10 flex h-full items-center px-3 transition-colors duration-100 select-none;
     }
 
     & .command_input {
-        @apply relative w-full rounded-b bg-gray-900 px-2 py-3 pl-10 pr-4 font-mono text-sm text-gray-100;
+        @apply relative w-full rounded-b bg-gray-900 px-2 py-3 pr-4 pl-10 font-mono text-sm text-gray-100;
         @apply outline-none focus:ring-0 focus-visible:outline-none;
         @apply border border-gray-600 transition-colors duration-100;
         @apply focus:border-cyan-500 active:border-cyan-500;
