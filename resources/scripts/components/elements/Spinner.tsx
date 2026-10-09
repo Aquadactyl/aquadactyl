@@ -50,13 +50,7 @@ const SpinnerComponent = styled.div<{ $size?: SpinnerSize; $isBlue?: boolean }>`
 
 const Spinner: Spinner = ({ centered, className, size, isBlue }) =>
     centered ? (
-        <div
-            className={classNames(
-                'flex items-center justify-center',
-                size === 'large' ? 'm-20' : 'm-6',
-                className,
-            )}
-        >
+        <div className={classNames('flex items-center justify-center', size === 'large' ? 'm-20' : 'm-6', className)}>
             <SpinnerComponent $size={size} $isBlue={isBlue} />
         </div>
     ) : (
