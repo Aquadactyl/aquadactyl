@@ -68,63 +68,61 @@ export default ({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.15 }}
                     >
-                        <HDialog
-                            static
-                            open={open}
-                            onClose={onDialogClose}
-                        >
+                        <HDialog static open={open} onClose={onDialogClose}>
                             <div className={'fixed inset-0 z-40 bg-gray-900/50'} />
                             <div className={'fixed inset-0 z-50 overflow-y-auto'}>
-                            <div
-                                ref={container}
-                                className={styles.container}
-                                onMouseDown={onContainerClick.bind(this, true)}
-                                onMouseUp={onContainerClick.bind(this, false)}
-                            >
-                                <HDialog.Panel
-                                    as={motion.div}
-                                    initial={'closed'}
-                                    animate={down ? 'bounce' : 'open'}
-                                    exit={'closed'}
-                                    variants={variants}
-                                    className={styles.panel}
+                                <div
+                                    ref={container}
+                                    className={styles.container}
+                                    onMouseDown={onContainerClick.bind(this, true)}
+                                    onMouseUp={onContainerClick.bind(this, false)}
                                 >
-                                    <div className={'flex overflow-y-auto p-6 pb-0'}>
-                                        {iconPosition === 'container' && icon}
-                                        <div className={'max-h-[70vh] min-w-0 flex-1'}>
-                                            <div className={'flex items-center'}>
-                                                {iconPosition !== 'container' && icon}
-                                                <div>
-                                                    {title && (
-                                                        <HDialog.Title className={styles.title}>{title}</HDialog.Title>
-                                                    )}
-                                                    {description && (
-                                                        <HDialog.Description>{description}</HDialog.Description>
-                                                    )}
+                                    <HDialog.Panel
+                                        as={motion.div}
+                                        initial={'closed'}
+                                        animate={down ? 'bounce' : 'open'}
+                                        exit={'closed'}
+                                        variants={variants}
+                                        className={styles.panel}
+                                    >
+                                        <div className={'flex overflow-y-auto p-6 pb-0'}>
+                                            {iconPosition === 'container' && icon}
+                                            <div className={'max-h-[70vh] min-w-0 flex-1'}>
+                                                <div className={'flex items-center'}>
+                                                    {iconPosition !== 'container' && icon}
+                                                    <div>
+                                                        {title && (
+                                                            <HDialog.Title className={styles.title}>
+                                                                {title}
+                                                            </HDialog.Title>
+                                                        )}
+                                                        {description && (
+                                                            <HDialog.Description>{description}</HDialog.Description>
+                                                        )}
+                                                    </div>
                                                 </div>
+                                                {children}
+                                                <div className={'invisible h-6'} />
                                             </div>
-                                            {children}
-                                            <div className={'invisible h-6'} />
                                         </div>
-                                    </div>
-                                    {footer}
-                                    {/* Keep this below the other buttons so that it isn't the default focus if they're present. */}
-                                    {!hideCloseIcon && (
-                                        <div className={'absolute top-0 right-0 m-4'}>
-                                            <Button.Text
-                                                size={Button.Sizes.Small}
-                                                shape={Button.Shapes.IconSquare}
-                                                onClick={onClose}
-                                                className={'group'}
-                                            >
-                                                <X className={styles.close_icon} />
-                                            </Button.Text>
-                                        </div>
-                                    )}
-                                </HDialog.Panel>
+                                        {footer}
+                                        {/* Keep this below the other buttons so that it isn't the default focus if they're present. */}
+                                        {!hideCloseIcon && (
+                                            <div className={'absolute top-0 right-0 m-4'}>
+                                                <Button.Text
+                                                    size={Button.Sizes.Small}
+                                                    shape={Button.Shapes.IconSquare}
+                                                    onClick={onClose}
+                                                    className={'group'}
+                                                >
+                                                    <X className={styles.close_icon} />
+                                                </Button.Text>
+                                            </div>
+                                        )}
+                                    </HDialog.Panel>
+                                </div>
                             </div>
-                        </div>
-                    </HDialog>
+                        </HDialog>
                     </motion.div>
                 </DialogContext.Provider>
             )}
