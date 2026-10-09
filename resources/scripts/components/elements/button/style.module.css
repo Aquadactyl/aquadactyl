@@ -1,5 +1,5 @@
 .button {
-    @apply inline-flex items-center justify-center px-4 py-2;
+    @apply inline-flex items-center justify-center px-4 py-2 cursor-pointer;
     @apply rounded text-base font-semibold transition-all duration-100;
     @apply focus:ring-[3px] focus:ring-opacity-50 focus:ring-offset-2 focus:ring-offset-gray-700;
 

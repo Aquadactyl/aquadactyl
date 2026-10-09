@@ -50,7 +50,7 @@ const FileUploadList = () => {
                     <Code className={'flex-1 truncate'}>{name}</Code>
                     <button
                         onClick={cancelFileUpload.bind(this, name)}
-                        className={'text-gray-500 transition-colors duration-75 hover:text-gray-200'}
+                        className={'text-gray-500 transition-colors duration-75 hover:text-gray-200 cursor-pointer'}
                     >
                         <X className={'h-5 w-5'} />
                     </button>
@@ -91,7 +91,7 @@ export default () => {
             {count > 0 && (
                 <Tooltip content={`${count} files are uploading, click to view`}>
                     <button
-                        className={'flex h-10 w-10 items-center justify-center'}
+                        className={'flex h-10 w-10 items-center justify-center cursor-pointer'}
                         onClick={() => (open.value = true)}
                     >
                         <Spinner progress={(progress.uploaded / progress.total) * 100} className={'h-8 w-8'} />

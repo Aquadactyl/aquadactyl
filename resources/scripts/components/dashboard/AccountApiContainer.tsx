@@ -88,7 +88,7 @@ export default () => {
                                     </code>
                                 </p>
                                 <button
-                                    className={'ml-4 p-2 text-sm'}
+                                    className={'ml-4 p-2 text-sm cursor-pointer'}
                                     onClick={() => setDeleteIdentifier(key.identifier)}
                                 >
                                     <FontAwesomeIcon

@@ -14,7 +14,7 @@ export const DropdownButtonRow: React.FC<React.ButtonHTMLAttributes<HTMLButtonEl
 }) => (
     <button
         className={classNames(
-            'flex w-full items-center rounded p-2 text-neutral-200 transition-all duration-150 ease-linear',
+            'flex w-full items-center rounded p-2 text-neutral-200 transition-all duration-150 ease-linear cursor-pointer',
             danger ? 'hover:bg-red-900 hover:text-red-200' : 'hover:bg-neutral-600 hover:text-neutral-50',
             className,
         )}

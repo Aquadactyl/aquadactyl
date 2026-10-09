@@ -168,7 +168,7 @@ export default ({ backup }: Props) => {
                     renderToggle={(onClick) => (
                         <button
                             onClick={onClick}
-                            className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'}
+                            className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100 cursor-pointer'}
                         >
                             <FontAwesomeIcon icon={faEllipsisH} />
                         </button>
@@ -211,7 +211,7 @@ export default ({ backup }: Props) => {
             ) : (
                 <button
                     onClick={() => setModal('delete')}
-                    className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'}
+                    className={'p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100 cursor-pointer'}
                 >
                     <FontAwesomeIcon icon={faTrashAlt} />
                 </button>

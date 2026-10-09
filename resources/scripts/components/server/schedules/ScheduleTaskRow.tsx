@@ -125,7 +125,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                         type={'button'}
                         aria-label={'Edit scheduled task'}
                         className={
-                            'ml-auto mr-4 block p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 sm:ml-0'
+                            'ml-auto mr-4 block p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 cursor-pointer sm:ml-0'
                         }
                         onClick={() => setIsEditing(true)}
                     >
@@ -137,7 +137,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                         type={'button'}
                         aria-label={'Delete scheduled task'}
                         className={
-                            'block p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-red-600'
+                            'block p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-red-600 cursor-pointer'
                         }
                         onClick={() => setVisible(true)}
                     >

@@ -57,7 +57,7 @@ export default ({ subuser }: Props) => {
                             type={'button'}
                             aria-label={'Edit subuser'}
                             className={
-                                'mx-4 block p-1 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 md:p-2'
+                                'mx-4 block p-1 text-sm text-neutral-500 transition-colors duration-150 hover:text-neutral-100 cursor-pointer md:p-2'
                             }
                             onClick={() => setVisible(true)}
                         >
