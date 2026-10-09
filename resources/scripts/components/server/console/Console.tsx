@@ -70,6 +70,7 @@ export default () => {
     const [canSendCommands] = usePermissions(['control.console']);
     const serverId = ServerContext.useStoreState((state) => state.server.data!.id);
     const isTransferring = ServerContext.useStoreState((state) => state.server.data!.isTransferring);
+    const status = ServerContext.useStoreState((state) => state.status.value);
     const [history, setHistory] = usePersistedState<string[]>(`${serverId}:command_history`, []);
     const [historyIndex, setHistoryIndex] = useState(-1);
     // SearchBarAddon has hardcoded z-index: 999 :(
@@ -189,6 +190,9 @@ export default () => {
             // Do not clear the console if the server is being transferred.
             if (!isTransferring) {
                 terminal.clear();
+                if (status) {
+                    terminal.writeln(TERMINAL_PRELUDE + 'Server marked as ' + status + '...\u001b[0m');
+                }
             }
 
             Object.keys(listeners).forEach((key: string) => {
