@@ -45,6 +45,7 @@ result
 .blueprint/extensions/blueprint/private/db/is_installed
 .blueprint/extensions/blueprint/private/db/version
 .blueprint/lib
+!scripts/commands/misc
 .blueprint/dist/types/*
 !.blueprint/dist/types/.gitkeep
 public/extensions/blueprint
