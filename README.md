@@ -29,8 +29,8 @@ Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprin
 - **Deployment security defaults:** Restricted filesystem permissions, HTTPS
   session cookies, Nginx rules that protect hidden files and limit PHP execution
   to the front controller, and validation of update archives before extraction.
-- **Addon libraries:** Axios, Lucide icons, React Hook Form, Zod, Zustand,
-  React Select and Lodash ES, alongside the panel's existing UI and chart libraries.
+- **Addon libraries:** Axios, Lucide icons, React Select and Lodash ES,
+  alongside the panel's Formik, Yup, UI and chart libraries.
   See the [addon development guide](docs/ADDONS.md).
 - **Dependency maintenance:** Committed Composer and pnpm lockfiles, weekly
   Dependabot checks and CI audits for production dependencies.
@@ -117,9 +117,13 @@ Blueprint is included in Aquadactyl and initialized during installation:
 cd /var/www/aquadactyl
 sudo blueprint -version
 sudo blueprint -i myextension
+sudo blueprint -r myextension
 ```
 
-Place `myextension.blueprint` in the panel root before installing it. Extensions
+Place `myextension.blueprint` in the panel root before installing it. Inside the
+Docker panel container, run `blueprint -i myextension` or `blueprint -r myextension`.
+The commands handle builds, migrations, permissions, caches and PHP reloads.
+Extensions
 execute code as part of the panel, so use trusted publishers and check compatibility
 before updating production.
 

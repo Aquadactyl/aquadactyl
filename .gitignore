@@ -24,7 +24,7 @@ public/assets/manifest.json
 !docker-compose.example.yaml
 
 # for image related files
-misc
+/misc
 .php-cs-fixer.cache
 coverage.xml
 resources/lang/locales.js

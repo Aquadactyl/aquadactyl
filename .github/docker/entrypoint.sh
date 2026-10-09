@@ -103,6 +103,11 @@ fi
 echo "Seeding Blueprint settings."
 php artisan db:seed --class=BlueprintSeeder --force
 
+# Refresh the shortcut even when the image already contains an initialized framework.
+cp /app/scripts/helpers/blueprint /usr/local/bin/blueprint
+sed -i 's|BLUEPRINT_FOLDER_HERE|/app|g' /usr/local/bin/blueprint
+chmod 755 /usr/local/bin/blueprint
+
 BLUEPRINT_MARKER="/app/.blueprint/extensions/blueprint/private/db/is_installed"
 if [ ! -f "$BLUEPRINT_MARKER" ]; then
   echo "Initialising bundled Blueprint framework."

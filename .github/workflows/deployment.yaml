@@ -11,5 +11,6 @@ jobs:
         runs-on: ubuntu-24.04
         steps:
             - uses: actions/checkout@v4
-            - run: shellcheck scripts/deploy/common.sh scripts/panel-install.sh scripts/panel-update.sh tests/Deployment/update-guards.sh tests/Deployment/smoke.sh
+            - run: shellcheck scripts/deploy/common.sh scripts/panel-install.sh scripts/panel-update.sh scripts/helpers/extension-lifecycle.sh tests/Deployment/update-guards.sh tests/Deployment/smoke.sh tests/Deployment/blueprint-guards.sh tests/Deployment/blueprint-smoke.sh
             - run: bash tests/Deployment/update-guards.sh
+            - run: bash tests/Deployment/blueprint-guards.sh

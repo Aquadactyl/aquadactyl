@@ -7,21 +7,22 @@ visible, and animations respect the browser's reduced motion preference.
 
 ## Palette
 
-| Role                               | Colour    | Client token        | Admin CSS variable               |
-| ---------------------------------- | --------- | ------------------- | -------------------------------- |
-| Page background                    | `#232428` | `gray.800`          | `--aqua-background`              |
-| Navigation and inset controls      | `#1e1f22` | `gray.900`          | `--aqua-chrome`                  |
-| Cards and dialogs                  | `#313338` | `gray.700`          | `--aqua-surface`                 |
-| Raised surfaces and subtle borders | `#41444c` | `gray.600`          | `--aqua-raised`, `--aqua-border` |
-| Body text                          | `#d6d9df` | `gray.200`          | `--aqua-text`                    |
-| Headings                           | `#f2f3f5` | `gray.50`           | `--aqua-heading`                 |
-| Secondary text                     | `#b0b5bf` | `gray.400`          | `--aqua-muted`                   |
-| Control borders                    | `#8a909d` | `gray.500`          | `--aqua-control-border`          |
-| Links and focus outlines           | `#78d4cc` | `blue.300`          | `--aqua-accent`                  |
-| Primary buttons                    | `#237c7f` | `blue.500`          | `--aqua-primary`                 |
-| Primary button hover               | `#20696d` | `blue.600`          | `--aqua-primary-hover`           |
-| Primary button text                | `#effcfa` | `blue.50`           | `--aqua-on-primary`              |
-| Terminal background                | `#18191c` | `black`, `gray.950` | —                                |
+| Role                          | Colour    | Client token                | Admin CSS variable      |
+| ----------------------------- | --------- | --------------------------- | ----------------------- |
+| Page background               | `#171c21` | `gray.800`                  | `--aqua-background`     |
+| Navigation and inset controls | `#11161b` | `gray.900`                  | `--aqua-chrome`         |
+| Interface cards               | `#1c232a` | `--panel-surface`           | `--aqua-surface`        |
+| Raised surfaces               | `#272e35` | `gray.700`                  | `--aqua-raised`         |
+| Subtle borders                | `#303942` | `--panel-border`            | `--aqua-border`         |
+| Body text                     | `#d7dce1` | `gray.200`                  | `--aqua-text`           |
+| Headings                      | `#f5f6f7` | `gray.50`                   | `--aqua-heading`        |
+| Secondary text                | `#9ca5af` | `gray.400`, `--panel-muted` | `--aqua-muted`          |
+| Control borders               | `#39424b` | `gray.600`                  | `--aqua-control-border` |
+| Links and focus outlines      | `#78d4cc` | `blue.300`                  | `--aqua-accent`         |
+| Primary buttons               | `#237c7f` | `blue.500`                  | `--aqua-primary`        |
+| Primary button hover          | `#20696d` | `blue.600`                  | `--aqua-primary-hover`  |
+| Primary button text           | `#effcfa` | `blue.50`                   | `--aqua-on-primary`     |
+| Terminal background           | `#0c1116` | `black`, `gray.950`         | None                    |
 
 `neutral` aliases `gray`; `primary` and `cyan` alias `blue` for existing panel
 components and Blueprint addons. Status colours retain their meaning: green
@@ -64,8 +65,21 @@ browsers fetch the new files.
 
 ### Colours and layouts
 
-Client colours are defined in `tailwind.config.js`, with shared browser styles
-in `resources/scripts/assets/css/GlobalStylesheet.ts`. The admin palette lives
+Client dropdowns use the shared `Select` component with the charcoal and aqua
+styles in `interface.css`. Admin selects use Select2, including fields added by
+Blueprint; existing AJAX and dependent selectors keep their page-specific setup.
+The server creation form uses a two-column grid with 32px column gutters and
+24px field gaps, switching to one column on phone screens.
+
+The console displays the Aquadactyl prompt for startup messages from Yolks
+images as well as panel status messages. ANSI colours, game output and image
+registry references retain their original content.
+
+Client utility colours are defined in `tailwind.config.ts`. Interface cards,
+navigation, authentication and server rows use `resources/scripts/assets/css/interface.css`;
+browser defaults and fonts use `resources/scripts/assets/css/GlobalStylesheet.ts`.
+The runtime theme helper in `resources/scripts/lib/theme.ts` and the terminal
+palette should stay aligned with these colours. The admin palette lives
 in `public/themes/pterodactyl/css/palette.css`, imported by `pterodactyl.css`.
 Keep both palettes aligned when changing the default theme.
 
@@ -84,4 +98,5 @@ or reference the admin variables in their extension stylesheet. See the
 
 Review long server names, narrow screens, form errors, menus, keyboard focus and
 text contrast when overriding colours. Use `gray.400` for secondary text on
-dark surfaces; the darker `gray.600` and `gray.700` values are surface colours.
+dark surfaces. The darker `gray.600` and `gray.700` values are surface colours;
+check text contrast against the particular surface an addon uses.

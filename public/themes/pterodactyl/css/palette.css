@@ -1,4 +1,4 @@
-/* Aquadactyl's charcoal palette. Match these surfaces to tailwind.config.js. */
+/* Aquadactyl's charcoal palette. Keep this aligned with the client theme. */
 :root {
     color-scheme: dark;
     --aqua-background: #171c21;

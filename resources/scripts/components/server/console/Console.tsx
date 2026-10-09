@@ -21,6 +21,7 @@ import CommandRow from '@blueprint/components/Server/Terminal/CommandRow';
 import '@xterm/xterm/css/xterm.css';
 import styles from './style.module.css';
 import { th } from '@/lib/theme';
+import { formatConsoleOutput } from './formatConsoleOutput';
 
 const theme = {
     background: '#0c1116',
@@ -42,7 +43,7 @@ const theme = {
     brightMagenta: '#C792EA',
     brightCyan: '#89DDFF',
     brightWhite: '#ffffff',
-    selection: '#1d5558',
+    selectionBackground: '#1d5558',
 };
 
 const terminalProps: ITerminalOptions = {
@@ -78,7 +79,11 @@ export default () => {
     }`;
 
     const handleConsoleOutput = (line: string, prelude = false) =>
-        terminal.writeln((prelude ? TERMINAL_PRELUDE : '') + line.replace(/(?:\r\n|\r|\n)$/im, '') + '\u001b[0m');
+        terminal.writeln(
+            (prelude ? TERMINAL_PRELUDE : '') +
+                formatConsoleOutput(line).replace(/(?:\r\n|\r|\n)$/im, '') +
+                '\u001b[0m',
+        );
 
     const handleTransferStatus = (status: string) => {
         switch (status) {

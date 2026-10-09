@@ -1,5 +1,106 @@
 # Validation results
 
+## Pull request branch on current main — 9 October 2026
+
+The Blueprint, Docker and UI changes were rebased onto the latest main branch,
+retaining its dependency updates, CodeMirror 6 editor, React 16 avatar support
+and Vitest migration. Type checking, lint, formatting of the changed frontend
+files, all 74 Vitest tests, six game-query protocol tests, ShellCheck and the
+deployment and Blueprint failure guards passed. Production frontend and Docker
+image builds passed, including rebuilding the frontend inside the Docker runtime.
+The production dependency audit reported no known vulnerabilities. The build
+workflow now uses `pnpm run test` so CI runs the configured Vitest runner. Full
+PHP unit and integration suites were not rerun for this PR branch.
+
+## Console prompts, dropdowns and server creation — 9 October 2026
+
+Frontend type checking, lint, production builds and all 75 tests passed. Console
+prompt tests cover plain and ANSI-coloured startup output and preserving other
+log messages. The Java Yolks entrypoint was inspected to confirm it supplies
+the upstream prompt independently of the panel and Wings.
+
+Browser checks of the production Select component passed for controlled and
+default values, real native change events, forwarded focus refs, grouped and
+disabled options, multi-value form submission, required-field focus, descriptions,
+asynchronously loaded options, programmatic changes and native form reset.
+Formik blur and submit worked, and selecting options or dismissing the dropdown
+with Escape left the surrounding Headless UI dialog open.
+
+Live Docker checks verified custom dropdowns in client activity filters and
+admin server creation. The creation form had 32px column gutters at 1440px and
+stacked fields at 390px and 320px without page overflow. All its admin selects
+used Select2, including Docker images. No browser JavaScript errors occurred.
+
+The rebuilt Docker deployment retained the Euphoria addon installed during the
+update, including all eight private files matching the pre-update backup. User,
+server, node and settings counts and the application environment checksum were
+preserved; Blueprint refreshed its asset-cache version during startup. The panel
+was healthy after recreation, and the existing Minecraft container continued
+running. Live console output displayed the Aquadactyl prompt for cached Yolks
+startup messages.
+
+## Docker deployment with Vite — 9 October 2026
+
+The Linux amd64 panel image built with PHP 8.5.11 and pnpm 12.10.1. All 35
+Vite manifest asset references resolved inside the image, frontend rebuilding
+worked in the runtime container, and all six game-query protocol tests passed.
+The Dockerfile now copies `public/build/` from the frontend stage; the build
+context excludes local Vite output and `public/hot` while retaining static SVGs.
+
+Blueprint's help, version, info and debug scripts were missing because the
+unanchored `misc` Git ignore rule also excluded `scripts/commands/misc/`.
+Those scripts were restored from the bundled beta-2026-08 release after verifying
+its SHA-256 against `deploy/blueprint-release.json`. The ignore rule now applies
+only to the root directory, and Blueprint's info command reports pnpm.
+Blueprint installation and extension install/remove rebuilds also stopped passing
+Webpack's `--progress` flag, which Vite rejects.
+
+The existing Docker panel was recreated using its persistent volumes. Database
+counts remained at two users, two servers, one node, 74 settings and 202
+migrations; the persisted environment checksum and stored image count also
+remained unchanged. Blueprint initialization and application cache generation
+completed, and Nginx, PHP-FPM and the queue worker were running. Live browser
+checks passed for sign-in, dashboard, account, admin, Blueprint, console and
+files, including 390px and 320px dashboard layouts, with no missing assets or
+JavaScript errors. These checks used the running panel and Wings.
+
+## Theme follow-up with Vite — 9 October 2026
+
+The current checkout uses Vite 8.3.3, TypeScript 6.0.3, Oxlint and Oxfmt.
+The production frontend build, type checking, lint and all 73 frontend tests
+passed. Jest still emits a warning that TypeScript 6 is outside ts-jest 28's
+tested range; the current suites pass despite that warning.
+
+The production browser check caught the generated avatar's UMD export being
+passed to React as an object. Avatar now handles both the component and wrapped
+export, preserving uploaded profile pictures. A regression test reproduces the
+wrapped export. This matches Vite 8's documented
+[CommonJS import behaviour](https://vite.dev/guide/migration.html#consistent-commonjs-interop).
+
+Input, textarea and button variants were corrected for the installed Tailwind 3
+compiler. Focus, hover and active styles now emit CSS; disabled and read-only
+controls retain their existing behaviour. Narrow navigation keeps the built-in
+actions visible, and long panel names truncate or wrap within their container.
+
+Headless Edge previews reviewed the production Vite assets on dashboard,
+account, login, console, file manager and error pages, including keyboard
+search and the upload drag overlay. Custom names, logos and logo/name pairings
+passed at 320px, 390px, 768px and 1440px without page overflow or broken images.
+The default navigation actions also fit at 320px without horizontal scrolling.
+Admin controls used representative HTML with the actual admin/Blueprint CSS.
+API responses and the Wings WebSocket were mocked, and PHP suites were not
+rerun for this frontend follow-up.
+
+Checkbox/select SVG URLs now encode spaces correctly, select arrows use a valid
+CSS calculation, button links retain hover styles, and disabled opacity emits
+CSS. The console uses xterm 6's `selectionBackground` theme option for aqua text
+selection.
+
+The current palette contrast pairs measure body text at 12.42:1, interface card
+text at 11.50:1, secondary text on raised admin surfaces at 5.51:1, primary button
+text at 4.69:1 and aqua links on interface cards at 9.14:1. The palette guide and
+build commands were updated for the current files and installed libraries.
+
 ## Hosted documentation links — 8 October 2026
 
 Panel documentation and in-app links use `https://aquadactyl.uk` and the website
@@ -103,18 +204,45 @@ The Nginx template previously passed syntax validation with temporary test
 certificates. This migration changes its FPM socket default to PHP 8.5; ensure
 the selected socket exists on your host.
 
+## Blueprint CLI lifecycle
+
+The isolated Docker fixture installed, updated and removed a sample theme with
+`blueprint -i` and `blueprint -r`. It verified the compiled client hook, addon
+migration, preserved private data during an update, removal from the active
+extension list, cached routes and views, web user ownership and graceful PHP-FPM
+reloads. The panel served its login page after each operation. The fixture also
+confirmed the CLI shortcut is recreated on startup when Blueprint is already
+initialized.
+
+The existing Euphoria package also passed `blueprint -i euphoriatheme` and
+`blueprint -r euphoriatheme --yes` in an isolated copy of the deployment image.
+The live deployment retained its installed Euphoria files, extension list,
+application secrets and database record counts. Its Minecraft container kept
+the same start time throughout the panel update.
+
+The fixture passed with Docker's `nginx:nginx` ownership and with the managed
+Linux installer's `root:nginx` code ownership. Cached configuration and application
+secrets retained mode `0640`; runtime directories retained web user ownership.
+The systemd reload branch was not exercised by this Docker fixture.
+
+Failure guards passed on the PHP 8.4 and 8.5 runtime images: dependency, install
+build, uninstall build and cache failures return a nonzero status, report no
+success and release the Blueprint lock. ShellCheck and the existing deployment
+update guards passed. These fixtures use an isolated database and do not modify
+installed user addons or game servers.
+
 ## Dependency audit limits
 
-The full pnpm audit reports six advisories in development dependencies: four
-moderate and two high. Affected packages include `dset`,
-`postcss-selector-parser`, SockJS's `uuid`, `braces` and `sprintf-js`.
-These are inherited build tool dependencies; the production dependency audits
-are clean. Review upgrades to the older tooling separately, test Blueprint
+The 9 October pnpm audit reports three advisories in development dependencies:
+two moderate and one high, affecting `postcss-selector-parser`, `braces` and
+`sprintf-js`. The production dependency audit is clean. The earlier Webpack
+audit reported six advisories; the current dependency graph no longer includes
+that tooling. Review upgrades to the remaining build dependencies separately, test Blueprint
 compatibility and keep extension packages and build inputs under trusted control.
 
-Dependency postinstall scripts are blocked unless reviewed in
-`pnpm-workspace.yaml`. The current Font Awesome and core-js packages need no
-install scripts because their published code is ready to use.
+Dependency postinstall scripts are controlled through the explicit `allowBuilds`
+list in `pnpm-workspace.yaml`, which currently includes esbuild, Font Awesome
+and core-js. Review changes to this list alongside dependency updates.
 
 ## PHP compatibility changes
 

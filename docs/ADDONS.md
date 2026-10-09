@@ -15,9 +15,6 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | ---------------------------------------------------------- | ------------------------------------------------------ |
 | `axios`                                                    | HTTP requests; prefer `@/api/http` for panel API calls |
 | `lucide-react`                                             | SVG icons through named component imports              |
-| `react-hook-form`, `@hookform/resolvers`                   | Forms and schema validation adapters                   |
-| `zod`                                                      | Typed validation of forms, settings and API responses  |
-| `zustand`                                                  | Small extension-specific state stores                  |
 | `react-select`                                             | Searchable and multi-value selects                     |
 | `lodash-es`                                                | Utility functions with ES module imports               |
 | `date-fns`                                                 | Date formatting and arithmetic                         |
@@ -26,42 +23,44 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
 | `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
 | `formik`, `yup`                                            | The panel's existing form and validation libraries     |
+| `react-hook-form`, `@hookform/resolvers`, `zod`              | Addon forms and schema validation                      |
+| `zustand`                                                  | Lightweight addon state stores                         |
 | `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |
 | `i18next`, `react-i18next`                                 | Translation                                            |
 
 React and React DOM remain on 16.14 for compatibility with this panel and Blueprint.
-Zod uses the 3.x API, Zustand the 4.x API, and Hook Form resolvers the 3.x API.
-These versions work with the existing React and TypeScript toolchain. Use the
-panel's React installation so extension hooks share the same runtime.
+Use the panel's React installation so extension hooks share the same runtime.
+Formik and Yup support the panel's existing forms. React Hook Form, its Zod
+resolver, Zod and Zustand are also shared dependencies for addons.
 
 ## Imports
 
 ```tsx
 import http from '@/api/http';
 import { Settings } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-
-const settingsSchema = z.object({ label: z.string().trim().min(1).max(80) });
-type SettingsValues = z.infer<typeof settingsSchema>;
+import { Form, Formik } from 'formik';
+import { object, string } from 'yup';
+import Field from '@/components/elements/Field';
+import Button from '@/components/elements/Button';
 
 export default function ExtensionSettings() {
-    const { register, handleSubmit } = useForm<SettingsValues>({
-        resolver: zodResolver(settingsSchema),
-    });
-
     return (
-        <form
-            onSubmit={handleSubmit(async (values) => {
+        <Formik
+            initialValues={{ label: '' }}
+            validationSchema={object({ label: string().trim().max(80).required('Enter a label.') })}
+            onSubmit={async (values) => {
                 await http.put('/api/client/extensions/myextension/settings', values);
-            })}
+            }}
         >
-            <input {...register('label')} aria-label='Label' />
-            <button type='submit'>
-                <Settings size={16} /> Save
-            </button>
-        </form>
+            {({ isSubmitting }) => (
+                <Form>
+                    <Field type='text' name='label' label='Label' />
+                    <Button type='submit' disabled={isSubmitting}>
+                        <Settings size={16} aria-hidden /> Save
+                    </Button>
+                </Form>
+            )}
+        </Formik>
     );
 }
 ```
@@ -72,9 +71,17 @@ handling. Server routes must still validate input and enforce authorization.
 
 ## Building and adding dependencies
 
+Import `Select` from `@/components/elements/Select` for the panel's custom dark
+dropdown. It accepts `<option>` and `<optgroup>` children and the existing native
+select props, including `value`, `defaultValue`, `multiple`, `disabled`, `required`
+and `onChange`. Change handlers receive an actual select element as both
+`target` and `currentTarget`; native form values, refs and Formik fields continue
+to work. Give the control an `id` with a matching label, or an `aria-label`.
+Menus support search and keyboard navigation and stay within dialog focus traps.
+
 ```bash
 pnpm install --frozen-lockfile
-pnpm run tsc
+pnpm run types
 pnpm run lint
 pnpm run build
 ```
@@ -86,8 +93,8 @@ release. Extension install scripts should not rewrite the panel's lockfile or
 download floating dependency versions during deployment. Declare any additional
 requirements in the extension's documentation.
 
-`pnpm-workspace.yaml` retains a flat dependency layout for Blueprint and explicitly
-blocks unnecessary dependency postinstall scripts. Dependencies requiring builds
+`pnpm-workspace.yaml` explicitly controls dependency postinstall scripts.
+Dependencies requiring builds
 need a reviewed `allowBuilds` entry. See the
 [pnpm build settings](https://pnpm.io/settings/build) for that policy.
 

@@ -14,7 +14,7 @@
 @endsection
 
 @section('content')
-<form action="{{ route('admin.servers.new') }}" method="POST">
+<form action="{{ route('admin.servers.new') }}" method="POST" class="server-create-form">
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
@@ -332,7 +332,7 @@
                 @endif
             @endif
             @if(old('image'))
-                $('#pDefaultContainer').val('{{ old('image') }}');
+                $('#pDefaultContainer').val('{{ old('image') }}').trigger('change.select2');
             @endif
         }
         // END Persist 'Service Variables'

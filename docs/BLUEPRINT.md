@@ -20,24 +20,38 @@ hooks, components, migrations and CLI. Installation initializes links, settings
 and placeholders from the bundled files. Once installed:
 
 ```bash
-cd /var/www/aquadactyl
-sudo blueprint -version
-sudo blueprint -i myextension
+# Inside the panel container (as root), with mytheme.blueprint in /app:
+blueprint -i mytheme
+blueprint -r mytheme
 ```
+
+The same install command updates an already installed extension. Both commands
+handle the frontend build, filesystem links, permissions, application caches and
+queue refresh, and gracefully reload PHP. Installation also runs addon database
+migrations in Docker. A failed build or cache refresh returns a nonzero status
+instead of reporting success. Removal keeps the original package and does not
+roll back database migrations.
+
+Removal asks for confirmation; use `blueprint -r mytheme --yes` for an unattended
+command. Outside the container, the equivalents are
+`docker compose exec panel blueprint -i mytheme` and
+`docker compose exec panel blueprint -r mytheme`.
+
+On a Linux installation, place the package in the panel root and use
+`sudo blueprint -i mytheme` or `sudo blueprint -r mytheme`. The CLI restores the
+managed installer's permissions automatically. Set `PHP_FPM_SERVICE` in
+`.blueprintrc` if the service name differs from `php8.5-fpm` (or `php8.4-fpm`
+when using PHP 8.4).
 
 Aquadactyl uses pnpm 12.10.1 for framework installation, extension rebuilds and
 development commands. See [addon development](ADDONS.md) for the shared dependency
 catalogue and examples. Extension scripts that invoke Yarn should be updated to
 use pnpm before installation on this fork.
 
-Keep `myextension.blueprint` in this directory for future panel updates. Install
+Keep the original `identifier.blueprint` package in the panel root for future
+panel updates. Install
 extensions from publishers you trust: their PHP, frontend and shell scripts become
-part of the panel. Installing extensions can change ownership, so reapply the
-deployment permissions after extension maintenance:
-
-```bash
-sudo bash -c 'source scripts/deploy/common.sh; preflight; finish_deployment'
-```
+part of the panel.
 
 This integration retains the panel's security headers, newer server identifiers,
 file draft persistence, maintenance labels, Unicode console support and server
@@ -51,7 +65,7 @@ settings written through the panel's settings repository remain readable.
 
 The pnpm migration fixes declaration generation for shared compound components
 such as buttons, dropdowns, inputs and transitions. With frontend dependencies
-installed, run `node scripts/helpers/generate-types.js` to regenerate the
+installed, run `pnpm exec tsx scripts/helpers/generate-types.ts` to regenerate the
 Blueprint declarations under `.blueprint/dist/types/`.
 
 `blueprint -upgrade` is disabled for this fork because the stock command replaces
