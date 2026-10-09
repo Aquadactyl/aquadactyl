@@ -8,5 +8,3 @@ allowBuilds:
     esbuild: true
 overrides:
     react-router>path-to-regexp: ^1.9.0
-    '@types/react': ^16.14.68
-    '@types/react-dom': ^16.9.25
