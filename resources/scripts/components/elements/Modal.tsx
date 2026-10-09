@@ -16,6 +16,7 @@ export interface ModalProps extends RequiredModalProps {
     closeOnEscape?: boolean;
     closeOnBackground?: boolean;
     showSpinnerOverlay?: boolean;
+    children?: React.ReactNode;
 }
 
 export const ModalMask: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, ...props }) => (

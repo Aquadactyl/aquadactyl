@@ -70,7 +70,12 @@ Spinner.Size = {
     LARGE: 'large',
 };
 
-Spinner.Suspense = ({ children, centered = true, size = Spinner.Size.LARGE, ...props }) => (
+Spinner.Suspense = ({
+    children,
+    centered = true,
+    size = Spinner.Size.LARGE,
+    ...props
+}: React.PropsWithChildren<Props>) => (
     <Suspense fallback={<Spinner centered={centered} size={size} {...props} />}>
         <ErrorBoundary>{children}</ErrorBoundary>
     </Suspense>

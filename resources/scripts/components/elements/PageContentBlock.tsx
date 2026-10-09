@@ -11,6 +11,7 @@ export interface PageContentBlockProps {
     includeAppUrl?: boolean;
     className?: string;
     showFlashKey?: string;
+    children?: React.ReactNode;
 }
 
 import Attribution from '@blueprint/extends/Attribution';

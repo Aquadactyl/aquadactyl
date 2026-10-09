@@ -21,7 +21,7 @@ export default ({ permission, children, ...props }: Props) => (
                     <ServerError title={'Access Denied'} message={'You do not have permission to access this page.'} />
                 }
             >
-                {children}
+                <>{children}</>
             </Can>
         )}
     </Route>
