@@ -14,6 +14,7 @@ import FlashMessageRender from '@/components/FlashMessageRender';
 import { Actions, useStoreActions } from 'easy-peasy';
 import { ApplicationStore } from '@/state';
 import asDialog from '@/hoc/asDialog';
+import Label from '@/components/elements/Label';
 
 interface Props {
     onTokens: (tokens: string[]) => void;
@@ -81,25 +82,32 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
                 Scan the QR code above using the two-step authentication app of your choice. Then, enter the 6-digit
                 code generated into the field below.
             </p>
+            <Label htmlFor={'totp-code'} className={'mt-3'}>
+                Authentication Code
+            </Label>
             <Input.Text
-                aria-labelledby={'totp-code-description'}
+                id={'totp-code'}
+                aria-describedby={'totp-code-description'}
                 variant={Input.Text.Variants.Loose}
                 value={value}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)}
-                className={'mt-3'}
+                className={'font-mono tracking-widest'}
                 placeholder={'000000'}
                 type={'text'}
                 inputMode={'numeric'}
                 autoComplete={'one-time-code'}
                 pattern={'\\d{6}'}
+                maxLength={6}
             />
-            <label htmlFor={'totp-password'} className={'mt-3 block'}>
+            <Label htmlFor={'totp-password'} className={'mt-3'}>
                 Account Password
-            </label>
+            </Label>
             <Input.Text
+                id={'totp-password'}
                 variant={Input.Text.Variants.Loose}
                 className={'mt-1'}
                 type={'password'}
+                autoComplete={'current-password'}
                 value={password}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.currentTarget.value)}
             />
