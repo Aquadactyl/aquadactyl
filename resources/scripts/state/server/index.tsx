@@ -7,7 +7,6 @@ import createSchedulesSlice, { ServerScheduleStore } from '@/state/server/schedu
 import createDatabasesSlice, { ServerDatabaseStore } from '@/state/server/databases';
 import isEqual from 'react-fast-compare';
 import { createStore } from 'zustand/vanilla';
-import { useStore as useZustandStore } from 'zustand';
 import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
 
 export type ServerStatus = 'offline' | 'starting' | 'stopping' | 'running' | null;
