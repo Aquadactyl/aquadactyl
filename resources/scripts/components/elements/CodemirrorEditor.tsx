@@ -1,82 +1,102 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import CodeMirror from 'codemirror';
+import React, { useEffect, useMemo, useRef } from 'react';
 import styled from 'styled-components';
+import { Compartment, EditorState, Extension } from '@codemirror/state';
+import {
+    crosshairCursor,
+    drawSelection,
+    dropCursor,
+    EditorView,
+    highlightActiveLine,
+    highlightActiveLineGutter,
+    highlightSpecialChars,
+    keymap,
+    lineNumbers,
+    rectangularSelection,
+} from '@codemirror/view';
+import {
+    bracketMatching,
+    defaultHighlightStyle,
+    foldGutter,
+    foldKeymap,
+    indentOnInput,
+    indentUnit,
+    StreamLanguage,
+    syntaxHighlighting,
+} from '@codemirror/language';
+import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
+import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
+import { autocompletion, closeBrackets, closeBracketsKeymap, completionKeymap } from '@codemirror/autocomplete';
+import { lintKeymap } from '@codemirror/lint';
+import { oneDark } from '@codemirror/theme-one-dark';
+
+// Language packages
+import { cpp } from '@codemirror/lang-cpp';
+import { css } from '@codemirror/lang-css';
+import { html } from '@codemirror/lang-html';
+import { java } from '@codemirror/lang-java';
+import { javascript } from '@codemirror/lang-javascript';
+import { json } from '@codemirror/lang-json';
+import { markdown } from '@codemirror/lang-markdown';
+import { php } from '@codemirror/lang-php';
+import { python } from '@codemirror/lang-python';
+import { rust } from '@codemirror/lang-rust';
+import { sql } from '@codemirror/lang-sql';
+import { vue } from '@codemirror/lang-vue';
+import { xml } from '@codemirror/lang-xml';
+import { yaml as yamlLang } from '@codemirror/lang-yaml';
+
+// Legacy modes
+import { csharp } from '@codemirror/legacy-modes/mode/clike';
+import { diff } from '@codemirror/legacy-modes/mode/diff';
+import { dockerFile } from '@codemirror/legacy-modes/mode/dockerfile';
+import { go } from '@codemirror/legacy-modes/mode/go';
+import { http } from '@codemirror/legacy-modes/mode/http';
+import { lua } from '@codemirror/legacy-modes/mode/lua';
+import { nginx } from '@codemirror/legacy-modes/mode/nginx';
+import { properties } from '@codemirror/legacy-modes/mode/properties';
+import { protobuf } from '@codemirror/legacy-modes/mode/protobuf';
+import { pug } from '@codemirror/legacy-modes/mode/pug';
+import { rpmSpec } from '@codemirror/legacy-modes/mode/rpm';
+import { ruby } from '@codemirror/legacy-modes/mode/ruby';
+import { sass } from '@codemirror/legacy-modes/mode/sass';
+import { shell } from '@codemirror/legacy-modes/mode/shell';
+import { swift } from '@codemirror/legacy-modes/mode/swift';
+import { toml } from '@codemirror/legacy-modes/mode/toml';
+import { brainfuck } from '@codemirror/legacy-modes/mode/brainfuck';
+import { erlang } from '@codemirror/legacy-modes/mode/erlang';
+import { julia } from '@codemirror/legacy-modes/mode/julia';
+import { perl } from '@codemirror/legacy-modes/mode/perl';
+
 import modes from '@/modes';
 
-require('codemirror/lib/codemirror.css');
-require('codemirror/theme/ayu-mirage.css');
-require('codemirror/addon/edit/closebrackets');
-require('codemirror/addon/edit/closetag');
-require('codemirror/addon/edit/matchbrackets');
-require('codemirror/addon/edit/matchtags');
-require('codemirror/addon/edit/trailingspace');
-require('codemirror/addon/fold/foldcode');
-require('codemirror/addon/fold/foldgutter.css');
-require('codemirror/addon/fold/foldgutter');
-require('codemirror/addon/fold/brace-fold');
-require('codemirror/addon/fold/comment-fold');
-require('codemirror/addon/fold/indent-fold');
-require('codemirror/addon/fold/markdown-fold');
-require('codemirror/addon/fold/xml-fold');
-require('codemirror/addon/hint/css-hint');
-require('codemirror/addon/hint/html-hint');
-require('codemirror/addon/hint/javascript-hint');
-require('codemirror/addon/hint/show-hint.css');
-require('codemirror/addon/hint/show-hint');
-require('codemirror/addon/hint/sql-hint');
-require('codemirror/addon/hint/xml-hint');
-require('codemirror/addon/mode/simple');
-require('codemirror/addon/dialog/dialog.css');
-require('codemirror/addon/dialog/dialog');
-require('codemirror/addon/scroll/annotatescrollbar');
-require('codemirror/addon/scroll/scrollpastend');
-require('codemirror/addon/scroll/simplescrollbars.css');
-require('codemirror/addon/scroll/simplescrollbars');
-require('codemirror/addon/search/jump-to-line');
-require('codemirror/addon/search/match-highlighter');
-require('codemirror/addon/search/matchesonscrollbar.css');
-require('codemirror/addon/search/matchesonscrollbar');
-require('codemirror/addon/search/search');
-require('codemirror/addon/search/searchcursor');
-
-require('codemirror/mode/brainfuck/brainfuck');
-require('codemirror/mode/clike/clike');
-require('codemirror/mode/css/css');
-require('codemirror/mode/dart/dart');
-require('codemirror/mode/diff/diff');
-require('codemirror/mode/dockerfile/dockerfile');
-require('codemirror/mode/erlang/erlang');
-require('codemirror/mode/gfm/gfm');
-require('codemirror/mode/go/go');
-require('codemirror/mode/handlebars/handlebars');
-require('codemirror/mode/htmlembedded/htmlembedded');
-require('codemirror/mode/htmlmixed/htmlmixed');
-require('codemirror/mode/http/http');
-require('codemirror/mode/javascript/javascript');
-require('codemirror/mode/jsx/jsx');
-require('codemirror/mode/julia/julia');
-require('codemirror/mode/lua/lua');
-require('codemirror/mode/markdown/markdown');
-require('codemirror/mode/nginx/nginx');
-require('codemirror/mode/perl/perl');
-require('codemirror/mode/php/php');
-require('codemirror/mode/properties/properties');
-require('codemirror/mode/protobuf/protobuf');
-require('codemirror/mode/pug/pug');
-require('codemirror/mode/python/python');
-require('codemirror/mode/rpm/rpm');
-require('codemirror/mode/ruby/ruby');
-require('codemirror/mode/rust/rust');
-require('codemirror/mode/sass/sass');
-require('codemirror/mode/shell/shell');
-require('codemirror/mode/smarty/smarty');
-require('codemirror/mode/sql/sql');
-require('codemirror/mode/swift/swift');
-require('codemirror/mode/toml/toml');
-require('codemirror/mode/twig/twig');
-require('codemirror/mode/vue/vue');
-require('codemirror/mode/xml/xml');
-require('codemirror/mode/yaml/yaml');
+const basicSetup: Extension = [
+    lineNumbers(),
+    highlightActiveLineGutter(),
+    highlightSpecialChars(),
+    history(),
+    foldGutter(),
+    drawSelection(),
+    dropCursor(),
+    EditorState.allowMultipleSelections.of(true),
+    indentOnInput(),
+    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+    bracketMatching(),
+    closeBrackets(),
+    autocompletion(),
+    rectangularSelection(),
+    crosshairCursor(),
+    highlightActiveLine(),
+    highlightSelectionMatches(),
+    keymap.of([
+        ...closeBracketsKeymap,
+        ...defaultKeymap,
+        ...searchKeymap,
+        ...historyKeymap,
+        ...foldKeymap,
+        ...completionKeymap,
+        ...lintKeymap,
+    ]),
+];
 
 const EditorContainer = styled.div`
     min-height: 16rem;
@@ -88,20 +108,9 @@ const EditorContainer = styled.div`
         height: 100%;
     }
 
-    .CodeMirror {
-        font-size: 12px;
-        line-height: 1.375rem;
-    }
-
-    .CodeMirror-linenumber {
-        padding: 1px 12px 0 12px !important;
-    }
-
-    .CodeMirror-foldmarker {
-        color: #cbccc6;
-        text-shadow: none;
-        margin-left: 0.25rem;
-        margin-right: 0.25rem;
+    .cm-editor {
+        height: 100%;
+        border-radius: 0.5rem;
     }
 `;
 
@@ -144,6 +153,126 @@ const findModeByFilename = (filename: string) => {
     return undefined;
 };
 
+const getLanguageExtension = (mode: string): Extension => {
+    const normalized = mode.toLowerCase();
+
+    // JavaScript / TypeScript / JSON
+    if (normalized.includes('json')) return json();
+    if (
+        normalized.includes('javascript') ||
+        normalized.includes('ecmascript') ||
+        normalized === 'js' ||
+        normalized === 'ts'
+    ) {
+        return javascript();
+    }
+
+    // HTML / XML / Vue
+    if (normalized.includes('vue')) return vue();
+    if (normalized.includes('html')) return html();
+    if (normalized.includes('xml')) return xml();
+
+    // CSS / SASS
+    if (normalized.includes('sass')) return StreamLanguage.define(sass);
+    if (normalized.includes('css')) return css();
+
+    // Markdown
+    if (normalized.includes('markdown') || normalized.includes('gfm')) return markdown();
+
+    // Python
+    if (normalized.includes('python')) return python();
+
+    // PHP
+    if (normalized.includes('php')) return php();
+
+    // Rust
+    if (normalized.includes('rust')) return rust();
+
+    // SQL / DBs
+    if (normalized.includes('sql') || normalized.includes('mariadb') || normalized.includes('cassandra')) {
+        return sql();
+    }
+
+    // C / C++ / C# / Java
+    if (normalized.includes('csharp') || normalized === 'cs' || normalized === 'text/x-csharp') {
+        return StreamLanguage.define(csharp);
+    }
+    if (normalized.includes('java') && !normalized.includes('javascript')) return java();
+    if (normalized.includes('csrc') || normalized.includes('c++src') || normalized.includes('clike')) return cpp();
+
+    // YAML
+    if (normalized.includes('yaml')) return yamlLang();
+
+    // Shell / Docker / Nginx
+    if (normalized.includes('sh') || normalized.includes('shell')) return StreamLanguage.define(shell);
+    if (normalized.includes('dockerfile')) return StreamLanguage.define(dockerFile);
+    if (normalized.includes('nginx')) return StreamLanguage.define(nginx);
+
+    // TOML
+    if (normalized.includes('toml')) return StreamLanguage.define(toml);
+
+    // Diff
+    if (normalized.includes('diff') || normalized.includes('patch')) return StreamLanguage.define(diff);
+
+    // Other legacy modes
+    if (normalized.includes('ruby')) return StreamLanguage.define(ruby);
+    if (normalized.includes('go')) return StreamLanguage.define(go);
+    if (normalized.includes('lua')) return StreamLanguage.define(lua);
+    if (normalized.includes('perl')) return StreamLanguage.define(perl);
+    if (normalized.includes('swift')) return StreamLanguage.define(swift);
+    if (normalized.includes('properties')) return StreamLanguage.define(properties);
+    if (normalized.includes('protobuf')) return StreamLanguage.define(protobuf);
+    if (normalized.includes('pug')) return StreamLanguage.define(pug);
+    if (normalized.includes('rpm')) return StreamLanguage.define(rpmSpec);
+    if (normalized.includes('http')) return StreamLanguage.define(http);
+    if (normalized.includes('erlang')) return StreamLanguage.define(erlang);
+    if (normalized.includes('julia')) return StreamLanguage.define(julia);
+    if (normalized.includes('brainfuck')) return StreamLanguage.define(brainfuck);
+
+    return [];
+};
+
+const customTheme = EditorView.theme(
+    {
+        '&': {
+            height: '100%',
+            fontSize: '12px',
+            backgroundColor: '#1f2430',
+            color: '#cbccc6',
+        },
+        '.cm-scroller': {
+            overflow: 'auto',
+            fontFamily:
+                'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+            lineHeight: '1.375rem',
+        },
+        '.cm-content': {
+            padding: '8px 0',
+        },
+        '.cm-gutters': {
+            backgroundColor: '#191e2a',
+            color: '#707a8c',
+            borderRight: '1px solid rgba(255, 255, 255, 0.05)',
+        },
+        '.cm-gutterElement': {
+            padding: '0 12px !important',
+        },
+        '.cm-activeLine': {
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
+        },
+        '.cm-activeLineGutter': {
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+        },
+        '&.cm-focused .cm-cursor': {
+            borderLeftColor: '#ffcc66',
+        },
+        '&.cm-focused .cm-selectionBackground, ::selection': {
+            backgroundColor: '#34455a !important',
+        },
+    },
+    { dark: true },
+);
+
 export default ({
     style,
     initialContent,
@@ -154,88 +283,94 @@ export default ({
     onModeChanged,
     onContentChanged,
 }: Props) => {
-    const [editor, setEditor] = useState<CodeMirror.Editor>();
+    const editorRef = useRef<HTMLDivElement>(null);
+    const viewRef = useRef<EditorView | null>(null);
+    const languageConf = useMemo(() => new Compartment(), []);
 
-    const ref = useCallback((node) => {
-        if (!node) return;
+    const onContentSavedRef = useRef(onContentSaved);
+    onContentSavedRef.current = onContentSaved;
 
-        const e = CodeMirror.fromTextArea(node, {
-            mode: 'text/plain',
-            theme: 'ayu-mirage',
-            indentUnit: 4,
-            smartIndent: true,
-            tabSize: 4,
-            indentWithTabs: false,
-            lineWrapping: true,
-            lineNumbers: true,
-            foldGutter: true,
-            fixedGutter: true,
-            scrollbarStyle: 'overlay',
-            coverGutterNextToScrollbar: false,
-            readOnly: false,
-            showCursorWhenSelecting: false,
-            autofocus: false,
-            spellcheck: true,
-            autocorrect: false,
-            autocapitalize: false,
-            lint: false,
-            // @ts-expect-error this property is actually used, the d.ts file for CodeMirror is incorrect.
-            autoCloseBrackets: true,
-            matchBrackets: true,
-            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+    const onContentChangedRef = useRef(onContentChanged);
+    onContentChangedRef.current = onContentChanged;
+
+    useEffect(() => {
+        if (!editorRef.current) return;
+
+        const saveKeymap = keymap.of([
+            {
+                key: 'Mod-s',
+                run: () => {
+                    onContentSavedRef.current();
+                    return true;
+                },
+            },
+        ]);
+
+        const changeListener = EditorView.updateListener.of((update) => {
+            if (update.docChanged && onContentChangedRef.current) {
+                onContentChangedRef.current(update.state.doc.toString());
+            }
         });
 
-        setEditor(e);
+        const state = EditorState.create({
+            doc: initialContent || '',
+            extensions: [
+                basicSetup,
+                EditorView.lineWrapping,
+                EditorState.tabSize.of(4),
+                indentUnit.of('    '),
+                oneDark,
+                customTheme,
+                languageConf.of(getLanguageExtension(mode)),
+                saveKeymap,
+                changeListener,
+            ],
+        });
+
+        const view = new EditorView({
+            state,
+            parent: editorRef.current,
+        });
+
+        viewRef.current = view;
+
+        return () => {
+            view.destroy();
+            viewRef.current = null;
+        };
     }, []);
 
     useEffect(() => {
-        if (filename === undefined) {
-            return;
-        }
-
+        if (filename === undefined) return;
         onModeChanged(findModeByFilename(filename)?.mime || 'text/plain');
     }, [filename]);
 
     useEffect(() => {
-        editor && editor.setOption('mode', mode);
-    }, [editor, mode]);
-
-    useEffect(() => {
-        if (editor) {
-            editor.setValue(initialContent || '');
-            // Reset the history so that "Ctrl+Z" doesn't delete the intial content
-            // we just set above.
-            editor.setHistory({ done: [], undone: [] });
+        if (viewRef.current) {
+            viewRef.current.dispatch({
+                effects: languageConf.reconfigure(getLanguageExtension(mode)),
+            });
         }
-    }, [editor, initialContent]);
+    }, [mode, languageConf]);
 
     useEffect(() => {
-        if (!editor || !onContentChanged) return;
-
-        const onChange = () => onContentChanged(editor.getValue());
-
-        editor.on('change', onChange);
-
-        return () => editor.off('change', onChange);
-    }, [editor, onContentChanged]);
-
-    useEffect(() => {
-        if (!editor) {
-            fetchContent(() => Promise.reject(new Error('no editor session has been configured')));
-            return;
+        if (viewRef.current && initialContent !== undefined) {
+            const currentContent = viewRef.current.state.doc.toString();
+            if (currentContent !== initialContent) {
+                viewRef.current.dispatch({
+                    changes: { from: 0, to: currentContent.length, insert: initialContent },
+                });
+            }
         }
+    }, [initialContent]);
 
-        editor.addKeyMap({
-            'Ctrl-S': () => onContentSaved(),
-            'Cmd-S': () => onContentSaved(),
-        });
-
-        fetchContent(() => Promise.resolve(editor.getValue()));
-    }, [editor, fetchContent, onContentSaved]);
+    useEffect(() => {
+        fetchContent(() => Promise.resolve(viewRef.current?.state.doc.toString() ?? ''));
+    }, [fetchContent]);
 
     return (
         <EditorContainer style={style}>
-            <textarea ref={ref} />
+            <div ref={editorRef} />
         </EditorContainer>
     );
 };

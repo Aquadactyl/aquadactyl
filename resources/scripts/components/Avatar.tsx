@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import BoringAvatar, { AvatarProps } from 'boring-avatars';
+import BoringAvatar from 'boring-avatars';
 import { useStoreState } from '@/state/hooks';
 
 const palette = ['#FFAD08', '#EDD75A', '#73B06F', '#0C8F8F', '#587291'];
 
-type Props = Omit<AvatarProps, 'colors'> & { src?: string | null; alt?: string };
+type Props = Omit<React.ComponentProps<typeof BoringAvatar>, 'colors'> & { src?: string | null; alt?: string };
 
 const _Avatar = ({ src, alt = 'Profile picture', variant = 'beam', size = 40, square = false, ...props }: Props) => {
     const [failed, setFailed] = useState(false);
