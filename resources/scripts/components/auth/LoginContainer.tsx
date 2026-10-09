@@ -7,7 +7,7 @@ import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import Field from '@/components/elements/Field';
 import Button from '@/components/elements/Button';
-import Reaptcha from 'reaptcha';
+import Reaptcha, { ReaptchaRef } from '@/components/elements/Reaptcha';
 import useFlash from '@/plugins/useFlash';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -18,7 +18,7 @@ interface Values {
 
 const LoginContainer = () => {
     const navigate = useNavigate();
-    const ref = useRef<Reaptcha>(null);
+    const ref = useRef<ReaptchaRef>(null);
     const [token, setToken] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 

@@ -9,7 +9,7 @@ import Field from '@/components/elements/Field';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import Button from '@/components/elements/Button';
-import Reaptcha from 'reaptcha';
+import Reaptcha, { ReaptchaRef } from '@/components/elements/Reaptcha';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
@@ -17,7 +17,7 @@ interface Values {
 }
 
 export default () => {
-    const ref = useRef<Reaptcha>(null);
+    const ref = useRef<ReaptchaRef>(null);
     const [token, setToken] = useState('');
 
     const { clearFlashes, addFlash } = useFlash();

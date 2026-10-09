@@ -355,9 +355,6 @@ importers:
       react-select:
         specifier: ^5.10.2
         version: 5.10.2(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(supports-color@5.5.0)
-      reaptcha:
-        specifier: ^1.12.1
-        version: 1.12.1(react@19.3.0)
       sockette:
         specifier: ^2.0.6
         version: 2.0.6
@@ -2502,11 +2499,6 @@ packages:
 
   readable-stream@2.3.8:
     resolution: {integrity: sha512-8p0AUk4XODgIewSi0l8Epjs+EVnWiK7NoDIEGU0HhE7+ZyY8D1IMY7odu5lRrFXGg71L15KG8QrPmum45RTtdA==}
-
-  reaptcha@1.12.1:
-    resolution: {integrity: sha512-zoppfGKHmo8x4PBmSrIQYQOGgVp1e8wMhr6KbwAdbQ76rSky1DcDCXLWRtBg7HGXn2hw+o+0hknafMB0rnrzZQ==}
-    peerDependencies:
-      react: ^16 || ^17 || ^18
 
   resolve-alpn@1.2.1:
     resolution: {integrity: sha512-0a1F4l73/ZFZOakJnQ3FvkJ2+gSTQWz/r2KE5OdDY0TxPm5h4GkqkWWfM47T7HsbnOtcJVEF4epCVy6u7Q3K+g==}
@@ -4754,10 +4746,6 @@ snapshots:
       safe-buffer: 5.1.2
       string_decoder: 1.1.1
       util-deprecate: 1.0.2
-
-  reaptcha@1.12.1(react@19.3.0):
-    dependencies:
-      react: 19.3.0
 
   resolve-alpn@1.2.1: {}
 
