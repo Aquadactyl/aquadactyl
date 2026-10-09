@@ -92,11 +92,12 @@ export default ({ children, ...props }: Props) => {
                             {...getFloatingProps({
                                 ref: floating,
                                 className:
-                                    'bg-gray-900 text-sm text-gray-200 px-3 py-2 rounded pointer-events-none max-w-[24rem] z-50',
+                                    'bg-gray-900 text-sm text-gray-200 px-3 py-2 rounded pointer-events-none max-w-[24rem] z-[9999]',
                                 style: {
                                     position: strategy,
                                     top: `${y || 0}px`,
                                     left: `${x || 0}px`,
+                                    zIndex: 9999,
                                 },
                             })}
                         >
