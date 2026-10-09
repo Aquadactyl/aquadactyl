@@ -63,6 +63,9 @@ RUN cp .env.example .env \
     && chown -R nginx:nginx vendor bootstrap/cache storage
 
 RUN rm /usr/local/etc/php-fpm.conf \
+    && cp scripts/helpers/blueprint /usr/local/bin/blueprint \
+    && sed -i 's|BLUEPRINT_FOLDER_HERE|/app|g' /usr/local/bin/blueprint \
+    && chmod 755 /usr/local/bin/blueprint \
     && echo "* * * * * /usr/local/bin/php /app/artisan schedule:run >> /dev/null 2>&1" >> /var/spool/cron/crontabs/root \
     && echo "0 23 * * * certbot renew --nginx --quiet" >> /var/spool/cron/crontabs/root \
     && sed -i s/ssl_session_cache/#ssl_session_cache/g /etc/nginx/nginx.conf \

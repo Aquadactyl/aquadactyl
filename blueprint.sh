@@ -59,7 +59,6 @@ fi
 export BLUEPRINT__FOLDER=$FOLDER
 export BLUEPRINT__VERSION=$VERSION
 export BLUEPRINT__DEBUG="$FOLDER"/.blueprint/extensions/blueprint/private/debug/logs.txt
-# Webpack 5 uses supported hashing algorithms and does not need legacy OpenSSL.
 
 # Defaults
 D_OWNERSHIP="www-data:www-data"
@@ -434,7 +433,7 @@ if [[ $1 != "-bash" ]]; then
       cd "$FOLDER" || cdhalt
       set -eo pipefail
       rm -rf "$FOLDER/node_modules/.cache"
-      pnpm run build --progress
+      pnpm run build
       set +eo pipefail
     fi
 

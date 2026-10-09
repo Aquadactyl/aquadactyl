@@ -1010,6 +1010,51 @@ body {
     padding: 0;
 }
 
+.server-create-form .box-body.row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 32px;
+    margin: 0;
+    padding: 24px;
+}
+.server-create-form .box-body.row + .box-body.row { padding-top: 0; }
+.server-create-form .box-body.row > [class*='col-'] {
+    width: auto;
+    min-width: 0;
+    float: none;
+    padding: 0;
+    margin-bottom: 0;
+}
+.server-create-form .box-body.row > .col-xs-12 { grid-column: 1 / -1; }
+.server-create-form .form-group { margin-bottom: 24px; }
+.server-create-form .form-group:last-child { margin-bottom: 0; }
+.server-create-form .form-group > label { margin-bottom: 8px; }
+.server-create-form .form-group > p.small {
+    margin: 8px 0 0 !important;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+.server-create-form .input-group { display: flex; width: 100%; }
+.server-create-form .input-group > .form-control { flex: 1; width: 0; min-width: 0; float: none; }
+.server-create-form .input-group > .input-group-addon {
+    display: flex;
+    align-items: center;
+    width: auto;
+    padding: 0 12px;
+}
+.server-create-form .box-footer { display: flex; justify-content: flex-end; }
+.select2-container .select2-selection--single,
+.select2-container--default .select2-selection--multiple { border-radius: 6px; }
+.select2-container--default .select2-selection--multiple { min-height: 42px; padding: 4px 8px; }
+.select2-container--default .select2-selection--multiple .select2-search__field { margin-top: 5px; }
+.select2-dropdown { border-radius: 6px; overflow: hidden; box-shadow: 0 12px 32px rgb(0 0 0 / 35%); }
+.select2-results__option { padding: 10px 12px; overflow-wrap: anywhere; }
+.select2-container--default .select2-search--dropdown .select2-search__field { border-color: var(--aqua-control-border) !important; border-radius: 4px; padding: 8px; }
+
+@media (max-width: 767px) {
+    .server-create-form .box-body.row { grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 20px; }
+}
+
 .box-footer {
     padding: 14px 20px;
 }

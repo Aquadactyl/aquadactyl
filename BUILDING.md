@@ -1,6 +1,6 @@
 # Developing Aquadactyl
 
-Aquadactyl uses React, TypeScript, Tailwind CSS and Webpack, with Blueprint
+Aquadactyl uses React, TypeScript, Tailwind CSS and Vite, with Blueprint
 beta-2026-08 bundled. Use pnpm to install dependencies and compile panel or theme
 changes. Production installation is covered in the
 [hosted installation guide](https://aquadactyl.uk/docs), with script details in
@@ -37,6 +37,33 @@ This testing stack binds to `127.0.0.1` and uses its own `aquadactyl-test` Compo
 project, image and named volumes. The database, application key and storage survive
 container recreation. Existing accounts and edited eggs are preserved on later
 starts. Use the separate deployment guide for public hosting.
+
+To rebuild only the panel in an existing stack, run these commands from the current
+source checkout, using the same Compose project and configuration files as before:
+
+```bash
+docker compose build panel
+docker compose up -d --no-build --no-deps --wait --wait-timeout 180 panel
+```
+
+The image compiles fresh Vite assets into `public/build/` and includes the Node
+dependencies needed for Blueprint rebuilds and game queries. Local build output
+and the Vite development server marker are excluded from the Docker build context.
+
+Blueprint addon installation and removal each use one command. Put the package
+in `/app` and, from a root shell inside the panel container, run:
+
+```bash
+blueprint -i mytheme
+blueprint -r mytheme
+```
+
+These commands build assets, run required addon migrations, restore permissions,
+refresh caches and queue workers, and gracefully reload PHP. Use the install
+command again to update the addon, or add `--yes` to removal to skip its prompt.
+From the host, use `docker compose exec panel blueprint -i mytheme` or
+`docker compose exec panel blueprint -r mytheme`.
+See [the Blueprint reference](docs/BLUEPRINT.md) for package compatibility.
 
 Profile pictures are stored in `storage/app/public/avatars` inside the persistent
 storage volume. The `public/storage` link exposes them to the web server. Linux
@@ -131,7 +158,7 @@ pnpm install --frozen-lockfile
 composer install
 ```
 
-The pnpm configuration uses a flat `node_modules` layout for Blueprint compatibility.
+Blueprint uses the installed pnpm dependency tree for extension builds.
 Dependency install scripts require an explicit decision in `pnpm-workspace.yaml`.
 Keep `package.json`, `pnpm-lock.yaml` and that configuration together in commits.
 Yarn is no longer used by Aquadactyl.
@@ -139,16 +166,16 @@ Yarn is no longer used by Aquadactyl.
 ## Development builds
 
 ```bash
-# Build development assets.
+# Build the current frontend.
 pnpm run build
 
 # Rebuild when source files change.
 pnpm run watch
 
 # Check types, lint and run frontend tests.
-pnpm run tsc
+pnpm run types
 pnpm run lint
-pnpm exec jest --runInBand
+pnpm run test
 ```
 
 Build at least once to create `public/build/manifest.json`, which the panel needs
@@ -161,11 +188,14 @@ and dependency conventions. Use the panel's React 16.14 runtime when building ad
 
 ## Hot module reloading
 
-`pnpm run serve` (or `pnpm run dev`) starts the Vite development server at
-`https://aquadactyl.test:5173/`. The existing local development environment expects
-certificates under `../../docker/certificates/`; configure `vite.config.ts`
-and the `serve` script for your own hostname and certificates when needed.
-HMR updates React components while you work.
+Run `pnpm exec vite --host 127.0.0.1` to start the Vite development server at
+`http://127.0.0.1:5173/`. It writes `public/hot`, which tells Laravel to use the
+development assets. Configure `server.hmr.host` in `vite.config.ts` for the
+hostname you use in your browser; its current default is `aquadactyl.test`.
+Optional HTTPS uses `USE_LOCAL_CERTS=true` and certificates under
+`../../docker/certificates/`. HMR updates React components while you work.
+Run `pnpm run build` after stopping the development server to remove `public/hot`
+and return to production assets.
 
 ## Production builds
 
@@ -181,8 +211,8 @@ Linux deployment builds the frontend and refreshes backend caches automatically.
 ```bash
 composer validate --strict
 composer audit --locked --no-dev
-vendor/bin/phpunit --bootstrap vendor/autoload.php tests/Unit
-vendor/bin/phpunit tests/Integration
+vendor/bin/pest --bootstrap vendor/autoload.php tests/Unit
+vendor/bin/pest tests/Integration
 composer cs:check
 ```
 

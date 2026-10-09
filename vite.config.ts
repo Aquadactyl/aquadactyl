@@ -18,10 +18,12 @@ const httpsOptions =
 
 export default defineConfig({
     plugins: [
-        laravel({
-            input: ['resources/scripts/index.tsx'],
-            refresh: true,
-        }),
+        // Vitest uses Vite's server API without serving the panel through Laravel.
+        process.env.VITEST !== 'true' &&
+            laravel({
+                input: ['resources/scripts/index.tsx'],
+                refresh: true,
+            }),
         react(),
     ],
     resolve: {

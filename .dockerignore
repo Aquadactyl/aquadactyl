@@ -12,8 +12,11 @@ vendor
 .blueprint/dev/*
 .blueprint/extensions/blueprint/private/db/is_installed
 .blueprint/extensions/blueprint/private/db/version
-public/assets
+public/assets/*
+!public/assets/svgs/
+!public/assets/svgs/**
 public/build
+public/hot
 storage/logs/*
 storage/framework/*
 bootstrap/cache/*.php

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "$FOLDER/scripts/helpers/extension-lifecycle.sh" || exit 1
+
 InstallExtension() {
   postexit() {
     rm -r ".blueprint/tmp"
@@ -1350,8 +1352,10 @@ Command() {
   if [[ ( $1 == "./"* ) || ( $1 == "../"* ) || ( $1 == "/"* ) ]]; then PRINT FATAL "Cannot import extensions from external paths.";exit 2;fi
 
   lock_wait
-  lock_create
-  trap lock_remove SIGINT SIGTERM
+  lock_create || exit 1
+  trap 'if [[ -f "$BLUEPRINT__FOLDER/.blueprint/lock" ]]; then lock_remove; fi' EXIT
+  trap 'exit 130' SIGINT
+  trap 'exit 143' SIGTERM
 
   if [[ $DeveloperWatch == "" ]]; then
     export DeveloperWatch="false"
@@ -1371,8 +1375,8 @@ Command() {
 
   # Install selected extensions
   current=0
-  extensions="$*"
-  total=$(echo "$extensions" | wc -w)
+  total=$#
+  local transaction_status=0
 
   local EXTENSIONS_STEPS=35 #Total amount of steps per extension
   local FINISH_STEPS=6 #Total amount of finalization steps
@@ -1384,10 +1388,11 @@ Command() {
   export PROGRESS_TOTAL="$(("$FINISH_STEPS" + "$EXTENSIONS_STEPS" * "$total"))"
   export PROGRESS_NOW=0
 
-  for extension in $extensions; do
+  for extension in "$@"; do
     (( current++ ))
     InstallExtension "$extension" "$current" "$total"
     LAST_EXIT_CODE="$?"
+    if [[ $LAST_EXIT_CODE != 0 ]]; then transaction_status=$LAST_EXIT_CODE; fi
     export PROGRESS_NOW="$(("$EXTENSIONS_STEPS" * "$current"))"
   done
 
@@ -1404,55 +1409,8 @@ Command() {
   # Finalize transaction
   PRINT INFO "Finalizing transaction.."
 
-  if [[ ( $YARN == "y" ) && ( $IgnoreRebuild != "true" ) ]]; then
-    PRINT INFO "Rebuilding panel assets.."
-    hide_progress
-    cd "$FOLDER" || cdhalt
-    rm -rf "$FOLDER/node_modules/.cache"
-    pnpm run build --progress || { lock_remove; exit 1; }
-  fi
-
-  ((PROGRESS_NOW++))
-
-  # Link filesystems
-  PRINT INFO "Linking filesystems.."
-  php artisan storage:link &>> "$BLUEPRINT__DEBUG"
-
-  ((PROGRESS_NOW++))
-
-  if [[ $DeveloperWatch == "false" ]]; then
-    # Flush cache.
-    PRINT INFO "Flushing view, config and route cache.."
-    {
-      php artisan view:cache
-      php artisan config:cache
-      php artisan route:clear
-      if [[ $KeepApplicationCache != "true" ]]; then php artisan cache:clear; fi
-      php artisan bp:cache
-      php artisan queue:restart
-    } &>> "$BLUEPRINT__DEBUG"
-
-    ((PROGRESS_NOW++))
-
-    # Make sure all files have correct permissions.
-    PRINT INFO "Changing Aquadactyl file ownership to '$OWNERSHIP'.."
-    find "$FOLDER/" \
-    -path "$FOLDER/node_modules" -prune \
-    -o -exec chown "$OWNERSHIP" {} + &>> "$BLUEPRINT__DEBUG"
-    # Code may be owned by a deployment account; runtime directories need the web user.
-    chown -R "$WEBUSER" "$FOLDER/storage" "$FOLDER/bootstrap/cache" &>> "$BLUEPRINT__DEBUG"
-  fi
-
-  ((PROGRESS_NOW++))
-
-  # Database migrations
-  if [[ ( $dbmigrations == "true" ) && ( $DOCKER != "y" ) ]]; then
-    PRINT INFO "Running database migrations.."
-    hide_progress
-    php artisan migrate --force
-  fi
-
-  ((PROGRESS_NOW++))
+  blueprint_extension_finish || exit 1
+  PROGRESS_NOW=$PROGRESS_TOTAL
 
   lock_remove
 
@@ -1465,5 +1423,5 @@ Command() {
   fi
 
   hide_progress
-  exit 0
+  exit "$transaction_status"
 }

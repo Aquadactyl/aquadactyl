@@ -4,7 +4,7 @@ use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\BlueprintBaseLibra
 
 function decodeSetting(string $value): mixed
 {
-    $method = new \ReflectionMethod(BlueprintBaseLibrary::class, 'decodeValue');
+    $method = new ReflectionMethod(BlueprintBaseLibrary::class, 'decodeValue');
 
     return $method->invoke(new BlueprintBaseLibrary(), $value);
 }

@@ -202,6 +202,7 @@
             {!! Theme::js('vendor/bootstrap-notify/bootstrap-notify.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/select2/select2.full.min.js?t={cache-version}') !!}
             {!! Theme::js('js/admin/functions.js?t={cache-version}') !!}
+            {!! Theme::js('js/admin/selects.js?v=' . filemtime(public_path('themes/pterodactyl/js/admin/selects.js'))) !!}
             <script src="/js/autocomplete.js" type="application/javascript"></script>
 
             @if(Auth::user()->root_admin)

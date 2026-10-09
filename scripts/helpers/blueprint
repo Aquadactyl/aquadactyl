@@ -16,4 +16,4 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
 fi
 
 # Run Blueprint command
-bash "$BLUEPRINT__FOLDER/blueprint.sh" -bash "${@}"
+exec bash "$BLUEPRINT__FOLDER/blueprint.sh" -bash "${@}"

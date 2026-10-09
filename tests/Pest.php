@@ -35,4 +35,3 @@ pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in('In
 | global functions to help you with this.
 |
 */
-

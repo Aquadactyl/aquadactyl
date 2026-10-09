@@ -16,29 +16,29 @@ const getButtonClass = ({
     className,
 }: Omit<Props, 'isLoading'> & { className?: string }): string => {
     return classNames(
-        'relative inline-block rounded border text-sm font-medium transition-all duration-150 disabled:cursor-default disabled:opacity-55',
+        'relative inline-block rounded border text-sm font-medium transition-all duration-150 disabled:cursor-default disabled:opacity-[0.55]',
         size === 'xsmall' && 'px-2 py-1 text-xs',
         (!size || size === 'small') && 'px-4 py-2',
         size === 'large' && 'p-4 text-sm',
         size === 'xlarge' && 'w-full p-4',
         !isSecondary && {
-            'hover:not-disabled:bg-primary-600 hover:not-disabled:border-primary-700 border-primary-600 bg-primary-500 text-primary-50':
+            'border-primary-600 bg-primary-500 text-primary-50 [&:not(:disabled):hover]:border-primary-700 [&:not(:disabled):hover]:bg-primary-600':
                 !color || color === 'primary',
-            'hover:not-disabled:bg-neutral-600 hover:not-disabled:border-neutral-500 border-neutral-500 bg-neutral-700 text-neutral-50':
+            'border-neutral-500 bg-neutral-700 text-neutral-50 [&:not(:disabled):hover]:border-neutral-500 [&:not(:disabled):hover]:bg-neutral-600':
                 color === 'grey',
-            'hover:not-disabled:bg-green-600 hover:not-disabled:border-green-700 border-green-600 bg-green-500 text-green-50':
+            'border-green-600 bg-green-500 text-green-50 [&:not(:disabled):hover]:border-green-700 [&:not(:disabled):hover]:bg-green-600':
                 color === 'green',
-            'hover:not-disabled:bg-red-600 hover:not-disabled:border-red-700 border-red-600 bg-red-500 text-red-50':
+            'border-red-600 bg-red-500 text-red-50 [&:not(:disabled):hover]:border-red-700 [&:not(:disabled):hover]:bg-red-600':
                 color === 'red',
         },
         isSecondary && [
-            'hover:not-disabled:border-neutral-500 hover:not-disabled:text-neutral-100 border-neutral-600 bg-transparent text-neutral-200',
+            'border-neutral-600 bg-transparent text-neutral-200 [&:not(:disabled):hover]:border-neutral-500 [&:not(:disabled):hover]:text-neutral-100',
             color === 'red' &&
-                'hover:not-disabled:bg-red-500 hover:not-disabled:border-red-600 hover:not-disabled:text-red-50 active:not-disabled:bg-red-600 active:not-disabled:border-red-700',
+                '[&:not(:disabled):active]:border-red-700 [&:not(:disabled):active]:bg-red-600 [&:not(:disabled):hover]:border-red-600 [&:not(:disabled):hover]:bg-red-500 [&:not(:disabled):hover]:text-red-50',
             color === 'primary' &&
-                'hover:not-disabled:bg-primary-500 hover:not-disabled:border-primary-600 hover:not-disabled:text-primary-50',
+                '[&:not(:disabled):hover]:border-primary-600 [&:not(:disabled):hover]:bg-primary-500 [&:not(:disabled):hover]:text-primary-50',
             color === 'green' &&
-                'hover:not-disabled:bg-green-500 hover:not-disabled:border-green-600 hover:not-disabled:text-green-50 active:not-disabled:bg-green-600 active:not-disabled:border-green-700',
+                '[&:not(:disabled):active]:border-green-700 [&:not(:disabled):active]:bg-green-600 [&:not(:disabled):hover]:border-green-600 [&:not(:disabled):hover]:bg-green-500 [&:not(:disabled):hover]:text-green-50',
         ],
         className,
     );

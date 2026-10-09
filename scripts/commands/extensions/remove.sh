@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "$FOLDER/scripts/helpers/extension-lifecycle.sh" || exit 1
+
 RemoveExtension() {
   if [[ $USER_CONFIRMED_REMOVAL != "yes" ]]; then
     PRINT INPUT "Do you want to proceed with this transaction? Some files might not be removed properly. (y/N)"
@@ -22,7 +24,6 @@ RemoveExtension() {
   set -- "${@:1:2}" "$EXTENSION" "${@:4}"
 
   if [[ $(cat ".blueprint/extensions/blueprint/private/db/installed_extensions") != *"|$EXTENSION,"* ]]; then
-    lock_remove
     PRINT FATAL "'$EXTENSION' is not installed or detected."
     return 2
   fi
@@ -81,7 +82,6 @@ RemoveExtension() {
       PRINT WARNING "Config value 'requests.controllers' is deprecated, use 'requests.app' instead."
     fi
   else
-    lock_remove
     PRINT FATAL "Extension configuration file not found or detected."
     return 1
   fi
@@ -395,16 +395,33 @@ RemoveExtension() {
 }
 
 Command() {
-  if [[ $1 == "" ]]; then PRINT FATAL "Expected at least 1 argument but got 0.";exit 2;fi
+  local extension
+  local -a extensions=()
+  for extension in "$@"; do
+    if [[ $extension == --yes || $extension == -y ]]; then
+      export USER_CONFIRMED_REMOVAL=yes
+    else
+      local identifier=${extension%.blueprint}
+      if [[ ! $identifier =~ ^[a-z]{1,48}$ || $identifier == blueprint ]]; then
+        PRINT FATAL "Expected an extension identifier, for example: blueprint -r mytheme"
+        exit 2
+      fi
+      extensions+=("$extension")
+    fi
+  done
+  if [[ ${#extensions[@]} == 0 ]]; then PRINT FATAL "Expected at least 1 extension identifier.";exit 2;fi
+  set -- "${extensions[@]}"
 
   lock_wait
-  lock_create
-  trap lock_remove SIGINT SIGTERM
+  lock_create || exit 1
+  trap 'if [[ -f "$BLUEPRINT__FOLDER/.blueprint/lock" ]]; then lock_remove; fi' EXIT
+  trap 'exit 130' SIGINT
+  trap 'exit 143' SIGTERM
 
   # Remove selected extensions
   current=0
-  extensions="$*"
-  total=$(echo "$extensions" | wc -w)
+  total=$#
+  local transaction_status=0
 
   local EXTENSIONS_STEPS=22 #Total amount of steps per extension
   local FINISH_STEPS=5 #Total amount of finalization
@@ -412,9 +429,11 @@ Command() {
   export PROGRESS_TOTAL="$(("$FINISH_STEPS" + "$EXTENSIONS_STEPS" * "$total"))"
   export PROGRESS_NOW=0
 
-  for extension in $extensions; do
+  for extension in "$@"; do
     (( current++ ))
     RemoveExtension "$extension" "$current" "$total"
+    local removal_status=$?
+    if [[ $removal_status != 0 ]]; then transaction_status=$removal_status; fi
     export PROGRESS_NOW="$(("$EXTENSIONS_STEPS" * "$current"))"
   done
 
@@ -424,42 +443,8 @@ Command() {
     # Finalize transaction
     PRINT INFO "Finalizing transaction.."
 
-    # Rebuild panel
-    if [[ $YARN == "y" ]]; then
-      PRINT INFO "Rebuilding panel assets.."
-      cd "$FOLDER" || cdhalt
-      rm -rf "$FOLDER/node_modules/.cache"
-      pnpm run build --progress
-    fi
-
-    ((PROGRESS_NOW++))
-
-    # Link filesystems
-    PRINT INFO "Linking filesystems.."
-    php artisan storage:link &>> "$BLUEPRINT__DEBUG"
-
-    ((PROGRESS_NOW++))
-
-    # Flush cache.
-    PRINT INFO "Flushing view, config and route cache.."
-    {
-      php artisan view:cache
-      php artisan config:cache
-      php artisan route:clear
-      php artisan cache:clear
-      php artisan bp:cache
-      php artisan queue:restart
-    } &>> "$BLUEPRINT__DEBUG"
-
-    ((PROGRESS_NOW++))
-
-    # Make sure all files have correct permissions.
-    PRINT INFO "Changing Aquadactyl file ownership to '$OWNERSHIP'.."
-    find "$FOLDER/" \
-    -path "$FOLDER/node_modules" -prune \
-    -o -exec chown "$OWNERSHIP" {} + &>> "$BLUEPRINT__DEBUG"
-
-    ((PROGRESS_NOW++))
+    blueprint_extension_finish || exit 1
+    PROGRESS_NOW=$PROGRESS_TOTAL
 
     lock_remove
 
@@ -468,7 +453,7 @@ Command() {
     PRINT SUCCESS "$RemovedExtensions $CorrectPhrasing been removed."
     hide_progress
 
-    exit 0
+    exit "$transaction_status"
   fi
 
   hide_progress

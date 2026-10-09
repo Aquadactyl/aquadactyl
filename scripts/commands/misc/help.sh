@@ -14,7 +14,7 @@ Command() {
   echo -e "
 \x1b[34;1mExtensions\x1b[0m\x1b[34m
   -install [name]   -add -i  install/update a blueprint extension
-  -remove [name]         -r  remove a blueprint extension
+  -remove [name]         -r  remove a blueprint extension (--yes skips the prompt)
   -query [name]          -q  information about a specific blueprint extension
   \x1b[0m
 
@@ -39,5 +39,10 @@ ${help_dev_primary}Developer${help_dev_status}\x1b[0m${help_dev_secondary}
   -upgrade (remote <url>)    update/reset to another release
   -rerun-install             rerun the blueprint installation script
   \x1b[0m
+
+  Place theme.blueprint in the panel root (/app in Docker), then run:
+    blueprint -i theme
+    blueprint -r theme
+  These commands rebuild assets, refresh caches and permissions, and reload PHP.
 "
 }

@@ -33,6 +33,6 @@ jobs:
             - run: pnpm audit --prod
             - run: pnpm run types
             - run: pnpm run lint
-            - run: pnpm exec jest --runInBand
+            - run: pnpm run test
             - run: node --test scripts/game-query.test.cjs
             - run: pnpm run build

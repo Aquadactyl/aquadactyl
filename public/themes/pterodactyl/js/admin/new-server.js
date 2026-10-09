@@ -41,6 +41,10 @@ $(document).ready(function() {
     $('#pAllocationAdditional').select2({
         placeholder: 'Select Additional Allocations',
     });
+
+    $('#pDefaultContainer').select2({
+        placeholder: 'Select a Docker image',
+    });
 });
 
 let lastActiveBox = null;
@@ -91,6 +95,7 @@ $('#pEggId').on('change', function (event) {
         opt.innerText = keys[i] + " (" + images[keys[i]] + ")";
         $('#pDefaultContainer').append(opt);
     }
+    $('#pDefaultContainer').trigger('change.select2');
 
     if (!_.get(objectChain, 'startup', false)) {
         $('#pStartup').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
