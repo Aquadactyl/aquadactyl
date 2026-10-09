@@ -14,6 +14,16 @@
 pest()->extend(Pterodactyl\Tests\TestCase::class)->in('Unit');
 pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in('Integration');
 
+uses(
+    Pterodactyl\Tests\Assertions\MiddlewareAttributeAssertionsTrait::class,
+    Pterodactyl\Tests\Traits\Http\MocksMiddlewareClosure::class,
+    Pterodactyl\Tests\Traits\Http\RequestMockHelpers::class
+)->beforeEach(function () {
+    if (method_exists($this, 'buildRequestMock')) {
+        $this->buildRequestMock();
+    }
+})->in('Unit/Http/Middleware');
+
 /*
 |--------------------------------------------------------------------------
 | Expectations
