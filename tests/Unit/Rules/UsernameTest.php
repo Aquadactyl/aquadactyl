@@ -1,72 +1,36 @@
 <?php
 
-namespace Pterodactyl\Tests\Unit\Rules;
-
 use Pterodactyl\Rules\Username;
-use Pterodactyl\Tests\TestCase;
 
-class UsernameTest extends TestCase
-{
-    /**
-     * Test that this rule can be cast to a string correctly.
-     */
-    public function testRuleIsStringable()
-    {
-        $this->assertSame('p_username', (string) new Username());
-    }
+test('rule is stringable', function () {
+    expect((string) new Username())->toBe('p_username');
+});
 
-    /**
-     * Test valid usernames.
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('validUsernameDataProvider')]
-    public function testValidUsernames(string $username)
-    {
-        $this->assertTrue((new Username())->passes('test', $username), 'Assert username is valid.');
-    }
+test('valid usernames', function (string $username) {
+    expect((new Username())->passes('test', $username))->toBeTrue();
+})->with([
+    'username',
+    'user_name',
+    'user.name',
+    'user-name',
+    '123username123',
+    '123-user.name',
+    '123456',
+]);
 
-    /**
-     * Test invalid usernames return false.
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('invalidUsernameDataProvider')]
-    public function testInvalidUsernames(string $username)
-    {
-        $this->assertFalse((new Username())->passes('test', $username), 'Assert username is not valid.');
-    }
-
-    /**
-     * Provide valid usernames.
-     */
-    public static function validUsernameDataProvider(): array
-    {
-        return [
-            ['username'],
-            ['user_name'],
-            ['user.name'],
-            ['user-name'],
-            ['123username123'],
-            ['123-user.name'],
-            ['123456'],
-        ];
-    }
-
-    /**
-     * Provide invalid usernames.
-     */
-    public static function invalidUsernameDataProvider(): array
-    {
-        return [
-            ['_username'],
-            ['username_'],
-            ['_username_'],
-            ['-username'],
-            ['.username'],
-            ['username-'],
-            ['username.'],
-            ['user*name'],
-            ['user^name'],
-            ['user#name'],
-            ['user+name'],
-            ['1234_'],
-        ];
-    }
-}
+test('invalid usernames', function (string $username) {
+    expect((new Username())->passes('test', $username))->toBeFalse();
+})->with([
+    '_username',
+    'username_',
+    '_username_',
+    '-username',
+    '.username',
+    'username-',
+    'username.',
+    'user*name',
+    'user^name',
+    'user#name',
+    'user+name',
+    '1234_',
+]);

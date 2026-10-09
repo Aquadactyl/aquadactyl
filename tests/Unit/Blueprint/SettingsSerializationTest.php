@@ -1,36 +1,12 @@
 <?php
 
-namespace Pterodactyl\Tests\Unit\Blueprint;
-
-use PHPUnit\Framework\TestCase;
 use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\BlueprintBaseLibrary;
 
-class SettingsSerializationTest extends TestCase
+function decodeSetting(string $value): mixed
 {
-    private function decode(string $value): mixed
-    {
-        $method = new \ReflectionMethod(BlueprintBaseLibrary::class, 'decodeValue');
+    $method = new \ReflectionMethod(BlueprintBaseLibrary::class, 'decodeValue');
 
-        return $method->invoke(new BlueprintBaseLibrary(), $value);
-    }
-
-    public function testPlainSettingsAndSerializedValuesAreBothPreserved(): void
-    {
-        $this->assertSame('1', $this->decode('1'));
-        $this->assertSame('0', $this->decode('0'));
-        $this->assertSame('example', $this->decode('example'));
-        $this->assertFalse($this->decode(serialize(false)));
-        $this->assertTrue($this->decode(serialize(true)));
-        $this->assertSame(['one', 'two'], $this->decode(serialize(['one', 'two'])));
-    }
-
-    public function testReadingSettingsDoesNotExecuteObjectWakeup(): void
-    {
-        SerializationProbe::$awakened = false;
-        $this->decode(serialize(new SerializationProbe()));
-
-        $this->assertFalse(SerializationProbe::$awakened);
-    }
+    return $method->invoke(new BlueprintBaseLibrary(), $value);
 }
 
 class SerializationProbe
@@ -42,3 +18,19 @@ class SerializationProbe
         self::$awakened = true;
     }
 }
+
+test('plain settings and serialized values are both preserved', function () {
+    expect(decodeSetting('1'))->toBe('1')
+        ->and(decodeSetting('0'))->toBe('0')
+        ->and(decodeSetting('example'))->toBe('example')
+        ->and(decodeSetting(serialize(false)))->toBeFalse()
+        ->and(decodeSetting(serialize(true)))->toBeTrue()
+        ->and(decodeSetting(serialize(['one', 'two'])))->toBe(['one', 'two']);
+});
+
+test('reading settings does not execute object wakeup', function () {
+    SerializationProbe::$awakened = false;
+    decodeSetting(serialize(new SerializationProbe()));
+
+    expect(SerializationProbe::$awakened)->toBeFalse();
+});
