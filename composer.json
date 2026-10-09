@@ -62,9 +62,10 @@
         "larastan/larastan": "^3.8",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.9",
+        "pestphp/pest": "^3.8",
+        "pestphp/pest-plugin-laravel": "^3.2",
         "phpstan/phpstan": "^2.1",
         "phpstan/phpstan-webmozart-assert": "^2.0",
-        "phpunit/phpunit": "^11.5",
         "spatie/laravel-ignition": "^2.9"
     },
     "autoload": {
@@ -83,6 +84,7 @@
         }
     },
     "scripts": {
+        "test": "pest",
         "cs:fix": "php-cs-fixer fix",
         "cs:check": "php-cs-fixer fix --dry-run --diff --verbose",
         "post-autoload-dump": [
@@ -107,6 +109,9 @@
         "sort-packages": true,
         "platform": {
             "php": "8.4.0"
+        },
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
         }
     },
     "minimum-stability": "stable",
