@@ -1,6 +1,5 @@
 import React from 'react';
-import { NavLink, Route, Switch } from 'react-router-dom';
-import { useLocation } from 'react-router';
+import { NavLink, Route, Routes, useLocation } from 'react-router';
 import { NotFound } from '@/components/elements/ScreenBlock';
 import TransitionRouter from '@/TransitionRouter';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
@@ -19,7 +18,7 @@ export const NavigationLinks = () => {
             {routes.account
                 .filter((route) => !!route.name)
                 .map(({ path, name, exact = false }) => (
-                    <NavLink key={path} to={`/account/${path}`.replace('//', '/')} exact={exact}>
+                    <NavLink key={path} to={`/account/${path}`.replace('//', '/')} end={exact}>
                         {name}
                     </NavLink>
                 ))}
@@ -30,7 +29,7 @@ export const NavigationLinks = () => {
                     .filter((route) => !!route.name)
                     .filter((route) => (route.adminOnly ? rootAdmin : true))
                     .map(({ path, name, exact = false, adminOnly }) => (
-                        <NavLink key={path} to={`/account/${path}`.replace('//', '/')} exact={exact}>
+                        <NavLink key={path} to={`/account/${path}`.replace('//', '/')} end={exact}>
                             {name}
                             {adminOnly ? (
                                 <>
@@ -53,16 +52,12 @@ export const NavigationRouter = () => {
         <>
             <TransitionRouter location={deferredLocation}>
                 <React.Suspense fallback={<Spinner centered />}>
-                    <Switch location={deferredLocation}>
-                        <Route path={'/'} exact>
-                            <DashboardContainer />
-                        </Route>
+                    <Routes location={deferredLocation}>
+                        <Route path={'/'} element={<DashboardContainer />} />
 
                         {/* Aquadactyl routes */}
                         {routes.account.map(({ path, component: Component }) => (
-                            <Route key={path} path={`/account/${path}`.replace('//', '/')} exact>
-                                <Component />
-                            </Route>
+                            <Route key={path} path={`account/${path.replace(/^\/+/, '')}`} element={<Component />} />
                         ))}
 
                         {/* Blueprint routes */}
@@ -70,15 +65,15 @@ export const NavigationRouter = () => {
                             blueprintRoutes.account
                                 .filter((route) => (route.adminOnly ? rootAdmin : true))
                                 .map(({ path, component: Component }) => (
-                                    <Route key={path} path={`/account/${path}`.replace('//', '/')} exact>
-                                        <Component />
-                                    </Route>
+                                    <Route
+                                        key={path}
+                                        path={`account/${path.replace(/^\/+/, '')}`}
+                                        element={<Component />}
+                                    />
                                 ))}
 
-                        <Route path={'*'}>
-                            <NotFound />
-                        </Route>
-                    </Switch>
+                        <Route path={'*'} element={<NotFound />} />
+                    </Routes>
                 </React.Suspense>
             </TransitionRouter>
         </>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ServerContext } from '@/state/server';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router';
 import { encodePathSegments, hashToPath } from '@/helpers';
 
 interface Props {

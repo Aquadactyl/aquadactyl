@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router';
 import getServerSchedule from '@/api/server/schedules/getServerSchedule';
 import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
 import Spinner from '@/components/elements/Spinner';
@@ -22,13 +22,10 @@ import { cronExpression, describeCron, formatScheduleDate } from './scheduleHelp
 import BeforeEdit from '@blueprint/components/Server/Schedules/Edit/BeforeEdit';
 import AfterEdit from '@blueprint/components/Server/Schedules/Edit/AfterEdit';
 
-interface Params {
-    id: string;
-}
 
 export default () => {
-    const history = useHistory();
-    const { id: scheduleId } = useParams<Params>();
+    const navigate = useNavigate();
+    const { id: scheduleId } = useParams<{ id: string }>();
     const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const timezone = useAppStore((state) => state.settings.data?.timezone ?? 'UTC');
@@ -37,7 +34,7 @@ export default () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [savingStatus, setSavingStatus] = useState(false);
     const schedule = ServerContext.useStoreState(
-        (state) => state.schedules.data.find((s) => s.id === parseInt(scheduleId, 10)),
+        (state) => state.schedules.data.find((s) => s.id === parseInt(scheduleId!, 10)),
         isEqual,
     );
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
@@ -57,6 +54,7 @@ export default () => {
             setIsLoading(false);
             return;
         }
+        if (!scheduleId) return;
         clearFlashes('schedules');
         getServerSchedule(uuid, parseInt(scheduleId, 10))
             .then((schedule) => appendSchedule(schedule))
@@ -187,7 +185,7 @@ export default () => {
                         <Can action={'schedule.delete'}>
                             <DeleteScheduleButton
                                 scheduleId={schedule.id}
-                                onDeleted={() => history.push('/server/' + id + '/schedules')}
+                                onDeleted={() => navigate('/server/' + id + '/schedules')}
                             />
                         </Can>
                         {schedule.tasks.length > 0 && (

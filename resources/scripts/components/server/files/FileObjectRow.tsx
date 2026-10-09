@@ -6,7 +6,7 @@ import React, { memo } from 'react';
 import { FileObject } from '@/api/server/files/loadDirectory';
 import FileDropdownMenu from '@/components/server/files/FileDropdownMenu';
 import { ServerContext } from '@/state/server';
-import { NavLink, useRouteMatch } from 'react-router-dom';
+import { NavLink } from 'react-router';
 import isEqual from 'react-fast-compare';
 import SelectFileCheckbox from '@/components/server/files/SelectFileCheckbox';
 import { usePermissions } from '@/plugins/usePermissions';
@@ -17,16 +17,15 @@ import styles from './style.module.css';
 const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
     const [canRead] = usePermissions(['file.read']);
     const [canReadContents] = usePermissions(['file.read-content']);
+    const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const directory = ServerContext.useStoreState((state) => state.files.directory);
-
-    const match = useRouteMatch();
 
     return (file.isFile && (!file.isEditable() || !canReadContents)) || (!file.isFile && !canRead) ? (
         <div className={styles.details}>{children}</div>
     ) : (
         <NavLink
             className={styles.details}
-            to={`${match.url}${file.isFile ? '/edit' : ''}#${encodePathSegments(join(directory, file.name))}`}
+            to={`/server/${id}/files${file.isFile ? '/edit' : ''}#${encodePathSegments(join(directory, file.name))}`}
         >
             {children}
         </NavLink>

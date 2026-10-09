@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Folder, Play, RotateCw, Square, Terminal } from 'lucide-react';
 import { Server } from '@/api/server/getServer';
 import sendServerPowerAction, { PowerAction } from '@/api/server/sendServerPowerAction';

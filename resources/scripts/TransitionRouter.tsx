@@ -1,6 +1,5 @@
 import React from 'react';
-import { Route } from 'react-router';
-import type { Location } from 'history';
+import { useLocation, type Location } from 'react-router';
 import { SwitchTransition } from 'react-transition-group';
 import Fade from '@/components/elements/Fade';
 import styled from 'styled-components';
@@ -22,19 +21,14 @@ interface TransitionRouterProps {
 }
 
 const TransitionRouter: React.FC<TransitionRouterProps> = ({ location: propLocation, children }) => {
+    const routeLocation = useLocation();
+    const loc = propLocation || routeLocation;
     return (
-        <Route
-            render={({ location: routeLocation }) => {
-                const loc = propLocation || routeLocation;
-                return (
-                    <StyledSwitchTransition>
-                        <Fade timeout={150} key={loc.pathname + loc.search} in appear unmountOnExit>
-                            <section>{children}</section>
-                        </Fade>
-                    </StyledSwitchTransition>
-                );
-            }}
-        />
+        <StyledSwitchTransition>
+            <Fade timeout={150} key={loc.pathname + loc.search} in appear unmountOnExit>
+                <section>{children}</section>
+            </Fade>
+        </StyledSwitchTransition>
     );
 };
 

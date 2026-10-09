@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import getServerSchedules from '@/api/server/schedules/getServerSchedules';
 import { ServerContext } from '@/state/server';
 import Spinner from '@/components/elements/Spinner';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import ScheduleRow from '@/components/server/schedules/ScheduleRow';
 import { httpErrorToHuman } from '@/api/http';
@@ -17,8 +17,8 @@ import BeforeContent from '@blueprint/components/Server/Schedules/List/BeforeCon
 import AfterContent from '@blueprint/components/Server/Schedules/List/AfterContent';
 
 export default () => {
-    const match = useRouteMatch();
-    const history = useHistory();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const { clearFlashes, addError } = useFlash();
@@ -60,11 +60,11 @@ export default () => {
                             <GreyRowBox
                                 as={'a'}
                                 key={schedule.id}
-                                href={`${match.url}/${schedule.id}`}
+                                href={`${location.pathname}/${schedule.id}`}
                                 className={'mb-2 cursor-pointer flex-wrap'}
                                 onClick={(e: any) => {
                                     e.preventDefault();
-                                    history.push(`${match.url}/${schedule.id}`);
+                                    navigate(`${location.pathname}/${schedule.id}`);
                                 }}
                             >
                                 <ScheduleRow schedule={schedule} />
@@ -76,7 +76,7 @@ export default () => {
                             <EditScheduleModal
                                 visible={visible}
                                 onModalDismissed={() => setVisible(false)}
-                                onCreated={(schedule) => history.push(`${match.url}/${schedule.id}`)}
+                                onCreated={(schedule) => navigate(`${location.pathname}/${schedule.id}`)}
                             />
                             <Button type={'button'} onClick={() => setVisible(true)}>
                                 Create schedule

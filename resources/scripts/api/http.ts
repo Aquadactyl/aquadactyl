@@ -85,11 +85,9 @@ export interface FractalPaginatedResponse extends FractalResponseList {
         pagination: {
             total: number;
             count: number;
-            /* eslint-disable camelcase */
             per_page: number;
             current_page: number;
             total_pages: number;
-            /* eslint-enable camelcase */
         };
     };
 }

@@ -10,7 +10,7 @@ import getServers from '@/api/getServers';
 import { Server } from '@/api/server/getServer';
 import { useAppStore } from '@/state';
 import useFlash from '@/plugins/useFlash';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import Input from '@/components/elements/Input';
 import { ip } from '@/lib/formatters';
 

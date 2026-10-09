@@ -1,20 +1,10 @@
 import React from 'react';
-import { Redirect, Route, RouteProps } from 'react-router';
+import { Navigate, useLocation } from 'react-router';
 import { useAppStore } from '@/state';
 
-export default ({ children, ...props }: Omit<RouteProps, 'render'>) => {
+export default ({ children }: { children: React.ReactNode }) => {
     const isAuthenticated = useAppStore((state) => !!state.user.data?.uuid);
+    const location = useLocation();
 
-    return (
-        <Route
-            {...props}
-            render={({ location }) =>
-                isAuthenticated ? (
-                    <>{children}</>
-                ) : (
-                    <Redirect to={{ pathname: '/auth/login', state: { from: location } }} />
-                )
-            }
-        />
-    );
+    return isAuthenticated ? <>{children}</> : <Navigate to={'/auth/login'} state={{ from: location }} replace />;
 };

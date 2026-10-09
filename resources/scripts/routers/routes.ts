@@ -81,7 +81,7 @@ export default {
             component: FileManagerContainer,
         },
         {
-            path: '/files/:action(edit|new)',
+            path: '/files/:action',
             permission: 'file.*',
             name: undefined,
             component: FileEditContainer,

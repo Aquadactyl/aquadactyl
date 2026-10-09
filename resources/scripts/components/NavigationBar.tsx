@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router';
 import { ArrowUpRight, LogOut, Server, Settings } from 'lucide-react';
 import { useAppStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
@@ -53,7 +53,7 @@ export default () => {
                     </Link>
                 </div>
                 <nav className={'navigation-items'} aria-label={'Main navigation'}>
-                    <NavLink to={'/'} exact id={'NavigationDashboard'} aria-label={'Servers'}>
+                    <NavLink to={'/'} end id={'NavigationDashboard'} aria-label={'Servers'}>
                         <Server size={17} aria-hidden />
                         <span>Servers</span>
                     </NavLink>

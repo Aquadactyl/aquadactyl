@@ -1,6 +1,6 @@
 import TransferListener from '@/components/server/TransferListener';
 import React, { useEffect, useState } from 'react';
-import { useRouteMatch } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
 import NavigationBar from '@/components/NavigationBar';
 import WebsocketHandler from '@/components/server/WebsocketHandler';
 import { ServerContext } from '@/state/server';
@@ -8,7 +8,6 @@ import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
-import { useLocation } from 'react-router';
 import { ServerError } from '@/components/elements/ScreenBlock';
 import { httpErrorToHuman } from '@/api/http';
 import { useAppStore } from '@/state';
@@ -23,7 +22,7 @@ import AdditionalServerItems from '@blueprint/components/Navigation/SubNavigatio
 import AfterSubNavigation from '@blueprint/components/Navigation/SubNavigation/AfterSubNavigation';
 
 export default () => {
-    const match = useRouteMatch<{ id: string }>();
+    const { id: routeId } = useParams<{ id: string }>();
     const location = useLocation();
     const inConflictState = ServerContext.useStoreState((state) => state.server.inConflictState);
 
@@ -46,7 +45,7 @@ export default () => {
     useEffect(() => {
         setError('');
 
-        getServer(match.params.id).catch((error) => {
+        getServer(routeId!).catch((error) => {
             console.error(error);
             setError(httpErrorToHuman(error));
         });
@@ -54,7 +53,7 @@ export default () => {
         return () => {
             clearServerState();
         };
-    }, [match.params.id]);
+    }, [routeId]);
 
     return (
         <React.Fragment key={'server-router'}>

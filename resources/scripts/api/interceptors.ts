@@ -1,8 +1,8 @@
 import http from '@/api/http';
 import { AxiosError } from 'axios';
-import { History } from 'history';
+import { history } from '@/components/history';
 
-export const setupInterceptors = (history: History) => {
+export const setupInterceptors = (hist: typeof history) => {
     http.interceptors.response.use(
         (resp) => resp,
         (error: AxiosError) => {
@@ -12,7 +12,7 @@ export const setupInterceptors = (history: History) => {
                     'TwoFactorAuthRequiredException'
                 ) {
                     if (!window.location.pathname.startsWith('/account')) {
-                        history.replace('/account', { twoFactorRedirect: true });
+                        hist.replace('/account', { twoFactorRedirect: true });
                     }
                 }
             }

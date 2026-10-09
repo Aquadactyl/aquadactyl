@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import { ActivityLogFilters } from '@/api/activity';
 import useLocationHash from '@/plugins/useLocationHash';
 
 export default () => {
     const { hash, pathTo } = useLocationHash();
-    const history = useHistory();
+    const navigate = useNavigate();
     const location = useLocation();
     const filters = useMemo<ActivityLogFilters>(
         () => ({
@@ -25,9 +25,9 @@ export default () => {
         [hash],
     );
     const update = (values: Record<string, string | undefined>, resetPage = true) => {
-        history.push({ ...location, hash: pathTo({ ...(resetPage ? { page: undefined } : {}), ...values }) });
+        navigate({ ...location, hash: pathTo({ ...(resetPage ? { page: undefined } : {}), ...values }) });
     };
-    const clear = () => history.push({ ...location, hash: '' });
+    const clear = () => navigate({ ...location, hash: '' });
     const hasFilters = Boolean(hash.event || hash.event_exact || hash.ip || hash.period || hash.source || hash.sort);
     return { hash, filters, update, clear, hasFilters };
 };

@@ -5,7 +5,7 @@ import CountryFlag from '@/components/elements/CountryFlag';
 import ServerPlayerCount from './ServerPlayerCount';
 import ServerQuickActions from './ServerQuickActions';
 import { ArrowRight, Cpu, HardDrive, MapPin, MemoryStick, Network, Server as ServerIcon } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerStats } from '@/api/server/getServerResourceUsage';
 import { bytesToString, ip, mbToBytes } from '@/lib/formatters';

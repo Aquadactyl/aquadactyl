@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useTransition } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { ArrowRight, Plus, RefreshCw, Search, Server as ServerIcon, X } from 'lucide-react';
 import { Server } from '@/api/server/getServer';
 import getServers from '@/api/getServers';

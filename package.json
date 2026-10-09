@@ -63,7 +63,6 @@
         "formik": "^2.4.9",
         "framer-motion": "^6.5.1",
         "gamedig": "5.3.3",
-        "history": "^4.10.1",
         "i18next": "^26.4.2",
         "i18next-http-backend": "^4.0.2",
         "i18next-multiload-backend-adapter": "^2.3.1",
@@ -77,8 +76,7 @@
         "react-fast-compare": "^3.2.2",
         "react-hook-form": "^7.89.0",
         "react-i18next": "^17.0.16",
-        "react-router": "^5.3.4",
-        "react-router-dom": "^5.3.4",
+        "react-router": "^7.18.4",
         "react-select": "^5.10.2",
         "react-transition-group": "^4.4.5",
         "reaptcha": "^1.12.1",
@@ -95,13 +93,10 @@
         "@tailwindcss/postcss": "^4.3.3",
         "@testing-library/jest-dom": "^5.17.0",
         "@types/events": "^3.0.3",
-        "@types/history": "^4.7.11",
         "@types/lodash-es": "^4.17.12",
         "@types/node": "^26.6.4",
         "@types/react": "^18.3.31",
         "@types/react-dom": "^18.3.7",
-        "@types/react-router": "^5.1.20",
-        "@types/react-router-dom": "^5.3.3",
         "@types/react-transition-group": "^4.4.12",
         "@types/styled-components": "^5.1.36",
         "@vitejs/plugin-react": "^6.1.2",
@@ -125,7 +120,7 @@
         "not dead"
     ],
     "engines": {
-        "node": ">=22.13",
+        "node": ">=22.22",
         "pnpm": "12.10.1"
     },
     "packageManager": "pnpm@12.10.1"

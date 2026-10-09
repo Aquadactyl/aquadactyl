@@ -1,13 +1,12 @@
 import React from 'react';
 import { useTanStackQuery } from '@/lib/queryClient';
 import http from '@/api/http';
-import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation, useParams } from 'react-router';
 import TransitionRouter from '@/TransitionRouter';
 import PermissionRoute from '@/components/elements/PermissionRoute';
 import Can from '@/components/elements/Can';
 import Spinner from '@/components/elements/Spinner';
 import { NotFound } from '@/components/elements/ScreenBlock';
-import { useLocation } from 'react-router';
 import { useAppStore } from '@/state';
 import { ServerContext } from '@/state/server';
 
@@ -45,12 +44,12 @@ const useExtensionEggs = () => {
 export const NavigationLinks = () => {
     const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const serverEgg = ServerContext.useStoreState((state) => state.server.data?.BlueprintFramework.eggId);
-    const match = useRouteMatch<{ id: string }>();
-    const to = (value: string, url = false) => {
+    const { id } = useParams<{ id: string }>();
+    const to = (value: string) => {
         if (value === '/') {
-            return url ? match.url : match.path;
+            return `/server/${id}`;
         }
-        return `${(url ? match.url : match.path).replace(/\/*$/, '')}/${value.replace(/^\/+/, '')}`;
+        return `/server/${id}/${value.replace(/^\/+/, '')}`;
     };
     const extensionEggs = useExtensionEggs();
 
@@ -62,12 +61,12 @@ export const NavigationLinks = () => {
                 .map((route) =>
                     route.permission ? (
                         <Can key={route.path} action={route.permission} matchAny>
-                            <NavLink to={to(route.path, true)} exact={route.exact}>
+                            <NavLink to={to(route.path)} end={route.exact}>
                                 {route.name}
                             </NavLink>
                         </Can>
                     ) : (
-                        <NavLink key={route.path} to={to(route.path, true)} exact={route.exact}>
+                        <NavLink key={route.path} to={to(route.path)} end={route.exact}>
                             {route.name}
                         </NavLink>
                     ),
@@ -86,7 +85,7 @@ export const NavigationLinks = () => {
                     .map((route) =>
                         route.permission ? (
                             <Can key={route.path} action={route.permission} matchAny>
-                                <NavLink to={to(route.path, true)} exact={route.exact}>
+                                <NavLink to={to(route.path)} end={route.exact}>
                                     {route.name}
                                     {route.adminOnly ? (
                                         <>
@@ -98,7 +97,7 @@ export const NavigationLinks = () => {
                                 </NavLink>
                             </Can>
                         ) : (
-                            <NavLink key={route.path} to={to(route.path, true)} exact={route.exact}>
+                            <NavLink key={route.path} to={to(route.path)} end={route.exact}>
                                 {route.name}
                                 {route.adminOnly ? (
                                     <>
@@ -117,12 +116,11 @@ export const NavigationLinks = () => {
 export const NavigationRouter = () => {
     const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const serverEgg = ServerContext.useStoreState((state) => state.server.data?.BlueprintFramework.eggId);
-    const match = useRouteMatch<{ id: string }>();
-    const to = (value: string, url = false) => {
+    const to = (value: string) => {
         if (value === '/') {
-            return url ? match.url : match.path;
+            return '';
         }
-        return `${(url ? match.url : match.path).replace(/\/*$/, '')}/${value.replace(/^\/+/, '')}`;
+        return value.replace(/^\/+/, '');
     };
     const extensionEggs = useExtensionEggs();
 
@@ -131,14 +129,20 @@ export const NavigationRouter = () => {
     return (
         <>
             <TransitionRouter location={deferredLocation}>
-                <Switch location={deferredLocation}>
+                <Routes location={deferredLocation}>
                     {/* Aquadactyl routes */}
                     {routes.server.map(({ path, permission, component: Component }) => (
-                        <PermissionRoute key={path} permission={permission} path={to(path)} exact>
-                            <Spinner.Suspense>
-                                <Component />
-                            </Spinner.Suspense>
-                        </PermissionRoute>
+                        <Route
+                            key={path}
+                            path={to(path)}
+                            element={
+                                <PermissionRoute permission={permission}>
+                                    <Spinner.Suspense>
+                                        <Component />
+                                    </Spinner.Suspense>
+                                </PermissionRoute>
+                            }
+                        />
                     ))}
 
                     {/* Blueprint routes */}
@@ -151,15 +155,21 @@ export const NavigationRouter = () => {
                                     : extensionEggs[route.identifier].find((id) => id === serverEgg?.toString()),
                             )
                             .map(({ path, permission, component: Component }) => (
-                                <PermissionRoute key={path} permission={permission} path={to(path)} exact>
-                                    <Spinner.Suspense>
-                                        <Component />
-                                    </Spinner.Suspense>
-                                </PermissionRoute>
+                                <Route
+                                    key={path}
+                                    path={to(path)}
+                                    element={
+                                        <PermissionRoute permission={permission}>
+                                            <Spinner.Suspense>
+                                                <Component />
+                                            </Spinner.Suspense>
+                                        </PermissionRoute>
+                                    }
+                                />
                             ))}
 
-                    <Route path={'*'} component={NotFound} />
-                </Switch>
+                    <Route path={'*'} element={<NotFound />} />
+                </Routes>
             </TransitionRouter>
         </>
     );

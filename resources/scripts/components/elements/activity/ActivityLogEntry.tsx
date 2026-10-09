@@ -1,6 +1,6 @@
 import SensitiveValue from '@/components/elements/SensitiveValue';
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import Translate from '@/components/elements/Translate';
 import { format, formatDistanceToNowStrict } from 'date-fns';

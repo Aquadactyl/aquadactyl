@@ -7,14 +7,15 @@ import PrivacySettingsForm from '@/components/dashboard/forms/PrivacySettingsFor
 import ConfigureTwoFactorForm from '@/components/dashboard/forms/ConfigureTwoFactorForm';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import MessageBox from '@/components/MessageBox';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { useAppStore } from '@/state';
 
 import BeforeContent from '@blueprint/components/Account/Overview/BeforeContent';
 import AfterContent from '@blueprint/components/Account/Overview/AfterContent';
 
 export default () => {
-    const { state } = useLocation<undefined | { twoFactorRedirect?: boolean }>();
+    const location = useLocation();
+    const state = location.state as { twoFactorRedirect?: boolean } | null;
     const features = useAppStore((state) => state.settings.data?.features);
 
     return (

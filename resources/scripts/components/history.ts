@@ -1,3 +1,3 @@
-import { createBrowserHistory } from 'history';
+import { UNSAFE_createBrowserHistory as createBrowserHistory } from 'react-router';
 
-export const history = createBrowserHistory({ basename: '/' });
+export const history = createBrowserHistory();

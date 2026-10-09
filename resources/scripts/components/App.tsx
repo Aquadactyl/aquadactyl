@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Route, Router, Switch } from 'react-router-dom';
+import { Route, Routes, unstable_HistoryRouter as HistoryRouter } from 'react-router';
 import { StoreProvider } from '@/state/hooks';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
@@ -27,7 +27,6 @@ interface ExtendedWindow extends Window {
         uuid: string;
         username: string;
         email: string;
-        /* eslint-disable camelcase */
         root_admin: boolean;
         use_totp: boolean;
         language: string;
@@ -35,7 +34,6 @@ interface ExtendedWindow extends Window {
         created_at: string;
         avatar_url?: string | null;
         blur_sensitive_data?: boolean;
-        /* eslint-enable camelcase */
     };
 }
 
@@ -70,30 +68,41 @@ const App = () => {
                     <PrivacyMode />
                     <ProgressBar />
                     <div className={'mx-auto w-auto'}>
-                        <Router history={history}>
-                            <Switch>
-                                <Route path={'/auth'}>
-                                    <Spinner.Suspense>
-                                        <AuthenticationRouter />
-                                    </Spinner.Suspense>
-                                </Route>
-                                <AuthenticatedRoute path={'/server/:id'}>
-                                    <Spinner.Suspense>
-                                        <ServerContext.Provider>
-                                            <ServerRouter />
-                                        </ServerContext.Provider>
-                                    </Spinner.Suspense>
-                                </AuthenticatedRoute>
-                                <AuthenticatedRoute path={'/'}>
-                                    <Spinner.Suspense>
-                                        <DashboardRouter />
-                                    </Spinner.Suspense>
-                                </AuthenticatedRoute>
-                                <Route path={'*'}>
-                                    <NotFound />
-                                </Route>
-                            </Switch>
-                        </Router>
+                        <HistoryRouter history={history} useTransitions>
+                            <Routes>
+                                <Route
+                                    path={'/auth/*'}
+                                    element={
+                                        <Spinner.Suspense>
+                                            <AuthenticationRouter />
+                                        </Spinner.Suspense>
+                                    }
+                                />
+                                <Route
+                                    path={'/server/:id/*'}
+                                    element={
+                                        <AuthenticatedRoute>
+                                            <Spinner.Suspense>
+                                                <ServerContext.Provider>
+                                                    <ServerRouter />
+                                                </ServerContext.Provider>
+                                            </Spinner.Suspense>
+                                        </AuthenticatedRoute>
+                                    }
+                                />
+                                <Route
+                                    path={'/*'}
+                                    element={
+                                        <AuthenticatedRoute>
+                                            <Spinner.Suspense>
+                                                <DashboardRouter />
+                                            </Spinner.Suspense>
+                                        </AuthenticatedRoute>
+                                    }
+                                />
+                                <Route path={'*'} element={<NotFound />} />
+                            </Routes>
+                        </HistoryRouter>
                     </div>
                 </StoreProvider>
             </QueryClientProvider>
