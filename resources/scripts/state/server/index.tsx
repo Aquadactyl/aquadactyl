@@ -5,6 +5,7 @@ import createFilesSlice, { ServerFileStore } from '@/state/server/files';
 import createSubusersSlice, { ServerSubuserStore } from '@/state/server/subusers';
 import createSchedulesSlice, { ServerScheduleStore } from '@/state/server/schedules';
 import createDatabasesSlice, { ServerDatabaseStore } from '@/state/server/databases';
+import isEqual from 'react-fast-compare';
 import { createStore } from 'zustand/vanilla';
 import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
 
