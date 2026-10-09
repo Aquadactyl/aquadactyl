@@ -27,7 +27,7 @@ function bytesToString(bytes: number, decimals = 2): string {
  * Formats an IPv4 or IPv6 address.
  */
 function ip(value: string): string {
-    const isIPv6Like = value.includes(':') && /^[a-f0-9:]+$/i.test(value);
+    const isIPv6Like = value.includes(':') && /^[a-f0-9.:]+$/i.test(value);
     return isIPv6Like ? `[${value}]` : value;
 }
 
