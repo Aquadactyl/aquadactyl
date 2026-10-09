@@ -19,17 +19,15 @@ import AfterSection from '@blueprint/components/Dashboard/Global/AfterSection';
 
 const PageContentBlock: React.FC<PageContentBlockProps> = ({
     title,
-    includeAppUrl = false,
     showFlashKey,
     className,
     children,
 }) => {
     const name = useStoreState((state) => state.settings.data?.name || 'Aquadactyl');
-    const appUrl = useStoreState((state) => state.settings.data?.appUrl);
     useEffect(() => {
         const pageTitle = title ? `${title} | ${name}` : name;
-        document.title = includeAppUrl && appUrl ? `${pageTitle} | ${appUrl}` : pageTitle;
-    }, [title, name, appUrl, includeAppUrl]);
+        document.title = pageTitle;
+    }, [title, name,]);
 
     return (
         <CSSTransition timeout={150} classNames={'fade'} appear in>
