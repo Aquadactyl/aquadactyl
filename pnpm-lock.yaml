@@ -382,9 +382,6 @@ importers:
       styled-components-breakpoint:
         specifier: ^3.0.0-preview.20
         version: 3.0.0-preview.20(@types/styled-components@5.1.36)(styled-components@5.3.11(@babel/core@7.29.7(supports-color@5.5.0))(react-dom@18.3.1(react@18.3.1))(react-is@19.3.0)(react@18.3.1))
-      use-sync-external-store:
-        specifier: ^1.7.0
-        version: 1.7.0(react@18.3.1)
       uuid:
         specifier: ^14.0.2
         version: 14.0.2
@@ -440,9 +437,6 @@ importers:
       '@types/styled-components':
         specifier: ^5.1.36
         version: 5.1.36
-      '@types/use-sync-external-store':
-        specifier: ^1.7.0
-        version: 1.7.0
       '@vitejs/plugin-react':
         specifier: ^6.1.2
         version: 6.1.2(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
@@ -1594,9 +1588,6 @@ packages:
 
   '@types/testing-library__jest-dom@5.14.9':
     resolution: {integrity: sha512-FSYhIjFlfOpGSRyVoMBMuS3ws5ehFQODymf3vlI7U1K8c7PHwWwFY7VREfmsuzHSOnoKs/9/Y983ayOs7eRzqw==}
-
-  '@types/use-sync-external-store@1.7.0':
-    resolution: {integrity: sha512-v8435kzWm3FuxyUa4r8o4sG6b0D+r+uOrzF5MXHxZKW4Haoo6txu/lq56Vio45e2i1nkmFPA+R7myWcmV7Z7Bg==}
 
   '@types/whatwg-mimetype@3.0.2':
     resolution: {integrity: sha512-c2AKvDT8ToxLIOUlN51gTiHXflsfIFisS4pO7pDPoKouJCESkhZnEy623gwP9laCy5lnLDAw1vAzu2vM2YLOrA==}
@@ -4066,8 +4057,6 @@ snapshots:
   '@types/testing-library__jest-dom@5.14.9':
     dependencies:
       '@types/jest': 30.0.0
-
-  '@types/use-sync-external-store@1.7.0': {}
 
   '@types/whatwg-mimetype@3.0.2': {}
 

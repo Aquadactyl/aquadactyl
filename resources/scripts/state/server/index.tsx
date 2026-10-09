@@ -5,9 +5,8 @@ import createFilesSlice, { ServerFileStore } from '@/state/server/files';
 import createSubusersSlice, { ServerSubuserStore } from '@/state/server/subusers';
 import createSchedulesSlice, { ServerScheduleStore } from '@/state/server/schedules';
 import createDatabasesSlice, { ServerDatabaseStore } from '@/state/server/databases';
-import isEqual from 'react-fast-compare';
 import { createStore } from 'zustand/vanilla';
-import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
+import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
 
 export type ServerStatus = 'offline' | 'starting' | 'stopping' | 'running' | null;
 
@@ -217,7 +216,7 @@ export const ServerContext = {
         equalityFn?: (a: Result, b: Result) => boolean,
     ): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
-        return useSyncExternalStoreWithSelector(store.subscribe, store.getState, store.getState, mapState, equalityFn);
+        return useStoreWithEqualityFn(store, mapState, equalityFn);
     },
     useStoreActions: <Result,>(mapActions: (actions: ServerStore) => Result): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
@@ -229,13 +228,7 @@ export const ServerContext = {
     ): Result | ServerStoreApi => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
         if (selector) {
-            return useSyncExternalStoreWithSelector(
-                store.subscribe,
-                store.getState,
-                store.getState,
-                selector,
-                equalityFn,
-            );
+            return useStoreWithEqualityFn(store, selector, equalityFn);
         }
         return store;
     },
@@ -246,7 +239,7 @@ export function useServerStore<Result>(
     equalityFn?: (a: Result, b: Result) => boolean,
 ): Result {
     const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
-    return useSyncExternalStoreWithSelector(store.subscribe, store.getState, store.getState, selector, equalityFn);
+    return useStoreWithEqualityFn(store, selector, equalityFn);
 }
 
 export default ServerContext;

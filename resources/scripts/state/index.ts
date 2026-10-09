@@ -1,5 +1,5 @@
 import { createStore } from 'zustand/vanilla';
-import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
+import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
 import createFlashesSlice, { FlashStore } from '@/state/flashes';
 import createUserSlice, { UserStore } from '@/state/user';
 import createPermissionsSlice, { GloablPermissionsStore } from '@/state/permissions';
@@ -23,13 +23,7 @@ export const appStore = createStore<ApplicationStore>((set, get) => ({
 }));
 
 export const useAppStore = <T>(selector: (state: ApplicationStore) => T, equalityFn?: (a: T, b: T) => boolean): T => {
-    return useSyncExternalStoreWithSelector(
-        appStore.subscribe,
-        appStore.getState,
-        appStore.getState,
-        selector,
-        equalityFn,
-    );
+    return useStoreWithEqualityFn(appStore, selector, equalityFn);
 };
 
 // Aliases for idiomatic or backward-compatible store consumption

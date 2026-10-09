@@ -1,4 +1,4 @@
-import { useSyncExternalStoreWithSelector } from 'use-sync-external-store/shim/with-selector';
+import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
 import { appStore, ApplicationStore } from '@/state';
 
 // Easy-peasy typed hooks compatibility
@@ -10,13 +10,7 @@ export function useStoreState<Result>(
     mapState: (state: ApplicationStore) => Result,
     equalityFn?: (a: Result, b: Result) => boolean,
 ): Result {
-    return useSyncExternalStoreWithSelector(
-        appStore.subscribe,
-        appStore.getState,
-        appStore.getState,
-        mapState,
-        equalityFn,
-    );
+    return useStoreWithEqualityFn(appStore, mapState, equalityFn);
 }
 
 export function useStoreActions<Result>(mapActions: (actions: ApplicationStore) => Result): Result {
