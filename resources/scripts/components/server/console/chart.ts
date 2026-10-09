@@ -34,7 +34,9 @@ const options: ChartOptions<'line'> = {
             type: 'linear',
             grid: {
                 display: false,
-                drawBorder: false,
+            },
+            border: {
+                display: false,
             },
             ticks: {
                 display: false,
@@ -46,7 +48,9 @@ const options: ChartOptions<'line'> = {
             grid: {
                 display: true,
                 color: theme('colors.gray.700'),
-                drawBorder: false,
+            },
+            border: {
+                display: false,
             },
             ticks: {
                 display: true,
@@ -55,7 +59,7 @@ const options: ChartOptions<'line'> = {
                 font: {
                     family: theme('fontFamily.sans'),
                     size: 11,
-                    weight: '400',
+                    weight: 400,
                 },
             },
         },

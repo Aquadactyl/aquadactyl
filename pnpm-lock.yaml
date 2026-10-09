@@ -241,8 +241,8 @@ importers:
         specifier: ^6.43.14
         version: 6.43.14
       '@floating-ui/react-dom-interactions':
-        specifier: ^0.6.6
-        version: 0.6.6(@types/react@16.14.70)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+        specifier: ^0.13.3
+        version: 0.13.3(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       '@fortawesome/fontawesome-svg-core':
         specifier: 1.2.36
         version: 1.2.36
@@ -289,8 +289,8 @@ importers:
         specifier: 2.0.4
         version: 2.0.4(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       chart.js:
-        specifier: ^3.9.1
-        version: 3.9.1
+        specifier: ^4.5.1
+        version: 4.5.1
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
@@ -346,8 +346,8 @@ importers:
         specifier: ^16.14.0
         version: 16.14.0
       react-chartjs-2:
-        specifier: ^4.3.1
-        version: 4.3.1(chart.js@3.9.1)(react@16.14.0)
+        specifier: ^5.3.1
+        version: 5.3.1(chart.js@4.5.1)(react@16.14.0)
       react-dom:
         specifier: 16.14.0
         version: 16.14.0(react@16.14.0)
@@ -391,8 +391,8 @@ importers:
         specifier: ^14.0.2
         version: 14.0.2
       yup:
-        specifier: ^0.29.3
-        version: 0.29.3
+        specifier: ^1.7.1
+        version: 1.7.1
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -445,9 +445,6 @@ importers:
       '@types/use-sync-external-store':
         specifier: ^1.7.0
         version: 1.7.0
-      '@types/yup':
-        specifier: ^0.29.14
-        version: 0.29.14
       '@vitejs/plugin-react':
         specifier: ^6.1.2
         version: 6.1.2(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))
@@ -866,27 +863,21 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@floating-ui/core@0.7.3':
-    resolution: {integrity: sha512-buc8BXHmG9l82+OQXOFU3Kr2XQx9ys01U/Q9HMIrZ300iLc8HLMgh7dcCqgYzAzf4BkoQvDcXf5Y+CuEZ5JBYg==}
-
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
-
-  '@floating-ui/dom@0.5.4':
-    resolution: {integrity: sha512-419BMceRLq0RrmTSDxn8hf9R3VCJv2K9PUfugh5JyEFmdjzDo+e8U5EdR8nzKq8Yj1htzLm3b6eQEEam3/rrtg==}
 
   '@floating-ui/dom@1.8.0':
     resolution: {integrity: sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg==}
 
-  '@floating-ui/react-dom-interactions@0.6.6':
-    resolution: {integrity: sha512-qnao6UPjSZNHnXrF+u4/n92qVroQkx0Umlhy3Avk1oIebm/5ee6yvDm4xbHob0OjY7ya8WmUnV3rQlPwX3Atwg==}
+  '@floating-ui/react-dom-interactions@0.13.3':
+    resolution: {integrity: sha512-AnCW06eIZxzD/Hl1Qbi2JkQRU5KpY7Dn81k3xRfbvs+HylhB+t3x88/GNKLK39mMTlJ/ylxm5prUpiLrTWvifQ==}
     deprecated: Package renamed to @floating-ui/react
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@floating-ui/react-dom@0.7.2':
-    resolution: {integrity: sha512-1T0sJcpHgX/u4I1OzIEhlcrvkUN8ln39nz7fMoE/2HDHrPiMFoOGR7++GYyfUmIQHkkrTinaeQsO3XWubjSvGg==}
+  '@floating-ui/react-dom@1.3.0':
+    resolution: {integrity: sha512-htwHm67Ji5E/pROEAr7f8IKFShuiCKHwUC/UY4vC3I5jiSvGFAYnSYiZO5MlGmads+QqvUkR9ANHEguGrDv72g==}
     peerDependencies:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
@@ -973,6 +964,9 @@ packages:
     peerDependencies:
       '@xterm/addon-search': ^0.16.0
       '@xterm/xterm': ^6.0.0
+
+  '@kurkle/color@0.3.4':
+    resolution: {integrity: sha512-M5UknZPHRu3DEDWoipU6sE8PdkZ6Z/S+v4dD+Ke8IaNlpdSQah50lz1KtcFBa2vsdOnwbbnxJwVM4wty6udA5w==}
 
   '@lezer/common@1.5.3':
     resolution: {integrity: sha512-H0iErY4e43LpXbYDyBci5W4v/RwTgGV3YzYOlJPiGZ8RY8w51kVE+xLn1tg3Z6UmSfyETvtsUK3r7YsgDQEI7Q==}
@@ -1629,9 +1623,6 @@ packages:
   '@types/yargs@17.0.35':
     resolution: {integrity: sha512-qUHkeCyQFxMXg79wQfTtfndEC+N9ZZg76HJftDJp+qH2tV7Gj4OJi7l+PiWwJ+pWtW8GwSmqsDj/oymhrTWXjg==}
 
-  '@types/yup@0.29.14':
-    resolution: {integrity: sha512-Ynb/CjHhE/Xp/4bhHmQC4U1Ox+I2OpfRYF3dnNgQqn1cHa6LK3H1wJMNPT02tSVZA6FYuXE2ITORfbnb6zBCSA==}
-
   '@vitejs/plugin-react@6.1.2':
     resolution: {integrity: sha512-fhJNGUdscQa4HkI0xFxwonWyhnVReCPDbXI7FH7jmzpnVCrFQI7PRrhWecO263610vOrs9tr2Y4xcf8uAdFxbw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -1787,8 +1778,9 @@ packages:
     resolution: {integrity: sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==}
     engines: {node: '>=10'}
 
-  chart.js@3.9.1:
-    resolution: {integrity: sha512-Ro2JbLmvg83gXF5F4sniaQ+lTbSv18E+TIf2cOeiH1Iqd2PGFOtem+DUufMZsCJwFE7ywPOpfXFBwRTGq7dh6w==}
+  chart.js@4.5.1:
+    resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
+    engines: {pnpm: '>=8'}
 
   ci-info@4.4.0:
     resolution: {integrity: sha512-77PSwercCZU2Fc4sX94eF8k8Pxte6JAwL4/ICZLFjJLqegs7kCuAsqqj/70NQF6TvDpgFjkubQB2FW2ZZddvQg==}
@@ -1990,10 +1982,6 @@ packages:
 
   find-root@1.1.0:
     resolution: {integrity: sha512-NKfW6bec6GfKc0SGx1e07QZY9PE99u0Bft/0rzSD5k3sO/vwkVUpDUKVm5Gpp5Ue3YfShPFTX2070tDs5kB9Ng==}
-
-  fn-name@3.0.0:
-    resolution: {integrity: sha512-eNMNr5exLoavuAMhIUVsOKF79SWd/zG104ef6sxBTSw+cZc6BXdQXDvYcGvp0VbxVVSp1XDUNoz7mg1xMtSznA==}
-    engines: {node: '>=8'}
 
   follow-redirects@1.16.1:
     resolution: {integrity: sha512-FNvFGzoMLWmE6Yj9spb/zjd7yiNCHiAW9/Tg9CXrQ8wuu32HtlJOwWO11OJafl5FfY3DxTdQ0vj42zU1kvv5jg==}
@@ -2576,11 +2564,11 @@ packages:
     resolution: {integrity: sha512-WuyALRjWPDGtt/wzJiadO5AXY+8hZ80hVpe6MyivgraREW751X3SbhRvG3eLKOYN+8VEvqLcf3wdnt44Z4S4SA==}
     engines: {node: '>=10'}
 
-  react-chartjs-2@4.3.1:
-    resolution: {integrity: sha512-5i3mjP6tU7QSn0jvb8I4hudTzHJqS8l00ORJnVwI2sYu0ihpj83Lv2YzfxunfxTZkscKvZu2F2w9LkwNBhj6xA==}
+  react-chartjs-2@5.3.1:
+    resolution: {integrity: sha512-h5IPXKg9EXpjoBzUfyWJvllMjG2mQ4EiuHQFhms/AjUm0XSZHhyRy2xVmLXHKrtcdrPO4mnGqRtYoD0vp95A0A==}
     peerDependencies:
-      chart.js: ^3.5.0
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      chart.js: ^4.1.1
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-dom@16.14.0:
     resolution: {integrity: sha512-1gCeQXDLoIqMgqD3IO2Ah9bnf0w9kzhwN5q4FGnHZ67hBm9yePzB5JJAIQCc8x3pFnNlwFq4RidZggNAAkzWWw==}
@@ -2795,8 +2783,8 @@ packages:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
 
-  synchronous-promise@2.0.18:
-    resolution: {integrity: sha512-4EEtGWYLkSoy/DjlKpHR6LT2AjmORt8HM+CUCSdKiKyuhL3PFBksgcTibSOj7JIoCvuqRVnZ7P9QFBMXR5kW6Q==}
+  tabbable@6.5.0:
+    resolution: {integrity: sha512-wieBHXygIm7OyQOu5hQlkk62/WyCFYGlWg7L6/ZCUZwx0o398Zkn4pVmMyfYhfMG8kGrj/Krt8eIk6UKC6VzwA==}
 
   tailwindcss@4.3.3:
     resolution: {integrity: sha512-gOhV3P7ufE62QDGg1zVaTgCR+EtPv92k2nIhVcVKcLmxT1sUBsQGhnZj175j+MqRt4zLF7ic+sCYjfhxMxj7YQ==}
@@ -2807,6 +2795,9 @@ packages:
 
   telnet-client@2.2.13:
     resolution: {integrity: sha512-pXAGggyeE7/STEnXhN8oe0V1hRzT6oNiGvs4CU4ilppledV40dok+70yl/Xb2newAXXdM9C5rW8otOKmRvkZxA==}
+
+  tiny-case@1.0.3:
+    resolution: {integrity: sha512-Eet/eeMhkO6TX8mnUteS9zgPbUMQa4I6Kkp5ORiBD5476/m+PIRiumP5tmh5ioJpH7k51Kehawy2UDfsnxxY8Q==}
 
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
@@ -2848,6 +2839,10 @@ packages:
     resolution: {integrity: sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==}
     engines: {node: '>=18.0.0'}
     hasBin: true
+
+  type-fest@2.19.0:
+    resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
+    engines: {node: '>=12.20'}
 
   typescript@6.0.3:
     resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
@@ -3024,9 +3019,8 @@ packages:
     resolution: {integrity: sha512-vIYeF1u3CjlhAFekPPAk2h/Kv4T3mAkMox5OymRiJQB0spDP10LHvt+K7G9Ny6NuuMAb25/6n1qyUjAcGNf/AA==}
     engines: {node: '>= 6'}
 
-  yup@0.29.3:
-    resolution: {integrity: sha512-RNUGiZ/sQ37CkhzKFoedkeMfJM0vNQyaz+wRZJzxdKE7VfDeVKH8bb4rr7XhRLbHJz5hSjoDNwMEIaKhuMZ8gQ==}
-    engines: {node: '>=10'}
+  yup@1.7.1:
+    resolution: {integrity: sha512-GKHFX2nXul2/4Dtfxhozv701jLQHdf6J34YDh2cEkpqoo8le5Mg6/LrdseVLrFarmFygZTlfIhHx/QKfb/QWXw==}
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
@@ -3499,39 +3493,28 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@floating-ui/core@0.7.3': {}
-
   '@floating-ui/core@1.8.0':
     dependencies:
       '@floating-ui/utils': 0.2.12
-
-  '@floating-ui/dom@0.5.4':
-    dependencies:
-      '@floating-ui/core': 0.7.3
 
   '@floating-ui/dom@1.8.0':
     dependencies:
       '@floating-ui/core': 1.8.0
       '@floating-ui/utils': 0.2.12
 
-  '@floating-ui/react-dom-interactions@0.6.6(@types/react@16.14.70)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
+  '@floating-ui/react-dom-interactions@0.13.3(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
     dependencies:
-      '@floating-ui/react-dom': 0.7.2(@types/react@16.14.70)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
+      '@floating-ui/react-dom': 1.3.0(react-dom@16.14.0(react@16.14.0))(react@16.14.0)
       aria-hidden: 1.2.6
       react: 16.14.0
       react-dom: 16.14.0(react@16.14.0)
-      use-isomorphic-layout-effect: 1.2.1(@types/react@16.14.70)(react@16.14.0)
-    transitivePeerDependencies:
-      - '@types/react'
+      tabbable: 6.5.0
 
-  '@floating-ui/react-dom@0.7.2(@types/react@16.14.70)(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
+  '@floating-ui/react-dom@1.3.0(react-dom@16.14.0(react@16.14.0))(react@16.14.0)':
     dependencies:
-      '@floating-ui/dom': 0.5.4
+      '@floating-ui/dom': 1.8.0
       react: 16.14.0
       react-dom: 16.14.0(react@16.14.0)
-      use-isomorphic-layout-effect: 1.2.1(@types/react@16.14.70)(react@16.14.0)
-    transitivePeerDependencies:
-      - '@types/react'
 
   '@floating-ui/utils@0.2.12': {}
 
@@ -3616,6 +3599,8 @@ snapshots:
       '@xterm/xterm': 6.0.0
       core-js: 3.50.0
       rxjs-compat: 6.6.7
+
+  '@kurkle/color@0.3.4': {}
 
   '@lezer/common@1.5.3': {}
 
@@ -4122,8 +4107,6 @@ snapshots:
     dependencies:
       '@types/yargs-parser': 21.0.3
 
-  '@types/yup@0.29.14': {}
-
   '@vitejs/plugin-react@6.1.2(vite@8.3.4(@types/node@26.6.4)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
@@ -4270,7 +4253,9 @@ snapshots:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
 
-  chart.js@3.9.1: {}
+  chart.js@4.5.1:
+    dependencies:
+      '@kurkle/color': 0.3.4
 
   ci-info@4.4.0: {}
 
@@ -4463,8 +4448,6 @@ snapshots:
       picomatch: 4.0.7
 
   find-root@1.1.0: {}
-
-  fn-name@3.0.0: {}
 
   follow-redirects@1.16.1(debug@4.4.3(supports-color@5.5.0)):
     optionalDependencies:
@@ -5019,9 +5002,9 @@ snapshots:
 
   quick-lru@5.1.1: {}
 
-  react-chartjs-2@4.3.1(chart.js@3.9.1)(react@16.14.0):
+  react-chartjs-2@5.3.1(chart.js@4.5.1)(react@16.14.0):
     dependencies:
-      chart.js: 3.9.1
+      chart.js: 4.5.1
       react: 16.14.0
 
   react-dom@16.14.0(react@16.14.0):
@@ -5279,7 +5262,7 @@ snapshots:
 
   supports-preserve-symlinks-flag@1.0.0: {}
 
-  synchronous-promise@2.0.18: {}
+  tabbable@6.5.0: {}
 
   tailwindcss@4.3.3: {}
 
@@ -5289,6 +5272,8 @@ snapshots:
     dependencies:
       net: 1.0.2
       stream: 0.0.2
+
+  tiny-case@1.0.3: {}
 
   tiny-invariant@1.3.3: {}
 
@@ -5318,6 +5303,8 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+
+  type-fest@2.19.0: {}
 
   typescript@6.0.3: {}
 
@@ -5411,15 +5398,12 @@ snapshots:
 
   yaml@1.10.3: {}
 
-  yup@0.29.3:
+  yup@1.7.1:
     dependencies:
-      '@babel/runtime': 7.29.10
-      fn-name: 3.0.0
-      lodash: 4.18.1
-      lodash-es: 4.18.1
       property-expr: 2.0.6
-      synchronous-promise: 2.0.18
+      tiny-case: 1.0.3
       toposort: 2.0.2
+      type-fest: 2.19.0
 
   zod@3.25.76: {}
 
