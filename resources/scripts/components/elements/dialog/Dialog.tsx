@@ -10,7 +10,7 @@ const variants = {
         scale: 1,
         opacity: 1,
         transition: {
-            type: 'spring',
+            type: 'spring' as const,
             damping: 15,
             stiffness: 300,
             duration: 0.15,
@@ -20,14 +20,15 @@ const variants = {
         scale: 0.75,
         opacity: 0,
         transition: {
-            type: 'easeIn',
+            type: 'tween' as const,
+            ease: 'easeIn' as const,
             duration: 0.15,
         },
     },
     bounce: {
         scale: 0.95,
         opacity: 1,
-        transition: { type: 'linear', duration: 0.075 },
+        transition: { type: 'tween' as const, ease: 'linear' as const, duration: 0.075 },
     },
 };
 
