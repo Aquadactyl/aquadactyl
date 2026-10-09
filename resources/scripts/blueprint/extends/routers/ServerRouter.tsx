@@ -127,10 +127,11 @@ export const NavigationRouter = () => {
     const extensionEggs = useExtensionEggs();
 
     const location = useLocation();
+    const deferredLocation = React.useDeferredValue(location);
     return (
         <>
-            <TransitionRouter>
-                <Switch location={location}>
+            <TransitionRouter location={deferredLocation}>
+                <Switch location={deferredLocation}>
                     {/* Aquadactyl routes */}
                     {routes.server.map(({ path, permission, component: Component }) => (
                         <PermissionRoute key={path} permission={permission} path={to(path)} exact>

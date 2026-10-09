@@ -43,7 +43,7 @@ export default ({ ...props }: Props) => {
 
         // if (ref.current) ref.current.focus();
         getServers({ query: term, type: isAdmin ? 'admin-all' : undefined })
-            .then((servers) => setServers(servers.items.filter((_, index) => index < 5)))
+            .then((servers) => React.startTransition(() => setServers(servers.items.filter((_, index) => index < 5))))
             .catch((error) => {
                 console.error(error);
                 clearAndAddHttpError({ key: 'search', error });

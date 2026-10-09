@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useDeferredValue, startTransition } from 'react';
 import { httpErrorToHuman } from '@/api/http';
 import { CSSTransition } from 'react-transition-group';
 import Spinner from '@/components/elements/Spinner';
@@ -27,10 +27,10 @@ import FileButtons from '@blueprint/components/Server/Files/Browse/FileButtons';
 import AfterContent from '@blueprint/components/Server/Files/Browse/AfterContent';
 
 const sortFiles = (files: FileObject[]): FileObject[] => {
-    const sortedFiles: FileObject[] = files
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, b) => (a.isFile === b.isFile ? 0 : a.isFile ? 1 : -1));
-    return sortedFiles.filter((file, index) => index === 0 || file.name !== sortedFiles[index - 1].name);
+    const copied = [...files];
+    copied.sort((a, b) => a.name.localeCompare(b.name));
+    copied.sort((a, b) => (a.isFile === b.isFile ? 0 : a.isFile ? 1 : -1));
+    return copied.filter((file, index) => index === 0 || file.name !== copied[index - 1].name);
 };
 
 export default () => {
@@ -44,10 +44,15 @@ export default () => {
     const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);
     const selectedFilesLength = ServerContext.useStoreState((state) => state.files.selectedFiles.length);
 
+    const sortedFiles = useMemo(() => (files ? sortFiles(files.slice(0, 250)) : null), [files]);
+    const deferredSortedFiles = useDeferredValue(sortedFiles);
+
     useEffect(() => {
         clearFlashes('files');
         setSelectedFiles([]);
-        setDirectory(hashToPath(hash));
+        startTransition(() => {
+            setDirectory(hashToPath(hash));
+        });
     }, [hash]);
 
     useEffect(() => {
@@ -107,7 +112,7 @@ export default () => {
                                         </p>
                                     </div>
                                 )}
-                                {sortFiles(files.slice(0, 250)).map((file) => (
+                                {(deferredSortedFiles || []).map((file) => (
                                     <FileObjectRow key={file.key} file={file} />
                                 ))}
                                 <MassActionsBar />

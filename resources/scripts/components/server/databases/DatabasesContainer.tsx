@@ -23,6 +23,7 @@ export default () => {
     const [loading, setLoading] = useState(true);
 
     const databases = useDeepMemoize(ServerContext.useStoreState((state) => state.databases.data));
+    const deferredDatabases = React.useDeferredValue(databases);
     const setDatabases = ServerContext.useStoreActions((state) => state.databases.setDatabases);
 
     useEffect(() => {
@@ -47,8 +48,8 @@ export default () => {
                 <Fade timeout={150}>
                     <>
                         <BeforeContent />
-                        {databases.length > 0 ? (
-                            databases.map((database, index) => (
+                        {deferredDatabases.length > 0 ? (
+                            deferredDatabases.map((database, index) => (
                                 <DatabaseRow
                                     key={database.id}
                                     database={database}

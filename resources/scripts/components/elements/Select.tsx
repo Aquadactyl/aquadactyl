@@ -77,6 +77,8 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         },
         forwardedRef,
     ) => {
+        const generatedId = React.useId();
+        const selectId = id || generatedId;
         const native = useRef<HTMLSelectElement>(null);
         const custom = useRef<SelectInstance<Option, boolean, Group>>(null);
         const [uncontrolled, setUncontrolled] = useState(() => values(defaultValue));
@@ -150,7 +152,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 >
                     <ReactSelect<Option, boolean, Group>
                         ref={custom}
-                        inputId={id}
+                        inputId={selectId}
                         classNamePrefix={'panel-select'}
                         unstyled
                         options={options}

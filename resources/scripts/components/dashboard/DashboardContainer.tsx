@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ArrowRight, Plus, RefreshCw, Search, Server as ServerIcon, X } from 'lucide-react';
 import { Server } from '@/api/server/getServer';
@@ -23,6 +23,7 @@ export default () => {
     const [page, setPage] = useState(Number.isInteger(defaultPage) && defaultPage > 0 ? defaultPage : 1);
     const [searchText, setSearchText] = useState(params.get('q') || '');
     const [query, setQuery] = useState(searchText.trim());
+    const [, startTransition] = useTransition();
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const uuid = useAppStore((state) => state.user.data!.uuid);
     const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
@@ -41,8 +42,10 @@ export default () => {
     useEffect(() => {
         if (searchText.trim() === query) return;
         const timeout = setTimeout(() => {
-            setQuery(searchText.trim());
-            setPage(1);
+            startTransition(() => {
+                setQuery(searchText.trim());
+                setPage(1);
+            });
         }, 300);
         return () => clearTimeout(timeout);
     }, [searchText, query]);
@@ -114,7 +117,17 @@ export default () => {
                         placeholder={'Search servers…'}
                     />
                     {searchText && (
-                        <button type={'button'} aria-label={'Clear search'} onClick={() => setSearchText('')}>
+                        <button
+                            type={'button'}
+                            aria-label={'Clear search'}
+                            onClick={() => {
+                                setSearchText('');
+                                startTransition(() => {
+                                    setQuery('');
+                                    setPage(1);
+                                });
+                            }}
+                        >
                             <X size={15} aria-hidden />
                         </button>
                     )}

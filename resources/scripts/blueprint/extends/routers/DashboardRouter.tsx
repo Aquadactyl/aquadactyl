@@ -47,12 +47,13 @@ export const NavigationLinks = () => {
 
 export const NavigationRouter = () => {
     const location = useLocation();
+    const deferredLocation = React.useDeferredValue(location);
     const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     return (
         <>
-            <TransitionRouter>
+            <TransitionRouter location={deferredLocation}>
                 <React.Suspense fallback={<Spinner centered />}>
-                    <Switch location={location}>
+                    <Switch location={deferredLocation}>
                         <Route path={'/'} exact>
                             <DashboardContainer />
                         </Route>

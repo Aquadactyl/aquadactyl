@@ -1,5 +1,4 @@
-import React, { forwardRef, useMemo } from 'react';
-import { v4 } from 'uuid';
+import React, { forwardRef, useId } from 'react';
 import { Field as FormikField, FieldProps } from 'formik';
 import Input from '@/components/elements/Input';
 import Label from '@/components/elements/Label';
@@ -16,7 +15,7 @@ type Props = OwnProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'
 
 const Field = forwardRef<HTMLInputElement, Props>(
     ({ id, name, light = false, label, description, validate, ...props }, ref) => {
-        const generatedId = useMemo(() => 'field-' + v4(), []);
+        const generatedId = useId();
         const fieldId = id || generatedId;
         return (
             <FormikField name={name} validate={validate}>

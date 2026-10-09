@@ -1,6 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useId } from 'react';
 import styled from 'styled-components';
-import { v4 } from 'uuid';
 import classNames from 'classnames';
 import Label from '@/components/elements/Label';
 import Input from '@/components/elements/Input';
@@ -67,6 +66,7 @@ const ToggleContainer = styled.div`
 `;
 
 export interface SwitchProps {
+    id?: string;
     name: string;
     label?: string;
     description?: string;
@@ -76,15 +76,16 @@ export interface SwitchProps {
     children?: React.ReactNode;
 }
 
-const Switch = ({ name, label, description, defaultChecked, readOnly, onChange, children }: SwitchProps) => {
-    const uuid = useMemo(() => v4(), []);
+const Switch = ({ id, name, label, description, defaultChecked, readOnly, onChange, children }: SwitchProps) => {
+    const generatedId = useId();
+    const switchId = id || generatedId;
 
     return (
         <div className={'flex items-center'}>
             <ToggleContainer className={'flex-none'}>
                 {children || (
                     <Input
-                        id={uuid}
+                        id={switchId}
                         name={name}
                         type={'checkbox'}
                         onChange={(e) => onChange && onChange(e)}
@@ -92,12 +93,12 @@ const Switch = ({ name, label, description, defaultChecked, readOnly, onChange, 
                         disabled={readOnly}
                     />
                 )}
-                <Label htmlFor={uuid} />
+                <Label htmlFor={switchId} />
             </ToggleContainer>
             {(label || description) && (
                 <div className={'ml-4 w-full'}>
                     {label && (
-                        <Label className={classNames('cursor-pointer', !!description && 'mb-0')} htmlFor={uuid}>
+                        <Label className={classNames('cursor-pointer', !!description && 'mb-0')} htmlFor={switchId}>
                             {label}
                         </Label>
                     )}

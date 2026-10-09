@@ -18,7 +18,8 @@ import { ServerContext } from '@/state/server';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { encodePathSegments, hashToPath } from '@/helpers';
 import { dirname } from 'pathe';
-import CodemirrorEditor from '@/components/elements/CodemirrorEditor';
+
+const CodemirrorEditor = React.lazy(() => import('@/components/elements/CodemirrorEditor'));
 
 import BeforeEdit from '@blueprint/components/Server/Files/Edit/BeforeEdit';
 import AfterEdit from '@blueprint/components/Server/Files/Edit/AfterEdit';
@@ -152,23 +153,25 @@ export default () => {
             />
             <div className={'relative'}>
                 <SpinnerOverlay visible={loading} />
-                <CodemirrorEditor
-                    mode={mode}
-                    filename={hash.replace(/^#/, '')}
-                    onModeChanged={setMode}
-                    initialContent={content}
-                    fetchContent={(value) => {
-                        fetchFileContent = value;
-                    }}
-                    onContentSaved={() => {
-                        if (action !== 'edit') {
-                            setModalVisible(true);
-                        } else {
-                            save();
-                        }
-                    }}
-                    onContentChanged={action === 'new' ? saveDraft : undefined}
-                />
+                <React.Suspense fallback={<div className={'h-96 w-full rounded bg-neutral-900'} />}>
+                    <CodemirrorEditor
+                        mode={mode}
+                        filename={hash.replace(/^#/, '')}
+                        onModeChanged={setMode}
+                        initialContent={content}
+                        fetchContent={(value) => {
+                            fetchFileContent = value;
+                        }}
+                        onContentSaved={() => {
+                            if (action !== 'edit') {
+                                setModalVisible(true);
+                            } else {
+                                save();
+                            }
+                        }}
+                        onContentChanged={action === 'new' ? saveDraft : undefined}
+                    />
+                </React.Suspense>
             </div>
             <div className={'mt-4 flex justify-end'}>
                 <div className={'mr-4 flex-1 rounded bg-neutral-900 sm:flex-none'}>

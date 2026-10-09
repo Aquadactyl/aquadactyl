@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import features from './index';
 import { getObjectKeys } from '@/lib/objects';
+import ErrorBoundary from '@/components/elements/ErrorBoundary';
 
 type ListItems = [string, React.ComponentType][];
 
@@ -12,10 +13,12 @@ export default ({ enabled }: { enabled: string[] }) => {
     }, [enabled]);
 
     return (
-        <React.Suspense fallback={null}>
-            {mapped.map(([key, Component]) => (
-                <Component key={key} />
-            ))}
-        </React.Suspense>
+        <ErrorBoundary fallback={null}>
+            <React.Suspense fallback={null}>
+                {mapped.map(([key, Component]) => (
+                    <Component key={key} />
+                ))}
+            </React.Suspense>
+        </ErrorBoundary>
     );
 };
