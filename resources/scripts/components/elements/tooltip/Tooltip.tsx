@@ -14,6 +14,7 @@ import {
     useHover,
     useInteractions,
     useRole,
+    FloatingPortal,
 } from '@floating-ui/react-dom-interactions';
 import { AnimatePresence, motion } from 'framer-motion';
 import classNames from 'classnames';
@@ -80,39 +81,41 @@ export default ({ children, ...props }: Props) => {
     return (
         <>
             {cloneElement(children, getReferenceProps({ ref: reference, ...children.props }))}
-            <AnimatePresence>
-                {open && (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.85 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ type: 'spring', damping: 20, stiffness: 300, duration: 0.075 }}
-                        {...getFloatingProps({
-                            ref: floating,
-                            className:
-                                'bg-gray-900 text-sm text-gray-200 px-3 py-2 rounded pointer-events-none max-w-[24rem]',
-                            style: {
-                                position: strategy,
-                                top: `${y || 0}px`,
-                                left: `${x || 0}px`,
-                            },
-                        })}
-                    >
-                        {props.content}
-                        {props.arrow && (
-                            <div
-                                ref={arrowEl}
-                                style={{
-                                    transform: `translate(${Math.round(ax || 0)}px, ${Math.round(
-                                        ay || 0,
-                                    )}px) rotate(45deg)`,
-                                }}
-                                className={classNames('absolute h-3 w-3 bg-gray-900', side)}
-                            />
-                        )}
-                    </motion.div>
-                )}
-            </AnimatePresence>
+            <FloatingPortal>
+                <AnimatePresence>
+                    {open && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.85 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ type: 'spring', damping: 20, stiffness: 300, duration: 0.075 }}
+                            {...getFloatingProps({
+                                ref: floating,
+                                className:
+                                    'bg-gray-900 text-sm text-gray-200 px-3 py-2 rounded pointer-events-none max-w-[24rem] z-50',
+                                style: {
+                                    position: strategy,
+                                    top: `${y || 0}px`,
+                                    left: `${x || 0}px`,
+                                },
+                            })}
+                        >
+                            {props.content}
+                            {props.arrow && (
+                                <div
+                                    ref={arrowEl}
+                                    style={{
+                                        transform: `translate(${Math.round(ax || 0)}px, ${Math.round(
+                                            ay || 0,
+                                        )}px) rotate(45deg)`,
+                                    }}
+                                    className={classNames('absolute h-3 w-3 bg-gray-900', side)}
+                                />
+                            )}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </FloatingPortal>
         </>
     );
 };

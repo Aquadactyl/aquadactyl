@@ -7,7 +7,7 @@ export default ({ children }: { children: React.ReactNode }) => {
 
     useDeepCompareEffect(() => {
         setFooter(
-            <div className={'flex items-center justify-end space-x-3 rounded-b-lg bg-gray-700 px-6 py-3'}>
+            <div className={'flex items-center justify-end gap-3 rounded-b-lg bg-gray-700 px-6 py-3'}>
                 {children}
             </div>,
         );
