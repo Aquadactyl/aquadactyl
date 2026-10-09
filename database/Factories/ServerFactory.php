@@ -26,7 +26,6 @@ class ServerFactory extends Factory
     {
         return [
             'uuid' => Uuid::uuid4()->toString(),
-            'uuidShort' => Str::lower(Str::random(8)),
             'name' => $this->faker->firstName,
             'description' => implode(' ', $this->faker->sentences()),
             'skip_scripts' => 0,

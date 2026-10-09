@@ -19,7 +19,7 @@ class SubstituteClientBindings extends SubstituteBindings
                 ->when(
                     str_starts_with($value, 'serv_'),
                     fn ($builder) => $builder->whereIdentifier($value),
-                    fn ($builder) => $builder->where(strlen($value) === 8 ? 'uuidShort' : 'uuid', $value)
+                    fn ($builder) => $builder->where('uuid', $value)
                 )
                 ->firstOrFail();
         });

@@ -147,9 +147,11 @@ class ServerRepository extends EloquentRepository implements ServerRepositoryInt
             /** @var Server $model */
             $model = $this->getBuilder()
                 ->with('nest', 'node')
-                ->where(function (Builder $query) use ($uuid) {
-                    $query->where('uuidShort', $uuid)->orWhere('uuid', $uuid);
-                })
+                ->when(
+                    str_starts_with($uuid, 'serv_'),
+                    fn (Builder $query) => $query->whereIdentifier($uuid),
+                    fn (Builder $query) => $query->where('uuid', $uuid)
+                )
                 ->firstOrFail($this->getColumns());
 
             return $model;
@@ -159,11 +161,21 @@ class ServerRepository extends EloquentRepository implements ServerRepositoryInt
     }
 
     /**
-     * Check if a given UUID and UUID-Short string are unique to a server.
+     * Check if a given UUID string is unique to a server.
      */
-    public function isUniqueUuidCombo(string $uuid, string $short): bool
+    public function isUniqueUuid(string $uuid): bool
     {
-        return !$this->getBuilder()->where('uuid', '=', $uuid)->orWhere('uuidShort', '=', $short)->exists();
+        return !$this->getBuilder()->where('uuid', '=', $uuid)->exists();
+    }
+
+    /**
+     * Check if a given UUID and UUID-Short string are unique to a server.
+     *
+     * @deprecated
+     */
+    public function isUniqueUuidCombo(string $uuid, string $short = ''): bool
+    {
+        return $this->isUniqueUuid($uuid);
     }
 
     /**

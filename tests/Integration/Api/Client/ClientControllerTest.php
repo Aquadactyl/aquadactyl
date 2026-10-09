@@ -34,7 +34,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertOk();
         $response->assertJsonPath('object', 'list');
         $response->assertJsonPath('data.0.object', Server::RESOURCE_NAME);
-        $response->assertJsonPath('data.0.attributes.identifier', $servers[0]->uuidShort);
+        $response->assertJsonPath('data.0.attributes.identifier', $servers[0]->identifier);
         $response->assertJsonPath('data.0.attributes.server_owner', true);
         $response->assertJsonPath('meta.pagination.total', 1);
         $response->assertJsonPath('meta.pagination.per_page', 50);
@@ -53,7 +53,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         /** @var \Pterodactyl\Models\Server[] $servers */
         $servers = [
             $this->createServerModel(['user_id' => $users[0]->id, 'name' => 'Julia']),
-            $this->createServerModel(['user_id' => $users[1]->id, 'uuidShort' => '12121212', 'name' => 'Janice']),
+            $this->createServerModel(['user_id' => $users[1]->id, 'name' => 'Janice']),
             $this->createServerModel(['user_id' => $users[1]->id, 'uuid' => Uuid::uuid4()->toString(), 'external_id' => 'ext123', 'name' => 'Julia']),
             $this->createServerModel(['user_id' => $users[1]->id, 'uuid' => Uuid::uuid4()->toString(), 'name' => 'Jennifer']),
         ];
@@ -61,27 +61,27 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $this->actingAs($users[1])->getJson('/api/client?filter[*]=Julia')
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->identifier);
 
         $this->actingAs($users[1])->getJson('/api/client?filter[*]=ext123')
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->identifier);
 
         $this->actingAs($users[1])->getJson('/api/client?filter[*]=ext123')
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->identifier);
 
-        $this->actingAs($users[1])->getJson('/api/client?filter[*]=12121212')
+        $this->actingAs($users[1])->getJson("/api/client?filter[*]={$servers[1]->identifier}")
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $servers[1]->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $servers[1]->identifier);
 
-        $this->actingAs($users[1])->getJson("/api/client?filter[*]={$servers[2]->uuidShort}")
+        $this->actingAs($users[1])->getJson("/api/client?filter[*]={$servers[2]->identifier}")
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $servers[2]->identifier);
 
         $this->actingAs($users[1])->getJson('/api/client?filter[*]=88788878-abcd')
             ->assertOk()
@@ -90,8 +90,8 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $this->actingAs($users[0])->getJson('/api/client?filter[*]=Julia&type=admin-all')
             ->assertOk()
             ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $servers[0]->uuidShort)
-            ->assertJsonPath('data.1.attributes.identifier', $servers[2]->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $servers[0]->identifier)
+            ->assertJsonPath('data.1.attributes.identifier', $servers[2]->identifier);
     }
 
     /**
@@ -117,24 +117,24 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $this->actingAs($user)->getJson('/api/client?filter[*]=192.168.1.1')
             ->assertOk()
             ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server->uuidShort)
-            ->assertJsonPath('data.1.attributes.identifier', $server2->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $server->identifier)
+            ->assertJsonPath('data.1.attributes.identifier', $server2->identifier);
 
         $this->actingAs($user)->getJson('/api/client?filter[*]=192.168.1.1:25565')
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $server->identifier);
 
         $this->actingAs($user)->getJson('/api/client?filter[*]=:25570')
             ->assertOk()
             ->assertJsonCount(1, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server2->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $server2->identifier);
 
         $this->actingAs($user)->getJson('/api/client?filter[*]=:255')
             ->assertOk()
             ->assertJsonCount(2, 'data')
-            ->assertJsonPath('data.0.attributes.identifier', $server->uuidShort)
-            ->assertJsonPath('data.1.attributes.identifier', $server2->uuidShort);
+            ->assertJsonPath('data.0.attributes.identifier', $server->identifier)
+            ->assertJsonPath('data.1.attributes.identifier', $server2->identifier);
     }
 
     /**
@@ -163,9 +163,9 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertOk();
         $response->assertJsonCount(2, 'data');
         $response->assertJsonPath('data.0.attributes.server_owner', true);
-        $response->assertJsonPath('data.0.attributes.identifier', $servers[0]->uuidShort);
+        $response->assertJsonPath('data.0.attributes.identifier', $servers[0]->identifier);
         $response->assertJsonPath('data.1.attributes.server_owner', false);
-        $response->assertJsonPath('data.1.attributes.identifier', $servers[1]->uuidShort);
+        $response->assertJsonPath('data.1.attributes.identifier', $servers[1]->identifier);
     }
 
     /**
@@ -194,7 +194,7 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertOk();
         $response->assertJsonCount(1, 'data');
         $response->assertJsonPath('data.0.attributes.server_owner', true);
-        $response->assertJsonPath('data.0.attributes.identifier', $servers[0]->uuidShort);
+        $response->assertJsonPath('data.0.attributes.identifier', $servers[0]->identifier);
     }
 
     /**
@@ -247,9 +247,9 @@ class ClientControllerTest extends ClientApiIntegrationTestCase
         $response->assertJsonCount(2, 'data');
 
         $response->assertJsonPath('data.0.attributes.server_owner', false);
-        $response->assertJsonPath('data.0.attributes.identifier', $servers[2]->uuidShort);
+        $response->assertJsonPath('data.0.attributes.identifier', $servers[2]->identifier);
         $response->assertJsonPath('data.1.attributes.server_owner', false);
-        $response->assertJsonPath('data.1.attributes.identifier', $servers[3]->uuidShort);
+        $response->assertJsonPath('data.1.attributes.identifier', $servers[3]->identifier);
     }
 
     /**

@@ -134,13 +134,12 @@ class ServerCreationService
      */
     private function createModel(array $data): Server
     {
-        $uuid = $this->generateUniqueUuidCombo();
+        $uuid = $this->generateUniqueUuid();
 
         /** @var Server $model */
         $model = $this->repository->create([
             'external_id' => Arr::get($data, 'external_id'),
             'uuid' => $uuid,
-            'uuidShort' => substr($uuid, 0, 8),
             'node_id' => Arr::get($data, 'node_id'),
             'name' => Arr::get($data, 'name'),
             'description' => Arr::get($data, 'description') ?? '',
@@ -201,14 +200,14 @@ class ServerCreationService
     }
 
     /**
-     * Create a unique UUID and UUID-Short combo for a server.
+     * Create a unique UUID for a server.
      */
-    private function generateUniqueUuidCombo(): string
+    private function generateUniqueUuid(): string
     {
         $uuid = Uuid::uuid4()->toString();
 
-        if (!$this->repository->isUniqueUuidCombo($uuid, substr($uuid, 0, 8))) {
-            return $this->generateUniqueUuidCombo();
+        if (!$this->repository->isUniqueUuid($uuid)) {
+            return $this->generateUniqueUuid();
         }
 
         return $uuid;

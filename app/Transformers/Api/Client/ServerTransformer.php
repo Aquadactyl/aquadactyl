@@ -41,10 +41,7 @@ class ServerTransformer extends BaseClientTransformer
 
         return [
             'server_owner' => $user->id === $server->owner_id,
-            'identifier' => config('pterodactyl.features.new_server_identifiers')
-                ? $server->identifier
-                : $server->uuidShort,
-            '__deprecated_uuid_short' => $server->uuidShort,
+            'identifier' => $server->identifier,
             'server_identifier' => $server->identifier,
             'internal_id' => $server->id,
             'uuid' => $server->uuid,

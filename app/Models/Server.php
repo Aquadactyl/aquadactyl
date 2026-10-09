@@ -21,7 +21,6 @@ use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
  * @property int $id
  * @property string|null $external_id
  * @property string $uuid
- * @property string $uuidShort
  * @property int $node_id
  * @property string $name
  * @property string $description
@@ -103,7 +102,6 @@ use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereThreads($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuid($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Server whereUuidShort($value)
  *
  * @mixin \Eloquent
  */

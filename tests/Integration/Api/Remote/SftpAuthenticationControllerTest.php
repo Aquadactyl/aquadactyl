@@ -170,7 +170,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
         $this->setAuthorization($server->node);
 
         $this->postJson('/api/remote/sftp/auth', [
-            'username' => $user->username . '.' . $server->uuidShort,
+            'username' => $user->username . '.' . $server->identifier,
             'password' => 'foobar',
         ])
             ->assertForbidden()
@@ -198,7 +198,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
         $this->setAuthorization($server->node);
 
         $data = [
-            'username' => $user->username . '.' . $server->uuidShort,
+            'username' => $user->username . '.' . $server->identifier,
             'password' => 'foobar',
         ];
 
@@ -213,7 +213,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
             ->assertJsonPath('permissions.0', '*');
 
         $this->setAuthorization();
-        $data['username'] = $user->username . '.' . $this->server->uuidShort;
+        $data['username'] = $user->username . '.' . $this->server->identifier;
 
         $this->post('/api/remote/sftp/auth', $data)
             ->assertOk()
@@ -245,7 +245,7 @@ class SftpAuthenticationControllerTest extends IntegrationTestCase
      */
     protected function getUsername(bool $long = false): string
     {
-        return $this->user->username . '.' . ($long ? $this->server->uuid : $this->server->uuidShort);
+        return $this->user->username . '.' . ($long ? $this->server->uuid : $this->server->identifier);
     }
 
     /**

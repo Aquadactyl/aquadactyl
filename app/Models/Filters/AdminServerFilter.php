@@ -24,11 +24,14 @@ class AdminServerFilter implements Filter
             ->where(function (Builder $builder) use ($value) {
                 $builder->where('servers.uuid', $value)
                     ->orWhere('servers.uuid', 'LIKE', "$value%")
-                    ->orWhere('servers.uuidShort', $value)
                     ->orWhere('servers.external_id', $value)
                     ->orWhereRaw('LOWER(users.username) LIKE ?', ["%$value%"])
                     ->orWhereRaw('LOWER(users.email) LIKE ?', ["$value%"])
                     ->orWhereRaw('LOWER(servers.name) LIKE ?', ["%$value%"]);
+
+                if (str_starts_with($value, 'serv_')) {
+                    $builder->orWhere(fn (Builder $b) => $b->whereIdentifier($value));
+                }
             })
             ->groupBy('servers.id');
     }
