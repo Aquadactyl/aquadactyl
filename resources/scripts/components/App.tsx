@@ -1,6 +1,8 @@
 import React, { lazy } from 'react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { StoreProvider } from 'easy-peasy';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClient } from '@/lib/queryClient';
 import { store } from '@/state';
 import { SiteSettings } from '@/state/settings';
 import ProgressBar from '@/components/elements/ProgressBar';
@@ -15,9 +17,9 @@ import '@/assets/css/interface.css';
 import Spinner from '@/components/elements/Spinner';
 import PrivacyMode from '@/components/elements/PrivacyMode';
 
-const DashboardRouter = lazy(() => import(/* webpackChunkName: "dashboard" */ '@/routers/DashboardRouter'));
-const ServerRouter = lazy(() => import(/* webpackChunkName: "server" */ '@/routers/ServerRouter'));
-const AuthenticationRouter = lazy(() => import(/* webpackChunkName: "auth" */ '@/routers/AuthenticationRouter'));
+const DashboardRouter = lazy(() => import('@/routers/DashboardRouter'));
+const ServerRouter = lazy(() => import('@/routers/ServerRouter'));
+const AuthenticationRouter = lazy(() => import('@/routers/AuthenticationRouter'));
 
 interface ExtendedWindow extends Window {
     SiteConfiguration?: SiteSettings;
@@ -63,36 +65,38 @@ const App = () => {
     return (
         <>
             <GlobalStylesheet />
-            <StoreProvider store={store}>
-                <PrivacyMode />
-                <ProgressBar />
-                <div className={'mx-auto w-auto'}>
-                    <Router history={history}>
-                        <Switch>
-                            <Route path={'/auth'}>
-                                <Spinner.Suspense>
-                                    <AuthenticationRouter />
-                                </Spinner.Suspense>
-                            </Route>
-                            <AuthenticatedRoute path={'/server/:id'}>
-                                <Spinner.Suspense>
-                                    <ServerContext.Provider>
-                                        <ServerRouter />
-                                    </ServerContext.Provider>
-                                </Spinner.Suspense>
-                            </AuthenticatedRoute>
-                            <AuthenticatedRoute path={'/'}>
-                                <Spinner.Suspense>
-                                    <DashboardRouter />
-                                </Spinner.Suspense>
-                            </AuthenticatedRoute>
-                            <Route path={'*'}>
-                                <NotFound />
-                            </Route>
-                        </Switch>
-                    </Router>
-                </div>
-            </StoreProvider>
+            <QueryClientProvider client={queryClient}>
+                <StoreProvider store={store}>
+                    <PrivacyMode />
+                    <ProgressBar />
+                    <div className={'mx-auto w-auto'}>
+                        <Router history={history}>
+                            <Switch>
+                                <Route path={'/auth'}>
+                                    <Spinner.Suspense>
+                                        <AuthenticationRouter />
+                                    </Spinner.Suspense>
+                                </Route>
+                                <AuthenticatedRoute path={'/server/:id'}>
+                                    <Spinner.Suspense>
+                                        <ServerContext.Provider>
+                                            <ServerRouter />
+                                        </ServerContext.Provider>
+                                    </Spinner.Suspense>
+                                </AuthenticatedRoute>
+                                <AuthenticatedRoute path={'/'}>
+                                    <Spinner.Suspense>
+                                        <DashboardRouter />
+                                    </Spinner.Suspense>
+                                </AuthenticatedRoute>
+                                <Route path={'*'}>
+                                    <NotFound />
+                                </Route>
+                            </Switch>
+                        </Router>
+                    </div>
+                </StoreProvider>
+            </QueryClientProvider>
         </>
     );
 };

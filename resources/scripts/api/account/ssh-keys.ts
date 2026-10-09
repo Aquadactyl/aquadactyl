@@ -1,14 +1,14 @@
-import useSWR, { ConfigInterface } from 'swr';
+import { useTanStackQuery } from '@/lib/queryClient';
 import http, { FractalResponseList } from '@/api/http';
 import { SSHKey, Transformers } from '@definitions/user';
 import { AxiosError } from 'axios';
 import { useUserSWRKey } from '@/plugins/useSWRKey';
 
-const useSSHKeys = (config?: ConfigInterface<SSHKey[], AxiosError>) => {
+const useSSHKeys = (config?: any) => {
     const key = useUserSWRKey(['account', 'ssh-keys']);
 
-    return useSWR(
-        key,
+    return useTanStackQuery<SSHKey[], AxiosError>(
+        [key],
         async () => {
             const { data } = await http.get('/api/client/account/ssh-keys');
 
@@ -16,7 +16,7 @@ const useSSHKeys = (config?: ConfigInterface<SSHKey[], AxiosError>) => {
                 return Transformers.toSSHKey(datum.attributes);
             });
         },
-        { revalidateOnMount: false, ...(config || {}) },
+        config,
     );
 };
 

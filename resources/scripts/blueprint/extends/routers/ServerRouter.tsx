@@ -1,5 +1,5 @@
 import React from 'react';
-import useSWR from 'swr';
+import { useTanStackQuery } from '@/lib/queryClient';
 import http from '@/api/http';
 import { NavLink, Route, Switch, useRouteMatch } from 'react-router-dom';
 import TransitionRouter from '@/TransitionRouter';
@@ -21,8 +21,8 @@ const blueprintExtensions = [...new Set(blueprintRoutes.server.map((route) => ro
  * Get the route egg IDs for each extension with server routes.
  */
 const useExtensionEggs = () => {
-    const { data } = useSWR<{ [x: string]: string[] }>(
-        blueprintExtensions.length ? `blueprint:extension-eggs:${blueprintExtensions.join(',')}` : null,
+    const { data } = useTanStackQuery<{ [x: string]: string[] }>(
+        blueprintExtensions.length ? ['blueprint:extension-eggs', blueprintExtensions.join(',')] : null,
         async () =>
             Object.fromEntries(
                 await Promise.all(
@@ -34,7 +34,7 @@ const useExtensionEggs = () => {
                     }),
                 ),
             ),
-        { revalidateOnFocus: false, dedupingInterval: 60000 },
+        { refetchOnWindowFocus: false, staleTime: 60000 },
     );
     return (
         data ||

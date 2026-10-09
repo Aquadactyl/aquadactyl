@@ -1,6 +1,6 @@
 import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect, useRef } from 'react';
-import useSWR from 'swr';
+import { useTanStackQuery } from '@/lib/queryClient';
 import CountryFlag from '@/components/elements/CountryFlag';
 import ServerPlayerCount from './ServerPlayerCount';
 import ServerQuickActions from './ServerQuickActions';
@@ -27,13 +27,12 @@ export default ({ server, className }: { server: Server; className?: string }) =
         data: stats,
         error,
         mutate,
-    } = useSWR<ServerStats>(
+    } = useTanStackQuery<ServerStats>(
         enabled ? ['server-resources', server.uuid] : null,
         () => getServerResourceUsage(server.uuid),
         {
-            refreshInterval: 30000,
-            revalidateOnFocus: false,
-            errorRetryInterval: 30000,
+            refetchInterval: 30000,
+            refetchOnWindowFocus: false,
         },
     );
     const unavailable = Boolean(error);

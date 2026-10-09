@@ -1,7 +1,7 @@
 import useWebsocketEvent from '@/plugins/useWebsocketEvent';
 import { ServerContext } from '@/state/server';
 import { SocketEvent } from '@/components/server/events';
-import { mutate } from 'swr';
+import { mutateGlobal } from '@/lib/queryClient';
 import { getDirectorySwrKey } from '@/plugins/useFileManagerSwr';
 
 const InstallListener = () => {
@@ -10,7 +10,7 @@ const InstallListener = () => {
     const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
 
     useWebsocketEvent(SocketEvent.BACKUP_RESTORE_COMPLETED, () => {
-        mutate(getDirectorySwrKey(uuid, '/'), undefined);
+        mutateGlobal(getDirectorySwrKey(uuid, '/'));
         setServerFromState((s) => ({ ...s, status: null }));
     });
 

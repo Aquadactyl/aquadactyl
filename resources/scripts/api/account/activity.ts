@@ -1,4 +1,4 @@
-import useSWR, { ConfigInterface, responseInterface } from 'swr';
+import { useTanStackQuery, QueryResponse } from '@/lib/queryClient';
 import { AxiosError } from 'axios';
 import http, { withQueryBuilderParams } from '@/api/http';
 import { ActivityLogFilters, ActivityLogResult, toActivityLogResult } from '@/api/activity';
@@ -7,14 +7,11 @@ import { useUserSWRKey } from '@/plugins/useSWRKey';
 
 export type { ActivityLogFilters } from '@/api/activity';
 
-const useActivityLogs = (
-    filters?: ActivityLogFilters,
-    config?: ConfigInterface<ActivityLogResult, AxiosError>,
-): responseInterface<ActivityLogResult, AxiosError> => {
+const useActivityLogs = (filters?: ActivityLogFilters, config?: any): QueryResponse<ActivityLogResult, AxiosError> => {
     const key = useUserSWRKey(['account', 'activity', JSON.stringify(useFilteredObject(filters || {}))]);
 
-    return useSWR<ActivityLogResult>(
-        key,
+    return useTanStackQuery<ActivityLogResult, AxiosError>(
+        [key],
         async () => {
             const { data } = await http.get('/api/client/account/activity', {
                 params: {
@@ -25,7 +22,7 @@ const useActivityLogs = (
 
             return toActivityLogResult(data);
         },
-        { revalidateOnMount: false, ...(config || {}) },
+        config,
     );
 };
 

@@ -9,7 +9,7 @@ import PageContentBlock from '@/components/elements/PageContentBlock';
 import useFlash from '@/plugins/useFlash';
 import { useStoreState } from 'easy-peasy';
 import { usePersistedState } from '@/plugins/usePersistedState';
-import useSWR from 'swr';
+import { useTanStackQuery } from '@/lib/queryClient';
 import { PaginatedResult } from '@/api/http';
 import Pagination from '@/components/elements/Pagination';
 
@@ -33,8 +33,9 @@ export default () => {
         error,
         mutate,
         isValidating,
-    } = useSWR<PaginatedResult<Server>>(['/api/client/servers', showOnlyAdmin && rootAdmin, page, query], () =>
-        getServers({ page, query: query || undefined, type: showOnlyAdmin && rootAdmin ? 'admin' : undefined }),
+    } = useTanStackQuery<PaginatedResult<Server>>(
+        ['/api/client/servers', showOnlyAdmin && rootAdmin, page, query],
+        () => getServers({ page, query: query || undefined, type: showOnlyAdmin && rootAdmin ? 'admin' : undefined }),
     );
 
     useEffect(() => {
