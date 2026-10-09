@@ -35,6 +35,8 @@ Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprin
 - **Simple server schedules:** Choose daily, weekly, monthly, or regular interval
   timings, then add restart, backup, or command steps with readable delays.
   Advanced cron remains available. See the [schedule guide](docs/SCHEDULES.md).
+- **Egg Library:** Browse eggs.download from the admin area, preview egg settings,
+  and import into an existing or new nest. See the [Egg Library guide](docs/EGG-LIBRARY.md).
 - **Dependency maintenance:** Committed Composer and pnpm lockfiles, weekly
   Dependabot checks and CI audits for production dependencies.
 

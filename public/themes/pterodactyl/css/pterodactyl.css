@@ -1492,3 +1492,18 @@ tr:hover + tr.server-description {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+/* Egg Library */
+.egg-library-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.egg-library-card { display: flex; flex-direction: column; margin-bottom: 0; }
+.egg-library-card .box-body { flex: 1; }
+.egg-library-card h3 { font-size: 20px; line-height: 1.4; overflow-wrap: anywhere; }
+.egg-library p, .egg-library h1, .egg-library h3, .egg-library code { overflow-wrap: anywhere; }
+.egg-library-description { white-space: pre-line; }
+.egg-library-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.egg-library-empty { padding: 30px; text-align: center; }
+.egg-library pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 420px; overflow: auto; }
+.egg-library-details { margin-top: 20px; }
+.egg-library-details summary { cursor: pointer; font-weight: 600; margin-bottom: 10px; }
+.egg-library [hidden] { display: none !important; }
+@media (max-width: 1199px) { .egg-library-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 767px) { .egg-library-grid { grid-template-columns: minmax(0, 1fr); } }

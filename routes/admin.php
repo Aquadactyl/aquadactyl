@@ -6,6 +6,13 @@ use Pterodactyl\Http\Middleware\Admin\Servers\ServerInstalled;
 
 Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
 
+Route::group(['prefix' => 'egg-library'], function () {
+    Route::get('/', [Admin\EggLibraryController::class, 'index'])->name('admin.egg-library.index');
+    Route::get('/{slug}', [Admin\EggLibraryController::class, 'show'])->name('admin.egg-library.show');
+    Route::get('/{slug}/download', [Admin\EggLibraryController::class, 'download'])->name('admin.egg-library.download');
+    Route::post('/{slug}/import', [Admin\EggLibraryController::class, 'import'])->name('admin.egg-library.import');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Location Controller Routes
