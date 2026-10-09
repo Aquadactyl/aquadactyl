@@ -217,13 +217,7 @@ export const ServerContext = {
         equalityFn?: (a: Result, b: Result) => boolean,
     ): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
-        return useSyncExternalStoreWithSelector(
-            store.subscribe,
-            store.getState,
-            store.getInitialState,
-            mapState,
-            equalityFn,
-        );
+        return useSyncExternalStoreWithSelector(store.subscribe, store.getState, store.getState, mapState, equalityFn);
     },
     useStoreActions: <Result,>(mapActions: (actions: ServerStore) => Result): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
@@ -238,7 +232,7 @@ export const ServerContext = {
             return useSyncExternalStoreWithSelector(
                 store.subscribe,
                 store.getState,
-                store.getInitialState,
+                store.getState,
                 selector,
                 equalityFn,
             );
@@ -252,13 +246,7 @@ export function useServerStore<Result>(
     equalityFn?: (a: Result, b: Result) => boolean,
 ): Result {
     const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
-    return useSyncExternalStoreWithSelector(
-        store.subscribe,
-        store.getState,
-        store.getInitialState,
-        selector,
-        equalityFn,
-    );
+    return useSyncExternalStoreWithSelector(store.subscribe, store.getState, store.getState, selector, equalityFn);
 }
 
 export default ServerContext;

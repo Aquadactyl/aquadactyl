@@ -26,7 +26,7 @@ export const useAppStore = <T>(selector: (state: ApplicationStore) => T, equalit
     return useSyncExternalStoreWithSelector(
         appStore.subscribe,
         appStore.getState,
-        appStore.getInitialState,
+        appStore.getState,
         selector,
         equalityFn,
     );

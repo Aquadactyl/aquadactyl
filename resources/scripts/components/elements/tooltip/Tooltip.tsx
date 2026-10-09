@@ -15,7 +15,7 @@ import {
     useInteractions,
     useRole,
     FloatingPortal,
-} from '@floating-ui/react-dom-interactions';
+} from '@floating-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import classNames from 'classnames';
 
@@ -44,7 +44,7 @@ export default ({ children, ...props }: Props) => {
     const arrowEl = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
 
-    const { x, y, reference, floating, middlewareData, strategy, context } = useFloating({
+    const { x, y, refs, middlewareData, strategy, context } = useFloating({
         open,
         strategy: 'fixed',
         placement: props.placement || 'top',
@@ -80,7 +80,7 @@ export default ({ children, ...props }: Props) => {
 
     return (
         <>
-            {cloneElement(children, getReferenceProps({ ref: reference, ...children.props }))}
+            {cloneElement(children, getReferenceProps({ ref: refs.setReference, ...children.props }))}
             <FloatingPortal>
                 <AnimatePresence>
                     {open && (
@@ -90,7 +90,7 @@ export default ({ children, ...props }: Props) => {
                             exit={{ opacity: 0 }}
                             transition={{ type: 'spring', damping: 20, stiffness: 300, duration: 0.075 }}
                             {...getFloatingProps({
-                                ref: floating,
+                                ref: refs.setFloating,
                                 className:
                                     'bg-gray-900 text-sm text-gray-200 px-3 py-2 rounded pointer-events-none max-w-[24rem] z-[9999]',
                                 style: {

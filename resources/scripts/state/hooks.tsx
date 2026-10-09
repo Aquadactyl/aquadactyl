@@ -13,7 +13,7 @@ export function useStoreState<Result>(
     return useSyncExternalStoreWithSelector(
         appStore.subscribe,
         appStore.getState,
-        appStore.getInitialState,
+        appStore.getState,
         mapState,
         equalityFn,
     );

@@ -1,30 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act, Simulate } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot, Root } from 'react-dom/client';
+import { Simulate } from 'react-dom/test-utils';
 import { Form, Formik } from 'formik';
 import ScheduleTimingFields, { TimingValues } from './ScheduleTimingFields';
 import { cronFromTiming, defaultTiming } from './scheduleHelpers';
 
 describe('schedule timing editor', () => {
     let container: HTMLDivElement;
+    let root: Root;
     const save = vi.fn();
 
     beforeEach(() => {
         save.mockClear();
         container = document.createElement('div');
         document.body.appendChild(container);
+        root = createRoot(container);
     });
 
     afterEach(() => {
         act(() => {
-            ReactDOM.unmountComponentAtNode(container);
+            root.unmount();
         });
         container.remove();
     });
 
     const render = (changes: Partial<TimingValues> = {}) => {
         act(() => {
-            ReactDOM.render(
+            root.render(
                 <Formik<TimingValues>
                     initialValues={{
                         ...defaultTiming,
@@ -42,7 +44,6 @@ describe('schedule timing editor', () => {
                         <button type={'submit'}>Save</button>
                     </Form>
                 </Formik>,
-                container,
             );
         });
     };

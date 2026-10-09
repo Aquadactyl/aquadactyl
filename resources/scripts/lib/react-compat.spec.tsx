@@ -1,8 +1,7 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 
-const useId = (React as typeof React & { useId: () => string }).useId;
+const useId = React.useId;
 
 const Field = ({ label }: { label: string }) => {
     const id = useId();
@@ -17,27 +16,29 @@ const Field = ({ label }: { label: string }) => {
 
 describe('React useId compatibility', () => {
     let container: HTMLDivElement;
+    let root: Root;
 
     beforeEach(() => {
         container = document.createElement('div');
         document.body.appendChild(container);
+        root = createRoot(container);
     });
 
     afterEach(() => {
         act(() => {
-            ReactDOM.unmountComponentAtNode(container);
+            root.unmount();
         });
         container.remove();
     });
 
     it('preserves field IDs and label associations when a component updates', () => {
         act(() => {
-            ReactDOM.render(<Field label={'Verification code'} />, container);
+            root.render(<Field label={'Verification code'} />);
         });
         const id = container.querySelector('input')!.id;
 
         act(() => {
-            ReactDOM.render(<Field label={'Updated verification code'} />, container);
+            root.render(<Field label={'Updated verification code'} />);
         });
 
         expect(container.querySelector('input')!.id).toBe(id);
@@ -54,13 +55,13 @@ describe('React useId compatibility', () => {
         );
 
         act(() => {
-            ReactDOM.render(fields('Verification code'), container);
+            root.render(fields('Verification code'));
         });
         const ids = Array.from(container.querySelectorAll('input'), (input) => input.id);
         expect(new Set(ids).size).toBe(2);
 
         act(() => {
-            ReactDOM.render(fields('Updated verification code'), container);
+            root.render(fields('Updated verification code'));
         });
 
         expect(Array.from(container.querySelectorAll('input'), (input) => input.id)).toEqual(ids);

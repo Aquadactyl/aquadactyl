@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTanStackQuery } from '@/lib/queryClient';
 import { Users } from 'lucide-react';
 import getGameQuery from '@/api/server/getGameQuery';
@@ -14,11 +14,14 @@ export default ({ server, state }: { server: Server; state: string }) => {
         {
             refetchInterval: refreshInterval,
             refetchOnWindowFocus: false,
-            onSuccess: (result) => {
-                setRefreshInterval(result.status === 'pending' && pendingPolls.current++ === 0 ? 5000 : 30000);
-            },
         },
     );
+
+    useEffect(() => {
+        if (data) {
+            setRefreshInterval(data.status === 'pending' && pendingPolls.current++ === 0 ? 5000 : 30000);
+        }
+    }, [data]);
     if (!server.gameQueryType) return null;
     const value = !running
         ? state === 'offline'

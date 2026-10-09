@@ -28,8 +28,6 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            'react/jsx-runtime': 'react/jsx-runtime.js',
-            'react/jsx-dev-runtime': 'react/jsx-dev-runtime.js',
             '@': path.resolve(import.meta.dirname, 'resources/scripts'),
             '@definitions': path.resolve(import.meta.dirname, 'resources/scripts/api/definitions'),
             '@feature': path.resolve(import.meta.dirname, 'resources/scripts/components/server/features'),

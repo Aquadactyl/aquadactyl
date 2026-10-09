@@ -1,26 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { act } from 'react-dom/test-utils';
+import React, { act } from 'react';
+import { createRoot, Root } from 'react-dom/client';
 import Select, { SelectProps } from './Select';
 
 describe('Select interactions inside a label', () => {
     let container: HTMLDivElement;
+    let root: Root;
 
     beforeEach(() => {
         container = document.createElement('div');
         document.body.appendChild(container);
+        root = createRoot(container);
     });
 
     afterEach(() => {
         act(() => {
-            ReactDOM.unmountComponentAtNode(container);
+            root.unmount();
         });
         container.remove();
     });
 
     const renderSelect = (props: SelectProps = {}) => {
         act(() => {
-            ReactDOM.render(
+            root.render(
                 <form>
                     <label>
                         Time range
@@ -31,7 +32,6 @@ describe('Select interactions inside a label', () => {
                         </Select>
                     </label>
                 </form>,
-                container,
             );
         });
     };
