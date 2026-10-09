@@ -22,7 +22,6 @@ import { cronExpression, describeCron, formatScheduleDate } from './scheduleHelp
 import BeforeEdit from '@blueprint/components/Server/Schedules/Edit/BeforeEdit';
 import AfterEdit from '@blueprint/components/Server/Schedules/Edit/AfterEdit';
 
-
 export default () => {
     const navigate = useNavigate();
     const { id: scheduleId } = useParams<{ id: string }>();
