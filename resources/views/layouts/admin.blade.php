@@ -186,7 +186,7 @@
                 </div>
                 <div class="admin-footer-meta small text-gray">
                     <span><strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}</span>
-                    <span><strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - LARAVEL_START, 3) }}s</span>
+                    <span><strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - (defined('LARAVEL_START') ? LARAVEL_START : microtime(true)), 3) }}s</span>
                 </div>
             </footer>
         </div>
