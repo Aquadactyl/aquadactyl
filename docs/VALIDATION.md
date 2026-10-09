@@ -1,5 +1,20 @@
 # Validation results
 
+## Two-factor input contrast — 9 October 2026
+
+The 2FA dialogs' separate input component inherited a white background from the
+forms plugin while keeping light text. It now delegates to the shared themed
+input, preserving spacing and forwarded refs. Code/password labels are connected
+to their fields, and the login checkpoint shows proper visible labels.
+
+The production Docker browser check verified setup and disable inputs, recovery
+codes, placeholders, aqua focus borders, label clicks, and a forced autofill
+pseudo-state. Text contrast for the fixed fields measured 15.34:1. Desktop,
+390px, and 320px layouts had no horizontal overflow or JavaScript errors.
+Mocked enable/disable responses and a mocked login checkpoint exercised the UI
+without changing real 2FA settings. All 131 frontend tests, type checking, lint,
+formatting, and the production Docker build passed.
+
 ## Friendly server schedules — 9 October 2026
 
 The timing editor now offers minute/hour intervals and daily, weekly, and monthly
