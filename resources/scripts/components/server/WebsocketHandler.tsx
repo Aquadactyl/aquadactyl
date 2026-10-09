@@ -3,7 +3,7 @@ import { Websocket } from '@/plugins/Websocket';
 import { ServerContext } from '@/state/server';
 import getWebsocketToken from '@/api/server/getWebsocketToken';
 import ContentContainer from '@/components/elements/ContentContainer';
-import { CSSTransition } from 'react-transition-group';
+import Fade from '@/components/elements/Fade';
 import Spinner from '@/components/elements/Spinner';
 
 const reconnectErrors = ['jwt: exp claim is invalid', 'jwt: created too far in past (denylist)'];
@@ -106,8 +106,8 @@ export default () => {
         connect(uuid);
     }, [uuid]);
 
-    return error ? (
-        <CSSTransition timeout={150} in appear classNames={'fade'}>
+    return (
+        <Fade in={!!error} unmountOnExit timeout={150}>
             <div className={'bg-red-500 py-2'}>
                 <ContentContainer className={'flex items-center justify-center'}>
                     {error === 'connecting' ? (
@@ -122,6 +122,6 @@ export default () => {
                     )}
                 </ContentContainer>
             </div>
-        </CSSTransition>
-    ) : null;
+        </Fade>
+    );
 };

@@ -1,50 +1,65 @@
 import React from 'react';
-import styled from 'styled-components';
-import CSSTransition, { CSSTransitionProps } from 'react-transition-group/CSSTransition';
+import { AnimatePresence, motion } from 'framer-motion';
 
-interface Props extends Omit<CSSTransitionProps, 'timeout' | 'classNames'> {
-    timeout: number;
+export interface FadeProps {
+    timeout?: number;
+    in?: boolean;
+    appear?: boolean;
+    unmountOnExit?: boolean;
+    onExited?: () => void;
+    children?: React.ReactNode;
+    className?: string;
+    style?: React.CSSProperties;
 }
 
-const Container = styled.div<{ timeout: number }>`
-    .fade-enter,
-    .fade-exit,
-    .fade-appear {
-        will-change: opacity;
+const Fade: React.FC<FadeProps> = ({
+    timeout = 150,
+    in: show = true,
+    unmountOnExit = false,
+    onExited,
+    children,
+    className,
+    style,
+}) => {
+    const duration = timeout / 1000;
+
+    if (unmountOnExit) {
+        return (
+            <AnimatePresence onExitComplete={onExited}>
+                {show && (
+                    <motion.div
+                        className={className}
+                        style={style}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration, ease: [0.4, 0, 1, 1] }}
+                    >
+                        {children}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        );
     }
 
-    .fade-enter,
-    .fade-appear {
-        opacity: 0;
-
-        &.fade-enter-active,
-        &.fade-appear-active {
-            opacity: 1;
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-            transition-duration: ${(props) => props.timeout}ms;
-        }
-    }
-
-    .fade-exit {
-        opacity: 1;
-
-        &.fade-exit-active {
-            opacity: 0;
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0.4, 0, 1, 1);
-            transition-duration: ${(props) => props.timeout}ms;
-        }
-    }
-`;
-
-const Fade: React.FC<Props> = ({ timeout, children, ...props }) => (
-    <Container timeout={timeout}>
-        <CSSTransition timeout={timeout} classNames={'fade'} {...props}>
+    return (
+        <motion.div
+            className={className}
+            style={style}
+            initial={false}
+            animate={{ opacity: show ? 1 : 0 }}
+            transition={{ duration, ease: [0.4, 0, 1, 1] }}
+            onAnimationComplete={() => {
+                if (!show && onExited) {
+                    onExited();
+                }
+            }}
+        >
             {children}
-        </CSSTransition>
-    </Container>
-);
+        </motion.div>
+    );
+};
+
 Fade.displayName = 'Fade';
 
 export default Fade;

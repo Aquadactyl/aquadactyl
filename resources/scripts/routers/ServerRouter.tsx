@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router';
 import NavigationBar from '@/components/NavigationBar';
 import WebsocketHandler from '@/components/server/WebsocketHandler';
 import { ServerContext } from '@/state/server';
-import { CSSTransition } from 'react-transition-group';
+import Fade from '@/components/elements/Fade';
 import Spinner from '@/components/elements/Spinner';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
@@ -66,7 +66,7 @@ export default () => {
                 )
             ) : (
                 <>
-                    <CSSTransition timeout={150} classNames={'fade'} appear in>
+                    <Fade timeout={150}>
                         <SubNavigation id={'SubNavigation'}>
                             <BeforeSubNavigation />
                             <div>
@@ -80,7 +80,7 @@ export default () => {
                             </div>
                             <AfterSubNavigation />
                         </SubNavigation>
-                    </CSSTransition>
+                    </Fade>
                     <InstallListener />
                     <TransferListener />
                     <WebsocketHandler />

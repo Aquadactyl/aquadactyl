@@ -1,19 +1,6 @@
 import React from 'react';
 import { useLocation, type Location } from 'react-router';
-import { SwitchTransition } from 'react-transition-group';
-import Fade from '@/components/elements/Fade';
-import styled from 'styled-components';
-
-const StyledSwitchTransition = styled(SwitchTransition)`
-    position: relative;
-
-    & section {
-        position: absolute;
-        width: 100%;
-        top: 0;
-        left: 0;
-    }
-`;
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface TransitionRouterProps {
     location?: Location;
@@ -23,12 +10,19 @@ interface TransitionRouterProps {
 const TransitionRouter: React.FC<TransitionRouterProps> = ({ location: propLocation, children }) => {
     const routeLocation = useLocation();
     const loc = propLocation || routeLocation;
+
     return (
-        <StyledSwitchTransition>
-            <Fade timeout={150} key={loc.pathname + loc.search} in appear unmountOnExit>
-                <section>{children}</section>
-            </Fade>
-        </StyledSwitchTransition>
+        <AnimatePresence mode="wait">
+            <motion.div
+                key={loc.pathname + loc.search}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.15, ease: [0.4, 0, 1, 1] }}
+            >
+                {children}
+            </motion.div>
+        </AnimatePresence>
     );
 };
 

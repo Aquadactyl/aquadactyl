@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import ContentContainer from '@/components/elements/ContentContainer';
-import { CSSTransition } from 'react-transition-group';
 import classNames from 'classnames';
 import PanelBranding from '@/components/elements/PanelBranding';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import { useAppStore } from '@/state';
+import Fade from '@/components/elements/Fade';
 
 export interface PageContentBlockProps {
     title?: string;
@@ -26,8 +26,8 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({ title, showFlashKey
     }, [title, name]);
 
     return (
-        <CSSTransition timeout={150} classNames={'fade'} appear in>
-            <>
+        <Fade timeout={150}>
+            <div>
                 <BeforeSection />
                 <ContentContainer className={classNames('my-8 sm:my-10', className)}>
                     {showFlashKey && <FlashMessageRender byKey={showFlashKey} className={'mb-4'} />}
@@ -40,8 +40,8 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({ title, showFlashKey
                         <Attribution />
                     </p>
                 </ContentContainer>
-            </>
-        </CSSTransition>
+            </div>
+        </Fade>
     );
 };
 

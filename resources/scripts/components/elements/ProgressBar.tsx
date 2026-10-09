@@ -2,17 +2,20 @@ import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { useAppStore } from '@/state';
 import { randomInt } from '@/helpers';
-import { CSSTransition } from 'react-transition-group';
+import Fade from '@/components/elements/Fade';
 
-const BarFill: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ className, style, ...props }) => (
-    <div
-        className={classNames(
-            'h-full bg-cyan-400 shadow-[0_0_6px_rgb(85_192_183/25%)] transition-all duration-250 ease-in-out',
-            className,
-        )}
-        style={style}
-        {...props}
-    />
+const BarFill = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+    ({ className, style, ...props }, ref) => (
+        <div
+            ref={ref}
+            className={classNames(
+                'h-full bg-cyan-400 shadow-[0_0_6px_rgb(85_192_183/25%)] transition-all duration-250 ease-in-out',
+                className,
+            )}
+            style={style}
+            {...props}
+        />
+    ),
 );
 
 type Timer = ReturnType<typeof setTimeout>;
@@ -64,9 +67,9 @@ export default () => {
 
     return (
         <div className={'fixed w-full'} style={{ height: '2px' }}>
-            <CSSTransition timeout={150} appear in={visible} unmountOnExit classNames={'fade'}>
+            <Fade in={visible} unmountOnExit timeout={150}>
                 <BarFill style={{ width: progress === undefined ? '100%' : `${progress}%` }} />
-            </CSSTransition>
+            </Fade>
         </div>
     );
 };

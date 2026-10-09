@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useDeferredValue, startTransition } from 'react';
 import { httpErrorToHuman } from '@/api/http';
-import { CSSTransition } from 'react-transition-group';
+import Fade from '@/components/elements/Fade';
 import Spinner from '@/components/elements/Spinner';
 import FileObjectRow from '@/components/server/files/FileObjectRow';
 import FileManagerBreadcrumbs from '@/components/server/files/FileManagerBreadcrumbs';
@@ -102,7 +102,7 @@ export default () => {
                     {!files.length ? (
                         <p className={'text-center text-sm text-neutral-400'}>This directory seems to be empty.</p>
                     ) : (
-                        <CSSTransition classNames={'fade'} timeout={150} appear in>
+                        <Fade timeout={150}>
                             <div>
                                 {files.length > 250 && (
                                     <div className={'mb-px rounded bg-yellow-400 p-3'}>
@@ -117,7 +117,7 @@ export default () => {
                                 ))}
                                 <MassActionsBar />
                             </div>
-                        </CSSTransition>
+                        </Fade>
                     )}
                 </>
             )}
