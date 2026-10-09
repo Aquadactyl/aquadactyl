@@ -18,8 +18,8 @@ trait MocksMiddlewareClosure
         }
 
         return function ($response) {
-            $this->assertInstanceOf(Request::class, $response);
-            $this->assertSame($this->request, $response);
+            expect($response)->toBeInstanceOf(Request::class)
+                ->toBe($this->request);
         };
     }
 }

@@ -23,7 +23,6 @@ pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in(
 );
 
 uses(
-    Pterodactyl\Tests\Assertions\MiddlewareAttributeAssertionsTrait::class,
     Pterodactyl\Tests\Traits\Http\MocksMiddlewareClosure::class,
     Pterodactyl\Tests\Traits\Http\RequestMockHelpers::class
 )->beforeEach(function () {

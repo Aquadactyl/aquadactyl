@@ -104,8 +104,8 @@ abstract class ApplicationApiIntegrationTestCase extends IntegrationTestCase
 
         $transformer = $abstract::fromRequest($request);
 
-        Assert::assertInstanceOf(BaseTransformer::class, $transformer);
-        Assert::assertNotInstanceOf(BaseClientTransformer::class, $transformer);
+        expect($transformer)->toBeInstanceOf(BaseTransformer::class)
+            ->and($transformer)->not->toBeInstanceOf(BaseClientTransformer::class);
 
         return $transformer;
     }

@@ -83,6 +83,6 @@ test('successful middleware process', function () {
     $this->encrypter->expects('decrypt')->with($model->daemon_token)->andReturns(decrypt($model->daemon_token));
 
     (new DaemonAuthenticate($this->encrypter, $this->repository))->handle($this->request, $this->getClosureAssertions());
-    $this->assertRequestHasAttribute('node');
-    $this->assertRequestAttributeEquals($model, 'node');
+    expect($this->request->attributes->has('node'))->toBeTrue()
+        ->and($this->request->attributes->get('node'))->toEqual($model);
 });

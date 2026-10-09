@@ -90,11 +90,8 @@ abstract class ClientApiIntegrationTestCase extends IntegrationTestCase
         $transformer = sprintf('\\Pterodactyl\\Transformers\\Api\\Client\\%sTransformer', $reflect->getShortName());
 
         $transformer = new $transformer();
-        $this->assertInstanceOf(BaseClientTransformer::class, $transformer);
-
-        $this->assertSame(
-            $transformer->transform($model),
-            Collection::make($data)->except(['relationships'])->toArray()
-        );
+        expect($transformer)->toBeInstanceOf(BaseClientTransformer::class)
+            ->and(Collection::make($data)->except(['relationships'])->toArray())
+            ->toBe($transformer->transform($model));
     }
 }
