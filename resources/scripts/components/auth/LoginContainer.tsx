@@ -7,7 +7,7 @@ import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import Field from '@/components/elements/Field';
 import Button from '@/components/elements/Button';
-import Reaptcha, { ReaptchaRef } from '@/components/elements/Reaptcha';
+import ReCAPTCHA from 'react-google-recaptcha';
 import useFlash from '@/plugins/useFlash';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -18,7 +18,7 @@ interface Values {
 
 const LoginContainer = () => {
     const navigate = useNavigate();
-    const ref = useRef<ReaptchaRef>(null);
+    const ref = useRef<ReCAPTCHA>(null);
     const [token, setToken] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
@@ -36,12 +36,18 @@ const LoginContainer = () => {
         // If there is no token in the state yet, request the token and then abort this submit request
         // since it will be re-submitted when the recaptcha data is returned by the component.
         if (recaptchaEnabled && !token) {
-            ref.current!.execute().catch((error) => {
-                console.error(error);
+            ref.current?.executeAsync()
+                ?.then((recaptchaToken) => {
+                    if (recaptchaToken) {
+                        setToken(recaptchaToken);
+                    }
+                })
+                .catch((error) => {
+                    console.error(error);
 
-                setSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
+                    setSubmitting(false);
+                    clearAndAddHttpError({ error });
+                });
 
             return;
         }
@@ -112,15 +118,15 @@ const LoginContainer = () => {
                         </Button>
                     </div>
                     {recaptchaEnabled && (
-                        <Reaptcha
+                        <ReCAPTCHA
                             ref={ref}
                             size={'invisible'}
                             sitekey={siteKey || '_invalid_key'}
-                            onVerify={(response) => {
-                                setToken(response);
+                            onChange={(response) => {
+                                setToken(response || '');
                                 submitForm();
                             }}
-                            onExpire={() => {
+                            onExpired={() => {
                                 setSubmitting(false);
                                 setToken('');
                             }}
