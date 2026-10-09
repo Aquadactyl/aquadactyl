@@ -214,7 +214,7 @@ export const ServerContext = {
     Provider: ServerContextProvider,
     useStoreState: <Result,>(
         mapState: (state: ServerStore) => Result,
-        equalityFn?: (a: Result, b: Result) => boolean,
+        _equalityFn?: (a: Result, b: Result) => boolean,
     ): Result => {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
         return useZustandStore(store, mapState);
