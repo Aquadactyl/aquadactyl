@@ -14,8 +14,8 @@ const DropdownGap = ({ invisible }: { invisible?: boolean }) => (
     <div className={classNames('m-2 border', { 'border-neutral-700': !invisible, 'border-transparent': invisible })} />
 );
 
-type TypedChild = (React.ReactChild | React.ReactFragment | React.ReactPortal) & {
-    type?: JSX.Element;
+type TypedChild = React.ReactNode & {
+    type?: unknown;
 };
 
 const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {

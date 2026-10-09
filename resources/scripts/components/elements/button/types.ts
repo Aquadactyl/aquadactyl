@@ -1,3 +1,5 @@
+import React from 'react';
+
 enum Shape {
     Default,
     IconSquare,
@@ -16,7 +18,7 @@ enum Variant {
 
 export const Options = { Shape, Size, Variant };
 
-export type ButtonProps = JSX.IntrinsicElements['button'] & {
+export type ButtonProps = React.ComponentPropsWithoutRef<'button'> & {
     shape?: Shape;
     size?: Size;
     variant?: Variant;

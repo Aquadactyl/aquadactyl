@@ -196,7 +196,7 @@ const getDefaultServerStore = (): ServerStoreApi => {
 };
 
 export const ServerContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const storeRef = useRef<ServerStoreApi>();
+    const storeRef = useRef<ServerStoreApi | undefined>(undefined);
     if (!storeRef.current) {
         storeRef.current = createServerStore();
     }

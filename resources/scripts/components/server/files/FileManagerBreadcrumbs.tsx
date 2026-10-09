@@ -4,7 +4,7 @@ import { NavLink, useLocation } from 'react-router';
 import { encodePathSegments, hashToPath } from '@/helpers';
 
 interface Props {
-    renderLeft?: JSX.Element;
+    renderLeft?: React.ReactElement;
     withinFileEditor?: boolean;
     isNewFile?: boolean;
 }

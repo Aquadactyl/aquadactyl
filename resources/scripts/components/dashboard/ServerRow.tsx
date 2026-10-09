@@ -21,7 +21,7 @@ const isAlarmState = (current: number, limit: number): boolean => limit > 0 && c
 
 export default ({ server, className }: { server: Server; className?: string }) => {
     const features = useAppStore((state) => state.settings.data?.features);
-    const refreshTimer = useRef<ReturnType<typeof setTimeout>>();
+    const refreshTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
     const enabled = !server.status && !server.isNodeUnderMaintenance && !server.isTransferring;
     const {
         data: stats,

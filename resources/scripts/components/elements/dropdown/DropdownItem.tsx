@@ -4,11 +4,11 @@ import styles from './style.module.css';
 import classNames from 'classnames';
 
 interface Props {
-    children: React.ReactNode | ((opts: { active: boolean; disabled: boolean }) => JSX.Element);
+    children: React.ReactNode | ((opts: { active: boolean; disabled: boolean }) => React.ReactElement);
     danger?: boolean;
     disabled?: boolean;
     className?: string;
-    icon?: JSX.Element;
+    icon?: React.ReactElement;
     onClick?: (e: React.MouseEvent) => void;
 }
 

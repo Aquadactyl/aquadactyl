@@ -24,13 +24,13 @@ type Interaction = 'hover' | 'click' | 'focus';
 interface Props {
     rest?: number;
     delay?: number | Partial<{ open: number; close: number }>;
-    content: string | React.ReactChild;
+    content: React.ReactNode;
     disabled?: boolean;
     arrow?: boolean;
     interactions?: Interaction[];
     placement?: Placement;
     className?: string;
-    children: React.ReactElement;
+    children: React.ReactElement<Record<string, unknown>>;
 }
 
 const arrowSides: Record<Side, string> = {
@@ -80,7 +80,7 @@ export default ({ children, ...props }: Props) => {
 
     return (
         <>
-            {cloneElement(children, getReferenceProps({ ref: refs.setReference, ...children.props }))}
+            {cloneElement(children, getReferenceProps({ ref: refs.setReference, ...(children.props as object) }))}
             <FloatingPortal>
                 <AnimatePresence>
                     {open && (

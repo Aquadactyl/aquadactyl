@@ -18,8 +18,9 @@ const DescriptionContext = createContext<{ description?: string; required?: Reac
 );
 const SelectInput = (props: InputProps<Option, boolean, Group>) => {
     const { description, required } = useContext(DescriptionContext);
+    const InputComponent = components.Input as any;
     return (
-        <components.Input
+        <InputComponent
             {...props}
             aria-describedby={description || props['aria-describedby']}
             aria-required={required}
@@ -37,20 +38,21 @@ const text = (children: React.ReactNode): string =>
 const optionsFromChildren = (children: React.ReactNode, disabled = false): (Option | Group)[] =>
     React.Children.toArray(children).flatMap((child): (Option | Group)[] => {
         if (!React.isValidElement(child)) return [];
-        if (child.type === React.Fragment) return optionsFromChildren(child.props.children, disabled);
+        const childProps = (child.props || {}) as Record<string, any>;
+        if (child.type === React.Fragment) return optionsFromChildren(childProps.children, disabled);
         if (child.type === 'optgroup') {
             return [
                 {
-                    label: child.props.label,
-                    options: optionsFromChildren(child.props.children, disabled || child.props.disabled).flatMap(
+                    label: childProps.label,
+                    options: optionsFromChildren(childProps.children, disabled || childProps.disabled).flatMap(
                         (option) => ('options' in option ? option.options : [option]),
                     ),
                 },
             ];
         }
         if (child.type !== 'option') return [];
-        const label = child.props.label ?? text(child.props.children);
-        return [{ value: String(child.props.value ?? label), label, isDisabled: disabled || !!child.props.disabled }];
+        const label = childProps.label ?? text(childProps.children);
+        return [{ value: String(childProps.value ?? label), label, isDisabled: disabled || !!childProps.disabled }];
     });
 
 const values = (value: SelectProps['value']): string[] | undefined =>

@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 import { createRoot, Root } from 'react-dom/client';
-import { Simulate } from 'react-dom/test-utils';
+import { fireEvent } from '@testing-library/react';
 import { Form, Formik } from 'formik';
 import ScheduleTimingFields, { TimingValues } from './ScheduleTimingFields';
 import { cronFromTiming, defaultTiming } from './scheduleHelpers';
@@ -72,16 +72,16 @@ describe('schedule timing editor', () => {
     };
     const submit = async () => {
         await act(async () => {
-            Simulate.submit(container.querySelector('form')!);
+            fireEvent.submit(container.querySelector('form')!);
         });
     };
 
     it('carries a changed basic time into the advanced dropdown and API fields', async () => {
         render();
         await act(async () => {
-            Simulate.change(container.querySelector('input[name="time"]')!, {
+            fireEvent.change(container.querySelector('input[name="time"]')!, {
                 target: { name: 'time', value: '21:15' },
-            } as any);
+            });
         });
         expect(container.textContent).toContain('Every day at 21:15');
         expect(container.textContent).toContain('Panel timezone: Europe/London');

@@ -66,7 +66,7 @@ const ButtonStyle: React.FC<ButtonStyleProps> = ({
     </Component>
 );
 
-type ComponentProps = Omit<JSX.IntrinsicElements['button'], 'ref' | keyof Props> & Props;
+type ComponentProps = Omit<React.ComponentPropsWithoutRef<'button'>, 'ref' | keyof Props> & Props;
 
 const Button: React.FC<ComponentProps> = ({ children, isLoading, ...props }) => (
     <ButtonStyle {...props}>
@@ -79,7 +79,7 @@ const Button: React.FC<ComponentProps> = ({ children, isLoading, ...props }) => 
     </ButtonStyle>
 );
 
-type LinkProps = Omit<JSX.IntrinsicElements['a'], 'ref' | keyof Props> & Props;
+type LinkProps = Omit<React.ComponentPropsWithoutRef<'a'>, 'ref' | keyof Props> & Props;
 
 const LinkButton: React.FC<LinkProps> = (props) => <ButtonStyle as={'a'} {...props} />;
 
