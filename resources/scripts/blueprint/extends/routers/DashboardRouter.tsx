@@ -5,14 +5,14 @@ import { NotFound } from '@/components/elements/ScreenBlock';
 import TransitionRouter from '@/TransitionRouter';
 import DashboardContainer from '@/components/dashboard/DashboardContainer';
 import Spinner from '@/components/elements/Spinner';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 import routes from '@/routers/routes';
 import blueprintRoutes from './routes';
 import { UiBadge } from '@blueprint/ui';
 
 export const NavigationLinks = () => {
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     return (
         <>
             {/* Aquadactyl routes */}
@@ -47,7 +47,7 @@ export const NavigationLinks = () => {
 
 export const NavigationRouter = () => {
     const location = useLocation();
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     return (
         <>
             <TransitionRouter>

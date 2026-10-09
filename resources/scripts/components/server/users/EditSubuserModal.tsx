@@ -4,8 +4,8 @@ import { Subuser } from '@/state/server/subusers';
 import { Form, Formik } from 'formik';
 import { array, object, string } from 'yup';
 import Field from '@/components/elements/Field';
-import { Actions, useStoreActions, useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import createOrUpdateSubuser from '@/api/server/users/createOrUpdateSubuser';
 import { ServerContext } from '@/state/server';
 import FlashMessageRender from '@/components/FlashMessageRender';
@@ -31,13 +31,11 @@ const EditSubuserModal = ({ subuser }: Props) => {
     const ref = useRef<HTMLHeadingElement>(null);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const appendSubuser = ServerContext.useStoreActions((actions) => actions.subusers.appendSubuser);
-    const { clearFlashes, clearAndAddHttpError } = useStoreActions(
-        (actions: Actions<ApplicationStore>) => actions.flashes,
-    );
+    const { clearFlashes, clearAndAddHttpError } = useFlash();
     const { dismiss, setPropOverrides } = useContext(ModalContext);
 
-    const isRootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
-    const permissions = useStoreState((state) => state.permissions.data);
+    const isRootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
+    const permissions = useAppStore((state) => state.permissions.data);
     // The currently logged in user's permissions. We're going to filter out any permissions
     // that they should not need.
     const loggedInPermissions = ServerContext.useStoreState((state) => state.server.permissions);

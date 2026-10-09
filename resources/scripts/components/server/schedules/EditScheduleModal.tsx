@@ -5,8 +5,7 @@ import { Form, Formik, FormikHelpers } from 'formik';
 import FormikSwitch from '@/components/elements/FormikSwitch';
 import createOrUpdateSchedule from '@/api/server/schedules/createOrUpdateSchedule';
 import { ServerContext } from '@/state/server';
-import { ApplicationStore } from '@/state';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { httpErrorToHuman } from '@/api/http';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
@@ -31,7 +30,7 @@ const EditScheduleModal = ({ schedule, onCreated }: Props) => {
     const { addError, clearFlashes } = useFlash();
     const { dismiss } = useContext(ModalContext);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const timezone = useStoreState((state: ApplicationStore) => state.settings.data?.timezone ?? 'UTC');
+    const timezone = useAppStore((state) => state.settings.data?.timezone ?? 'UTC');
     const appendSchedule = ServerContext.useStoreActions((actions) => actions.schedules.appendSchedule);
 
     useEffect(() => () => clearFlashes('schedule:edit'), []);

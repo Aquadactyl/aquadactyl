@@ -8,7 +8,7 @@ import Can from '@/components/elements/Can';
 import Spinner from '@/components/elements/Spinner';
 import { NotFound } from '@/components/elements/ScreenBlock';
 import { useLocation } from 'react-router';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { ServerContext } from '@/state/server';
 
 import routes from '@/routers/routes';
@@ -43,7 +43,7 @@ const useExtensionEggs = () => {
 };
 
 export const NavigationLinks = () => {
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const serverEgg = ServerContext.useStoreState((state) => state.server.data?.BlueprintFramework.eggId);
     const match = useRouteMatch<{ id: string }>();
     const to = (value: string, url = false) => {
@@ -115,7 +115,7 @@ export const NavigationLinks = () => {
 };
 
 export const NavigationRouter = () => {
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const serverEgg = ServerContext.useStoreState((state) => state.server.data?.BlueprintFramework.eggId);
     const match = useRouteMatch<{ id: string }>();
     const to = (value: string, url = false) => {

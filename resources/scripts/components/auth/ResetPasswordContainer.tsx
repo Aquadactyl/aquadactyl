@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom';
 import performPasswordReset from '@/api/auth/performPasswordReset';
 import { httpErrorToHuman } from '@/api/http';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import { Formik, FormikHelpers } from 'formik';
 import { object, ref, string } from 'yup';
 import Field from '@/components/elements/Field';
@@ -20,7 +19,7 @@ interface Values {
 export default ({ match, location }: RouteComponentProps<{ token: string }>) => {
     const [email, setEmail] = useState('');
 
-    const { clearFlashes, addFlash } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const { clearFlashes, addFlash } = useFlash();
 
     const parsed = new URLSearchParams(location.search);
     if (email.length === 0 && parsed.get('email')) {

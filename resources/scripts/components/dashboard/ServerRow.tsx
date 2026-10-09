@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerStats } from '@/api/server/getServerResourceUsage';
 import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 import BeforeEntryName from '@blueprint/components/Dashboard/Serverlist/ServerRow/BeforeEntryName';
 import AfterEntryName from '@blueprint/components/Dashboard/Serverlist/ServerRow/AfterEntryName';
@@ -20,7 +20,7 @@ import ResourceLimits from '@blueprint/components/Dashboard/Serverlist/ServerRow
 const isAlarmState = (current: number, limit: number): boolean => limit > 0 && current / mbToBytes(limit) >= 0.9;
 
 export default ({ server, className }: { server: Server; className?: string }) => {
-    const features = useStoreState((state) => state.settings.data?.features);
+    const features = useAppStore((state) => state.settings.data?.features);
     const refreshTimer = useRef<ReturnType<typeof setTimeout>>();
     const enabled = !server.status && !server.isNodeUnderMaintenance && !server.isTransferring;
     const {

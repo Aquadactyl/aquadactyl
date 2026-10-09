@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import reinstallServer from '@/api/server/reinstallServer';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/elements/button/index';
 import { Dialog } from '@/components/elements/dialog';
@@ -12,7 +11,7 @@ export default () => {
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const skipScripts = ServerContext.useStoreState((state) => state.server.data!.skipScripts);
     const [modalVisible, setModalVisible] = useState(false);
-    const { addFlash, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const { addFlash, clearFlashes } = useFlash();
 
     const reinstall = () => {
         clearFlashes('settings');

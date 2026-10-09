@@ -8,14 +8,14 @@ import ConfigureTwoFactorForm from '@/components/dashboard/forms/ConfigureTwoFac
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import MessageBox from '@/components/MessageBox';
 import { useLocation } from 'react-router-dom';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 import BeforeContent from '@blueprint/components/Account/Overview/BeforeContent';
 import AfterContent from '@blueprint/components/Account/Overview/AfterContent';
 
 export default () => {
     const { state } = useLocation<undefined | { twoFactorRedirect?: boolean }>();
-    const features = useStoreState((state) => state.settings.data?.features);
+    const features = useAppStore((state) => state.settings.data?.features);
 
     return (
         <PageContentBlock title={'Account settings'}>

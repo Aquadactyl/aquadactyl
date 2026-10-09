@@ -1,11 +1,8 @@
 import React from 'react';
-import { useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
 
 export default () => {
-    const disable_attribution = useStoreState(
-        (state: ApplicationStore) => state.settings.data!.blueprint.disable_attribution,
-    );
+    const disable_attribution = useAppStore((state) => state.settings.data!.blueprint.disable_attribution);
 
     return (
         <>

@@ -2,14 +2,14 @@ import SensitiveValue from '@/components/elements/SensitiveValue';
 import React, { useEffect, useRef, useState } from 'react';
 import Modal, { RequiredModalProps } from '@/components/elements/Modal';
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions, useStoreState } from '@/state/hooks';
 import { object, string } from 'yup';
 import debounce from 'debounce';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import InputSpinner from '@/components/elements/InputSpinner';
 import getServers from '@/api/getServers';
 import { Server } from '@/api/server/getServer';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import { Link } from 'react-router-dom';
 import Input from '@/components/elements/Input';
 import { ip } from '@/lib/formatters';
@@ -34,11 +34,9 @@ const SearchWatcher = () => {
 
 export default ({ ...props }: Props) => {
     const ref = useRef<HTMLInputElement>(null);
-    const isAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const isAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const [servers, setServers] = useState<Server[]>([]);
-    const { clearAndAddHttpError, clearFlashes } = useStoreActions(
-        (actions: Actions<ApplicationStore>) => actions.flashes,
-    );
+    const { clearAndAddHttpError, clearFlashes } = useFlash();
 
     const search = debounce(({ term }: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('search');

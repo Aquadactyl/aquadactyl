@@ -3,8 +3,7 @@ import { Field, Form, Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import createApiKey from '@/api/account/createApiKey';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import { httpErrorToHuman } from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import { ApiKey } from '@/api/account/getApiKeys';
@@ -19,7 +18,7 @@ interface Values {
 
 export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
     const [apiKey, setApiKey] = useState('');
-    const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const { addError, clearFlashes } = useFlash();
 
     const submit = (values: Values, { setSubmitting, resetForm }: FormikHelpers<Values>) => {
         clearFlashes('account');

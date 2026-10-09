@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
+import { useServerStore } from '@/state/server';
 import Modal from '@/components/elements/Modal';
 import Button from '@/components/elements/Button';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import useFlash from '@/plugins/useFlash';
 import { SocketEvent } from '@/components/server/events';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
@@ -13,10 +13,10 @@ const PIDLimitModalFeature = () => {
     const [visible, setVisible] = useState(false);
     const [loading] = useState(false);
 
-    const status = ServerContext.useStoreState((state) => state.status.value);
+    const status = useServerStore((state) => state.status.value);
     const { clearFlashes } = useFlash();
-    const { connected, instance } = ServerContext.useStoreState((state) => state.socket);
-    const isAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const { connected, instance } = useServerStore((state) => state.socket);
+    const isAdmin = useAppStore((state) => state.user.data!.rootAdmin);
 
     useEffect(() => {
         if (!connected || !instance || status === 'running') return;

@@ -12,7 +12,7 @@ import Avatar from '@/components/Avatar';
 import useLocationHash from '@/plugins/useLocationHash';
 import { getObjectKeys, isObject } from '@/lib/objects';
 import { activityEventLabel } from './events';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { isSensitiveProperty } from './sensitiveProperties';
 
 interface Props {
@@ -49,7 +49,7 @@ export default ({ activity, children }: Props) => {
     const { pathTo } = useLocationHash();
     const actor = activity.relationships.actor;
     const properties = wrapProperties(activity.properties);
-    const currentUser = useStoreState((state) => state.user.data);
+    const currentUser = useAppStore((state) => state.user.data);
     const avatarUrl = actor?.uuid === currentUser?.uuid ? currentUser?.avatarUrl : actor?.avatarUrl;
     const eventLabel = activityEventLabel(activity.event);
 

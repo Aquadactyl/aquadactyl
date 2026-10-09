@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import rotateDatabasePassword from '@/api/server/databases/rotateDatabasePassword';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
-import { ServerContext } from '@/state/server';
+import useFlash from '@/plugins/useFlash';
+import { useServerStore } from '@/state/server';
 import { ServerDatabase } from '@/api/server/databases/getServerDatabases';
 import { httpErrorToHuman } from '@/api/http';
 import Button from '@/components/elements/Button';
 
 export default ({ databaseId, onUpdate }: { databaseId: string; onUpdate: (database: ServerDatabase) => void }) => {
     const [loading, setLoading] = useState(false);
-    const { addFlash, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
-    const server = ServerContext.useStoreState((state) => state.server.data!);
+    const { addFlash, clearFlashes } = useFlash();
+    const server = useServerStore((state) => state.server.data!);
 
     if (!databaseId) {
         return null;

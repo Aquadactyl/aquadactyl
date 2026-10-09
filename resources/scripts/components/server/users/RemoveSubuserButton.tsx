@@ -5,8 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Subuser } from '@/state/server/subusers';
 import deleteSubuser from '@/api/server/users/deleteSubuser';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import { httpErrorToHuman } from '@/api/http';
 
 export default ({ subuser }: { subuser: Subuser }) => {
@@ -15,7 +14,7 @@ export default ({ subuser }: { subuser: Subuser }) => {
 
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const removeSubuser = ServerContext.useStoreActions((actions) => actions.subusers.removeSubuser);
-    const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const { addError, clearFlashes } = useFlash();
 
     const doDeletion = () => {
         setLoading(true);

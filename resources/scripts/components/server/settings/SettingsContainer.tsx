@@ -1,7 +1,7 @@
 import React from 'react';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { ServerContext } from '@/state/server';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import RenameServerBox from '@/components/server/settings/RenameServerBox';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import Can from '@/components/elements/Can';
@@ -18,7 +18,7 @@ import BeforeContent from '@blueprint/components/Server/Settings/BeforeContent';
 import AfterContent from '@blueprint/components/Server/Settings/AfterContent';
 
 export default () => {
-    const username = useStoreState((state) => state.user.data!.username);
+    const username = useAppStore((state) => state.user.data!.username);
     const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
     const node = ServerContext.useStoreState((state) => state.server.data!.node);

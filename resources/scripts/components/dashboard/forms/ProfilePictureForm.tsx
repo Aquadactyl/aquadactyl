@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Avatar from '@/components/Avatar';
 import { Button } from '@/components/elements/button/index';
-import { useStoreActions, useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import useFlash from '@/plugins/useFlash';
 import { uploadAccountAvatar, removeAccountAvatar } from '@/api/account/updateAccountAvatar';
 
 const ProfilePictureForm = () => {
-    const avatarUrl = useStoreState((state) => state.user.data?.avatarUrl);
-    const updateUserData = useStoreActions((actions) => actions.user.updateUserData);
+    const avatarUrl = useAppStore((state) => state.user.data?.avatarUrl);
+    const updateUserData = useAppStore((state) => state.user.updateUserData);
     const input = useRef<HTMLInputElement>(null);
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string>();

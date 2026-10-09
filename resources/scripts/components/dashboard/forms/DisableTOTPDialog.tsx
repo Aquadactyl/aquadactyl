@@ -6,7 +6,7 @@ import { Input } from '@/components/elements/inputs';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import disableAccountTwoFactor from '@/api/account/disableAccountTwoFactor';
 import { useFlashKey } from '@/plugins/useFlash';
-import { useStoreActions } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import Label from '@/components/elements/Label';
 
@@ -15,7 +15,7 @@ const DisableTOTPDialog = () => {
     const [password, setPassword] = useState('');
     const { clearAndAddHttpError } = useFlashKey('account:two-step');
     const { close, setProps } = useContext(DialogWrapperContext);
-    const updateUserData = useStoreActions((actions) => actions.user.updateUserData);
+    const updateUserData = useAppStore((state) => state.user.updateUserData);
 
     useEffect(() => {
         setProps((state) => ({ ...state, preventExternalClose: submitting }));

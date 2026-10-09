@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { useStoreActions, useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { useFlashKey } from '@/plugins/useFlash';
 import updateAccountPrivacy from '@/api/account/updateAccountPrivacy';
 
 export default () => {
-    const enabled = useStoreState((state) => Boolean(state.user.data?.blurSensitiveData));
-    const updateUserData = useStoreActions((actions) => actions.user.updateUserData);
+    const enabled = useAppStore((state) => Boolean(state.user.data?.blurSensitiveData));
+    const updateUserData = useAppStore((state) => state.user.updateUserData);
     const { clearFlashes, clearAndAddHttpError } = useFlashKey('account:privacy');
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);

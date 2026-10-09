@@ -1,6 +1,6 @@
 import React from 'react';
 import MessageBox from '@/components/MessageBox';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 type Props = Readonly<{
     byKey?: string;
@@ -8,9 +8,7 @@ type Props = Readonly<{
 }>;
 
 const FlashMessageRender = ({ byKey, className }: Props) => {
-    const flashes = useStoreState((state) =>
-        state.flashes.items.filter((flash) => (byKey ? flash.key === byKey : true)),
-    );
+    const flashes = useAppStore((state) => state.flashes.items.filter((flash) => (byKey ? flash.key === byKey : true)));
 
     return flashes.length ? (
         <div className={className}>

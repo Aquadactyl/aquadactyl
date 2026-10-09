@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { ArrowUpRight, LogOut, Server, Settings } from 'lucide-react';
-import { useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
 import SearchContainer from '@/components/dashboard/search/SearchContainer';
 import http from '@/api/http';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
@@ -14,11 +13,11 @@ import AdditionalItems from '@blueprint/components/Navigation/NavigationBar/Addi
 import AfterNavigation from '@blueprint/components/Navigation/NavigationBar/AfterNavigation';
 
 export default () => {
-    const name = useStoreState((state: ApplicationStore) => state.settings.data!.name);
-    const logoUrl = useStoreState((state: ApplicationStore) => state.settings.data?.logoUrl);
-    const showNameWithLogo = useStoreState((state: ApplicationStore) => state.settings.data?.showNameWithLogo);
+    const name = useAppStore((state) => state.settings.data!.name);
+    const logoUrl = useAppStore((state) => state.settings.data?.logoUrl);
+    const showNameWithLogo = useAppStore((state) => state.settings.data?.showNameWithLogo);
     const pairedLogo = Boolean(logoUrl && showNameWithLogo);
-    const user = useStoreState((state: ApplicationStore) => state.user.data!);
+    const user = useAppStore((state) => state.user.data!);
     const isAquadactyl = name.trim().toLowerCase() === 'aquadactyl';
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ServerContext } from '@/state/server';
-import { Actions, useStoreActions, useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import Spinner from '@/components/elements/Spinner';
 import AddSubuserButton from '@/components/server/users/AddSubuserButton';
 import UserRow from '@/components/server/users/UserRow';
@@ -21,9 +21,9 @@ export default () => {
     const subusers = ServerContext.useStoreState((state) => state.subusers.data);
     const setSubusers = ServerContext.useStoreActions((actions) => actions.subusers.setSubusers);
 
-    const permissions = useStoreState((state: ApplicationStore) => state.permissions.data);
-    const getPermissions = useStoreActions((actions: Actions<ApplicationStore>) => actions.permissions.getPermissions);
-    const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const permissions = useAppStore((state) => state.permissions.data);
+    const getPermissions = useAppStore((state) => state.permissions.getPermissions);
+    const { addError, clearFlashes } = useFlash();
 
     useEffect(() => {
         clearFlashes('users');

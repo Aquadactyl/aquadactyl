@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect } from 'react';
 import { Form } from 'formik';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import PanelBranding from '@/components/elements/PanelBranding';
 
@@ -14,9 +14,9 @@ type Props = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, 
 };
 
 export default forwardRef<HTMLFormElement, Props>(({ title, description, children, ...props }, ref) => {
-    const name = useStoreState((state) => state.settings.data!.name);
-    const logoUrl = useStoreState((state) => state.settings.data?.logoUrl);
-    const showNameWithLogo = useStoreState((state) => state.settings.data?.showNameWithLogo);
+    const name = useAppStore((state) => state.settings.data!.name);
+    const logoUrl = useAppStore((state) => state.settings.data?.logoUrl);
+    const showNameWithLogo = useAppStore((state) => state.settings.data?.showNameWithLogo);
     const pairedLogo = Boolean(logoUrl && showNameWithLogo);
     const isAquadactyl = name.trim().toLowerCase() === 'aquadactyl';
 

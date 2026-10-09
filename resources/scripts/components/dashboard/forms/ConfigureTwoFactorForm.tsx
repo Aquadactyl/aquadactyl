@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
 import { Button } from '@/components/elements/button/index';
 import SetupTOTPDialog from '@/components/dashboard/forms/SetupTOTPDialog';
 import RecoveryTokensDialog from '@/components/dashboard/forms/RecoveryTokensDialog';
@@ -10,7 +9,7 @@ import { useFlashKey } from '@/plugins/useFlash';
 export default () => {
     const [tokens, setTokens] = useState<string[]>([]);
     const [visible, setVisible] = useState<'enable' | 'disable' | null>(null);
-    const isEnabled = useStoreState((state: ApplicationStore) => state.user.data!.useTotp);
+    const isEnabled = useAppStore((state) => state.user.data!.useTotp);
     const { clearAndAddHttpError } = useFlashKey('account:two-step');
 
     useEffect(() => {

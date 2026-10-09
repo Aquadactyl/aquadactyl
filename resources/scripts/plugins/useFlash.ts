@@ -1,6 +1,5 @@
-import { Actions, useStoreActions } from '@/state/hooks';
+import { appStore } from '@/state';
 import { FlashStore } from '@/state/flashes';
-import { ApplicationStore } from '@/state';
 
 interface KeyedFlashStore {
     addError: (message: string, title?: string) => void;
@@ -8,8 +7,8 @@ interface KeyedFlashStore {
     clearAndAddHttpError: (error?: Error | string | null) => void;
 }
 
-const useFlash = (): Actions<FlashStore> => {
-    return useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+const useFlash = (): FlashStore => {
+    return appStore.getState().flashes;
 };
 
 const useFlashKey = (key: string): KeyedFlashStore => {

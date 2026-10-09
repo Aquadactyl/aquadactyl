@@ -6,7 +6,7 @@ import { faPencilAlt, faUnlockAlt, faUserLock } from '@fortawesome/free-solid-sv
 import RemoveSubuserButton from '@/components/server/users/RemoveSubuserButton';
 import EditSubuserModal from '@/components/server/users/EditSubuserModal';
 import Can from '@/components/elements/Can';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import GreyRowBox from '@/components/elements/GreyRowBox';
 
 interface Props {
@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default ({ subuser }: Props) => {
-    const uuid = useStoreState((state) => state.user!.data!.uuid);
+    const uuid = useAppStore((state) => state.user!.data!.uuid);
     const [visible, setVisible] = useState(false);
 
     return (

@@ -16,8 +16,7 @@ import { Button } from '@/components/elements/button/index';
 import ScheduleTaskRow from '@/components/server/schedules/ScheduleTaskRow';
 import isEqual from 'react-fast-compare';
 import RunScheduleButton from '@/components/server/schedules/RunScheduleButton';
-import { useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
 import { cronExpression, describeCron, formatScheduleDate } from './scheduleHelpers';
 
 import BeforeEdit from '@blueprint/components/Server/Schedules/Edit/BeforeEdit';
@@ -32,7 +31,7 @@ export default () => {
     const { id: scheduleId } = useParams<Params>();
     const id = ServerContext.useStoreState((state) => state.server.data!.id);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const timezone = useStoreState((state: ApplicationStore) => state.settings.data?.timezone ?? 'UTC');
+    const timezone = useAppStore((state) => state.settings.data?.timezone ?? 'UTC');
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const [isLoading, setIsLoading] = useState(true);
     const [showEditModal, setShowEditModal] = useState(false);

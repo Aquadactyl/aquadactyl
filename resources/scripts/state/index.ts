@@ -26,6 +26,12 @@ export const useAppStore = <T>(selector: (state: ApplicationStore) => T): T => {
     return useZustandStore(appStore, selector);
 };
 
+// Aliases for idiomatic or backward-compatible store consumption
+export const useStoreState = useAppStore;
+export function useStoreActions<Result>(mapActions: (actions: ApplicationStore) => Result): Result {
+    return mapActions(appStore.getState());
+}
+
 // Easy-peasy store compatibility facade
 export const store = {
     getState: () => appStore.getState(),

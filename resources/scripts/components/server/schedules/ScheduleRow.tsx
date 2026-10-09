@@ -3,12 +3,11 @@ import { Schedule } from '@/api/server/schedules/getServerSchedules';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
-import { useStoreState } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
 import { describeCron, formatScheduleDate } from './scheduleHelpers';
 
 export default ({ schedule }: { schedule: Schedule }) => {
-    const timezone = useStoreState((state: ApplicationStore) => state.settings.data?.timezone ?? 'UTC');
+    const timezone = useAppStore((state) => state.settings.data?.timezone ?? 'UTC');
     return (
         <>
             <div className={'hidden md:block'}>

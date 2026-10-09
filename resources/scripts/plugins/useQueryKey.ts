@@ -1,8 +1,7 @@
 import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
 import { ServerContext } from '@/state/server';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type Context = string | string[] | (string | number | null | {})[];
 
 function useQueryContextKey(context: Context, prefix: string | null = null): string {
@@ -24,7 +23,7 @@ function useServerQueryKey(context: Context): string {
 }
 
 function useUserQueryKey(context: Context): string {
-    const uuid = useStoreState((state) => state.user.data?.uuid);
+    const uuid = useAppStore((state) => state.user.data?.uuid);
 
     return useQueryContextKey(context, `user:${uuid}`);
 }

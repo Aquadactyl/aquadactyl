@@ -7,7 +7,7 @@ import ServerRow from '@/components/dashboard/ServerRow';
 import Spinner from '@/components/elements/Spinner';
 import PageContentBlock from '@/components/elements/PageContentBlock';
 import useFlash from '@/plugins/useFlash';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { usePersistedState } from '@/plugins/usePersistedState';
 import { useTanStackQuery } from '@/lib/queryClient';
 import { PaginatedResult } from '@/api/http';
@@ -24,8 +24,8 @@ export default () => {
     const [searchText, setSearchText] = useState(params.get('q') || '');
     const [query, setQuery] = useState(searchText.trim());
     const { clearFlashes, clearAndAddHttpError } = useFlash();
-    const uuid = useStoreState((state) => state.user.data!.uuid);
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const uuid = useAppStore((state) => state.user.data!.uuid);
+    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const [showOnlyAdmin, setShowOnlyAdmin] = usePersistedState(uuid + ':show_all_servers', false);
 
     const {

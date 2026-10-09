@@ -1,9 +1,9 @@
 import React from 'react';
 import { Redirect, Route, RouteProps } from 'react-router';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 export default ({ children, ...props }: Omit<RouteProps, 'render'>) => {
-    const isAuthenticated = useStoreState((state) => !!state.user.data?.uuid);
+    const isAuthenticated = useAppStore((state) => !!state.user.data?.uuid);
 
     return (
         <Route

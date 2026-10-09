@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import BoringAvatar from 'boring-avatars';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 const palette = ['#FFAD08', '#EDD75A', '#73B06F', '#0C8F8F', '#587291'];
 
@@ -32,7 +32,7 @@ const _Avatar = ({ src, alt = 'Profile picture', variant = 'beam', size = 40, sq
 };
 
 const _UserAvatar = ({ variant = 'beam', size = 40, square = false, ...props }: Omit<Props, 'name'>) => {
-    const user = useStoreState((state) => state.user.data);
+    const user = useAppStore((state) => state.user.data);
 
     return (
         <_Avatar

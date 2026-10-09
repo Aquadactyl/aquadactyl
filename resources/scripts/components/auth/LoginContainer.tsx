@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import login from '@/api/auth/login';
 import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { Formik, FormikHelpers } from 'formik';
 import { object, string } from 'yup';
 import Field from '@/components/elements/Field';
@@ -22,7 +22,7 @@ const LoginContainer = ({ history }: RouteComponentProps) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const { clearFlashes, clearAndAddHttpError } = useFlash();
-    const { enabled: recaptchaEnabled, siteKey } = useStoreState((state) => state.settings.data!.recaptcha);
+    const { enabled: recaptchaEnabled, siteKey } = useAppStore((state) => state.settings.data!.recaptcha);
 
     useEffect(() => {
         clearFlashes();

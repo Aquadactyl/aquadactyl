@@ -11,7 +11,7 @@ import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
 import { useLocation } from 'react-router';
 import { ServerError } from '@/components/elements/ScreenBlock';
 import { httpErrorToHuman } from '@/api/http';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import SubNavigation from '@/components/elements/SubNavigation';
 import InstallListener from '@/components/server/InstallListener';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -27,7 +27,7 @@ export default () => {
     const location = useLocation();
     const inConflictState = ServerContext.useStoreState((state) => state.server.inConflictState);
 
-    const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
     const [error, setError] = useState('');
 
     const id = ServerContext.useStoreState((state) => state.server.data?.id);
@@ -74,7 +74,6 @@ export default () => {
                                 <NavigationLinks />
                                 <AdditionalServerItems />
                                 {rootAdmin && (
-                                    // eslint-disable-next-line react/jsx-no-target-blank
                                     <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
                                         <FontAwesomeIcon icon={faExternalLinkAlt} />
                                     </a>

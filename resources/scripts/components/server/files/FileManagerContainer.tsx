@@ -16,7 +16,7 @@ import FileManagerStatus from '@/components/server/files/FileManagerStatus';
 import MassActionsBar from '@/components/server/files/MassActionsBar';
 import UploadButton from '@/components/server/files/UploadButton';
 import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import { useStoreActions } from '@/state/hooks';
+import useFlash from '@/plugins/useFlash';
 import ErrorBoundary from '@/components/elements/ErrorBoundary';
 import { FileActionCheckbox } from '@/components/server/files/SelectFileCheckbox';
 import { hashToPath } from '@/helpers';
@@ -38,7 +38,7 @@ export default () => {
     const { hash } = useLocation();
     const { data: files, error, mutate } = useFileManagerQuery();
     const directory = ServerContext.useStoreState((state) => state.files.directory);
-    const clearFlashes = useStoreActions((actions) => actions.flashes.clearFlashes);
+    const { clearFlashes } = useFlash();
     const setDirectory = ServerContext.useStoreActions((actions) => actions.files.setDirectory);
 
     const setSelectedFiles = ServerContext.useStoreActions((actions) => actions.files.setSelectedFiles);

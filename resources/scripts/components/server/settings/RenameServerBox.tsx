@@ -2,12 +2,11 @@ import React from 'react';
 import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
 import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { Actions, useStoreActions } from '@/state/hooks';
+import useFlash from '@/plugins/useFlash';
 import renameServer from '@/api/server/renameServer';
 import Field from '@/components/elements/Field';
 import { object, string } from 'yup';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { ApplicationStore } from '@/state';
 import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/elements/button/index';
 import Label from '@/components/elements/Label';
@@ -44,7 +43,7 @@ const RenameServerBox = () => {
 export default () => {
     const server = ServerContext.useStoreState((state) => state.server.data!);
     const setServer = ServerContext.useStoreActions((actions) => actions.server.setServer);
-    const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const { addError, clearFlashes } = useFlash();
 
     const submit = ({ name, description }: Values, { setSubmitting }: FormikHelpers<Values>) => {
         clearFlashes('settings');

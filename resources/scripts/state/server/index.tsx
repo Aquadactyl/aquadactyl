@@ -223,9 +223,18 @@ export const ServerContext = {
         const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
         return mapActions(store.getState());
     },
-    useStore: (): ServerStoreApi => {
-        return useContext(ServerStoreReactContext) || getDefaultServerStore();
+    useStore: <Result = ServerStore,>(selector?: (state: ServerStore) => Result): Result | ServerStoreApi => {
+        const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
+        if (selector) {
+            return useZustandStore(store, selector);
+        }
+        return store;
     },
 };
+
+export function useServerStore<Result>(selector: (state: ServerStore) => Result): Result {
+    const store = useContext(ServerStoreReactContext) || getDefaultServerStore();
+    return useZustandStore(store, selector);
+}
 
 export default ServerContext;

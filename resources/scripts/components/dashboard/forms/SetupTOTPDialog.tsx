@@ -11,8 +11,7 @@ import CopyOnClick from '@/components/elements/CopyOnClick';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import enableAccountTwoFactor from '@/api/account/enableAccountTwoFactor';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import { useAppStore } from '@/state';
 import asDialog from '@/hoc/asDialog';
 import Label from '@/components/elements/Label';
 
@@ -26,7 +25,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
     const [password, setPassword] = useState('');
     const [token, setToken] = useState<TwoFactorTokenData | null>(null);
     const { clearAndAddHttpError } = useFlashKey('account:two-step');
-    const updateUserData = useStoreActions((actions: Actions<ApplicationStore>) => actions.user.updateUserData);
+    const updateUserData = useAppStore((state) => state.user.updateUserData);
 
     const { close, setProps } = useContext(DialogWrapperContext);
 

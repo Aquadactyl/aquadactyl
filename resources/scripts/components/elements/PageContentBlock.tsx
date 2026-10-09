@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group';
 import classNames from 'classnames';
 import PanelBranding from '@/components/elements/PanelBranding';
 import FlashMessageRender from '@/components/FlashMessageRender';
-import { useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 
 export interface PageContentBlockProps {
     title?: string;
@@ -18,7 +18,7 @@ import BeforeSection from '@blueprint/components/Dashboard/Global/BeforeSection'
 import AfterSection from '@blueprint/components/Dashboard/Global/AfterSection';
 
 const PageContentBlock: React.FC<PageContentBlockProps> = ({ title, showFlashKey, className, children }) => {
-    const name = useStoreState((state) => state.settings.data?.name || 'Aquadactyl');
+    const name = useAppStore((state) => state.settings.data?.name || 'Aquadactyl');
     useEffect(() => {
         const pageTitle = title ? `${title} | ${name}` : name;
         document.title = pageTitle;

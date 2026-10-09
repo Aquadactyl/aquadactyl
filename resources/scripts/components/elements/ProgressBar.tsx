@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { useStoreActions, useStoreState } from '@/state/hooks';
+import { useAppStore } from '@/state';
 import { randomInt } from '@/helpers';
 import { CSSTransition } from 'react-transition-group';
 
@@ -21,9 +21,9 @@ export default () => {
     const interval = useRef<Timer>(null) as React.MutableRefObject<Timer>;
     const timeout = useRef<Timer>(null) as React.MutableRefObject<Timer>;
     const [visible, setVisible] = useState(false);
-    const progress = useStoreState((state) => state.progress.progress);
-    const continuous = useStoreState((state) => state.progress.continuous);
-    const setProgress = useStoreActions((actions) => actions.progress.setProgress);
+    const progress = useAppStore((state) => state.progress.progress);
+    const continuous = useAppStore((state) => state.progress.continuous);
+    const setProgress = useAppStore((state) => state.progress.setProgress);
 
     useEffect(() => {
         return () => {

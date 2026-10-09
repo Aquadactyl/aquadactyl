@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import deleteSchedule from '@/api/server/schedules/deleteSchedule';
 import { ServerContext } from '@/state/server';
-import { Actions, useStoreActions } from '@/state/hooks';
-import { ApplicationStore } from '@/state';
+import useFlash from '@/plugins/useFlash';
 import { httpErrorToHuman } from '@/api/http';
 import { Button } from '@/components/elements/button/index';
 import { Dialog } from '@/components/elements/dialog';
@@ -17,7 +16,7 @@ export default ({ scheduleId, onDeleted }: Props) => {
     const [visible, setVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { addError, clearFlashes } = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes);
+    const { addError, clearFlashes } = useFlash();
     const removeSchedule = ServerContext.useStoreActions((actions) => actions.schedules.removeSchedule);
 
     const onDelete = () => {
