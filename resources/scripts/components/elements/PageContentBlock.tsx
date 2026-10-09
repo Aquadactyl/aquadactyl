@@ -17,17 +17,12 @@ import Attribution from '@blueprint/extends/Attribution';
 import BeforeSection from '@blueprint/components/Dashboard/Global/BeforeSection';
 import AfterSection from '@blueprint/components/Dashboard/Global/AfterSection';
 
-const PageContentBlock: React.FC<PageContentBlockProps> = ({
-    title,
-    showFlashKey,
-    className,
-    children,
-}) => {
+const PageContentBlock: React.FC<PageContentBlockProps> = ({ title, showFlashKey, className, children }) => {
     const name = useStoreState((state) => state.settings.data?.name || 'Aquadactyl');
     useEffect(() => {
         const pageTitle = title ? `${title} | ${name}` : name;
         document.title = pageTitle;
-    }, [title, name,]);
+    }, [title, name]);
 
     return (
         <CSSTransition timeout={150} classNames={'fade'} appear in>
