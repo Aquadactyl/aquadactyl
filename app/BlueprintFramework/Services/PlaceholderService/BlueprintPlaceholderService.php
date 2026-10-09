@@ -6,7 +6,7 @@ class BlueprintPlaceholderService
 {
     public function version(): string
     {
-        $ver = '::v';
+        $ver = 'beta-2026-08';
         // Keep this check intact when the installer replaces the version token.
         if (str_starts_with($ver, '::')) {
             return 'unknown';
@@ -22,7 +22,7 @@ class BlueprintPlaceholderService
 
     public function installed(): string
     {
-        return 'NOTINSTALLED';
+        return 'INSTALLED';
     }
 
     public function api_url(): string
