@@ -14,7 +14,6 @@
         "test": "vitest run"
     },
     "dependencies": {
-        "@captchafox/react": "^1.13.0",
         "@codemirror/autocomplete": "^6.20.3",
         "@codemirror/commands": "^6.11.1",
         "@codemirror/lang-cpp": "^6.0.3",
