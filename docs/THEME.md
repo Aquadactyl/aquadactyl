@@ -80,7 +80,7 @@ navigation, authentication and server rows use `resources/scripts/assets/index.c
 browser defaults and fonts use `resources/scripts/assets/css/GlobalStylesheet.ts`.
 The runtime theme helper in `resources/scripts/lib/theme.ts` and the terminal
 palette should stay aligned with these colours. The admin palette lives
-in `public/themes/pterodactyl/css/palette.css`, imported by `pterodactyl.css`.
+in `public/themes/pterodactyl/css/index.css`.
 Keep both palettes aligned when changing the default theme.
 
 Rebuild client assets after changing Tailwind tokens or React styles:
