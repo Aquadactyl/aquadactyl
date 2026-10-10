@@ -13,8 +13,7 @@ import { httpErrorToHuman } from "@/api/http";
 import { useAppStore } from "@/state";
 import SubNavigation from "@/components/elements/SubNavigation";
 import InstallListener from "@/components/server/InstallListener";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
+import { ExternalLink } from "lucide-react";
 
 import {
   NavigationLinks,
@@ -85,7 +84,7 @@ export default () => {
                 <AdditionalServerItems />
                 {rootAdmin && (
                   <a href={`/admin/servers/view/${serverId}`} target={"_blank"}>
-                    <FontAwesomeIcon icon={faExternalLinkAlt} />
+                    <ExternalLink size={16} />
                   </a>
                 )}
               </div>

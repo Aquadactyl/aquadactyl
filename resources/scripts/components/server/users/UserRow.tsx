@@ -1,12 +1,7 @@
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useState } from "react";
 import { Subuser } from "@/state/server/subusers";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faPencilAlt,
-  faUnlockAlt,
-  faUserLock,
-} from "@fortawesome/free-solid-svg-icons";
+import { Lock, Unlock, Pencil } from "lucide-react";
 import RemoveSubuserButton from "@/components/server/users/RemoveSubuserButton";
 import EditSubuserModal from "@/components/server/users/EditSubuserModal";
 import Can from "@/components/elements/Can";
@@ -41,15 +36,13 @@ export default ({ subuser }: Props) => {
         </p>
       </div>
       <div className={"ml-4"}>
-        <p className={"text-center font-medium"}>
-          &nbsp;
-          <FontAwesomeIcon
-            icon={subuser.twoFactorEnabled ? faUserLock : faUnlockAlt}
-            fixedWidth
-            className={!subuser.twoFactorEnabled ? "text-red-400" : undefined}
-          />
-          &nbsp;
-        </p>
+        <div className={"flex justify-center"}>
+          {subuser.twoFactorEnabled ? (
+            <Lock className={"h-4 w-4 text-neutral-300"} />
+          ) : (
+            <Unlock className={"h-4 w-4 text-red-400"} />
+          )}
+        </div>
         <p className={"text-2xs hidden text-neutral-500 uppercase md:block"}>
           2FA Enabled
         </p>
@@ -75,7 +68,7 @@ export default ({ subuser }: Props) => {
               }
               onClick={() => setVisible(true)}
             >
-              <FontAwesomeIcon icon={faPencilAlt} />
+              <Pencil size={16} />
             </button>
           </Can>
           <Can action={"user.delete"}>

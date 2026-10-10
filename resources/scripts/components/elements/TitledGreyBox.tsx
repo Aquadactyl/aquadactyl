@@ -1,17 +1,20 @@
 import React, { memo } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import classNames from "classnames";
 import isEqual from "react-fast-compare";
 
 interface Props {
-  icon?: IconProp;
+  icon?: React.ComponentType<{ className?: string }>;
   title: string | React.ReactNode;
   className?: string;
   children: React.ReactNode;
 }
 
-const TitledGreyBox = ({ icon, title, children, className }: Props) => (
+const TitledGreyBox = ({
+  icon: IconComponent,
+  title,
+  children,
+  className,
+}: Props) => (
   <div
     className={classNames(
       "rounded-lg border border-neutral-600 bg-neutral-700 shadow-xs",
@@ -22,9 +25,9 @@ const TitledGreyBox = ({ icon, title, children, className }: Props) => (
       className={"rounded-t-lg border-b border-neutral-600 bg-neutral-700 p-3"}
     >
       {typeof title === "string" ? (
-        <p className={"text-sm uppercase"}>
-          {icon && (
-            <FontAwesomeIcon icon={icon} className={"mr-2 text-neutral-300"} />
+        <p className={"flex items-center text-sm uppercase"}>
+          {IconComponent && (
+            <IconComponent className={"mr-2 h-4 w-4 text-neutral-300"} />
           )}
           {title}
         </p>

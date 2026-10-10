@@ -4,8 +4,7 @@ import ContentBox from "@/components/elements/ContentBox";
 import CreateApiKeyForm from "@/components/dashboard/forms/CreateApiKeyForm";
 import getApiKeys, { ApiKey } from "@/api/account/getApiKeys";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey, faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { Key, Trash2 } from "lucide-react";
 import deleteApiKey from "@/api/account/deleteApiKey";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import { format } from "date-fns";
@@ -90,7 +89,7 @@ export default () => {
                   index > 0 && "mt-2",
                 )}
               >
-                <FontAwesomeIcon icon={faKey} className={"text-neutral-300"} />
+                <Key className={"h-4 w-4 shrink-0 text-neutral-300"} />
                 <div className={"ml-4 flex-1 overflow-hidden"}>
                   <p className={"text-sm wrap-break-word"}>{key.description}</p>
                   <p className={"text-2xs text-neutral-300 uppercase"}>
@@ -111,8 +110,8 @@ export default () => {
                   className={"ml-4 cursor-pointer p-2 text-sm"}
                   onClick={() => setDeleteIdentifier(key.identifier)}
                 >
-                  <FontAwesomeIcon
-                    icon={faTrashAlt}
+                  <Trash2
+                    size={16}
                     className={
                       "text-neutral-400 transition-colors duration-150 hover:text-red-400"
                     }

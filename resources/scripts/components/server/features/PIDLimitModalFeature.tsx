@@ -6,8 +6,7 @@ import FlashMessageRender from "@/components/FlashMessageRender";
 import useFlash from "@/plugins/useFlash";
 import { SocketEvent } from "@/components/server/events";
 import { useAppStore } from "@/state";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { TriangleAlert } from "lucide-react";
 
 const PIDLimitModalFeature = () => {
   const [visible, setVisible] = useState(false);
@@ -59,11 +58,8 @@ const PIDLimitModalFeature = () => {
       {isAdmin ? (
         <>
           <div className={"mt-4 items-center sm:flex"}>
-            <FontAwesomeIcon
-              className={"pr-4"}
-              icon={faExclamationTriangle}
-              color={"orange"}
-              size={"4x"}
+            <TriangleAlert
+              className={"h-16 w-16 shrink-0 pr-4 text-orange-500"}
             />
             <h2 className={"mb-4 text-2xl text-neutral-100"}>
               Memory or process limit reached...
@@ -99,11 +95,8 @@ const PIDLimitModalFeature = () => {
       ) : (
         <>
           <div className={"mt-4 items-center sm:flex"}>
-            <FontAwesomeIcon
-              className={"pr-4"}
-              icon={faExclamationTriangle}
-              color={"orange"}
-              size={"4x"}
+            <TriangleAlert
+              className={"h-16 w-16 shrink-0 pr-4 text-orange-500"}
             />
             <h2 className={"mb-4 text-2xl text-neutral-100"}>
               Possible resource limit reached...

@@ -8,8 +8,7 @@ import classNames from "classnames";
 import GreyRowBox from "@/components/elements/GreyRowBox";
 import { useSSHKeys } from "@/api/account/ssh-keys";
 import { useFlashKey } from "@/plugins/useFlash";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faKey } from "@fortawesome/free-solid-svg-icons";
+import { Key } from "lucide-react";
 import { format } from "date-fns";
 import CreateSSHKeyForm from "@/components/dashboard/ssh/CreateSSHKeyForm";
 import DeleteSSHKeyButton from "@/components/dashboard/ssh/DeleteSSHKeyButton";
@@ -57,7 +56,7 @@ export default () => {
                   index > 0 && "mt-2",
                 )}
               >
-                <FontAwesomeIcon icon={faKey} className={"text-neutral-300"} />
+                <Key className={"h-4 w-4 shrink-0 text-neutral-300"} />
                 <div className={"flex-1"}>
                   <p className={"text-sm font-medium wrap-break-word"}>
                     {key.name}

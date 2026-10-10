@@ -1,10 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFileAlt,
-  faFileArchive,
-  faFileImport,
-  faFolder,
-} from "@fortawesome/free-solid-svg-icons";
+import { Archive, FileSymlink, FileText, Folder } from "lucide-react";
 import { encodePathSegments } from "@/helpers";
 import { differenceInHours, format, formatDistanceToNow } from "date-fns";
 import React, { memo } from "react";
@@ -55,19 +49,17 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
   >
     <SelectFileCheckbox name={file.name} />
     <Clickable file={file}>
-      <div className={"mr-4 ml-6 flex-none pl-3 text-lg text-neutral-400"}>
+      <div className={"mr-4 ml-6 flex-none pl-3 text-neutral-400"}>
         {file.isFile ? (
-          <FontAwesomeIcon
-            icon={
-              file.isSymlink
-                ? faFileImport
-                : file.isArchiveType()
-                  ? faFileArchive
-                  : faFileAlt
-            }
-          />
+          file.isSymlink ? (
+            <FileSymlink size={18} />
+          ) : file.isArchiveType() ? (
+            <Archive size={18} />
+          ) : (
+            <FileText size={18} />
+          )
         ) : (
-          <FontAwesomeIcon icon={faFolder} />
+          <Folder size={18} />
         )}
       </div>
       <div className={"flex-1 truncate"}>{file.name}</div>

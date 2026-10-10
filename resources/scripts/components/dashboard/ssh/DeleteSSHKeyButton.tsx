@@ -1,5 +1,4 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { useFlashKey } from "@/plugins/useFlash";
 import { deleteSSHKey, useSSHKeys } from "@/api/account/ssh-keys";
@@ -48,8 +47,8 @@ export default ({
         className={"ml-4 cursor-pointer p-2 text-sm"}
         onClick={() => setVisible(true)}
       >
-        <FontAwesomeIcon
-          icon={faTrashAlt}
+        <Trash2
+          size={16}
           className={
             "text-neutral-400 transition-colors duration-150 hover:text-red-400"
           }

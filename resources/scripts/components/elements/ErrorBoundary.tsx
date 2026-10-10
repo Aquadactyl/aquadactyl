@@ -1,6 +1,5 @@
 import React from "react";
-import Icon from "@/components/elements/Icon";
-import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { TriangleAlert } from "lucide-react";
 
 interface FallbackProps {
   error?: Error;
@@ -62,10 +61,7 @@ class ErrorBoundary extends React.Component<Props, State> {
             "flex flex-col items-center rounded bg-neutral-900 p-4 text-center text-red-500 sm:flex-row sm:text-left"
           }
         >
-          <Icon
-            icon={faExclamationTriangle}
-            className={"mb-2 h-5 w-auto sm:mr-3 sm:mb-0"}
-          />
+          <TriangleAlert className={"mb-2 h-5 w-5 shrink-0 sm:mr-3 sm:mb-0"} />
           <div className={"flex-1"}>
             <p className={"text-sm text-neutral-100"}>
               An error was encountered by the application while rendering this

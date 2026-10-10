@@ -1,10 +1,5 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArchive,
-  faEllipsisH,
-  faLock,
-} from "@fortawesome/free-solid-svg-icons";
+import { Archive, Lock, Ellipsis } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
 import Spinner from "@/components/elements/Spinner";
 import { bytesToString } from "@/lib/formatters";
@@ -65,12 +60,9 @@ export default ({ backup, className }: Props) => {
         <div className={"mr-4"}>
           {backup.completedAt !== null ? (
             backup.isLocked ? (
-              <FontAwesomeIcon icon={faLock} className={"text-yellow-500"} />
+              <Lock className={"h-4 w-4 text-yellow-500"} />
             ) : (
-              <FontAwesomeIcon
-                icon={faArchive}
-                className={"text-neutral-300"}
-              />
+              <Archive className={"h-4 w-4 text-neutral-300"} />
             )
           ) : (
             <Spinner size={"small"} />
@@ -130,7 +122,7 @@ export default ({ backup, className }: Props) => {
         <div className={"mt-4 ml-6 md:mt-0"} style={{ marginRight: "-0.5rem" }}>
           {!backup.completedAt ? (
             <div className={"invisible p-2"}>
-              <FontAwesomeIcon icon={faEllipsisH} />
+              <Ellipsis size={16} />
             </div>
           ) : (
             <BackupContextMenu backup={backup} />

@@ -1,17 +1,15 @@
 import React, { memo, useRef, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faBoxOpen,
-  faCopy,
-  faEllipsisH,
-  faFileArchive,
-  faFileCode,
-  faFileDownload,
-  faLevelUpAlt,
-  faPencilAlt,
-  faTrashAlt,
-  IconDefinition,
-} from "@fortawesome/free-solid-svg-icons";
+  Ellipsis,
+  Pencil,
+  CornerUpRight,
+  FileCode,
+  Copy,
+  ArchiveRestore,
+  Archive,
+  Download,
+  Trash2,
+} from "lucide-react";
 import RenameFileModal from "@/components/server/files/RenameFileModal";
 import { ServerContext } from "@/state/server";
 import { join } from "pathe";
@@ -37,12 +35,18 @@ import DropdownItems from "@blueprint/components/Server/Files/Browse/DropdownIte
 type ModalType = "rename" | "move" | "chmod";
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
-  icon: IconDefinition;
+  icon: React.ComponentType<{ className?: string; size?: number }>;
   title: string;
   $danger?: boolean;
 }
 
-const Row = ({ icon, title, $danger, className, ...props }: RowProps) => (
+const Row = ({
+  icon: IconComponent,
+  title,
+  $danger,
+  className,
+  ...props
+}: RowProps) => (
   <div
     className={classNames(
       "flex cursor-pointer items-center rounded p-2",
@@ -53,8 +57,8 @@ const Row = ({ icon, title, $danger, className, ...props }: RowProps) => (
     )}
     {...props}
   >
-    <FontAwesomeIcon icon={icon} className={"text-xs"} fixedWidth />
-    <span className={"ml-2"}>{title}</span>
+    <IconComponent size={14} className={"mr-2 shrink-0"} />
+    <span>{title}</span>
   </div>
 );
 
@@ -150,7 +154,7 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
         ref={onClickRef}
         renderToggle={(onClick) => (
           <div className={"px-4 py-2 hover:text-white"} onClick={onClick}>
-            <FontAwesomeIcon icon={faEllipsisH} />
+            <Ellipsis size={16} />
             {modal ? (
               modal === "chmod" ? (
                 <ChmodFileModal
@@ -181,41 +185,45 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
         <Can action={"file.update"}>
           <Row
             onClick={() => setModal("rename")}
-            icon={faPencilAlt}
+            icon={Pencil}
             title={"Rename"}
           />
           <Row
             onClick={() => setModal("move")}
-            icon={faLevelUpAlt}
+            icon={CornerUpRight}
             title={"Move"}
           />
           <Row
             onClick={() => setModal("chmod")}
-            icon={faFileCode}
+            icon={FileCode}
             title={"Permissions"}
           />
         </Can>
         {file.isFile && (
           <Can action={"file.create"}>
-            <Row onClick={doCopy} icon={faCopy} title={"Copy"} />
+            <Row onClick={doCopy} icon={Copy} title={"Copy"} />
           </Can>
         )}
         {file.isArchiveType() ? (
           <Can action={"file.create"}>
-            <Row onClick={doUnarchive} icon={faBoxOpen} title={"Unarchive"} />
+            <Row
+              onClick={doUnarchive}
+              icon={ArchiveRestore}
+              title={"Unarchive"}
+            />
           </Can>
         ) : (
           <Can action={"file.archive"}>
-            <Row onClick={doArchive} icon={faFileArchive} title={"Archive"} />
+            <Row onClick={doArchive} icon={Archive} title={"Archive"} />
           </Can>
         )}
         {file.isFile && (
-          <Row onClick={doDownload} icon={faFileDownload} title={"Download"} />
+          <Row onClick={doDownload} icon={Download} title={"Download"} />
         )}
         <Can action={"file.delete"}>
           <Row
             onClick={() => setShowConfirmation(true)}
-            icon={faTrashAlt}
+            icon={Trash2}
             title={"Delete"}
             $danger
           />

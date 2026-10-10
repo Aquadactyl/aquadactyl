@@ -1,14 +1,14 @@
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  faClock,
-  faCloudDownloadAlt,
-  faCloudUploadAlt,
-  faHdd,
-  faMemory,
-  faMicrochip,
-  faWifi,
-} from "@fortawesome/free-solid-svg-icons";
+  Clock,
+  CloudDownload,
+  CloudUpload,
+  Cpu,
+  HardDrive,
+  MemoryStick,
+  Wifi,
+} from "lucide-react";
 import { bytesToString, ip, mbToBytes } from "@/lib/formatters";
 import { ServerContext } from "@/state/server";
 import { SocketEvent, SocketRequest } from "@/components/server/events";
@@ -121,11 +121,11 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
   return (
     <div className={classNames("grid grid-cols-6 gap-2 md:gap-4", className)}>
       <BeforeInformation />
-      <StatBlock icon={faWifi} title={"Address"} copyOnClick={allocation}>
+      <StatBlock icon={Wifi} title={"Address"} copyOnClick={allocation}>
         <SensitiveValue>{allocation}</SensitiveValue>
       </StatBlock>
       <StatBlock
-        icon={faClock}
+        icon={Clock}
         title={"Uptime"}
         color={getBackgroundColor(
           status === "running" ? 0 : status !== "offline" ? 9 : 10,
@@ -141,7 +141,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         )}
       </StatBlock>
       <StatBlock
-        icon={faMicrochip}
+        icon={Cpu}
         title={"CPU Load"}
         color={getBackgroundColor(stats.cpu, limits.cpu)}
       >
@@ -152,7 +152,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         )}
       </StatBlock>
       <StatBlock
-        icon={faMemory}
+        icon={MemoryStick}
         title={"Memory"}
         color={getBackgroundColor(stats.memory / 1024, limits.memory * 1024)}
       >
@@ -163,20 +163,20 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
         )}
       </StatBlock>
       <StatBlock
-        icon={faHdd}
+        icon={HardDrive}
         title={"Disk"}
         color={getBackgroundColor(stats.disk / 1024, limits.disk * 1024)}
       >
         <Limit limit={textLimits.disk}>{bytesToString(stats.disk)}</Limit>
       </StatBlock>
-      <StatBlock icon={faCloudDownloadAlt} title={"Network (Inbound)"}>
+      <StatBlock icon={CloudDownload} title={"Network (Inbound)"}>
         {status === "offline" ? (
           <span className={"text-gray-400"}>Offline</span>
         ) : (
           bytesToString(stats.rx)
         )}
       </StatBlock>
-      <StatBlock icon={faCloudUploadAlt} title={"Network (Outbound)"}>
+      <StatBlock icon={CloudUpload} title={"Network (Outbound)"}>
         {status === "offline" ? (
           <span className={"text-gray-400"}>Offline</span>
         ) : (

@@ -1,7 +1,6 @@
 import React from "react";
 import PageContentBlock from "@/components/elements/PageContentBlock";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faSyncAlt } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft, RotateCw } from "lucide-react";
 import classNames from "classnames";
 import Button from "@/components/elements/Button";
 import NotFoundSvg from "@/assets/images/not_found.svg";
@@ -60,7 +59,11 @@ const ScreenBlock = ({
               onClick={() => (onRetry ? onRetry() : onBack ? onBack() : null)}
               className={onRetry ? "hover:animate-spin" : undefined}
             >
-              <FontAwesomeIcon icon={onRetry ? faSyncAlt : faArrowLeft} />
+              {onRetry ? (
+                <RotateCw className={"h-4 w-4"} />
+              ) : (
+                <ArrowLeft className={"h-4 w-4"} />
+              )}
             </ActionButton>
           </div>
         )}

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
-import Icon from "@/components/elements/Icon";
+import { Trash2 } from "lucide-react";
 import { ServerContext } from "@/state/server";
 import deleteServerAllocation from "@/api/server/network/deleteServerAllocation";
 import getServerAllocations from "@/api/server/network/getServerAllocations";
@@ -56,7 +55,7 @@ const DeleteAllocationButton = ({ allocation }: Props) => {
         type={"button"}
         onClick={() => setConfirm(true)}
       >
-        <Icon icon={faTrashAlt} className={"h-auto w-3"} />
+        <Trash2 className={"h-3.5 w-3.5"} />
       </Button.Danger>
     </>
   );

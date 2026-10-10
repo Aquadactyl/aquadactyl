@@ -2,8 +2,7 @@ import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { memo, useCallback, useState } from "react";
 import isEqual from "react-fast-compare";
 import classNames from "classnames";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faNetworkWired } from "@fortawesome/free-solid-svg-icons";
+import { Network } from "lucide-react";
 import InputSpinner from "@/components/elements/InputSpinner";
 import { Textarea } from "@/components/elements/Input";
 import Can from "@/components/elements/Can";
@@ -78,7 +77,7 @@ const AllocationRow = ({ allocation }: Props) => {
     <GreyRowBox $hoverable={false} className={"mt-2 flex-wrap md:flex-nowrap"}>
       <div className={"flex w-full items-center md:w-auto"}>
         <div className={"pr-6 pl-4 text-neutral-400"}>
-          <FontAwesomeIcon icon={faNetworkWired} />
+          <Network className={"h-4 w-4"} />
         </div>
         <div className={"mr-4 flex-1 md:w-40"}>
           {allocation.alias ? (

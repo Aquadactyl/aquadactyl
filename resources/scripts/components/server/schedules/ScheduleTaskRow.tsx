@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import { Schedule, Task } from "@/api/server/schedules/getServerSchedules";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowCircleDown,
-  faCode,
-  faFileArchive,
-  faPencilAlt,
-  faToggleOn,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
+  Code,
+  ToggleRight,
+  Archive,
+  Pencil,
+  Trash2,
+  ArrowDownCircle,
+} from "lucide-react";
 import deleteScheduleTask from "@/api/server/schedules/deleteScheduleTask";
 import { httpErrorToHuman } from "@/api/http";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
@@ -17,7 +16,6 @@ import Can from "@/components/elements/Can";
 import useFlash from "@/plugins/useFlash";
 import { ServerContext } from "@/state/server";
 import ConfirmationModal from "@/components/elements/ConfirmationModal";
-import Icon from "@/components/elements/Icon";
 import { describeDelay, taskKind, taskKinds } from "./scheduleHelpers";
 
 interface Props {
@@ -26,16 +24,18 @@ interface Props {
   stepNumber?: number;
 }
 
-const getActionDetails = (action: string): [string, any] => {
+const getActionDetails = (
+  action: string,
+): [string, React.ComponentType<{ className?: string }>] => {
   switch (action) {
     case "command":
-      return ["Send Command", faCode];
+      return ["Send Command", Code];
     case "power":
-      return ["Send Power Action", faToggleOn];
+      return ["Send Power Action", ToggleRight];
     case "backup":
-      return ["Create Backup", faFileArchive];
+      return ["Create Backup", Archive];
     default:
-      return ["Unknown Action", faCode];
+      return ["Unknown Action", Code];
   }
 };
 
@@ -69,7 +69,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
       });
   };
 
-  const [fallbackTitle, icon] = getActionDetails(task.action);
+  const [fallbackTitle, ActionIcon] = getActionDetails(task.action);
   const title = taskKinds[taskKind(task)] ?? fallbackTitle;
 
   return (
@@ -92,10 +92,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
       >
         Are you sure you want to delete this task? This action cannot be undone.
       </ConfirmationModal>
-      <FontAwesomeIcon
-        icon={icon}
-        className={"hidden text-lg text-white md:block"}
-      />
+      <ActionIcon className={"hidden h-5 w-5 shrink-0 text-white md:block"} />
       <div className={"w-full min-w-0 flex-none sm:w-auto sm:flex-1"}>
         <p className={"text-sm font-medium text-neutral-100 md:ml-6"}>
           Step {stepNumber} · {title}
@@ -135,7 +132,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
                 "flex items-center rounded-full bg-yellow-500 px-2 py-1 text-sm text-yellow-800"
               }
             >
-              <Icon icon={faArrowCircleDown} className={"mr-2 h-3 w-3"} />
+              <ArrowDownCircle className={"mr-2 h-3.5 w-3.5 shrink-0"} />
               Keeps going on connection failure
             </div>
           </div>
@@ -149,7 +146,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
             }
             onClick={() => setIsEditing(true)}
           >
-            <FontAwesomeIcon icon={faPencilAlt} />
+            <Pencil size={16} />
           </button>
         </Can>
         <Can action={"schedule.update"}>
@@ -161,7 +158,7 @@ export default ({ schedule, task, stepNumber = task.sequenceId }: Props) => {
             }
             onClick={() => setVisible(true)}
           >
-            <FontAwesomeIcon icon={faTrashAlt} />
+            <Trash2 size={16} />
           </button>
         </Can>
       </div>

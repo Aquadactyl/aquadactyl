@@ -1,7 +1,6 @@
 import React from "react";
 import { Schedule } from "@/api/server/schedules/getServerSchedules";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { Calendar } from "lucide-react";
 import classNames from "classnames";
 import { useAppStore } from "@/state";
 import { describeCron, formatScheduleDate } from "./scheduleHelpers";
@@ -13,7 +12,7 @@ export default ({ schedule }: { schedule: Schedule }) => {
   return (
     <>
       <div className={"hidden md:block"}>
-        <FontAwesomeIcon icon={faCalendarAlt} fixedWidth />
+        <Calendar className={"h-4 w-4 text-neutral-400"} />
       </div>
       <div className={"min-w-0 flex-1 md:ml-4"}>
         <p className={"font-medium wrap-break-word"}>{schedule.name}</p>

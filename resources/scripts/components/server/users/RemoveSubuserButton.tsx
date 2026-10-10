@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import ConfirmationModal from "@/components/elements/ConfirmationModal";
 import { ServerContext } from "@/state/server";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { Trash2 } from "lucide-react";
 import { Subuser } from "@/state/server/subusers";
 import deleteSubuser from "@/api/server/users/deleteSubuser";
 import useFlash from "@/plugins/useFlash";
@@ -54,7 +53,7 @@ export default ({ subuser }: { subuser: Subuser }) => {
         }
         onClick={() => setShowConfirmation(true)}
       >
-        <FontAwesomeIcon icon={faTrashAlt} />
+        <Trash2 size={16} />
       </button>
     </>
   );

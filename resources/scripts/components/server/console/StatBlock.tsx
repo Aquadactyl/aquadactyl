@@ -1,6 +1,4 @@
-import React from "react";
-import Icon from "@/components/elements/Icon";
-import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import type { LucideIcon } from "lucide-react";
 import classNames from "classnames";
 import styles from "./style.module.css";
 import CopyOnClick from "@/components/elements/CopyOnClick";
@@ -9,7 +7,7 @@ interface StatBlockProps {
   title: string;
   copyOnClick?: string;
   color?: string | undefined;
-  icon: IconDefinition;
+  icon: LucideIcon | React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
   className?: string;
 }
@@ -17,7 +15,7 @@ interface StatBlockProps {
 export default ({
   title,
   copyOnClick,
-  icon,
+  icon: IconComponent,
   color,
   className,
   children,
@@ -29,8 +27,7 @@ export default ({
           className={classNames(styles.status_bar, color || "bg-gray-700")}
         />
         <div className={classNames(styles.icon, color || "bg-gray-700")}>
-          <Icon
-            icon={icon}
+          <IconComponent
             className={classNames({
               "text-gray-100": !color || color === "bg-gray-700",
               "text-gray-50": color && color !== "bg-gray-700",

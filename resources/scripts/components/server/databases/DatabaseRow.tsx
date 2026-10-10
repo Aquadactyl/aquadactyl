@@ -1,11 +1,6 @@
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faDatabase,
-  faEye,
-  faTrashAlt,
-} from "@fortawesome/free-solid-svg-icons";
+import { Database, Eye, Trash2 } from "lucide-react";
 import Modal from "@/components/elements/Modal";
 import { Form, Formik, FormikHelpers } from "formik";
 import Field from "@/components/elements/Field";
@@ -204,7 +199,7 @@ export default ({ database, className }: Props) => {
       </Modal>
       <GreyRowBox $hoverable={false} className={classNames("mb-2", className)}>
         <div className={"hidden md:block"}>
-          <FontAwesomeIcon icon={faDatabase} fixedWidth />
+          <Database className={"h-4 w-4"} />
         </div>
         <div className={"ml-4 flex-1"}>
           <CopyOnClick text={database.name}>
@@ -239,17 +234,17 @@ export default ({ database, className }: Props) => {
             Username
           </p>
         </div>
-        <div className={"ml-8"}>
+        <div className={"ml-8 flex items-center"}>
           <Button
             isSecondary
             className={"mr-2"}
             onClick={() => setConnectionVisible(true)}
           >
-            <FontAwesomeIcon icon={faEye} fixedWidth />
+            <Eye className={"h-4 w-4"} />
           </Button>
           <Can action={"database.delete"}>
             <Button color={"red"} isSecondary onClick={() => setVisible(true)}>
-              <FontAwesomeIcon icon={faTrashAlt} fixedWidth />
+              <Trash2 className={"h-4 w-4"} />
             </Button>
           </Can>
         </div>

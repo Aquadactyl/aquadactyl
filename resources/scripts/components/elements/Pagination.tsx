@@ -2,11 +2,7 @@ import React from "react";
 import { PaginatedResult } from "@/api/http";
 import classNames from "classnames";
 import Button from "@/components/elements/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAngleDoubleLeft,
-  faAngleDoubleRight,
-} from "@fortawesome/free-solid-svg-icons";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
 interface RenderFuncProps<T> {
   items: T[];
@@ -62,7 +58,7 @@ function Pagination<T>({
               color={"primary"}
               onClick={() => onPageSelect(1)}
             >
-              <FontAwesomeIcon icon={faAngleDoubleLeft} />
+              <ChevronsLeft className={"inline-block h-4 w-4"} />
             </Block>
           )}
           {pages.map((i) => (
@@ -81,7 +77,7 @@ function Pagination<T>({
               color={"primary"}
               onClick={() => onPageSelect(pagination.totalPages)}
             >
-              <FontAwesomeIcon icon={faAngleDoubleRight} />
+              <ChevronsRight className={"inline-block h-4 w-4"} />
             </Block>
           )}
         </div>
