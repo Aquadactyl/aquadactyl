@@ -13,7 +13,7 @@ export interface SiteSettings {
   };
   recaptcha: {
     enabled: boolean;
-    provider?: 'recaptcha' | 'hcaptcha' | 'turnstile';
+    provider?: "recaptcha" | "hcaptcha" | "turnstile";
     siteKey: string;
   };
   blueprint: {
