@@ -212,7 +212,7 @@ class ActivityLogService
 
         if ($actor = $this->targetable->actor()) {
             $this->actor($actor);
-        } elseif (! is_null($user = $this->manager->guard()->user())) {
+        } elseif (!is_null($user = $this->manager->guard()->user())) {
             $this->actor($user);
         }
 

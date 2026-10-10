@@ -169,7 +169,7 @@ class ApiKey extends Model implements HasAbilities
 
     public function cant($ability)
     {
-        return ! $this->can($ability);
+        return !$this->can($ability);
     }
 
     /**

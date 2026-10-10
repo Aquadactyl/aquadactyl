@@ -17,7 +17,7 @@ class ExtensionCachedMetadata extends Model
     {
         $row = static::where('identifier', $identifier)->first(['metadata']);
 
-        if (! $row) {
+        if (!$row) {
             return null;
         }
 

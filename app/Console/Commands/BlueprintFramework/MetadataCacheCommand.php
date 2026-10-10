@@ -32,7 +32,7 @@ class MetadataCacheCommand extends Command
 
     public function handle()
     {
-        if (! $this->blueprint->dbGet('blueprint', 'flags:remote_metadata')) {
+        if (!$this->blueprint->dbGet('blueprint', 'flags:remote_metadata')) {
             $this->error('remote_metadata flag set to false');
 
             return false;
@@ -50,14 +50,14 @@ class MetadataCacheCommand extends Command
             $remoteVersionsData = json_decode($remoteVersions, true);
         }
 
-        if (! isset($remoteVersionsData)) {
+        if (!isset($remoteVersionsData)) {
             $this->error('failed to fetch extension versions');
 
             return false;
         }
 
         foreach ($installedExtensions as $identifier) {
-            if (! isset($remoteVersionsData[$identifier]) || ! is_scalar($remoteVersionsData[$identifier])) {
+            if (!isset($remoteVersionsData[$identifier]) || !is_scalar($remoteVersionsData[$identifier])) {
                 continue;
             }
 
@@ -65,7 +65,7 @@ class MetadataCacheCommand extends Command
 
             $rows[] = [
                 'identifier' => $identifier,
-                'metadata' =>  json_encode([
+                'metadata' => json_encode([
                     'latest_version' => (string) $remoteVersionsData[$identifier],
                     'local_version' => (string) $local_extension['info']['version'] ?? '',
                 ]),

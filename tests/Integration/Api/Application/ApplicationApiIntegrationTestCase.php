@@ -4,7 +4,6 @@ namespace Pterodactyl\Tests\Integration\Api\Application;
 
 use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
-use PHPUnit\Framework\Assert;
 use Pterodactyl\Models\ApiKey;
 use Pterodactyl\Services\Acl\Api\AdminAcl;
 use Pterodactyl\Tests\Integration\IntegrationTestCase;

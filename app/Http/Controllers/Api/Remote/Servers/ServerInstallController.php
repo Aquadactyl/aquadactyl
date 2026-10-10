@@ -33,7 +33,7 @@ class ServerInstallController extends Controller
         $server = $this->repository->getByUuid($uuid);
         $egg = $server->egg;
 
-        if (! $server->node->is($request->attributes->get('node'))) {
+        if (!$server->node->is($request->attributes->get('node'))) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
@@ -55,7 +55,7 @@ class ServerInstallController extends Controller
         $server = $this->repository->getByUuid($uuid);
         $status = null;
 
-        if (! $server->node->is($request->attributes->get('node'))) {
+        if (!$server->node->is($request->attributes->get('node'))) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 

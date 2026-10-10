@@ -49,7 +49,7 @@ class ServerDetailsController extends Controller
             ? $node->id === $transfer->old_node || $node->id === $transfer->new_node
             : $node->id === $server->node_id;
 
-        if (! $valid) {
+        if (!$valid) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 

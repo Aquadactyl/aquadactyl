@@ -85,11 +85,7 @@ use Pterodactyl\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @mixin \Eloquent
  */
 #[Attributes\Identifiable('user')]
-class User extends Model implements
-    AuthenticatableContract,
-    AuthorizableContract,
-    CanResetPasswordContract,
-    Identifiable
+class User extends Model implements AuthenticatableContract, AuthorizableContract, CanResetPasswordContract, Identifiable
 {
     use Authenticatable;
     use Authorizable;

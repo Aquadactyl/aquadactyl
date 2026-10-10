@@ -48,7 +48,7 @@ class ServerTransferController extends Controller
 
         // Either node can tell the panel that the transfer has failed. Only the new node
         // can tell the panel that it was successful.
-        if (! $node->is($transfer->newNode) && ! $node->is($transfer->oldNode)) {
+        if (!$node->is($transfer->newNode) && !$node->is($transfer->oldNode)) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
@@ -73,7 +73,7 @@ class ServerTransferController extends Controller
 
         // Only the new node communicates a successful state to the panel, so we should
         // not allow the old node to hit this endpoint.
-        if (! $node->is($transfer->newNode)) {
+        if (!$node->is($transfer->newNode)) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 

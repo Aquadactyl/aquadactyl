@@ -51,7 +51,7 @@ jobs:
       - run: cp .env.ci .env
       - run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
       - run: composer audit --locked --no-dev
-      - run: vendor/bin/php-cs-fixer fix --dry-run --diff
+      - run: vendor/bin/pint --test
         if: matrix.php == '8.4'
       - run: vendor/bin/pest --bootstrap vendor/autoload.php tests/Unit --fail-on-deprecation
         env:

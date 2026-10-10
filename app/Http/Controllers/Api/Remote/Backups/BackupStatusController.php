@@ -96,7 +96,7 @@ class BackupStatusController extends Controller
         $model = Backup::query()->where('uuid', $backup)->firstOrFail();
 
         $node = $request->attributes->get('node');
-        if (! $model->server->node->is($node)) {
+        if (!$model->server->node->is($node)) {
             throw new HttpForbiddenException('Requesting node does not have permission to access this server.');
         }
 
