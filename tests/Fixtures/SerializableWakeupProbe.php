@@ -11,3 +11,4 @@ class SerializableWakeupProbe
         self::$awakened = true;
     }
 }
+
