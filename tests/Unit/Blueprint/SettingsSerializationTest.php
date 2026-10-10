@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Tests\Unit\Blueprint;
 
+use Pterodactyl\Tests\Fixtures\SerializableWakeupProbe;
 use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\BlueprintBaseLibrary;
 
 function decodeSetting(string $value): mixed
@@ -19,16 +20,6 @@ test('plain settings and serialized values are both preserved', function () {
         ->and(decodeSetting(serialize(true)))->toBeTrue()
         ->and(decodeSetting(serialize(['one', 'two'])))->toBe(['one', 'two']);
 });
-
-class SerializableWakeupProbe
-{
-    public static bool $awakened = false;
-
-    public function __wakeup(): void
-    {
-        self::$awakened = true;
-    }
-}
 
 test('reading settings does not execute object wakeup', function () {
     $probe = new SerializableWakeupProbe();
