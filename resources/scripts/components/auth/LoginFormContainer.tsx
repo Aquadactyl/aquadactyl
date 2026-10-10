@@ -1,5 +1,4 @@
 import React, { forwardRef, useEffect } from "react";
-import { Form } from "formik";
 import { useAppStore } from "@/state";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import PanelBranding from "@/components/elements/PanelBranding";
@@ -69,9 +68,9 @@ export default forwardRef<HTMLFormElement, Props>(
           )}
           <FlashMessageRender />
           <BeforeContent />
-          <Form {...props} ref={ref}>
+          <form {...props} ref={ref}>
             <div className={"w-full"}>{children}</div>
-          </Form>
+          </form>
           <AfterContent />
         </div>
         <p className={"authentication-footer"}>
