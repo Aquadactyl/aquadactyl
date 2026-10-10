@@ -1,75 +1,75 @@
 @reference "../../../assets/tailwind.css";
 
 .button {
-    @apply inline-flex cursor-pointer items-center justify-center px-4 py-2;
-    @apply rounded text-base font-semibold transition-all duration-100;
-    @apply focus:ring-[3px] focus:ring-offset-2 focus:ring-offset-gray-700;
+  @apply inline-flex cursor-pointer items-center justify-center px-4 py-2;
+  @apply rounded text-base font-semibold transition-all duration-100;
+  @apply focus:ring-[3px] focus:ring-offset-2 focus:ring-offset-gray-700;
 
-    /* Sizing Controls */
-    &.small {
-        @apply h-8 px-4 py-0 text-sm font-normal focus:ring-2;
-    }
+  /* Sizing Controls */
+  &.small {
+    @apply h-8 px-4 py-0 text-sm font-normal focus:ring-2;
+  }
 
-    &.large {
-        @apply px-5 py-3;
-    }
+  &.large {
+    @apply px-5 py-3;
+  }
 
-    &.secondary {
-        @apply bg-transparent text-gray-50;
-
-        &:disabled {
-            background: transparent !important;
-        }
-    }
+  &.secondary {
+    @apply bg-transparent text-gray-50;
 
     &:disabled {
-        @apply cursor-not-allowed;
+      background: transparent !important;
     }
+  }
 
-    &.square {
-        @apply h-12 w-12 p-0;
+  &:disabled {
+    @apply cursor-not-allowed;
+  }
 
-        &.small {
-            @apply h-8 w-8;
-        }
+  &.square {
+    @apply h-12 w-12 p-0;
+
+    &.small {
+      @apply h-8 w-8;
     }
+  }
 }
 
 .primary {
-    @apply bg-blue-600 text-blue-50;
-    @apply hover:bg-blue-500 focus:ring-blue-400/75 active:bg-blue-500;
+  @apply bg-blue-600 text-blue-50;
+  @apply hover:bg-blue-500 focus:ring-blue-400/75 active:bg-blue-500;
 
-    &.secondary {
-        @apply hover:bg-blue-600 active:bg-blue-600;
-    }
+  &.secondary {
+    @apply hover:bg-blue-600 active:bg-blue-600;
+  }
 
-    &:disabled {
-        @apply bg-blue-500/75 text-blue-200/75;
-    }
+  &:disabled {
+    @apply bg-blue-500/75 text-blue-200/75;
+  }
 }
 
 .text {
-    @apply border border-gray-500 bg-gray-700 text-gray-50;
-    @apply hover:bg-gray-600 focus:ring-gray-300/50 active:bg-gray-600;
+  @apply border border-gray-500 bg-gray-700 text-gray-50;
+  @apply hover:bg-gray-600 focus:ring-gray-300/50 active:bg-gray-600;
 
-    &.secondary {
-        @apply hover:bg-gray-600 active:bg-gray-600;
-    }
+  &.secondary {
+    @apply hover:bg-gray-600 active:bg-gray-600;
+  }
 
-    &:disabled {
-        @apply bg-gray-600/75 text-gray-200/75;
-    }
+  &:disabled {
+    @apply bg-gray-600/75 text-gray-200/75;
+  }
 }
 
 .danger {
-    @apply bg-red-600 text-gray-50;
-    @apply hover:bg-red-500 focus:ring-red-400/75 active:bg-red-500;
+  @apply bg-red-600 text-gray-50;
+  @apply hover:bg-red-500 focus:ring-red-400/75 active:bg-red-500;
 
-    &.secondary {
-        @apply hover:bg-red-600 active:bg-red-600;
-    }
+  &.secondary {
+    @apply hover:bg-red-600 active:bg-red-600;
+  }
 
-    &:disabled {
-        @apply bg-red-600/75 text-red-50/75;
-    }
+  &:disabled {
+    @apply bg-red-600/75 text-red-50/75;
+  }
 }

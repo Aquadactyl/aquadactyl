@@ -10,92 +10,100 @@ import { Button } from '@/components/elements/button/index';
 import useFlash from '@/plugins/useFlash';
 
 interface Values {
-    current: string;
-    password: string;
-    confirmPassword: string;
+  current: string;
+  password: string;
+  confirmPassword: string;
 }
 
 const schema = Yup.object().shape({
-    current: Yup.string().min(1).required('You must provide your current password.'),
-    password: Yup.string().min(8).required(),
-    confirmPassword: Yup.string().test(
-        'password',
-        'Password confirmation does not match the password you entered.',
-        function (value) {
-            return value === this.parent.password;
-        },
-    ),
+  current: Yup.string()
+    .min(1)
+    .required('You must provide your current password.'),
+  password: Yup.string().min(8).required(),
+  confirmPassword: Yup.string().test(
+    'password',
+    'Password confirmation does not match the password you entered.',
+    function (value) {
+      return value === this.parent.password;
+    },
+  ),
 });
 
 export default () => {
-    const user = useAppStore((state) => state.user.data);
-    const { clearFlashes, addFlash } = useFlash();
+  const user = useAppStore((state) => state.user.data);
+  const { clearFlashes, addFlash } = useFlash();
 
-    if (!user) {
-        return null;
-    }
+  if (!user) {
+    return null;
+  }
 
-    const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
-        clearFlashes('account:password');
-        updateAccountPassword({ ...values })
-            .then(() => {
-                // @ts-expect-error this is valid
-                window.location = '/auth/login';
-            })
-            .catch((error) =>
-                addFlash({
-                    key: 'account:password',
-                    type: 'error',
-                    title: 'Error',
-                    message: httpErrorToHuman(error),
-                }),
-            )
-            .then(() => setSubmitting(false));
-    };
+  const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
+    clearFlashes('account:password');
+    updateAccountPassword({ ...values })
+      .then(() => {
+        // @ts-expect-error this is valid
+        window.location = '/auth/login';
+      })
+      .catch((error) =>
+        addFlash({
+          key: 'account:password',
+          type: 'error',
+          title: 'Error',
+          message: httpErrorToHuman(error),
+        }),
+      )
+      .then(() => setSubmitting(false));
+  };
 
-    return (
-        <React.Fragment>
-            <Formik
-                onSubmit={submit}
-                validationSchema={schema}
-                initialValues={{ current: '', password: '', confirmPassword: '' }}
-            >
-                {({ isSubmitting, isValid }) => (
-                    <React.Fragment>
-                        <SpinnerOverlay size={'large'} visible={isSubmitting} />
-                        <Form className={'m-0'}>
-                            <Field
-                                id={'current_password'}
-                                type={'password'}
-                                name={'current'}
-                                label={'Current Password'}
-                            />
-                            <div className={'mt-6'}>
-                                <Field
-                                    id={'new_password'}
-                                    type={'password'}
-                                    name={'password'}
-                                    label={'New Password'}
-                                    description={
-                                        'Your new password should be at least 8 characters in length and unique to this website.'
-                                    }
-                                />
-                            </div>
-                            <div className={'mt-6'}>
-                                <Field
-                                    id={'confirm_new_password'}
-                                    type={'password'}
-                                    name={'confirmPassword'}
-                                    label={'Confirm New Password'}
-                                />
-                            </div>
-                            <div className={'mt-6'}>
-                                <Button disabled={isSubmitting || !isValid}>Update Password</Button>
-                            </div>
-                        </Form>
-                    </React.Fragment>
-                )}
-            </Formik>
-        </React.Fragment>
-    );
+  return (
+    <React.Fragment>
+      <Formik
+        onSubmit={submit}
+        validationSchema={schema}
+        initialValues={{
+          current: '',
+          password: '',
+          confirmPassword: '',
+        }}
+      >
+        {({ isSubmitting, isValid }) => (
+          <React.Fragment>
+            <SpinnerOverlay size={'large'} visible={isSubmitting} />
+            <Form className={'m-0'}>
+              <Field
+                id={'current_password'}
+                type={'password'}
+                name={'current'}
+                label={'Current Password'}
+              />
+              <div className={'mt-6'}>
+                <Field
+                  id={'new_password'}
+                  type={'password'}
+                  name={'password'}
+                  label={'New Password'}
+                  description={
+                    'Your new password should be at least 8 characters in length and unique to this website.'
+                  }
+                />
+              </div>
+              <div className={'mt-6'}>
+                <Field
+                  id={'confirm_new_password'}
+                  type={'password'}
+                  name={'confirmPassword'}
+                  label={'Confirm New Password'}
+                />
+              </div>
+              <div className={'mt-6'}>
+                <Button disabled={isSubmitting || !isValid}>
+                  Update Password
+                </Button>
+              </div>
+            </Form>
+          </React.Fragment>
+        )}
+      </Formik>
+    </React.Fragment>
+  );
 };

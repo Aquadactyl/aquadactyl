@@ -1,45 +1,47 @@
 export interface SiteSettings {
-    name: string;
-    appUrl?: string;
-    locale: string;
-    timezone?: string;
-    logoUrl?: string | null;
-    showNameWithLogo?: boolean;
-    features?: {
-        playerCounts: boolean;
-        customProfilePictures: boolean;
-        privacyMode: boolean;
-        serverQuickActions: boolean;
-    };
-    recaptcha: {
-        enabled: boolean;
-        siteKey: string;
-    };
-    blueprint: {
-        disable_attribution: boolean;
-    };
+  name: string;
+  appUrl?: string;
+  locale: string;
+  timezone?: string;
+  logoUrl?: string | null;
+  showNameWithLogo?: boolean;
+  features?: {
+    playerCounts: boolean;
+    customProfilePictures: boolean;
+    privacyMode: boolean;
+    serverQuickActions: boolean;
+  };
+  recaptcha: {
+    enabled: boolean;
+    siteKey: string;
+  };
+  blueprint: {
+    disable_attribution: boolean;
+  };
 }
 
 export interface SettingsState {
-    data?: SiteSettings;
+  data?: SiteSettings;
 }
 
 export interface SettingsActions {
-    setSettings: (payload: SiteSettings) => void;
+  setSettings: (payload: SiteSettings) => void;
 }
 
 export type SettingsStore = SettingsState & SettingsActions;
 
-export const createSettingsSlice = (set: (fn: (state: any) => any) => void): SettingsStore => ({
-    data: undefined,
+export const createSettingsSlice = (
+  set: (fn: (state: any) => any) => void,
+): SettingsStore => ({
+  data: undefined,
 
-    setSettings: (payload) =>
-        set((state) => ({
-            settings: {
-                ...state.settings,
-                data: payload,
-            },
-        })),
+  setSettings: (payload) =>
+    set((state) => ({
+      settings: {
+        ...state.settings,
+        data: payload,
+      },
+    })),
 });
 
 export default createSettingsSlice;

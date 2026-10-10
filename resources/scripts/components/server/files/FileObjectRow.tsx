@@ -1,5 +1,10 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileAlt, faFileArchive, faFileImport, faFolder } from '@fortawesome/free-solid-svg-icons';
+import {
+  faFileAlt,
+  faFileArchive,
+  faFileImport,
+  faFolder,
+} from '@fortawesome/free-solid-svg-icons';
 import { encodePathSegments } from '@/helpers';
 import { differenceInHours, format, formatDistanceToNow } from 'date-fns';
 import React, { memo } from 'react';
@@ -15,58 +20,86 @@ import { bytesToString } from '@/lib/formatters';
 import styles from './style.module.css';
 
 const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
-    const [canRead] = usePermissions(['file.read']);
-    const [canReadContents] = usePermissions(['file.read-content']);
-    const id = ServerContext.useStoreState((state) => state.server.data!.id);
-    const directory = ServerContext.useStoreState((state) => state.files.directory);
+  const [canRead] = usePermissions(['file.read']);
+  const [canReadContents] = usePermissions(['file.read-content']);
+  const id = ServerContext.useStoreState((state) => state.server.data!.id);
+  const directory = ServerContext.useStoreState(
+    (state) => state.files.directory,
+  );
 
-    return (file.isFile && (!file.isEditable() || !canReadContents)) || (!file.isFile && !canRead) ? (
-        <div className={styles.details}>{children}</div>
-    ) : (
-        <NavLink
-            className={styles.details}
-            to={`/server/${id}/files${file.isFile ? '/edit' : ''}#${encodePathSegments(join(directory, file.name))}`}
-        >
-            {children}
-        </NavLink>
-    );
+  return (file.isFile && (!file.isEditable() || !canReadContents)) ||
+    (!file.isFile && !canRead) ? (
+    <div className={styles.details}>{children}</div>
+  ) : (
+    <NavLink
+      className={styles.details}
+      to={`/server/${id}/files${file.isFile ? '/edit' : ''}#${encodePathSegments(join(directory, file.name))}`}
+    >
+      {children}
+    </NavLink>
+  );
 }, isEqual);
 
 const FileObjectRow = ({ file }: { file: FileObject }) => (
-    <div
-        className={styles.file_row}
-        key={file.name}
-        onContextMenu={(e) => {
-            e.preventDefault();
-            window.dispatchEvent(new CustomEvent(`pterodactyl:files:ctx:${file.key}`, { detail: e.clientX }));
-        }}
-    >
-        <SelectFileCheckbox name={file.name} />
-        <Clickable file={file}>
-            <div className={'mr-4 ml-6 flex-none pl-3 text-lg text-neutral-400'}>
-                {file.isFile ? (
-                    <FontAwesomeIcon
-                        icon={file.isSymlink ? faFileImport : file.isArchiveType() ? faFileArchive : faFileAlt}
-                    />
-                ) : (
-                    <FontAwesomeIcon icon={faFolder} />
-                )}
-            </div>
-            <div className={'flex-1 truncate'}>{file.name}</div>
-            {file.isFile && <div className={'mr-4 hidden w-1/6 text-right sm:block'}>{bytesToString(file.size)}</div>}
-            <div className={'mr-4 hidden w-1/5 text-right md:block'} title={file.modifiedAt.toString()}>
-                {Math.abs(differenceInHours(file.modifiedAt, new Date())) > 48
-                    ? format(file.modifiedAt, 'MMM do, yyyy h:mma')
-                    : formatDistanceToNow(file.modifiedAt, { addSuffix: true })}
-            </div>
-        </Clickable>
-        <FileDropdownMenu file={file} />
-    </div>
+  <div
+    className={styles.file_row}
+    key={file.name}
+    onContextMenu={(e) => {
+      e.preventDefault();
+      window.dispatchEvent(
+        new CustomEvent(`pterodactyl:files:ctx:${file.key}`, {
+          detail: e.clientX,
+        }),
+      );
+    }}
+  >
+    <SelectFileCheckbox name={file.name} />
+    <Clickable file={file}>
+      <div className={'mr-4 ml-6 flex-none pl-3 text-lg text-neutral-400'}>
+        {file.isFile ? (
+          <FontAwesomeIcon
+            icon={
+              file.isSymlink
+                ? faFileImport
+                : file.isArchiveType()
+                  ? faFileArchive
+                  : faFileAlt
+            }
+          />
+        ) : (
+          <FontAwesomeIcon icon={faFolder} />
+        )}
+      </div>
+      <div className={'flex-1 truncate'}>{file.name}</div>
+      {file.isFile && (
+        <div className={'mr-4 hidden w-1/6 text-right sm:block'}>
+          {bytesToString(file.size)}
+        </div>
+      )}
+      <div
+        className={'mr-4 hidden w-1/5 text-right md:block'}
+        title={file.modifiedAt.toString()}
+      >
+        {Math.abs(differenceInHours(file.modifiedAt, new Date())) > 48
+          ? format(file.modifiedAt, 'MMM do, yyyy h:mma')
+          : formatDistanceToNow(file.modifiedAt, { addSuffix: true })}
+      </div>
+    </Clickable>
+    <FileDropdownMenu file={file} />
+  </div>
 );
 
 export default memo(FileObjectRow, (prevProps, nextProps) => {
-    const { isArchiveType: _prevIsArchive, isEditable: _prevIsEditable, ...prevFile } = prevProps.file;
-    const { isArchiveType: _nextIsArchive, isEditable: _nextIsEditable, ...nextFile } = nextProps.file;
+  const {
+    isArchiveType: _prevIsArchive,
+    isEditable: _prevIsEditable,
+    ...prevFile
+  } = prevProps.file;
+  const {
+    isArchiveType: _nextIsArchive,
+    isEditable: _nextIsEditable,
+    ...nextFile
+  } = nextProps.file;
 
-    return isEqual(prevFile, nextFile);
+  return isEqual(prevFile, nextFile);
 });

@@ -6,7 +6,10 @@ export type Identifier<P extends string = string> = `${P}_${string}`;
 export interface Model {}
 
 interface ModelWithRelationships extends Model {
-    relationships: Record<string, FractalResponseData | FractalResponseList | undefined>;
+  relationships: Record<
+    string,
+    FractalResponseData | FractalResponseList | undefined
+  >;
 }
 
 /**
@@ -19,8 +22,11 @@ interface ModelWithRelationships extends Model {
  *  >> const user: WithLoaded<User, 'servers'> = {};
  *  >> // "user.servers" is no longer potentially undefined.
  */
-type WithLoaded<M extends ModelWithRelationships, R extends keyof M['relationships']> = M & {
-    relationships: MarkRequired<M['relationships'], R>;
+type WithLoaded<
+  M extends ModelWithRelationships,
+  R extends keyof M['relationships'],
+> = M & {
+  relationships: MarkRequired<M['relationships'], R>;
 };
 
 /**
@@ -29,4 +35,5 @@ type WithLoaded<M extends ModelWithRelationships, R extends keyof M['relationshi
  *
  * type Egg = InferModel<typeof getEgg>;
  */
-export type InferModel<T extends (...args: any) => any> = ReturnType<T> extends Promise<infer U> ? U : T;
+export type InferModel<T extends (...args: any) => any> =
+  ReturnType<T> extends Promise<infer U> ? U : T;

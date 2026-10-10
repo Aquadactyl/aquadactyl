@@ -29,11 +29,11 @@ Aquadactyl's own components and the ones offered in Blueprint UI can look nearly
 import { UiBadge } from '@blueprint/ui';
 
 export default () => {
-    return (
-        <>
-            <UiBadge>Hello, world!</UiBadge>
-        </>
-    );
+  return (
+    <>
+      <UiBadge>Hello, world!</UiBadge>
+    </>
+  );
 };
 ```
 

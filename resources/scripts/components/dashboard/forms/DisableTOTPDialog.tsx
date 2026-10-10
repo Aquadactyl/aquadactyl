@@ -11,62 +11,69 @@ import FlashMessageRender from '@/components/FlashMessageRender';
 import Label from '@/components/elements/Label';
 
 const DisableTOTPDialog = () => {
-    const [submitting, setSubmitting] = useState(false);
-    const [password, setPassword] = useState('');
-    const { clearAndAddHttpError } = useFlashKey('account:two-step');
-    const { close, setProps } = useContext(DialogWrapperContext);
-    const updateUserData = useAppStore((state) => state.user.updateUserData);
+  const [submitting, setSubmitting] = useState(false);
+  const [password, setPassword] = useState('');
+  const { clearAndAddHttpError } = useFlashKey('account:two-step');
+  const { close, setProps } = useContext(DialogWrapperContext);
+  const updateUserData = useAppStore((state) => state.user.updateUserData);
 
-    useEffect(() => {
-        setProps((state) => ({ ...state, preventExternalClose: submitting }));
-    }, [submitting]);
+  useEffect(() => {
+    setProps((state) => ({ ...state, preventExternalClose: submitting }));
+  }, [submitting]);
 
-    const submit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
+  const submit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
 
-        if (submitting) return;
+    if (submitting) return;
 
-        setSubmitting(true);
-        clearAndAddHttpError();
-        disableAccountTwoFactor(password)
-            .then(() => {
-                updateUserData({ useTotp: false });
-                close();
-            })
-            .catch(clearAndAddHttpError)
-            .then(() => setSubmitting(false));
-    };
+    setSubmitting(true);
+    clearAndAddHttpError();
+    disableAccountTwoFactor(password)
+      .then(() => {
+        updateUserData({ useTotp: false });
+        close();
+      })
+      .catch(clearAndAddHttpError)
+      .then(() => setSubmitting(false));
+  };
 
-    return (
-        <form id={'disable-totp-form'} className={'mt-6'} onSubmit={submit}>
-            <FlashMessageRender byKey={'account:two-step'} className={'-mt-2 mb-6'} />
-            <Label htmlFor={'totp-password'}>Password</Label>
-            <Input.Text
-                id={'totp-password'}
-                type={'password'}
-                autoComplete={'current-password'}
-                variant={Input.Text.Variants.Loose}
-                value={password}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.currentTarget.value)}
-            />
-            <Dialog.Footer>
-                <Button.Text onClick={close}>Cancel</Button.Text>
-                <Tooltip
-                    delay={100}
-                    disabled={password.length > 0}
-                    content={'You must enter your account password to continue.'}
-                >
-                    <Button.Danger type={'submit'} form={'disable-totp-form'} disabled={submitting || !password.length}>
-                        Disable
-                    </Button.Danger>
-                </Tooltip>
-            </Dialog.Footer>
-        </form>
-    );
+  return (
+    <form id={'disable-totp-form'} className={'mt-6'} onSubmit={submit}>
+      <FlashMessageRender byKey={'account:two-step'} className={'-mt-2 mb-6'} />
+      <Label htmlFor={'totp-password'}>Password</Label>
+      <Input.Text
+        id={'totp-password'}
+        type={'password'}
+        autoComplete={'current-password'}
+        variant={Input.Text.Variants.Loose}
+        value={password}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPassword(e.currentTarget.value)
+        }
+      />
+      <Dialog.Footer>
+        <Button.Text onClick={close}>Cancel</Button.Text>
+        <Tooltip
+          delay={100}
+          disabled={password.length > 0}
+          content={'You must enter your account password to continue.'}
+        >
+          <Button.Danger
+            type={'submit'}
+            form={'disable-totp-form'}
+            disabled={submitting || !password.length}
+          >
+            Disable
+          </Button.Danger>
+        </Tooltip>
+      </Dialog.Footer>
+    </form>
+  );
 };
 
 export default asDialog({
-    title: 'Disable Two-Step Verification',
-    description: 'Disabling two-step verification will make your account less secure.',
+  title: 'Disable Two-Step Verification',
+  description:
+    'Disabling two-step verification will make your account less secure.',
 })(DisableTOTPDialog);

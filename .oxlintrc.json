@@ -1,66 +1,66 @@
 {
-    "$schema": "./node_modules/oxlint/configuration_schema.json",
-    "plugins": ["react", "typescript", "oxc", "jest"],
-    "env": {
-        "browser": true,
-        "es6": true
-    },
-    "settings": {
-        "react": {
-            "linkComponents": [
-                { "name": "Link", "attribute": "to" },
-                { "name": "NavLink", "attribute": "to" }
-            ]
-        }
-    },
-    "ignorePatterns": [
-        "public/**",
-        "node_modules/**",
-        "vendor/**",
-        "storage/**",
-        "resources/views/**",
-        "scripts/**",
-        "tailwind.config.ts",
-        "postcss.config.ts",
-        "vite.config.ts"
-    ],
-    "rules": {
-        "eqeqeq": "error",
-        "react/display-name": "off",
-        "react/exhaustive-deps": "off",
-        "react/set-state-in-effect": "off",
-        "react/purity": "off",
-        "react/refs": "off",
-        "react/use-memo": "off",
-        "react/no-did-update-set-state": "off",
-        "typescript/no-explicit-any": "off",
-        "typescript/no-non-null-assertion": "off",
-        "no-use-before-define": "off",
-        "no-unused-expressions": [
-            "warn",
-            {
-                "allowShortCircuit": true,
-                "allowTernary": true
-            }
-        ],
-        "no-unused-vars": [
-            "warn",
-            {
-                "argsIgnorePattern": "^_",
-                "varsIgnorePattern": "^_"
-            }
-        ],
-        "typescript/ban-ts-comment": [
-            "error",
-            {
-                "ts-expect-error": "allow-with-description"
-            }
-        ],
-        "react/no-unknown-property": [
-            "error",
-            {
-                "ignore": ["css"]
-            }
-        ]
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc", "jest"],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "settings": {
+    "react": {
+      "linkComponents": [
+        { "name": "Link", "attribute": "to" },
+        { "name": "NavLink", "attribute": "to" }
+      ]
     }
+  },
+  "ignorePatterns": [
+    "public/**",
+    "node_modules/**",
+    "vendor/**",
+    "storage/**",
+    "resources/views/**",
+    "scripts/**",
+    "tailwind.config.ts",
+    "postcss.config.ts",
+    "vite.config.ts"
+  ],
+  "rules": {
+    "eqeqeq": "error",
+    "react/display-name": "off",
+    "react/exhaustive-deps": "off",
+    "react/set-state-in-effect": "off",
+    "react/purity": "off",
+    "react/refs": "off",
+    "react/use-memo": "off",
+    "react/no-did-update-set-state": "off",
+    "typescript/no-explicit-any": "off",
+    "typescript/no-non-null-assertion": "off",
+    "no-use-before-define": "off",
+    "no-unused-expressions": [
+      "warn",
+      {
+        "allowShortCircuit": true,
+        "allowTernary": true
+      }
+    ],
+    "no-unused-vars": [
+      "warn",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_"
+      }
+    ],
+    "typescript/ban-ts-comment": [
+      "error",
+      {
+        "ts-expect-error": "allow-with-description"
+      }
+    ],
+    "react/no-unknown-property": [
+      "error",
+      {
+        "ignore": ["css"]
+      }
+    ]
+  }
 }

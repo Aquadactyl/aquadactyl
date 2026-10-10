@@ -8,32 +8,37 @@ import useActivityLogFilters from '@/components/elements/activity/useActivityLog
 import { ServerContext } from '@/state/server';
 
 export default () => {
-    const controls = useActivityLogFilters();
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { clearAndAddHttpError } = useFlashKey('server:activity');
-    const { data, isValidating, error, mutate } = useActivityLogs(controls.filters, {
-        revalidateOnMount: true,
-        revalidateOnFocus: false,
-    });
+  const controls = useActivityLogFilters();
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const { clearAndAddHttpError } = useFlashKey('server:activity');
+  const { data, isValidating, error, mutate } = useActivityLogs(
+    controls.filters,
+    {
+      revalidateOnMount: true,
+      revalidateOnFocus: false,
+    },
+  );
 
-    useEffect(() => {
-        clearAndAddHttpError(error);
-    }, [error]);
+  useEffect(() => {
+    clearAndAddHttpError(error);
+  }, [error]);
 
-    return (
-        <ServerContentBlock title={'Activity'}>
-            <FlashMessageRender byKey={'server:activity'} />
-            <ActivityLogList
-                key={uuid}
-                title={'Server activity'}
-                description={'Keep track of changes, file access, and other actions on this server.'}
-                scope={'Your server'}
-                data={data}
-                isValidating={isValidating}
-                hasError={Boolean(error)}
-                controls={controls}
-                onRefresh={() => mutate()}
-            />
-        </ServerContentBlock>
-    );
+  return (
+    <ServerContentBlock title={'Activity'}>
+      <FlashMessageRender byKey={'server:activity'} />
+      <ActivityLogList
+        key={uuid}
+        title={'Server activity'}
+        description={
+          'Keep track of changes, file access, and other actions on this server.'
+        }
+        scope={'Your server'}
+        data={data}
+        isValidating={isValidating}
+        hasError={Boolean(error)}
+        controls={controls}
+        onRefresh={() => mutate()}
+      />
+    </ServerContentBlock>
+  );
 };

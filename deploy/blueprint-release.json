@@ -1,8 +1,8 @@
 {
-    "repository": "BlueprintFramework/framework",
-    "version": "beta-2026-08",
-    "panel_base": "v1.15.1",
-    "asset": "release.zip",
-    "sha256": "38bcee33b19abcbb3460578236ead74668ec39a7861200bbc6902a9152ac118d",
-    "source": "https://github.com/BlueprintFramework/framework/releases/tag/beta-2026-08"
+  "repository": "BlueprintFramework/framework",
+  "version": "beta-2026-08",
+  "panel_base": "v1.15.1",
+  "asset": "release.zip",
+  "sha256": "38bcee33b19abcbb3460578236ead74668ec39a7861200bbc6902a9152ac118d",
+  "source": "https://github.com/BlueprintFramework/framework/releases/tag/beta-2026-08"
 }

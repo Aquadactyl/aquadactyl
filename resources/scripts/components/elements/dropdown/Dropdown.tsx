@@ -6,59 +6,66 @@ import DropdownItem from '@/components/elements/dropdown/DropdownItem';
 import DropdownButton from '@/components/elements/dropdown/DropdownButton';
 
 interface Props {
-    as?: ElementType;
-    children: React.ReactNode;
+  as?: ElementType;
+  children: React.ReactNode;
 }
 
 const DropdownGap = ({ invisible }: { invisible?: boolean }) => (
-    <div className={classNames('m-2 border', { 'border-neutral-700': !invisible, 'border-transparent': invisible })} />
+  <div
+    className={classNames('m-2 border', {
+      'border-neutral-700': !invisible,
+      'border-transparent': invisible,
+    })}
+  />
 );
 
 type TypedChild = React.ReactNode & {
-    type?: unknown;
+  type?: unknown;
 };
 
 const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {
-    const [Button, items] = useMemo(() => {
-        const list = React.Children.toArray(children) as unknown as TypedChild[];
+  const [Button, items] = useMemo(() => {
+    const list = React.Children.toArray(children) as unknown as TypedChild[];
 
-        return [
-            list.filter((child) => child.type === DropdownButton),
-            list.filter((child) => child.type !== DropdownButton),
-        ];
-    }, [children]);
+    return [
+      list.filter((child) => child.type === DropdownButton),
+      list.filter((child) => child.type !== DropdownButton),
+    ];
+  }, [children]);
 
-    if (!Button) {
-        throw new Error('Cannot mount <Dropdown /> component without a child <Dropdown.Button />.');
-    }
-
-    return (
-        <Menu as={as || 'div'} className={styles.menu} ref={ref}>
-            {Button}
-            <Transition
-                enter={'transition duration-100 ease-out'}
-                enterFrom={'transition scale-95 opacity-0'}
-                enterTo={'transform scale-100 opacity-100'}
-                leave={'transition duration-75 ease-out'}
-                leaveFrom={'transform scale-100 opacity-100'}
-                leaveTo={'transform scale-95 opacity-0'}
-            >
-                <Menu.Items className={classNames(styles.items_container, 'w-56')}>
-                    <div className={'px-1 py-1'}>{items}</div>
-                </Menu.Items>
-            </Transition>
-        </Menu>
+  if (!Button) {
+    throw new Error(
+      'Cannot mount <Dropdown /> component without a child <Dropdown.Button />.',
     );
+  }
+
+  return (
+    <Menu as={as || 'div'} className={styles.menu} ref={ref}>
+      {Button}
+      <Transition
+        enter={'transition duration-100 ease-out'}
+        enterFrom={'transition scale-95 opacity-0'}
+        enterTo={'transform scale-100 opacity-100'}
+        leave={'transition duration-75 ease-out'}
+        leaveFrom={'transform scale-100 opacity-100'}
+        leaveTo={'transform scale-95 opacity-0'}
+      >
+        <Menu.Items className={classNames(styles.items_container, 'w-56')}>
+          <div className={'px-1 py-1'}>{items}</div>
+        </Menu.Items>
+      </Transition>
+    </Menu>
+  );
 });
 
 const _Dropdown: typeof Dropdown & {
-    Button: typeof DropdownButton;
-    Item: typeof DropdownItem;
-    Gap: typeof DropdownGap;
+  Button: typeof DropdownButton;
+  Item: typeof DropdownItem;
+  Gap: typeof DropdownGap;
 } = Object.assign(Dropdown, {
-    Button: DropdownButton,
-    Item: DropdownItem,
-    Gap: DropdownGap,
+  Button: DropdownButton,
+  Item: DropdownItem,
+  Gap: DropdownGap,
 });
 
 export { _Dropdown as default };

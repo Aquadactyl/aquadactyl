@@ -44,24 +44,26 @@ import Field from '@/components/elements/Field';
 import Button from '@/components/elements/Button';
 
 export default function ExtensionSettings() {
-    return (
-        <Formik
-            initialValues={{ label: '' }}
-            validationSchema={object({ label: string().trim().max(80).required('Enter a label.') })}
-            onSubmit={async (values) => {
-                await http.put('/api/client/extensions/myextension/settings', values);
-            }}
-        >
-            {({ isSubmitting }) => (
-                <Form>
-                    <Field type='text' name='label' label='Label' />
-                    <Button type='submit' disabled={isSubmitting}>
-                        <Settings size={16} aria-hidden /> Save
-                    </Button>
-                </Form>
-            )}
-        </Formik>
-    );
+  return (
+    <Formik
+      initialValues={{ label: '' }}
+      validationSchema={object({
+        label: string().trim().max(80).required('Enter a label.'),
+      })}
+      onSubmit={async (values) => {
+        await http.put('/api/client/extensions/myextension/settings', values);
+      }}
+    >
+      {({ isSubmitting }) => (
+        <Form>
+          <Field type='text' name='label' label='Label' />
+          <Button type='submit' disabled={isSubmitting}>
+            <Settings size={16} aria-hidden /> Save
+          </Button>
+        </Form>
+      )}
+    </Formik>
+  );
 }
 ```
 

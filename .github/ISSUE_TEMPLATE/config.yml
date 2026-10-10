@@ -1,8 +1,8 @@
 blank_issues_enabled: true
 contact_links:
-    - name: Features, Help, or Questions
-      url: https://github.com/Aquadactyl/aquadactyl/issues
-      about: Ask Aquadactyl questions or request features from this fork's maintainers.
-    - name: Aquadactyl documentation
-      url: https://aquadactyl.uk/docs
-      about: Installation, updates, Blueprint extensions and development guides.
+  - name: Features, Help, or Questions
+    url: https://github.com/Aquadactyl/aquadactyl/issues
+    about: Ask Aquadactyl questions or request features from this fork's maintainers.
+  - name: Aquadactyl documentation
+    url: https://aquadactyl.uk/docs
+    about: Installation, updates, Blueprint extensions and development guides.

@@ -1,1 +1,5 @@
-export { default, getDirectoryQueryKey, getDirectorySwrKey } from './useFileManagerQuery';
+export {
+  default,
+  getDirectoryQueryKey,
+  getDirectorySwrKey,
+} from './useFileManagerQuery';

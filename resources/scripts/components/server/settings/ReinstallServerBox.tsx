@@ -8,69 +8,79 @@ import { Button } from '@/components/elements/button/index';
 import { Dialog } from '@/components/elements/dialog';
 
 export default () => {
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const skipScripts = ServerContext.useStoreState((state) => state.server.data!.skipScripts);
-    const [modalVisible, setModalVisible] = useState(false);
-    const { addFlash, clearFlashes } = useFlash();
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const skipScripts = ServerContext.useStoreState(
+    (state) => state.server.data!.skipScripts,
+  );
+  const [modalVisible, setModalVisible] = useState(false);
+  const { addFlash, clearFlashes } = useFlash();
 
-    const reinstall = () => {
-        clearFlashes('settings');
-        reinstallServer(uuid)
-            .then(() => {
-                addFlash({
-                    key: 'settings',
-                    type: 'success',
-                    message: 'Your server has begun the reinstallation process.',
-                });
-            })
-            .catch((error) => {
-                console.error(error);
+  const reinstall = () => {
+    clearFlashes('settings');
+    reinstallServer(uuid)
+      .then(() => {
+        addFlash({
+          key: 'settings',
+          type: 'success',
+          message: 'Your server has begun the reinstallation process.',
+        });
+      })
+      .catch((error) => {
+        console.error(error);
 
-                addFlash({ key: 'settings', type: 'error', message: httpErrorToHuman(error) });
-            })
-            .then(() => setModalVisible(false));
-    };
+        addFlash({
+          key: 'settings',
+          type: 'error',
+          message: httpErrorToHuman(error),
+        });
+      })
+      .then(() => setModalVisible(false));
+  };
 
-    useEffect(() => {
-        clearFlashes();
-    }, []);
+  useEffect(() => {
+    clearFlashes();
+  }, []);
 
-    if (skipScripts) {
-        return (
-            <TitledGreyBox title={'Reinstall Server'}>
-                <p className={'text-sm'}>
-                    Reinstalling this server has been disabled because it is configured to skip its egg&apos;s install
-                    script. If you would like to reinstall this server, contact a server administrator.
-                </p>
-            </TitledGreyBox>
-        );
-    }
-
+  if (skipScripts) {
     return (
-        <TitledGreyBox title={'Reinstall Server'} className={'relative'}>
-            <Dialog.Confirm
-                open={modalVisible}
-                title={'Confirm server reinstallation'}
-                confirm={'Yes, reinstall server'}
-                onClose={() => setModalVisible(false)}
-                onConfirmed={reinstall}
-            >
-                Your server will be stopped and some files may be deleted or modified during this process, are you sure
-                you wish to continue?
-            </Dialog.Confirm>
-            <p className={'text-sm'}>
-                Reinstalling your server will stop it, and then re-run the installation script that initially set it
-                up.&nbsp;
-                <strong className={'font-medium'}>
-                    Some files may be deleted or modified during this process, please back up your data before
-                    continuing.
-                </strong>
-            </p>
-            <div className={'mt-6 text-right'}>
-                <Button.Danger variant={Button.Variants.Secondary} onClick={() => setModalVisible(true)}>
-                    Reinstall Server
-                </Button.Danger>
-            </div>
-        </TitledGreyBox>
+      <TitledGreyBox title={'Reinstall Server'}>
+        <p className={'text-sm'}>
+          Reinstalling this server has been disabled because it is configured to
+          skip its egg&apos;s install script. If you would like to reinstall
+          this server, contact a server administrator.
+        </p>
+      </TitledGreyBox>
     );
+  }
+
+  return (
+    <TitledGreyBox title={'Reinstall Server'} className={'relative'}>
+      <Dialog.Confirm
+        open={modalVisible}
+        title={'Confirm server reinstallation'}
+        confirm={'Yes, reinstall server'}
+        onClose={() => setModalVisible(false)}
+        onConfirmed={reinstall}
+      >
+        Your server will be stopped and some files may be deleted or modified
+        during this process, are you sure you wish to continue?
+      </Dialog.Confirm>
+      <p className={'text-sm'}>
+        Reinstalling your server will stop it, and then re-run the installation
+        script that initially set it up.&nbsp;
+        <strong className={'font-medium'}>
+          Some files may be deleted or modified during this process, please back
+          up your data before continuing.
+        </strong>
+      </p>
+      <div className={'mt-6 text-right'}>
+        <Button.Danger
+          variant={Button.Variants.Secondary}
+          onClick={() => setModalVisible(true)}
+        >
+          Reinstall Server
+        </Button.Danger>
+      </div>
+    </TitledGreyBox>
+  );
 };

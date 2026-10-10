@@ -7,68 +7,83 @@ import useFlash from '@/plugins/useFlash';
 import { SocketEvent } from '@/components/server/events';
 
 const HytaleOauthRequireFeature = () => {
-    const [visible, setVisible] = useState(false);
-    const [link, setLink] = useState('');
+  const [visible, setVisible] = useState(false);
+  const [link, setLink] = useState('');
 
-    const status = ServerContext.useStoreState((state) => state.status.value);
-    const { clearFlashes } = useFlash();
-    const { connected, instance } = ServerContext.useStoreState((state) => state.socket);
+  const status = ServerContext.useStoreState((state) => state.status.value);
+  const { clearFlashes } = useFlash();
+  const { connected, instance } = ServerContext.useStoreState(
+    (state) => state.socket,
+  );
 
-    useEffect(() => {
-        if (!connected || !instance || status === 'running') return;
+  useEffect(() => {
+    if (!connected || !instance || status === 'running') return;
 
-        const listener = (line: string) => {
-            if (line.match(/https:\/\/oauth\.accounts\.hytale\.com\/oauth2\/device\/verify\?user_code=(.*)/i)) {
-                setLink(line);
-                setVisible(true);
-            }
-        };
-
-        instance.addListener(SocketEvent.CONSOLE_OUTPUT, listener);
-
-        return () => {
-            instance.removeListener(SocketEvent.CONSOLE_OUTPUT, listener);
-        };
-    }, [connected, instance, status]);
-
-    useEffect(() => {
-        clearFlashes('feature:hytaleOauth');
-    }, []);
-
-    const handleLogin = () => {
-        if (link) {
-            window.open(link, '_blank', 'noopener,noreferrer');
-            setVisible(false);
-            setLink('');
-        }
+    const listener = (line: string) => {
+      if (
+        line.match(
+          /https:\/\/oauth\.accounts\.hytale\.com\/oauth2\/device\/verify\?user_code=(.*)/i,
+        )
+      ) {
+        setLink(line);
+        setVisible(true);
+      }
     };
 
-    return (
-        <Modal
-            visible={visible}
-            onDismissed={() => {
-                setVisible(false);
-                setLink('');
-            }}
-            closeOnBackground={false}
-            showSpinnerOverlay={false}
+    instance.addListener(SocketEvent.CONSOLE_OUTPUT, listener);
+
+    return () => {
+      instance.removeListener(SocketEvent.CONSOLE_OUTPUT, listener);
+    };
+  }, [connected, instance, status]);
+
+  useEffect(() => {
+    clearFlashes('feature:hytaleOauth');
+  }, []);
+
+  const handleLogin = () => {
+    if (link) {
+      window.open(link, '_blank', 'noopener,noreferrer');
+      setVisible(false);
+      setLink('');
+    }
+  };
+
+  return (
+    <Modal
+      visible={visible}
+      onDismissed={() => {
+        setVisible(false);
+        setLink('');
+      }}
+      closeOnBackground={false}
+      showSpinnerOverlay={false}
+    >
+      <FlashMessageRender key={'feature:hytaleOauth'} className={'mb-4'} />
+      <h2 className={'mb-4 text-2xl text-neutral-100'}>
+        Authentication Required
+      </h2>
+      <p className={'text-neutral-200'}>
+        You need to authenticate with your Hytale account to download or update
+        server files. Please log in to continue.
+      </p>
+      <div className={'mt-8 items-center justify-end sm:flex'}>
+        <Button
+          isSecondary
+          onClick={() => setVisible(false)}
+          className={'w-full border-transparent sm:w-auto'}
         >
-            <FlashMessageRender key={'feature:hytaleOauth'} className={'mb-4'} />
-            <h2 className={'mb-4 text-2xl text-neutral-100'}>Authentication Required</h2>
-            <p className={'text-neutral-200'}>
-                You need to authenticate with your Hytale account to download or update server files. Please log in to
-                continue.
-            </p>
-            <div className={'mt-8 items-center justify-end sm:flex'}>
-                <Button isSecondary onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
-                    Cancel
-                </Button>
-                <Button onClick={handleLogin} className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}>
-                    Log in
-                </Button>
-            </div>
-        </Modal>
-    );
+          Cancel
+        </Button>
+        <Button
+          onClick={handleLogin}
+          className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}
+        >
+          Log in
+        </Button>
+      </div>
+    </Modal>
+  );
 };
 
 export default HytaleOauthRequireFeature;

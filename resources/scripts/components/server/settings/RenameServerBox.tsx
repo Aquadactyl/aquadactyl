@@ -1,7 +1,13 @@
 import React from 'react';
 import { ServerContext } from '@/state/server';
 import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import { Field as FormikField, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
+import {
+  Field as FormikField,
+  Form,
+  Formik,
+  FormikHelpers,
+  useFormikContext,
+} from 'formik';
 import useFlash from '@/plugins/useFlash';
 import renameServer from '@/api/server/renameServer';
 import Field from '@/components/elements/Field';
@@ -14,61 +20,66 @@ import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
 import { Textarea } from '@/components/elements/Input';
 
 interface Values {
-    name: string;
-    description: string;
+  name: string;
+  description: string;
 }
 
 const RenameServerBox = () => {
-    const { isSubmitting } = useFormikContext<Values>();
+  const { isSubmitting } = useFormikContext<Values>();
 
-    return (
-        <TitledGreyBox title={'Change Server Details'} className={'relative'}>
-            <SpinnerOverlay visible={isSubmitting} />
-            <Form className={'mb-0'}>
-                <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
-                <div className={'mt-6'}>
-                    <Label>Server Description</Label>
-                    <FormikFieldWrapper name={'description'}>
-                        <FormikField as={Textarea} name={'description'} rows={3} />
-                    </FormikFieldWrapper>
-                </div>
-                <div className={'mt-6 text-right'}>
-                    <Button type={'submit'}>Save</Button>
-                </div>
-            </Form>
-        </TitledGreyBox>
-    );
+  return (
+    <TitledGreyBox title={'Change Server Details'} className={'relative'}>
+      <SpinnerOverlay visible={isSubmitting} />
+      <Form className={'mb-0'}>
+        <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
+        <div className={'mt-6'}>
+          <Label>Server Description</Label>
+          <FormikFieldWrapper name={'description'}>
+            <FormikField as={Textarea} name={'description'} rows={3} />
+          </FormikFieldWrapper>
+        </div>
+        <div className={'mt-6 text-right'}>
+          <Button type={'submit'}>Save</Button>
+        </div>
+      </Form>
+    </TitledGreyBox>
+  );
 };
 
 export default () => {
-    const server = ServerContext.useStoreState((state) => state.server.data!);
-    const setServer = ServerContext.useStoreActions((actions) => actions.server.setServer);
-    const { addError, clearFlashes } = useFlash();
+  const server = ServerContext.useStoreState((state) => state.server.data!);
+  const setServer = ServerContext.useStoreActions(
+    (actions) => actions.server.setServer,
+  );
+  const { addError, clearFlashes } = useFlash();
 
-    const submit = ({ name, description }: Values, { setSubmitting }: FormikHelpers<Values>) => {
-        clearFlashes('settings');
-        renameServer(server.uuid, name, description)
-            .then(() => setServer({ ...server, name, description }))
-            .catch((error) => {
-                console.error(error);
-                addError({ key: 'settings', message: httpErrorToHuman(error) });
-            })
-            .then(() => setSubmitting(false));
-    };
+  const submit = (
+    { name, description }: Values,
+    { setSubmitting }: FormikHelpers<Values>,
+  ) => {
+    clearFlashes('settings');
+    renameServer(server.uuid, name, description)
+      .then(() => setServer({ ...server, name, description }))
+      .catch((error) => {
+        console.error(error);
+        addError({ key: 'settings', message: httpErrorToHuman(error) });
+      })
+      .then(() => setSubmitting(false));
+  };
 
-    return (
-        <Formik
-            onSubmit={submit}
-            initialValues={{
-                name: server.name,
-                description: server.description,
-            }}
-            validationSchema={object().shape({
-                name: string().required().min(1),
-                description: string().nullable(),
-            })}
-        >
-            <RenameServerBox />
-        </Formik>
-    );
+  return (
+    <Formik
+      onSubmit={submit}
+      initialValues={{
+        name: server.name,
+        description: server.description,
+      }}
+      validationSchema={object().shape({
+        name: string().required().min(1),
+        description: string().nullable(),
+      })}
+    >
+      <RenameServerBox />
+    </Formik>
+  );
 };

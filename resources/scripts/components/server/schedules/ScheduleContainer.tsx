@@ -17,75 +17,85 @@ import BeforeContent from '@blueprint/components/Server/Schedules/List/BeforeCon
 import AfterContent from '@blueprint/components/Server/Schedules/List/AfterContent';
 
 export default () => {
-    const navigate = useNavigate();
-    const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { clearFlashes, addError } = useFlash();
-    const [loading, setLoading] = useState(true);
-    const [visible, setVisible] = useState(false);
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const { clearFlashes, addError } = useFlash();
+  const [loading, setLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
 
-    const schedules = ServerContext.useStoreState((state) => state.schedules.data);
-    const setSchedules = ServerContext.useStoreActions((actions) => actions.schedules.setSchedules);
+  const schedules = ServerContext.useStoreState(
+    (state) => state.schedules.data,
+  );
+  const setSchedules = ServerContext.useStoreActions(
+    (actions) => actions.schedules.setSchedules,
+  );
 
-    useEffect(() => {
-        clearFlashes('schedules');
-        getServerSchedules(uuid)
-            .then((schedules) => setSchedules(schedules))
-            .catch((error) => {
-                addError({ message: httpErrorToHuman(error), key: 'schedules' });
-                console.error(error);
-            })
-            .then(() => setLoading(false));
-    }, []);
+  useEffect(() => {
+    clearFlashes('schedules');
+    getServerSchedules(uuid)
+      .then((schedules) => setSchedules(schedules))
+      .catch((error) => {
+        addError({
+          message: httpErrorToHuman(error),
+          key: 'schedules',
+        });
+        console.error(error);
+      })
+      .then(() => setLoading(false));
+  }, []);
 
-    return (
-        <ServerContentBlock title={'Schedules'}>
-            <FlashMessageRender byKey={'schedules'} className={'mb-4'} />
-            {!schedules.length && loading ? (
-                <Spinner size={'large'} centered />
-            ) : (
-                <>
-                    <BeforeContent />
-                    <p className={'mb-6 text-sm text-neutral-300'}>
-                        Automate restarts, backups, and console commands. Choose when to run, then add the steps to
-                        follow.
-                    </p>
-                    {schedules.length === 0 ? (
-                        <p className={'text-center text-sm text-neutral-300'}>
-                            No schedules yet. Create one to automate a daily restart or a regular backup.
-                        </p>
-                    ) : (
-                        schedules.map((schedule) => (
-                            <GreyRowBox
-                                as={'a'}
-                                key={schedule.id}
-                                href={`${location.pathname}/${schedule.id}`}
-                                className={'mb-2 cursor-pointer flex-wrap'}
-                                onClick={(e: any) => {
-                                    e.preventDefault();
-                                    navigate(`${location.pathname}/${schedule.id}`);
-                                }}
-                            >
-                                <ScheduleRow schedule={schedule} />
-                            </GreyRowBox>
-                        ))
-                    )}
-                    <Can action={'schedule.create'}>
-                        <div className={'mt-8 flex justify-end'}>
-                            <EditScheduleModal
-                                visible={visible}
-                                onModalDismissed={() => setVisible(false)}
-                                onCreated={(schedule) => navigate(`${location.pathname}/${schedule.id}`)}
-                            />
-                            <Button type={'button'} onClick={() => setVisible(true)}>
-                                Create schedule
-                            </Button>
-                        </div>
-                    </Can>
-                    <AfterContent />
-                </>
-            )}
-        </ServerContentBlock>
-    );
+  return (
+    <ServerContentBlock title={'Schedules'}>
+      <FlashMessageRender byKey={'schedules'} className={'mb-4'} />
+      {!schedules.length && loading ? (
+        <Spinner size={'large'} centered />
+      ) : (
+        <>
+          <BeforeContent />
+          <p className={'mb-6 text-sm text-neutral-300'}>
+            Automate restarts, backups, and console commands. Choose when to
+            run, then add the steps to follow.
+          </p>
+          {schedules.length === 0 ? (
+            <p className={'text-center text-sm text-neutral-300'}>
+              No schedules yet. Create one to automate a daily restart or a
+              regular backup.
+            </p>
+          ) : (
+            schedules.map((schedule) => (
+              <GreyRowBox
+                as={'a'}
+                key={schedule.id}
+                href={`${location.pathname}/${schedule.id}`}
+                className={'mb-2 cursor-pointer flex-wrap'}
+                onClick={(e: any) => {
+                  e.preventDefault();
+                  navigate(`${location.pathname}/${schedule.id}`);
+                }}
+              >
+                <ScheduleRow schedule={schedule} />
+              </GreyRowBox>
+            ))
+          )}
+          <Can action={'schedule.create'}>
+            <div className={'mt-8 flex justify-end'}>
+              <EditScheduleModal
+                visible={visible}
+                onModalDismissed={() => setVisible(false)}
+                onCreated={(schedule) =>
+                  navigate(`${location.pathname}/${schedule.id}`)
+                }
+              />
+              <Button type={'button'} onClick={() => setVisible(true)}>
+                Create schedule
+              </Button>
+            </div>
+          </Can>
+          <AfterContent />
+        </>
+      )}
+    </ServerContentBlock>
+  );
 };

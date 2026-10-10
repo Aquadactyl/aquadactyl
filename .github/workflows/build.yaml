@@ -1,38 +1,38 @@
 name: Build
 
 on:
-    pull_request:
-        branches:
-            - 'main'
-            - '1.0-develop'
+  pull_request:
+    branches:
+      - 'main'
+      - '1.0-develop'
 
 jobs:
-    ui:
-        name: UI
-        runs-on: ubuntu-24.04
-        permissions:
-            contents: read
-        strategy:
-            fail-fast: false
-            matrix:
-                node-version: [22, 24]
-        steps:
-            - name: Code Checkout
-              uses: actions/checkout@v4
+  ui:
+    name: UI
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
 
-            - uses: pnpm/action-setup@v6
+      - uses: pnpm/action-setup@v6
 
-            - name: Setup Node
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ matrix.node-version }}
-                  cache: pnpm
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
 
-            - name: Install dependencies
-              run: pnpm install --frozen-lockfile
-            - run: pnpm audit --prod
-            - run: pnpm run types
-            - run: pnpm run lint
-            - run: pnpm run test
-            - run: node --test scripts/game-query.test.cjs
-            - run: pnpm run build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - run: pnpm audit --prod
+      - run: pnpm run types
+      - run: pnpm run lint
+      - run: pnpm run test
+      - run: node --test scripts/game-query.test.cjs
+      - run: pnpm run build

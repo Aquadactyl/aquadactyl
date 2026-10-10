@@ -16,111 +16,136 @@ import { useAppStore } from '@/state';
 import { isSensitiveProperty } from './sensitiveProperties';
 
 interface Props {
-    activity: ActivityLog;
-    children?: React.ReactNode;
+  activity: ActivityLog;
+  children?: React.ReactNode;
 }
 
 function wrapProperties(value: unknown, key = ''): any {
-    if (value === null || typeof value === 'string' || typeof value === 'number') {
-        const content = isSensitiveProperty(key, value) ? `<sensitive>${String(value)}</sensitive>` : String(value);
-        return `<strong>${content}</strong>`;
-    }
+  if (
+    value === null ||
+    typeof value === 'string' ||
+    typeof value === 'number'
+  ) {
+    const content = isSensitiveProperty(key, value)
+      ? `<sensitive>${String(value)}</sensitive>`
+      : String(value);
+    return `<strong>${content}</strong>`;
+  }
 
-    if (isObject(value)) {
-        return getObjectKeys(value).reduce(
-            (obj, key) => {
-                if (key === 'count' || (typeof key === 'string' && key.endsWith('_count'))) {
-                    return { ...obj, [key]: value[key] };
-                }
-                return { ...obj, [key]: wrapProperties(value[key], String(key)) };
-            },
-            {} as Record<string, unknown>,
-        );
-    }
+  if (isObject(value)) {
+    return getObjectKeys(value).reduce(
+      (obj, key) => {
+        if (
+          key === 'count' ||
+          (typeof key === 'string' && key.endsWith('_count'))
+        ) {
+          return { ...obj, [key]: value[key] };
+        }
+        return {
+          ...obj,
+          [key]: wrapProperties(value[key], String(key)),
+        };
+      },
+      {} as Record<string, unknown>,
+    );
+  }
 
-    if (Array.isArray(value)) {
-        return value.map((item) => wrapProperties(item, key));
-    }
+  if (Array.isArray(value)) {
+    return value.map((item) => wrapProperties(item, key));
+  }
 
-    return value;
+  return value;
 }
 
 export default ({ activity, children }: Props) => {
-    const { pathTo } = useLocationHash();
-    const actor = activity.relationships.actor;
-    const properties = wrapProperties(activity.properties);
-    const currentUser = useAppStore((state) => state.user.data);
-    const avatarUrl = actor?.uuid === currentUser?.uuid ? currentUser?.avatarUrl : actor?.avatarUrl;
-    const eventLabel = activityEventLabel(activity.event);
+  const { pathTo } = useLocationHash();
+  const actor = activity.relationships.actor;
+  const properties = wrapProperties(activity.properties);
+  const currentUser = useAppStore((state) => state.user.data);
+  const avatarUrl =
+    actor?.uuid === currentUser?.uuid
+      ? currentUser?.avatarUrl
+      : actor?.avatarUrl;
+  const eventLabel = activityEventLabel(activity.event);
 
-    return (
-        <article className={style.entry}>
-            <div className={style.avatar}>
-                <Avatar
-                    name={actor?.uuid || 'system'}
-                    src={avatarUrl}
-                    alt={`${actor?.username || 'System'}'s profile picture`}
-                    size={40}
-                />
-            </div>
-            <div className={style.content}>
-                <div className={style.header}>
-                    <div className={style.identity}>
-                        <span className={style.username}>{actor?.username || 'System'}</span>
-                        <Link
-                            to={`#${pathTo({ event: undefined, event_exact: activity.event, page: undefined })}`}
-                            className={style.event}
-                            title={activity.event}
-                            aria-label={`Filter by ${eventLabel}`}
-                        >
-                            {eventLabel}
-                        </Link>
-                    </div>
-                    {activity.hasAdditionalMetadata && <ActivityLogMetaButton meta={activity.properties} />}
-                </div>
-                <p className={style.description}>
-                    <Translate
-                        ns={'activity'}
-                        values={properties}
-                        i18nKey={activity.event.replace(':', '.')}
-                        defaults={activity.description || eventLabel}
-                        components={{ sensitive: <SensitiveValue /> }}
-                    />
-                </p>
-                <div className={style.details}>
-                    <Tooltip placement={'top'} content={format(activity.timestamp, 'MMM do, yyyy H:mm:ss')}>
-                        <time dateTime={activity.timestamp.toISOString()} tabIndex={0}>
-                            {formatDistanceToNowStrict(activity.timestamp, { addSuffix: true })}
-                        </time>
-                    </Tooltip>
-                    {activity.ip && (
-                        <Link
-                            to={`#${pathTo({ ip: activity.ip, page: undefined })}`}
-                            className={style.ip}
-                            aria-label={`Filter by IP address ${activity.ip}`}
-                        >
-                            <SensitiveValue>{activity.ip}</SensitiveValue>
-                        </Link>
-                    )}
-                    <div className={style.icons}>
-                        {activity.isApi && (
-                            <Tooltip placement={'top'} content={'Using API Key'}>
-                                <span tabIndex={0} aria-label={'API activity'}>
-                                    <Terminal />
-                                </span>
-                            </Tooltip>
-                        )}
-                        {(activity.event.startsWith('server:sftp.') || activity.event.startsWith('auth:sftp.')) && (
-                            <Tooltip placement={'top'} content={'Using SFTP'}>
-                                <span tabIndex={0} aria-label={'SFTP activity'}>
-                                    <FolderOpen />
-                                </span>
-                            </Tooltip>
-                        )}
-                        {children}
-                    </div>
-                </div>
-            </div>
-        </article>
-    );
+  return (
+    <article className={style.entry}>
+      <div className={style.avatar}>
+        <Avatar
+          name={actor?.uuid || 'system'}
+          src={avatarUrl}
+          alt={`${actor?.username || 'System'}'s profile picture`}
+          size={40}
+        />
+      </div>
+      <div className={style.content}>
+        <div className={style.header}>
+          <div className={style.identity}>
+            <span className={style.username}>
+              {actor?.username || 'System'}
+            </span>
+            <Link
+              to={`#${pathTo({ event: undefined, event_exact: activity.event, page: undefined })}`}
+              className={style.event}
+              title={activity.event}
+              aria-label={`Filter by ${eventLabel}`}
+            >
+              {eventLabel}
+            </Link>
+          </div>
+          {activity.hasAdditionalMetadata && (
+            <ActivityLogMetaButton meta={activity.properties} />
+          )}
+        </div>
+        <p className={style.description}>
+          <Translate
+            ns={'activity'}
+            values={properties}
+            i18nKey={activity.event.replace(':', '.')}
+            defaults={activity.description || eventLabel}
+            components={{ sensitive: <SensitiveValue /> }}
+          />
+        </p>
+        <div className={style.details}>
+          <Tooltip
+            placement={'top'}
+            content={format(activity.timestamp, 'MMM do, yyyy H:mm:ss')}
+          >
+            <time dateTime={activity.timestamp.toISOString()} tabIndex={0}>
+              {formatDistanceToNowStrict(activity.timestamp, {
+                addSuffix: true,
+              })}
+            </time>
+          </Tooltip>
+          {activity.ip && (
+            <Link
+              to={`#${pathTo({ ip: activity.ip, page: undefined })}`}
+              className={style.ip}
+              aria-label={`Filter by IP address ${activity.ip}`}
+            >
+              <SensitiveValue>{activity.ip}</SensitiveValue>
+            </Link>
+          )}
+          <div className={style.icons}>
+            {activity.isApi && (
+              <Tooltip placement={'top'} content={'Using API Key'}>
+                <span tabIndex={0} aria-label={'API activity'}>
+                  <Terminal />
+                </span>
+              </Tooltip>
+            )}
+            {(activity.event.startsWith('server:sftp.') ||
+              activity.event.startsWith('auth:sftp.')) && (
+              <Tooltip placement={'top'} content={'Using SFTP'}>
+                <span tabIndex={0} aria-label={'SFTP activity'}>
+                  <FolderOpen />
+                </span>
+              </Tooltip>
+            )}
+            {children}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
 };

@@ -16,83 +16,95 @@ import InstallListener from '@/components/server/InstallListener';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { NavigationLinks, NavigationRouter } from '@blueprint/extends/routers/ServerRouter';
+import {
+  NavigationLinks,
+  NavigationRouter,
+} from '@blueprint/extends/routers/ServerRouter';
 import BeforeSubNavigation from '@blueprint/components/Navigation/SubNavigation/BeforeSubNavigation';
 import AdditionalServerItems from '@blueprint/components/Navigation/SubNavigation/AdditionalServerItems';
 import AfterSubNavigation from '@blueprint/components/Navigation/SubNavigation/AfterSubNavigation';
 
 export default () => {
-    const { id: routeId } = useParams<{ id: string }>();
-    const location = useLocation();
-    const inConflictState = ServerContext.useStoreState((state) => state.server.inConflictState);
+  const { id: routeId } = useParams<{ id: string }>();
+  const location = useLocation();
+  const inConflictState = ServerContext.useStoreState(
+    (state) => state.server.inConflictState,
+  );
 
-    const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
-    const [error, setError] = useState('');
+  const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
+  const [error, setError] = useState('');
 
-    const id = ServerContext.useStoreState((state) => state.server.data?.id);
-    const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
-    const serverId = ServerContext.useStoreState((state) => state.server.data?.internalId);
-    const getServer = ServerContext.useStoreActions((actions) => actions.server.getServer);
-    const clearServerState = ServerContext.useStoreActions((actions) => actions.clearServerState);
+  const id = ServerContext.useStoreState((state) => state.server.data?.id);
+  const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
+  const serverId = ServerContext.useStoreState(
+    (state) => state.server.data?.internalId,
+  );
+  const getServer = ServerContext.useStoreActions(
+    (actions) => actions.server.getServer,
+  );
+  const clearServerState = ServerContext.useStoreActions(
+    (actions) => actions.clearServerState,
+  );
 
-    useEffect(
-        () => () => {
-            clearServerState();
-        },
-        [],
-    );
+  useEffect(
+    () => () => {
+      clearServerState();
+    },
+    [],
+  );
 
-    useEffect(() => {
-        setError('');
+  useEffect(() => {
+    setError('');
 
-        getServer(routeId!).catch((error) => {
-            console.error(error);
-            setError(httpErrorToHuman(error));
-        });
+    getServer(routeId!).catch((error) => {
+      console.error(error);
+      setError(httpErrorToHuman(error));
+    });
 
-        return () => {
-            clearServerState();
-        };
-    }, [routeId]);
+    return () => {
+      clearServerState();
+    };
+  }, [routeId]);
 
-    return (
-        <React.Fragment key={'server-router'}>
-            <NavigationBar />
-            {!uuid || !id ? (
-                error ? (
-                    <ServerError message={error} />
-                ) : (
-                    <Spinner size={'large'} centered />
-                )
-            ) : (
-                <>
-                    <Fade timeout={150}>
-                        <SubNavigation id={'SubNavigation'}>
-                            <BeforeSubNavigation />
-                            <div>
-                                <NavigationLinks />
-                                <AdditionalServerItems />
-                                {rootAdmin && (
-                                    <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
-                                        <FontAwesomeIcon icon={faExternalLinkAlt} />
-                                    </a>
-                                )}
-                            </div>
-                            <AfterSubNavigation />
-                        </SubNavigation>
-                    </Fade>
-                    <InstallListener />
-                    <TransferListener />
-                    <WebsocketHandler />
-                    {inConflictState && (!rootAdmin || !location.pathname.endsWith(`/server/${id}`)) ? (
-                        <ConflictStateRenderer />
-                    ) : (
-                        <ErrorBoundary>
-                            <NavigationRouter />
-                        </ErrorBoundary>
-                    )}
-                </>
-            )}
-        </React.Fragment>
-    );
+  return (
+    <React.Fragment key={'server-router'}>
+      <NavigationBar />
+      {!uuid || !id ? (
+        error ? (
+          <ServerError message={error} />
+        ) : (
+          <Spinner size={'large'} centered />
+        )
+      ) : (
+        <>
+          <Fade timeout={150}>
+            <SubNavigation id={'SubNavigation'}>
+              <BeforeSubNavigation />
+              <div>
+                <NavigationLinks />
+                <AdditionalServerItems />
+                {rootAdmin && (
+                  <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
+                    <FontAwesomeIcon icon={faExternalLinkAlt} />
+                  </a>
+                )}
+              </div>
+              <AfterSubNavigation />
+            </SubNavigation>
+          </Fade>
+          <InstallListener />
+          <TransferListener />
+          <WebsocketHandler />
+          {inConflictState &&
+          (!rootAdmin || !location.pathname.endsWith(`/server/${id}`)) ? (
+            <ConflictStateRenderer />
+          ) : (
+            <ErrorBoundary>
+              <NavigationRouter />
+            </ErrorBoundary>
+          )}
+        </>
+      )}
+    </React.Fragment>
+  );
 };

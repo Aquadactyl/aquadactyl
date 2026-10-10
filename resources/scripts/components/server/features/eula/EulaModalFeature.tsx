@@ -8,85 +8,105 @@ import useFlash from '@/plugins/useFlash';
 import { SocketEvent, SocketRequest } from '@/components/server/events';
 
 const EulaModalFeature = () => {
-    const [visible, setVisible] = useState(false);
-    const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const status = ServerContext.useStoreState((state) => state.status.value);
-    const { clearFlashes, clearAndAddHttpError } = useFlash();
-    const { connected, instance } = ServerContext.useStoreState((state) => state.socket);
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const status = ServerContext.useStoreState((state) => state.status.value);
+  const { clearFlashes, clearAndAddHttpError } = useFlash();
+  const { connected, instance } = ServerContext.useStoreState(
+    (state) => state.socket,
+  );
 
-    useEffect(() => {
-        if (!connected || !instance || status === 'running') return;
+  useEffect(() => {
+    if (!connected || !instance || status === 'running') return;
 
-        const listener = (line: string) => {
-            if (line.toLowerCase().indexOf('you need to agree to the eula in order to run the server') >= 0) {
-                setVisible(true);
-            }
-        };
-
-        instance.addListener(SocketEvent.CONSOLE_OUTPUT, listener);
-
-        return () => {
-            instance.removeListener(SocketEvent.CONSOLE_OUTPUT, listener);
-        };
-    }, [connected, instance, status]);
-
-    const onAcceptEULA = () => {
-        setLoading(true);
-        clearFlashes('feature:eula');
-
-        saveFileContents(uuid, 'eula.txt', 'eula=true')
-            .then(() => {
-                if (status === 'offline' && instance) {
-                    instance.send(SocketRequest.SET_STATE, 'restart');
-                }
-
-                setLoading(false);
-                setVisible(false);
-            })
-            .catch((error) => {
-                console.error(error);
-                clearAndAddHttpError({ key: 'feature:eula', error });
-            })
-            .then(() => setLoading(false));
+    const listener = (line: string) => {
+      if (
+        line
+          .toLowerCase()
+          .indexOf(
+            'you need to agree to the eula in order to run the server',
+          ) >= 0
+      ) {
+        setVisible(true);
+      }
     };
 
-    useEffect(() => {
-        clearFlashes('feature:eula');
-    }, []);
+    instance.addListener(SocketEvent.CONSOLE_OUTPUT, listener);
 
-    return (
-        <Modal
-            visible={visible}
-            onDismissed={() => setVisible(false)}
-            closeOnBackground={false}
-            showSpinnerOverlay={loading}
+    return () => {
+      instance.removeListener(SocketEvent.CONSOLE_OUTPUT, listener);
+    };
+  }, [connected, instance, status]);
+
+  const onAcceptEULA = () => {
+    setLoading(true);
+    clearFlashes('feature:eula');
+
+    saveFileContents(uuid, 'eula.txt', 'eula=true')
+      .then(() => {
+        if (status === 'offline' && instance) {
+          instance.send(SocketRequest.SET_STATE, 'restart');
+        }
+
+        setLoading(false);
+        setVisible(false);
+      })
+      .catch((error) => {
+        console.error(error);
+        clearAndAddHttpError({ key: 'feature:eula', error });
+      })
+      .then(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    clearFlashes('feature:eula');
+  }, []);
+
+  return (
+    <Modal
+      visible={visible}
+      onDismissed={() => setVisible(false)}
+      closeOnBackground={false}
+      showSpinnerOverlay={loading}
+    >
+      <FlashMessageRender key={'feature:eula'} className={'mb-4'} />
+      <h2 className={'mb-4 text-2xl text-neutral-100'}>
+        Accept Minecraft&reg; EULA
+      </h2>
+      <p className={'text-neutral-200'}>
+        By pressing {'"I Accept"'} below you are indicating your agreement to
+        the&nbsp;
+        <a
+          target={'_blank'}
+          className={
+            'text-primary-300 hover:text-primary-400 underline transition-colors duration-150'
+          }
+          rel={'noreferrer noopener'}
+          href='https://www.minecraft.net/eula'
         >
-            <FlashMessageRender key={'feature:eula'} className={'mb-4'} />
-            <h2 className={'mb-4 text-2xl text-neutral-100'}>Accept Minecraft&reg; EULA</h2>
-            <p className={'text-neutral-200'}>
-                By pressing {'"I Accept"'} below you are indicating your agreement to the&nbsp;
-                <a
-                    target={'_blank'}
-                    className={'text-primary-300 hover:text-primary-400 underline transition-colors duration-150'}
-                    rel={'noreferrer noopener'}
-                    href='https://www.minecraft.net/eula'
-                >
-                    Minecraft&reg; EULA
-                </a>
-                .
-            </p>
-            <div className={'mt-8 items-center justify-end sm:flex'}>
-                <Button isSecondary onClick={() => setVisible(false)} className={'w-full border-transparent sm:w-auto'}>
-                    Cancel
-                </Button>
-                <Button onClick={onAcceptEULA} className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}>
-                    I Accept
-                </Button>
-            </div>
-        </Modal>
-    );
+          Minecraft&reg; EULA
+        </a>
+        .
+      </p>
+      <div className={'mt-8 items-center justify-end sm:flex'}>
+        <Button
+          isSecondary
+          onClick={() => setVisible(false)}
+          className={'w-full border-transparent sm:w-auto'}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={onAcceptEULA}
+          className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}
+        >
+          I Accept
+        </Button>
+      </div>
+    </Modal>
+  );
 };
 
 export default EulaModalFeature;

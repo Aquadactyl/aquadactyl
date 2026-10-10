@@ -2034,9 +2034,9 @@ After nearly a month in the works, version `v0.5.0` is finally here! 🎉
 - `Server\AjaxController@postSetConnection` is now `Server\AjaxController@postSetPrimary` and accepts one post parameter of `allocation` rather than a combined `ip:port` value.
 - Port allocations on server view are now cleaner and should make more sense.
 - Improved File Manager
-    - Rewritten Javascript to load, rename, and handle other file actions.
-    - Uses Ace Editor for editing files rather than a non-formatted textarea
-    - File actions that were previously icons to the right are now contained in a menu that appears when right-clicking a file or folder.
+  - Rewritten Javascript to load, rename, and handle other file actions.
+  - Uses Ace Editor for editing files rather than a non-formatted textarea
+  - File actions that were previously icons to the right are now contained in a menu that appears when right-clicking a file or folder.
 
 ### Fixed
 
@@ -2173,9 +2173,9 @@ After nearly a month in the works, version `v0.5.0` is finally here! 🎉
 - `Server\AjaxController@postSetConnection` is now `Server\AjaxController@postSetPrimary` and accepts one post parameter of `allocation` rather than a combined `ip:port` value.
 - Port allocations on server view are now cleaner and should make more sense.
 - Improved File Manager
-    - Rewritten Javascript to load, rename, and handle other file actions.
-    - Uses Ace Editor for editing files rather than a non-formatted textarea
-    - File actions that were previously icons to the right are now contained in a menu that appears when right-clicking a file or folder.
+  - Rewritten Javascript to load, rename, and handle other file actions.
+  - Uses Ace Editor for editing files rather than a non-formatted textarea
+  - File actions that were previously icons to the right are now contained in a menu that appears when right-clicking a file or folder.
 
 ### Fixed
 

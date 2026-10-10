@@ -1,1 +1,8 @@
-export { default, useServerQueryKey, useUserQueryKey, useSWRKey, useServerSWRKey, useUserSWRKey } from './useQueryKey';
+export {
+  default,
+  useServerQueryKey,
+  useUserQueryKey,
+  useSWRKey,
+  useServerSWRKey,
+  useUserSWRKey,
+} from './useQueryKey';

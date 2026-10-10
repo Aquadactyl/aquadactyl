@@ -21,107 +21,125 @@ import getServerAllocations from '@/api/server/network/getServerAllocations';
 import { ip } from '@/lib/formatters';
 import Code from '@/components/elements/Code';
 
-const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({ className, ...props }) => (
-    <label
-        className={classNames(
-            'mt-1 block px-1 text-xs text-neutral-400 uppercase transition-colors duration-150 select-none',
-            className,
-        )}
-        {...props}
-    />
+const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({
+  className,
+  ...props
+}) => (
+  <label
+    className={classNames(
+      'mt-1 block px-1 text-xs text-neutral-400 uppercase transition-colors duration-150 select-none',
+      className,
+    )}
+    {...props}
+  />
 );
 
 interface Props {
-    allocation: Allocation;
+  allocation: Allocation;
 }
 
 const AllocationRow = ({ allocation }: Props) => {
-    const [loading, setLoading] = useState(false);
-    const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const { mutate } = getServerAllocations();
+  const [loading, setLoading] = useState(false);
+  const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const { mutate } = getServerAllocations();
 
-    const onNotesChanged = useCallback((id: number, notes: string) => {
-        mutate((data) => data?.map((a) => (a.id === id ? { ...a, notes } : a)), false);
-    }, []);
-
-    const setAllocationNotes = debounce((notes: string) => {
-        setLoading(true);
-        clearFlashes();
-
-        setServerAllocationNotes(uuid, allocation.id, notes)
-            .then(() => onNotesChanged(allocation.id, notes))
-            .catch((error) => clearAndAddHttpError(error))
-            .then(() => setLoading(false));
-    }, 750);
-
-    const setPrimaryAllocation = () => {
-        clearFlashes();
-        mutate((data) => data?.map((a) => ({ ...a, isDefault: a.id === allocation.id })), false);
-
-        setPrimaryServerAllocation(uuid, allocation.id).catch((error) => {
-            clearAndAddHttpError(error);
-            mutate();
-        });
-    };
-
-    return (
-        <GreyRowBox $hoverable={false} className={'mt-2 flex-wrap md:flex-nowrap'}>
-            <div className={'flex w-full items-center md:w-auto'}>
-                <div className={'pr-6 pl-4 text-neutral-400'}>
-                    <FontAwesomeIcon icon={faNetworkWired} />
-                </div>
-                <div className={'mr-4 flex-1 md:w-40'}>
-                    {allocation.alias ? (
-                        <CopyOnClick text={allocation.alias}>
-                            <Code dark className={'w-40 truncate'}>
-                                <SensitiveValue>{allocation.alias}</SensitiveValue>
-                            </Code>
-                        </CopyOnClick>
-                    ) : (
-                        <CopyOnClick text={ip(allocation.ip)}>
-                            <Code dark>
-                                <SensitiveValue>{ip(allocation.ip)}</SensitiveValue>
-                            </Code>
-                        </CopyOnClick>
-                    )}
-                    <Label>{allocation.alias ? 'Hostname' : 'IP Address'}</Label>
-                </div>
-                <div className={'w-16 overflow-hidden md:w-24'}>
-                    <Code dark>{allocation.port}</Code>
-                    <Label>Port</Label>
-                </div>
-            </div>
-            <div className={'mt-4 w-full md:mt-0 md:w-auto md:flex-1'}>
-                <InputSpinner visible={loading}>
-                    <Textarea
-                        className={'border-transparent bg-neutral-800 hover:border-neutral-600'}
-                        placeholder={'Notes'}
-                        defaultValue={allocation.notes || undefined}
-                        onChange={(e) => setAllocationNotes(e.currentTarget.value)}
-                    />
-                </InputSpinner>
-            </div>
-            <div className={'mt-4 flex w-full justify-end space-x-4 md:mt-0 md:w-48'}>
-                {allocation.isDefault ? (
-                    <Button size={Button.Sizes.Small} className={'bg-blue-600! text-gray-50!'} disabled>
-                        Primary
-                    </Button>
-                ) : (
-                    <>
-                        <Can action={'allocation.delete'}>
-                            <DeleteAllocationButton allocation={allocation.id} />
-                        </Can>
-                        <Can action={'allocation.update'}>
-                            <Button.Text size={Button.Sizes.Small} onClick={setPrimaryAllocation}>
-                                Make Primary
-                            </Button.Text>
-                        </Can>
-                    </>
-                )}
-            </div>
-        </GreyRowBox>
+  const onNotesChanged = useCallback((id: number, notes: string) => {
+    mutate(
+      (data) => data?.map((a) => (a.id === id ? { ...a, notes } : a)),
+      false,
     );
+  }, []);
+
+  const setAllocationNotes = debounce((notes: string) => {
+    setLoading(true);
+    clearFlashes();
+
+    setServerAllocationNotes(uuid, allocation.id, notes)
+      .then(() => onNotesChanged(allocation.id, notes))
+      .catch((error) => clearAndAddHttpError(error))
+      .then(() => setLoading(false));
+  }, 750);
+
+  const setPrimaryAllocation = () => {
+    clearFlashes();
+    mutate(
+      (data) => data?.map((a) => ({ ...a, isDefault: a.id === allocation.id })),
+      false,
+    );
+
+    setPrimaryServerAllocation(uuid, allocation.id).catch((error) => {
+      clearAndAddHttpError(error);
+      mutate();
+    });
+  };
+
+  return (
+    <GreyRowBox $hoverable={false} className={'mt-2 flex-wrap md:flex-nowrap'}>
+      <div className={'flex w-full items-center md:w-auto'}>
+        <div className={'pr-6 pl-4 text-neutral-400'}>
+          <FontAwesomeIcon icon={faNetworkWired} />
+        </div>
+        <div className={'mr-4 flex-1 md:w-40'}>
+          {allocation.alias ? (
+            <CopyOnClick text={allocation.alias}>
+              <Code dark className={'w-40 truncate'}>
+                <SensitiveValue>{allocation.alias}</SensitiveValue>
+              </Code>
+            </CopyOnClick>
+          ) : (
+            <CopyOnClick text={ip(allocation.ip)}>
+              <Code dark>
+                <SensitiveValue>{ip(allocation.ip)}</SensitiveValue>
+              </Code>
+            </CopyOnClick>
+          )}
+          <Label>{allocation.alias ? 'Hostname' : 'IP Address'}</Label>
+        </div>
+        <div className={'w-16 overflow-hidden md:w-24'}>
+          <Code dark>{allocation.port}</Code>
+          <Label>Port</Label>
+        </div>
+      </div>
+      <div className={'mt-4 w-full md:mt-0 md:w-auto md:flex-1'}>
+        <InputSpinner visible={loading}>
+          <Textarea
+            className={
+              'border-transparent bg-neutral-800 hover:border-neutral-600'
+            }
+            placeholder={'Notes'}
+            defaultValue={allocation.notes || undefined}
+            onChange={(e) => setAllocationNotes(e.currentTarget.value)}
+          />
+        </InputSpinner>
+      </div>
+      <div className={'mt-4 flex w-full justify-end space-x-4 md:mt-0 md:w-48'}>
+        {allocation.isDefault ? (
+          <Button
+            size={Button.Sizes.Small}
+            className={'bg-blue-600! text-gray-50!'}
+            disabled
+          >
+            Primary
+          </Button>
+        ) : (
+          <>
+            <Can action={'allocation.delete'}>
+              <DeleteAllocationButton allocation={allocation.id} />
+            </Can>
+            <Can action={'allocation.update'}>
+              <Button.Text
+                size={Button.Sizes.Small}
+                onClick={setPrimaryAllocation}
+              >
+                Make Primary
+              </Button.Text>
+            </Can>
+          </>
+        )}
+      </div>
+    </GreyRowBox>
+  );
 };
 
 export default memo(AllocationRow, isEqual);

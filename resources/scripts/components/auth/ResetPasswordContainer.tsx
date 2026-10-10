@@ -11,88 +11,111 @@ import Input from '@/components/elements/Input';
 import Button from '@/components/elements/Button';
 
 interface Values {
-    password: string;
-    passwordConfirmation: string;
+  password: string;
+  passwordConfirmation: string;
 }
 
 export default () => {
-    const { token } = useParams<{ token: string }>();
-    const location = useLocation();
-    const [email, setEmail] = useState('');
+  const { token } = useParams<{ token: string }>();
+  const location = useLocation();
+  const [email, setEmail] = useState('');
 
-    const { clearFlashes, addFlash } = useFlash();
+  const { clearFlashes, addFlash } = useFlash();
 
-    const parsed = new URLSearchParams(location.search);
-    if (email.length === 0 && parsed.get('email')) {
-        setEmail(parsed.get('email') || '');
-    }
+  const parsed = new URLSearchParams(location.search);
+  if (email.length === 0 && parsed.get('email')) {
+    setEmail(parsed.get('email') || '');
+  }
 
-    const submit = ({ password, passwordConfirmation }: Values, { setSubmitting }: FormikHelpers<Values>) => {
-        clearFlashes();
-        performPasswordReset(email, { token: token || '', password, passwordConfirmation })
-            .then(() => {
-                // @ts-expect-error this is valid
-                window.location = '/';
-            })
-            .catch((error) => {
-                console.error(error);
+  const submit = (
+    { password, passwordConfirmation }: Values,
+    { setSubmitting }: FormikHelpers<Values>,
+  ) => {
+    clearFlashes();
+    performPasswordReset(email, {
+      token: token || '',
+      password,
+      passwordConfirmation,
+    })
+      .then(() => {
+        // @ts-expect-error this is valid
+        window.location = '/';
+      })
+      .catch((error) => {
+        console.error(error);
 
-                setSubmitting(false);
-                addFlash({ type: 'error', title: 'Error', message: httpErrorToHuman(error) });
-            });
-    };
+        setSubmitting(false);
+        addFlash({
+          type: 'error',
+          title: 'Error',
+          message: httpErrorToHuman(error),
+        });
+      });
+  };
 
-    return (
-        <Formik
-            onSubmit={submit}
-            initialValues={{
-                password: '',
-                passwordConfirmation: '',
-            }}
-            validationSchema={object().shape({
-                password: string()
-                    .required('A new password is required.')
-                    .min(8, 'Your new password should be at least 8 characters in length.'),
-                passwordConfirmation: string()
-                    .required('Your new password does not match.')
-                    // @ts-expect-error this is valid
-                    .oneOf([ref('password'), null], 'Your new password does not match.'),
-            })}
-        >
-            {({ isSubmitting }) => (
-                <LoginFormContainer title={'Reset Password'} className={'flex w-full'}>
-                    <div>
-                        <label>Email</label>
-                        <Input value={email} disabled />
-                    </div>
-                    <div className={'mt-6'}>
-                        <Field
-                            label={'New Password'}
-                            name={'password'}
-                            type={'password'}
-                            description={'Passwords must be at least 8 characters in length.'}
-                        />
-                    </div>
-                    <div className={'mt-6'}>
-                        <Field label={'Confirm New Password'} name={'passwordConfirmation'} type={'password'} />
-                    </div>
-                    <div className={'mt-6'}>
-                        <Button size={'xlarge'} type={'submit'} disabled={isSubmitting} isLoading={isSubmitting}>
-                            Reset Password
-                        </Button>
-                    </div>
-                    <div className={'mt-6 text-center'}>
-                        <Link
-                            to={'/auth/login'}
-                            className={
-                                'text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200'
-                            }
-                        >
-                            Return to Login
-                        </Link>
-                    </div>
-                </LoginFormContainer>
-            )}
-        </Formik>
-    );
+  return (
+    <Formik
+      onSubmit={submit}
+      initialValues={{
+        password: '',
+        passwordConfirmation: '',
+      }}
+      validationSchema={object().shape({
+        password: string()
+          .required('A new password is required.')
+          .min(
+            8,
+            'Your new password should be at least 8 characters in length.',
+          ),
+        passwordConfirmation: string()
+          .required('Your new password does not match.')
+          // @ts-expect-error this is valid
+          .oneOf([ref('password'), null], 'Your new password does not match.'),
+      })}
+    >
+      {({ isSubmitting }) => (
+        <LoginFormContainer title={'Reset Password'} className={'flex w-full'}>
+          <div>
+            <label>Email</label>
+            <Input value={email} disabled />
+          </div>
+          <div className={'mt-6'}>
+            <Field
+              label={'New Password'}
+              name={'password'}
+              type={'password'}
+              description={'Passwords must be at least 8 characters in length.'}
+            />
+          </div>
+          <div className={'mt-6'}>
+            <Field
+              label={'Confirm New Password'}
+              name={'passwordConfirmation'}
+              type={'password'}
+            />
+          </div>
+          <div className={'mt-6'}>
+            <Button
+              size={'xlarge'}
+              type={'submit'}
+              disabled={isSubmitting}
+              isLoading={isSubmitting}
+            >
+              Reset Password
+            </Button>
+          </div>
+          <div className={'mt-6 text-center'}>
+            <Link
+              to={'/auth/login'}
+              className={
+                'text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200'
+              }
+            >
+              Return to Login
+            </Link>
+          </div>
+        </LoginFormContainer>
+      )}
+    </Formik>
+  );
 };

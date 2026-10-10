@@ -5,45 +5,51 @@ import Input from '@/components/elements/Input';
 import isEqual from 'react-fast-compare';
 
 interface Props {
-    isEditable: boolean;
-    title: string;
-    permissions: string[];
-    className?: string;
+  isEditable: boolean;
+  title: string;
+  permissions: string[];
+  className?: string;
 }
 
-const PermissionTitleBox: React.FC<Props> = memo(({ isEditable, title, permissions, className, children }) => {
+const PermissionTitleBox: React.FC<Props> = memo(
+  ({ isEditable, title, permissions, className, children }) => {
     const [{ value }, , { setValue }] = useField<string[]>('permissions');
 
     const onCheckboxClicked = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.currentTarget.checked) {
-                setValue([...value, ...permissions.filter((p) => !value.includes(p))]);
-            } else {
-                setValue(value.filter((p) => !permissions.includes(p)));
-            }
-        },
-        [permissions, value],
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.currentTarget.checked) {
+          setValue([
+            ...value,
+            ...permissions.filter((p) => !value.includes(p)),
+          ]);
+        } else {
+          setValue(value.filter((p) => !permissions.includes(p)));
+        }
+      },
+      [permissions, value],
     );
 
     return (
-        <TitledGreyBox
-            title={
-                <div className={'flex items-center'}>
-                    <p className={'flex-1 text-sm uppercase'}>{title}</p>
-                    {isEditable && (
-                        <Input
-                            type={'checkbox'}
-                            checked={permissions.every((p) => value.includes(p))}
-                            onChange={onCheckboxClicked}
-                        />
-                    )}
-                </div>
-            }
-            className={className}
-        >
-            {children}
-        </TitledGreyBox>
+      <TitledGreyBox
+        title={
+          <div className={'flex items-center'}>
+            <p className={'flex-1 text-sm uppercase'}>{title}</p>
+            {isEditable && (
+              <Input
+                type={'checkbox'}
+                checked={permissions.every((p) => value.includes(p))}
+                onChange={onCheckboxClicked}
+              />
+            )}
+          </div>
+        }
+        className={className}
+      >
+        {children}
+      </TitledGreyBox>
     );
-}, isEqual);
+  },
+  isEqual,
+);
 
 export default PermissionTitleBox;

@@ -6,19 +6,21 @@ import ErrorBoundary from '@/components/elements/ErrorBoundary';
 type ListItems = [string, React.ComponentType][];
 
 export default ({ enabled }: { enabled: string[] }) => {
-    const mapped: ListItems = useMemo(() => {
-        return getObjectKeys(features)
-            .filter((key) => enabled.map((v) => v.toLowerCase()).includes(key.toLowerCase()))
-            .reduce((arr, key) => [...arr, [key, features[key]]], [] as ListItems);
-    }, [enabled]);
+  const mapped: ListItems = useMemo(() => {
+    return getObjectKeys(features)
+      .filter((key) =>
+        enabled.map((v) => v.toLowerCase()).includes(key.toLowerCase()),
+      )
+      .reduce((arr, key) => [...arr, [key, features[key]]], [] as ListItems);
+  }, [enabled]);
 
-    return (
-        <ErrorBoundary fallback={null}>
-            <React.Suspense fallback={null}>
-                {mapped.map(([key, Component]) => (
-                    <Component key={key} />
-                ))}
-            </React.Suspense>
-        </ErrorBoundary>
-    );
+  return (
+    <ErrorBoundary fallback={null}>
+      <React.Suspense fallback={null}>
+        {mapped.map(([key, Component]) => (
+          <Component key={key} />
+        ))}
+      </React.Suspense>
+    </ErrorBoundary>
+  );
 };

@@ -1,10 +1,10 @@
 {
-    "extends": "./tsconfig.json",
-    "compilerOptions": {
-        "noEmit": false,
-        "declaration": true,
-        "emitDeclarationOnly": true,
-        "rootDir": "./resources/scripts",
-        "outDir": "./.blueprint/dist/types"
-    }
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "./resources/scripts",
+    "outDir": "./.blueprint/dist/types"
+  }
 }

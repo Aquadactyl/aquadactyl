@@ -16,77 +16,90 @@ import BeforeContent from '@blueprint/components/Server/Network/BeforeContent';
 import AfterContent from '@blueprint/components/Server/Network/AfterContent';
 
 const NetworkContainer = () => {
-    const [loading, setLoading] = useState(false);
-    const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
-    const allocationLimit = ServerContext.useStoreState((state) => state.server.data!.featureLimits.allocations);
-    const allocations = ServerContext.useStoreState((state) => state.server.data!.allocations, isEqual);
-    const setServerFromState = ServerContext.useStoreActions((actions) => actions.server.setServerFromState);
+  const [loading, setLoading] = useState(false);
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const allocationLimit = ServerContext.useStoreState(
+    (state) => state.server.data!.featureLimits.allocations,
+  );
+  const allocations = ServerContext.useStoreState(
+    (state) => state.server.data!.allocations,
+    isEqual,
+  );
+  const setServerFromState = ServerContext.useStoreActions(
+    (actions) => actions.server.setServerFromState,
+  );
 
-    const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
-    const { data, error, mutate } = getServerAllocations();
+  const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
+  const { data, error, mutate } = getServerAllocations();
 
-    useEffect(() => {
-        mutate(allocations);
-    }, []);
+  useEffect(() => {
+    mutate(allocations);
+  }, []);
 
-    useEffect(() => {
-        clearAndAddHttpError(error);
-    }, [error]);
+  useEffect(() => {
+    clearAndAddHttpError(error);
+  }, [error]);
 
-    useDeepCompareEffect(() => {
-        if (!data) return;
+  useDeepCompareEffect(() => {
+    if (!data) return;
 
-        setServerFromState((state) => ({ ...state, allocations: data }));
-    }, [data]);
+    setServerFromState((state) => ({ ...state, allocations: data }));
+  }, [data]);
 
-    const onCreateAllocation = () => {
-        clearFlashes();
+  const onCreateAllocation = () => {
+    clearFlashes();
 
-        setLoading(true);
-        createServerAllocation(uuid)
-            .then((allocation) => {
-                setServerFromState((s) => ({ ...s, allocations: s.allocations.concat(allocation) }));
-                return mutate(data?.concat(allocation), false);
-            })
-            .catch((error) => clearAndAddHttpError(error))
-            .then(() => setLoading(false));
-    };
+    setLoading(true);
+    createServerAllocation(uuid)
+      .then((allocation) => {
+        setServerFromState((s) => ({
+          ...s,
+          allocations: s.allocations.concat(allocation),
+        }));
+        return mutate(data?.concat(allocation), false);
+      })
+      .catch((error) => clearAndAddHttpError(error))
+      .then(() => setLoading(false));
+  };
 
-    return (
-        <ServerContentBlock showFlashKey={'server:network'} title={'Network'}>
-            {!data ? (
-                <Spinner size={'large'} centered />
-            ) : (
-                <>
-                    <BeforeContent />
-                    {data.map((allocation) => (
-                        <AllocationRow key={`${allocation.ip}:${allocation.port}`} allocation={allocation} />
-                    ))}
-                    {allocationLimit > 0 && (
-                        <Can action={'allocation.create'}>
-                            <SpinnerOverlay visible={loading} />
-                            <div className={'mt-6 items-center justify-end sm:flex'}>
-                                <p className={'mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0'}>
-                                    You are currently using {data.length} of {allocationLimit} allowed allocations for
-                                    this server.
-                                </p>
-                                {allocationLimit > data.length && (
-                                    <Button
-                                        className={'w-full sm:w-auto'}
-                                        color={'primary'}
-                                        onClick={onCreateAllocation}
-                                    >
-                                        Create Allocation
-                                    </Button>
-                                )}
-                            </div>
-                        </Can>
-                    )}
-                    <AfterContent />
-                </>
-            )}
-        </ServerContentBlock>
-    );
+  return (
+    <ServerContentBlock showFlashKey={'server:network'} title={'Network'}>
+      {!data ? (
+        <Spinner size={'large'} centered />
+      ) : (
+        <>
+          <BeforeContent />
+          {data.map((allocation) => (
+            <AllocationRow
+              key={`${allocation.ip}:${allocation.port}`}
+              allocation={allocation}
+            />
+          ))}
+          {allocationLimit > 0 && (
+            <Can action={'allocation.create'}>
+              <SpinnerOverlay visible={loading} />
+              <div className={'mt-6 items-center justify-end sm:flex'}>
+                <p className={'mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0'}>
+                  You are currently using {data.length} of {allocationLimit}{' '}
+                  allowed allocations for this server.
+                </p>
+                {allocationLimit > data.length && (
+                  <Button
+                    className={'w-full sm:w-auto'}
+                    color={'primary'}
+                    onClick={onCreateAllocation}
+                  >
+                    Create Allocation
+                  </Button>
+                )}
+              </div>
+            </Can>
+          )}
+          <AfterContent />
+        </>
+      )}
+    </ServerContentBlock>
+  );
 };
 
 export default NetworkContainer;

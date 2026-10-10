@@ -10,6 +10,6 @@ import './i18n';
 
 const container = document.getElementById('app');
 if (container) {
-    const root = createRoot(container);
-    root.render(<App />);
+  const root = createRoot(container);
+  root.render(<App />);
 }

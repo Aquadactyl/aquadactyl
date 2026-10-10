@@ -1,140 +1,140 @@
 .entry {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr);
-    gap: 16px;
-    padding: 22px 24px;
-    border-bottom: 1px solid var(--panel-border);
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--panel-border);
 }
 .entry:last-of-type {
-    border-bottom: 0;
+  border-bottom: 0;
 }
 .avatar {
-    width: 40px;
-    height: 40px;
-    overflow: hidden;
-    border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
 }
 .content {
-    min-width: 0;
+  min-width: 0;
 }
 .header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
 }
 .identity {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    min-width: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
 }
 .username {
-    font-size: 14px;
-    font-weight: 600;
-    color: #edf0f3;
-    overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 600;
+  color: #edf0f3;
+  overflow-wrap: anywhere;
 }
 .event {
-    padding: 4px 8px;
-    border: 1px solid #345154;
-    border-radius: 5px;
-    background: #203033;
-    color: #a4e3dc;
-    font-size: 11px;
-    line-height: 1.5;
-    overflow-wrap: anywhere;
-    transition:
-        background 150ms,
-        border-color 150ms;
+  padding: 4px 8px;
+  border: 1px solid #345154;
+  border-radius: 5px;
+  background: #203033;
+  color: #a4e3dc;
+  font-size: 11px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  transition:
+    background 150ms,
+    border-color 150ms;
 }
 .event:hover {
-    background: #2a4043;
-    border-color: #64b9b2;
+  background: #2a4043;
+  border-color: #64b9b2;
 }
 .event:focus-visible,
 .ip:focus-visible,
 .metadata:focus-visible {
-    outline: 2px solid var(--panel-accent);
-    outline-offset: 3px;
+  outline: 2px solid var(--panel-accent);
+  outline-offset: 3px;
 }
 .description {
-    margin-top: 8px;
-    font-size: 13px;
-    line-height: 1.75;
-    color: #bbc2ca;
-    overflow-wrap: anywhere;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.75;
+  color: #bbc2ca;
+  overflow-wrap: anywhere;
 }
 .description strong {
-    color: #edf0f3;
-    font-weight: 500;
+  color: #edf0f3;
+  font-weight: 500;
 }
 .details {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px 16px;
-    margin-top: 10px;
-    color: #9ca5af;
-    font-size: 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 10px;
+  color: #9ca5af;
+  font-size: 12px;
 }
 .ip {
-    color: #9ca5af;
-    font-family: monospace;
-    overflow-wrap: anywhere;
+  color: #9ca5af;
+  font-family: monospace;
+  overflow-wrap: anywhere;
 }
 .ip:hover {
-    color: var(--panel-accent);
+  color: var(--panel-accent);
 }
 .icons {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: #78838f;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #78838f;
 }
 .icons svg {
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 }
 .icons span {
-    display: inline-flex;
+  display: inline-flex;
 }
 .metadata {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: 1px solid transparent;
-    border-radius: 5px;
-    color: #9ca5af;
-    cursor: pointer;
-    transition:
-        background 150ms,
-        color 150ms;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: #9ca5af;
+  cursor: pointer;
+  transition:
+    background 150ms,
+    color 150ms;
 }
 .metadata:hover {
-    background: #303942;
-    color: #edf0f3;
+  background: #303942;
+  color: #edf0f3;
 }
 @media (max-width: 640px) {
-    .entry {
-        padding: 18px 16px;
-        gap: 12px;
-        grid-template-columns: 32px minmax(0, 1fr);
-    }
-    .avatar {
-        width: 32px;
-        height: 32px;
-    }
-    .identity {
-        gap: 6px;
-    }
-    .username {
-        width: 100%;
-    }
-    .details {
-        gap: 8px 12px;
-    }
+  .entry {
+    padding: 18px 16px;
+    gap: 12px;
+    grid-template-columns: 32px minmax(0, 1fr);
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .identity {
+    gap: 6px;
+  }
+  .username {
+    width: 100%;
+  }
+  .details {
+    gap: 8px 12px;
+  }
 }

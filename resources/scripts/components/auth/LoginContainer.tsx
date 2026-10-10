@@ -12,129 +12,151 @@ import useFlash from '@/plugins/useFlash';
 import { Eye, EyeOff } from 'lucide-react';
 
 interface Values {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
 
 const LoginContainer = () => {
-    const navigate = useNavigate();
-    const ref = useRef<ReaptchaRef>(null);
-    const [token, setToken] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const ref = useRef<ReaptchaRef>(null);
+  const [token, setToken] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-    const { clearFlashes, clearAndAddHttpError } = useFlash();
-    const recaptchaEnabled = useAppStore((state) => state.settings.data!.recaptcha.enabled);
-    const siteKey = useAppStore((state) => state.settings.data!.recaptcha.siteKey);
+  const { clearFlashes, clearAndAddHttpError } = useFlash();
+  const recaptchaEnabled = useAppStore(
+    (state) => state.settings.data!.recaptcha.enabled,
+  );
+  const siteKey = useAppStore(
+    (state) => state.settings.data!.recaptcha.siteKey,
+  );
 
-    useEffect(() => {
-        clearFlashes();
-    }, []);
+  useEffect(() => {
+    clearFlashes();
+  }, []);
 
-    const onSubmit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
-        clearFlashes();
+  const onSubmit = (
+    values: Values,
+    { setSubmitting }: FormikHelpers<Values>,
+  ) => {
+    clearFlashes();
 
-        // If there is no token in the state yet, request the token and then abort this submit request
-        // since it will be re-submitted when the recaptcha data is returned by the component.
-        if (recaptchaEnabled && !token) {
-            ref.current!.execute().catch((error) => {
-                console.error(error);
+    // If there is no token in the state yet, request the token and then abort this submit request
+    // since it will be re-submitted when the recaptcha data is returned by the component.
+    if (recaptchaEnabled && !token) {
+      ref.current!.execute().catch((error) => {
+        console.error(error);
 
-                setSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
+        setSubmitting(false);
+        clearAndAddHttpError({ error });
+      });
 
-            return;
+      return;
+    }
+
+    login({ ...values, recaptchaData: token })
+      .then((response) => {
+        if (response.complete) {
+          // @ts-expect-error this is valid
+          window.location = response.intended || '/';
+          return;
         }
 
-        login({ ...values, recaptchaData: token })
-            .then((response) => {
-                if (response.complete) {
-                    // @ts-expect-error this is valid
-                    window.location = response.intended || '/';
-                    return;
-                }
+        navigate('/auth/login/checkpoint', {
+          replace: true,
+          state: { token: response.confirmationToken },
+        });
+      })
+      .catch((error) => {
+        console.error(error);
 
-                navigate('/auth/login/checkpoint', { replace: true, state: { token: response.confirmationToken } });
-            })
-            .catch((error) => {
-                console.error(error);
+        setToken('');
+        if (ref.current) ref.current.reset();
 
-                setToken('');
-                if (ref.current) ref.current.reset();
+        setSubmitting(false);
+        clearAndAddHttpError({ error });
+      });
+  };
 
-                setSubmitting(false);
-                clearAndAddHttpError({ error });
-            });
-    };
-
-    return (
-        <Formik
-            onSubmit={onSubmit}
-            initialValues={{ username: '', password: '' }}
-            validationSchema={object().shape({
-                username: string().required('A username or email must be provided.'),
-                password: string().required('Please enter your account password.'),
-            })}
+  return (
+    <Formik
+      onSubmit={onSubmit}
+      initialValues={{ username: '', password: '' }}
+      validationSchema={object().shape({
+        username: string().required('A username or email must be provided.'),
+        password: string().required('Please enter your account password.'),
+      })}
+    >
+      {({ isSubmitting, setSubmitting, submitForm }) => (
+        <LoginFormContainer
+          title={'Welcome back'}
+          description={'Sign in to manage your servers.'}
         >
-            {({ isSubmitting, setSubmitting, submitForm }) => (
-                <LoginFormContainer title={'Welcome back'} description={'Sign in to manage your servers.'}>
-                    <Field
-                        type={'text'}
-                        label={'Username or email'}
-                        name={'username'}
-                        autoComplete={'username'}
-                        autoCapitalize={'none'}
-                        spellCheck={false}
-                        disabled={isSubmitting}
-                    />
-                    <div className={'password-field mt-5'}>
-                        <Field
-                            type={showPassword ? 'text' : 'password'}
-                            label={'Password'}
-                            name={'password'}
-                            autoComplete={'current-password'}
-                            disabled={isSubmitting}
-                        />
-                        <button
-                            type={'button'}
-                            className={'password-reveal'}
-                            aria-label={showPassword ? 'Hide password' : 'Show password'}
-                            aria-pressed={showPassword}
-                            disabled={isSubmitting}
-                            onClick={() => setShowPassword((value) => !value)}
-                        >
-                            {showPassword ? <EyeOff size={18} aria-hidden /> : <Eye size={18} aria-hidden />}
-                        </button>
-                    </div>
-                    <div className={'mt-6'}>
-                        <Button type={'submit'} size={'xlarge'} isLoading={isSubmitting} disabled={isSubmitting}>
-                            Sign in
-                        </Button>
-                    </div>
-                    {recaptchaEnabled && (
-                        <Reaptcha
-                            ref={ref}
-                            size={'invisible'}
-                            sitekey={siteKey || '_invalid_key'}
-                            onVerify={(response) => {
-                                setToken(response);
-                                submitForm();
-                            }}
-                            onExpire={() => {
-                                setSubmitting(false);
-                                setToken('');
-                            }}
-                        />
-                    )}
-                    <div>
-                        <Link to={'/auth/password'} className={'login-recovery'}>
-                            Forgot password?
-                        </Link>
-                    </div>
-                </LoginFormContainer>
-            )}
-        </Formik>
-    );
+          <Field
+            type={'text'}
+            label={'Username or email'}
+            name={'username'}
+            autoComplete={'username'}
+            autoCapitalize={'none'}
+            spellCheck={false}
+            disabled={isSubmitting}
+          />
+          <div className={'password-field mt-5'}>
+            <Field
+              type={showPassword ? 'text' : 'password'}
+              label={'Password'}
+              name={'password'}
+              autoComplete={'current-password'}
+              disabled={isSubmitting}
+            />
+            <button
+              type={'button'}
+              className={'password-reveal'}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              disabled={isSubmitting}
+              onClick={() => setShowPassword((value) => !value)}
+            >
+              {showPassword ? (
+                <EyeOff size={18} aria-hidden />
+              ) : (
+                <Eye size={18} aria-hidden />
+              )}
+            </button>
+          </div>
+          <div className={'mt-6'}>
+            <Button
+              type={'submit'}
+              size={'xlarge'}
+              isLoading={isSubmitting}
+              disabled={isSubmitting}
+            >
+              Sign in
+            </Button>
+          </div>
+          {recaptchaEnabled && (
+            <Reaptcha
+              ref={ref}
+              size={'invisible'}
+              sitekey={siteKey || '_invalid_key'}
+              onVerify={(response) => {
+                setToken(response);
+                submitForm();
+              }}
+              onExpire={() => {
+                setSubmitting(false);
+                setToken('');
+              }}
+            />
+          )}
+          <div>
+            <Link to={'/auth/password'} className={'login-recovery'}>
+              Forgot password?
+            </Link>
+          </div>
+        </LoginFormContainer>
+      )}
+    </Formik>
+  );
 };
 
 export default LoginContainer;
