@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import Modal, { RequiredModalProps } from "@/components/elements/Modal";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import FormField from "@/components/elements/FormField";
 import { join } from "pathe";
 import renameFiles from "@/api/server/files/renameFiles";
@@ -33,7 +33,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<Values>({
@@ -44,7 +44,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
     reset({ name: files.length > 1 ? "" : files[0] || "" });
   }, [files, reset]);
 
-  const name = watch("name");
+  const name = useWatch({ control, name: "name" });
 
   const onSubmit = async ({ name: newName }: Values) => {
     clearFlashes("files");

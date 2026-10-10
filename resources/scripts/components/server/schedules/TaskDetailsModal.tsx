@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { Schedule, Task } from "@/api/server/schedules/getServerSchedules";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { ServerContext } from "@/state/server";
 import createOrUpdateScheduleTask from "@/api/server/schedules/createOrUpdateScheduleTask";
 import { httpErrorToHuman } from "@/api/http";
@@ -89,7 +89,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
     },
   });
 
-  const values = methods.watch();
+  const values = useWatch({ control: methods.control });
 
   const submit = async (formValues: Values) => {
     clearFlashes("schedule:task");
