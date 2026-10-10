@@ -1,6 +1,7 @@
-import { EventEmitter } from "events";
+type Listener = (...args: any[]) => void;
 
-export class Websocket extends EventEmitter {
+export class Websocket {
+  private listeners: Map<string, Set<Listener>> = new Map();
   private socket: WebSocket | null = null;
   private url: string | null = null;
   private token = "";
@@ -8,6 +9,51 @@ export class Websocket extends EventEmitter {
   private maxAttempts = 20;
   private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
   private manualClose = false;
+
+  on(event: string, listener: Listener): this {
+    if (!this.listeners.has(event)) {
+      this.listeners.set(event, new Set());
+    }
+    this.listeners.get(event)!.add(listener);
+    return this;
+  }
+
+  addListener(event: string, listener: Listener): this {
+    return this.on(event, listener);
+  }
+
+  off(event: string, listener: Listener): this {
+    const set = this.listeners.get(event);
+    if (set) {
+      set.delete(listener);
+      if (set.size === 0) {
+        this.listeners.delete(event);
+      }
+    }
+    return this;
+  }
+
+  removeListener(event: string, listener: Listener): this {
+    return this.off(event, listener);
+  }
+
+  removeAllListeners(event?: string): this {
+    if (event) {
+      this.listeners.delete(event);
+    } else {
+      this.listeners.clear();
+    }
+    return this;
+  }
+
+  emit(event: string, ...args: any[]): boolean {
+    const set = this.listeners.get(event);
+    if (!set || set.size === 0) return false;
+    for (const listener of Array.from(set)) {
+      listener(...args);
+    }
+    return true;
+  }
 
   connect(url: string): this {
     this.url = url;
