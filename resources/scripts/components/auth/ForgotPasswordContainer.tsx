@@ -7,7 +7,8 @@ import LoginFormContainer from "@/components/auth/LoginFormContainer";
 import { useAppStore } from "@/state";
 import Field from "@/components/elements/Field";
 import { Formik, FormikHelpers } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Button from "@/components/elements/Button";
 import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
 import useFlash from "@/plugins/useFlash";
@@ -87,11 +88,14 @@ export default () => {
     <Formik
       onSubmit={handleSubmission}
       initialValues={{ email: "" }}
-      validationSchema={object().shape({
-        email: string()
-          .email("A valid email address must be provided to continue.")
-          .required("A valid email address must be provided to continue."),
-      })}
+      validate={toFormikValidate(
+        z.object({
+          email: z
+            .string()
+            .min(1, "A valid email address must be provided to continue.")
+            .email("A valid email address must be provided to continue."),
+        }),
+      )}
     >
       {({ isSubmitting, setSubmitting, submitForm }) => (
         <LoginFormContainer

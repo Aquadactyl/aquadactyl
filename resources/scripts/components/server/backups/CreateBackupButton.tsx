@@ -7,7 +7,8 @@ import {
   FormikHelpers,
   useFormikContext,
 } from "formik";
-import { boolean, object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Field from "@/components/elements/Field";
 import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
 import useFlash from "@/plugins/useFlash";
@@ -120,11 +121,13 @@ export default ({ className }: Props) => {
         <Formik
           onSubmit={submit}
           initialValues={{ name: "", ignored: "", isLocked: false }}
-          validationSchema={object().shape({
-            name: string().max(191),
-            ignored: string(),
-            isLocked: boolean(),
-          })}
+          validate={toFormikValidate(
+            z.object({
+              name: z.string().max(191),
+              ignored: z.string(),
+              isLocked: z.boolean(),
+            }),
+          )}
         >
           <ModalContent
             appear

@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import Modal from "@/components/elements/Modal";
 import { Form, Formik, FormikHelpers } from "formik";
 import Field from "@/components/elements/Field";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import createServerDatabase from "@/api/server/databases/createServerDatabase";
 import { ServerContext } from "@/state/server";
 import { httpErrorToHuman } from "@/api/http";
@@ -15,19 +16,18 @@ interface Values {
   connectionsFrom: string;
 }
 
-const schema = object().shape({
-  databaseName: string()
-    .required("A database name must be provided.")
+const schema = z.object({
+  databaseName: z
+    .string()
     .min(3, "Database name must be at least 3 characters.")
     .max(48, "Database name must not exceed 48 characters.")
-    .matches(
+    .regex(
       /^[\w\-.]{3,48}$/,
       "Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.",
     ),
-  connectionsFrom: string().matches(
-    /^[\w\-/.%:]+$/,
-    "A valid host address must be provided.",
-  ),
+  connectionsFrom: z
+    .string()
+    .regex(/^[\w\-/.%:]+$/, "A valid host address must be provided."),
 });
 
 interface Props {
@@ -67,7 +67,7 @@ export default ({ className }: Props) => {
       <Formik
         onSubmit={submit}
         initialValues={{ databaseName: "", connectionsFrom: "" }}
-        validationSchema={schema}
+        validate={toFormikValidate(schema)}
       >
         {({ isSubmitting, resetForm }) => (
           <Modal

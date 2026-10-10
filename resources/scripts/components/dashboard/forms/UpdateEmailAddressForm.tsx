@@ -1,7 +1,8 @@
 import React from "react";
 import { useAppStore } from "@/state";
 import { Form, Formik, FormikHelpers } from "formik";
-import * as Yup from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import Field from "@/components/elements/Field";
 import { httpErrorToHuman } from "@/api/http";
@@ -13,11 +14,11 @@ interface Values {
   password: string;
 }
 
-const schema = Yup.object().shape({
-  email: Yup.string().email().required(),
-  password: Yup.string().required(
-    "You must provide your current account password.",
-  ),
+const schema = z.object({
+  email: z.string().email(),
+  password: z
+    .string()
+    .min(1, "You must provide your current account password."),
 });
 
 export default () => {
@@ -56,7 +57,7 @@ export default () => {
   return (
     <Formik
       onSubmit={submit}
-      validationSchema={schema}
+      validate={toFormikValidate(schema)}
       initialValues={{ email: user!.email, password: "" }}
     >
       {({ isSubmitting, isValid }) => (

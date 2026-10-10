@@ -2,7 +2,8 @@ import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect, useRef, useState } from "react";
 import Modal, { RequiredModalProps } from "@/components/elements/Modal";
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import debounce from "debounce";
 import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
 import InputSpinner from "@/components/elements/InputSpinner";
@@ -71,12 +72,16 @@ export default ({ ...props }: Props) => {
   return (
     <Formik
       onSubmit={search}
-      validationSchema={object().shape({
-        term: string().min(
-          3,
-          "Please enter at least three characters to begin searching.",
-        ),
-      })}
+      validate={toFormikValidate(
+        z.object({
+          term: z
+            .string()
+            .min(
+              3,
+              "Please enter at least three characters to begin searching.",
+            ),
+        }),
+      )}
       initialValues={{ term: "" } as Values}
     >
       {({ isSubmitting }) => (

@@ -22,16 +22,15 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `chart.js`, `react-chartjs-2`                              | Charts                                                 |
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
 | `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
-| `formik`, `yup`                                            | The panel's existing form and validation libraries     |
-| `react-hook-form`, `@hookform/resolvers`, `zod`            | Addon forms and schema validation                      |
+| `formik`, `react-hook-form`                                | Form libraries                                         |
+| `@hookform/resolvers`, `zod`                               | Schema validation and resolvers                        |
 | `zustand`                                                  | Lightweight addon state stores                         |
 | `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |
 | `i18next`, `react-i18next`                                 | Translation                                            |
 
 React and React DOM remain on 16.14 for compatibility with this panel and Blueprint.
 Use the panel's React installation so extension hooks share the same runtime.
-Formik and Yup support the panel's existing forms. React Hook Form, its Zod
-resolver, Zod and Zustand are also shared dependencies for addons.
+Formik, React Hook Form, Zod and Zustand are shared dependencies for addons.
 
 ## Imports
 
@@ -39,17 +38,20 @@ resolver, Zod and Zustand are also shared dependencies for addons.
 import http from "@/api/http";
 import { Settings } from "lucide-react";
 import { Form, Formik } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Field from "@/components/elements/Field";
 import Button from "@/components/elements/Button";
+
+const schema = z.object({
+  label: z.string().trim().max(80).min(1, "Enter a label."),
+});
 
 export default function ExtensionSettings() {
   return (
     <Formik
       initialValues={{ label: "" }}
-      validationSchema={object({
-        label: string().trim().max(80).required("Enter a label."),
-      })}
+      validate={toFormikValidate(schema)}
       onSubmit={async (values) => {
         await http.put("/api/client/extensions/myextension/settings", values);
       }}

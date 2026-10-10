@@ -5,7 +5,8 @@ import { httpErrorToHuman } from "@/api/http";
 import LoginFormContainer from "@/components/auth/LoginFormContainer";
 import useFlash from "@/plugins/useFlash";
 import { Formik, FormikHelpers } from "formik";
-import { object, ref, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Field from "@/components/elements/Field";
 import Input from "@/components/elements/Input";
 import Button from "@/components/elements/Button";
@@ -60,18 +61,24 @@ export default () => {
         password: "",
         passwordConfirmation: "",
       }}
-      validationSchema={object().shape({
-        password: string()
-          .required("A new password is required.")
-          .min(
-            8,
-            "Your new password should be at least 8 characters in length.",
-          ),
-        passwordConfirmation: string()
-          .required("Your new password does not match.")
-          // @ts-expect-error this is valid
-          .oneOf([ref("password"), null], "Your new password does not match."),
-      })}
+      validate={toFormikValidate(
+        z
+          .object({
+            password: z
+              .string()
+              .min(
+                8,
+                "Your new password should be at least 8 characters in length.",
+              ),
+            passwordConfirmation: z
+              .string()
+              .min(1, "Your new password does not match."),
+          })
+          .refine((data) => data.password === data.passwordConfirmation, {
+            message: "Your new password does not match.",
+            path: ["passwordConfirmation"],
+          }),
+      )}
     >
       {({ isSubmitting }) => (
         <LoginFormContainer title={"Reset Password"} className={"flex w-full"}>

@@ -3,7 +3,8 @@ import { ServerContext } from "@/state/server";
 import { Form, Formik, FormikHelpers } from "formik";
 import Field from "@/components/elements/Field";
 import { join, normalize } from "pathe";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import createDirectory from "@/api/server/files/createDirectory";
 import { Button } from "@/components/elements/button/index";
 import { FileObject } from "@/api/server/files/loadDirectory";
@@ -19,8 +20,8 @@ interface Values {
   directoryName: string;
 }
 
-const schema = object().shape({
-  directoryName: string().required("A valid directory name must be provided."),
+const schema = z.object({
+  directoryName: z.string().min(1, "A valid directory name must be provided."),
 });
 
 const displayNameForDirectory = (name: string): string =>
@@ -86,7 +87,7 @@ const NewDirectoryDialog = asDialog({
   return (
     <Formik
       onSubmit={submit}
-      validationSchema={schema}
+      validate={toFormikValidate(schema)}
       initialValues={{ directoryName: "" }}
     >
       {({ submitForm, values }) => (

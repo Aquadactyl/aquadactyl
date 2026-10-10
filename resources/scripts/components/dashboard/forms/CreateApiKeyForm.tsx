@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
 import createApiKey from "@/api/account/createApiKey";
 import useFlash from "@/plugins/useFlash";
@@ -50,10 +51,12 @@ export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
       <Formik
         onSubmit={submit}
         initialValues={{ description: "", allowedIps: "" }}
-        validationSchema={object().shape({
-          allowedIps: string(),
-          description: string().required().min(4),
-        })}
+        validate={toFormikValidate(
+          z.object({
+            allowedIps: z.string().optional(),
+            description: z.string().min(4),
+          }),
+        )}
       >
         {({ isSubmitting }) => (
           <Form>

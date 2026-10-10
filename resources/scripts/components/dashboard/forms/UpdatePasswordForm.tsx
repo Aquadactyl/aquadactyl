@@ -2,7 +2,8 @@ import React from "react";
 import { useAppStore } from "@/state";
 import { Form, Formik, FormikHelpers } from "formik";
 import Field from "@/components/elements/Field";
-import * as Yup from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import updateAccountPassword from "@/api/account/updateAccountPassword";
 import { httpErrorToHuman } from "@/api/http";
@@ -15,19 +16,16 @@ interface Values {
   confirmPassword: string;
 }
 
-const schema = Yup.object().shape({
-  current: Yup.string()
-    .min(1)
-    .required("You must provide your current password."),
-  password: Yup.string().min(8).required(),
-  confirmPassword: Yup.string().test(
-    "password",
-    "Password confirmation does not match the password you entered.",
-    function (value) {
-      return value === this.parent.password;
-    },
-  ),
-});
+const schema = z
+  .object({
+    current: z.string().min(1, "You must provide your current password."),
+    password: z.string().min(8),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.confirmPassword === data.password, {
+    message: "Password confirmation does not match the password you entered.",
+    path: ["confirmPassword"],
+  });
 
 export default () => {
   const user = useAppStore((state) => state.user.data);
@@ -59,7 +57,7 @@ export default () => {
     <React.Fragment>
       <Formik
         onSubmit={submit}
-        validationSchema={schema}
+        validate={toFormikValidate(schema)}
         initialValues={{
           current: "",
           password: "",

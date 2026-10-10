@@ -2,7 +2,8 @@ import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useContext, useEffect, useRef } from "react";
 import { Subuser } from "@/state/server/subusers";
 import { Form, Formik } from "formik";
-import { array, object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Field from "@/components/elements/Field";
 import { useAppStore } from "@/state";
 import useFlash from "@/plugins/useFlash";
@@ -104,13 +105,16 @@ const EditSubuserModal = ({ subuser }: Props) => {
           permissions: subuser?.permissions || [],
         } as Values
       }
-      validationSchema={object().shape({
-        email: string()
-          .max(191, "Email addresses must not exceed 191 characters.")
-          .email("A valid email address must be provided.")
-          .required("A valid email address must be provided."),
-        permissions: array().of(string()),
-      })}
+      validate={toFormikValidate(
+        z.object({
+          email: z
+            .string()
+            .min(1, "A valid email address must be provided.")
+            .max(191, "Email addresses must not exceed 191 characters.")
+            .email("A valid email address must be provided."),
+          permissions: z.array(z.string()),
+        }),
+      )}
     >
       <Form>
         <div className={"flex justify-between"}>

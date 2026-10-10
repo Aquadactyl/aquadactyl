@@ -1,7 +1,8 @@
 import React from "react";
 import Modal, { RequiredModalProps } from "@/components/elements/Modal";
 import { Form, Formik, FormikHelpers } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Field from "@/components/elements/Field";
 import { ServerContext } from "@/state/server";
 import { join } from "pathe";
@@ -29,9 +30,11 @@ export default ({ onFileNamed, onDismissed, ...props }: Props) => {
     <Formik
       onSubmit={submit}
       initialValues={{ fileName: "" }}
-      validationSchema={object().shape({
-        fileName: string().required().min(1),
-      })}
+      validate={toFormikValidate(
+        z.object({
+          fileName: z.string().min(1),
+        }),
+      )}
     >
       {({ resetForm }) => (
         <Modal

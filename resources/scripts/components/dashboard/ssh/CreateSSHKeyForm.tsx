@@ -1,6 +1,7 @@
 import React from "react";
 import { Field, Form, Formik, FormikHelpers } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import Button from "@/components/elements/Button";
@@ -37,10 +38,12 @@ export default () => {
       <Formik
         onSubmit={submit}
         initialValues={{ name: "", publicKey: "" }}
-        validationSchema={object().shape({
-          name: string().required(),
-          publicKey: string().required(),
-        })}
+        validate={toFormikValidate(
+          z.object({
+            name: z.string().min(1),
+            publicKey: z.string().min(1),
+          }),
+        )}
       >
         {({ isSubmitting }) => (
           <Form>

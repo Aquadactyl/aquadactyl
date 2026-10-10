@@ -11,7 +11,8 @@ import {
 import useFlash from "@/plugins/useFlash";
 import renameServer from "@/api/server/renameServer";
 import Field from "@/components/elements/Field";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import { httpErrorToHuman } from "@/api/http";
 import { Button } from "@/components/elements/button/index";
@@ -74,10 +75,12 @@ export default () => {
         name: server.name,
         description: server.description,
       }}
-      validationSchema={object().shape({
-        name: string().required().min(1),
-        description: string().nullable(),
-      })}
+      validate={toFormikValidate(
+        z.object({
+          name: z.string().min(1),
+          description: z.string().nullable().optional(),
+        }),
+      )}
     >
       <RenameServerBox />
     </Formik>

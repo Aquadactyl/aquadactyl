@@ -4,7 +4,8 @@ import login from "@/api/auth/login";
 import LoginFormContainer from "@/components/auth/LoginFormContainer";
 import { useAppStore } from "@/state";
 import { Formik, FormikHelpers } from "formik";
-import { object, string } from "yup";
+import { z } from "zod";
+import { toFormikValidate } from "@/lib/zValidate";
 import Field from "@/components/elements/Field";
 import Button from "@/components/elements/Button";
 import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
@@ -84,10 +85,12 @@ const LoginContainer = () => {
     <Formik
       onSubmit={onSubmit}
       initialValues={{ username: "", password: "" }}
-      validationSchema={object().shape({
-        username: string().required("A username or email must be provided."),
-        password: string().required("Please enter your account password."),
-      })}
+      validate={toFormikValidate(
+        z.object({
+          username: z.string().min(1, "A username or email must be provided."),
+          password: z.string().min(1, "Please enter your account password."),
+        }),
+      )}
     >
       {({ isSubmitting, setSubmitting, submitForm }) => (
         <LoginFormContainer
