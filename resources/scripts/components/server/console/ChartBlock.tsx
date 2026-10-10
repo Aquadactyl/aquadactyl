@@ -1,6 +1,5 @@
 import React from "react";
 import classNames from "classnames";
-import styles from "@/components/server/console/style.module.css";
 
 interface ChartBlockProps {
   title: string;
@@ -9,7 +8,7 @@ interface ChartBlockProps {
 }
 
 export default ({ title, legend, children }: ChartBlockProps) => (
-  <div className={classNames(styles.chart_container, "group")}>
+  <div className={classNames("chart_container", "group")}>
     <div className={"flex items-center justify-between px-4 py-2"}>
       <h3
         className={

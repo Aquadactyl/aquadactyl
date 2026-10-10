@@ -25,7 +25,6 @@ import useFlash from "@/plugins/useFlash";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 import { FileActionCheckbox } from "@/components/server/files/SelectFileCheckbox";
 import { hashToPath } from "@/helpers";
-import style from "./style.module.css";
 
 import BeforeContent from "@blueprint/components/Server/Files/Browse/BeforeContent";
 import FileButtons from "@blueprint/components/Server/Files/Browse/FileButtons";
@@ -108,7 +107,7 @@ export default () => {
             }
           />
           <Can action={"file.create"}>
-            <div className={style.manager_actions}>
+            <div className={"manager_actions"}>
               <FileManagerStatus />
               <FileButtons />
               <NewDirectoryButton />

@@ -19,7 +19,6 @@ import { ChevronsRight } from "lucide-react";
 import CommandRow from "@blueprint/components/Server/Terminal/CommandRow";
 
 import "@xterm/xterm/css/xterm.css";
-import styles from "./style.module.css";
 import { th } from "@/lib/theme";
 import { formatConsoleOutput } from "./formatConsoleOutput";
 
@@ -227,21 +226,21 @@ export default () => {
   }, [connected, instance]);
 
   return (
-    <div className={classNames(styles.terminal, "relative")}>
+    <div className={classNames("terminal", "relative")}>
       <SpinnerOverlay visible={!connected} size={"large"} />
       <div
-        className={classNames(styles.container, styles.overflows_container, {
+        className={classNames("container", "overflows_container", {
           "rounded-b-lg": !canSendCommands,
         })}
       >
         <div className={"h-full"}>
-          <div id={styles.terminal} ref={ref} />
+          <div id={"terminal"} ref={ref} />
         </div>
       </div>
       {canSendCommands && (
-        <div className={classNames("relative", styles.overflows_container)}>
+        <div className={classNames("relative", "overflows_container")}>
           <input
-            className={classNames("peer", styles.command_input)}
+            className={classNames("peer", "command_input")}
             type={"text"}
             placeholder={"Type a command..."}
             aria-label={"Console command input."}
@@ -253,7 +252,7 @@ export default () => {
           <div
             className={classNames(
               "text-gray-100 peer-focus:animate-pulse peer-focus:text-gray-50",
-              styles.command_icon,
+              "command_icon",
             )}
           >
             <ChevronsRight className={"h-4 w-4"} />

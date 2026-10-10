@@ -3,7 +3,7 @@ import { Dialog as HDialog } from "@headlessui/react";
 import { Button } from "@/components/elements/button/index";
 import { X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { DialogContext, IconPosition, RenderDialogProps, styles } from "./";
+import { DialogContext, IconPosition, RenderDialogProps } from "./";
 
 const variants = {
   open: {
@@ -84,7 +84,7 @@ export default ({
               <div className={"fixed inset-0 z-50 overflow-y-auto"}>
                 <div
                   ref={container}
-                  className={styles.container}
+                  className={"dialog_container"}
                   onMouseDown={onContainerClick.bind(this, true)}
                   onMouseUp={onContainerClick.bind(this, false)}
                 >
@@ -94,7 +94,7 @@ export default ({
                     animate={down ? "bounce" : "open"}
                     exit={"closed"}
                     variants={variants}
-                    className={styles.panel}
+                    className={"dialog_panel"}
                   >
                     <div className={"flex overflow-y-auto p-6 pb-0"}>
                       {iconPosition === "container" && icon}
@@ -103,7 +103,7 @@ export default ({
                           {iconPosition !== "container" && icon}
                           <div>
                             {title && (
-                              <HDialog.Title className={styles.title}>
+                              <HDialog.Title className={"dialog_title"}>
                                 {title}
                               </HDialog.Title>
                             )}
@@ -128,7 +128,7 @@ export default ({
                           onClick={onClose}
                           className={"group"}
                         >
-                          <X className={styles.close_icon} />
+                          <X className={"dialog_close_icon"} />
                         </Button.Text>
                       </div>
                     )}

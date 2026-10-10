@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { AlertTriangle, Check, Info, ShieldAlert } from "lucide-react";
 import classNames from "classnames";
-import { DialogContext, DialogIconProps, styles } from "./";
+import { DialogContext, DialogIconProps } from "./";
 
 const icons = {
   danger: ShieldAlert,
@@ -17,7 +17,7 @@ export default ({ type, position, className }: DialogIconProps) => {
     const Icon = icons[type];
 
     setIcon(
-      <div className={classNames(styles.dialog_icon, styles[type], className)}>
+      <div className={classNames("dialog_icon", type, className)}>
         <Icon className={"h-6 w-6"} />
       </div>,
     );

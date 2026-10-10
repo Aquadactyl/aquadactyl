@@ -11,4 +11,3 @@ const Input: { Text: typeof InputField; Checkbox: typeof Checkbox } =
   );
 
 export { Input };
-export { default as styles } from "./styles.module.css";

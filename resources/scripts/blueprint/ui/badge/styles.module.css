@@ -1,5 +1,0 @@
-@reference "../../../assets/tailwind.css";
-
-.UiBadge {
-  @apply ml-2 items-center rounded-full bg-neutral-600 px-2 py-px text-xs text-white uppercase;
-}

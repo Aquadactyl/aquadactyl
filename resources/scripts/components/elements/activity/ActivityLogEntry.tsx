@@ -7,7 +7,6 @@ import { format, formatDistanceToNowStrict } from "date-fns";
 import { ActivityLog } from "@definitions/user";
 import ActivityLogMetaButton from "@/components/elements/activity/ActivityLogMetaButton";
 import { FolderOpen, Terminal } from "lucide-react";
-import style from "./style.module.css";
 import Avatar from "@/components/Avatar";
 import useLocationHash from "@/plugins/useLocationHash";
 import { getObjectKeys, isObject } from "@/lib/objects";
@@ -69,8 +68,8 @@ export default ({ activity, children }: Props) => {
   const eventLabel = activityEventLabel(activity.event);
 
   return (
-    <article className={style.entry}>
-      <div className={style.avatar}>
+    <article className={"activity_entry"}>
+      <div className={"activity_avatar"}>
         <Avatar
           name={actor?.uuid || "system"}
           src={avatarUrl}
@@ -78,15 +77,15 @@ export default ({ activity, children }: Props) => {
           size={40}
         />
       </div>
-      <div className={style.content}>
-        <div className={style.header}>
-          <div className={style.identity}>
-            <span className={style.username}>
+      <div className={"activity_content"}>
+        <div className={"activity_header"}>
+          <div className={"activity_identity"}>
+            <span className={"activity_username"}>
               {actor?.username || "System"}
             </span>
             <Link
               to={`#${pathTo({ event: undefined, event_exact: activity.event, page: undefined })}`}
-              className={style.event}
+              className={"activity_event"}
               title={activity.event}
               aria-label={`Filter by ${eventLabel}`}
             >
@@ -97,7 +96,7 @@ export default ({ activity, children }: Props) => {
             <ActivityLogMetaButton meta={activity.properties} />
           )}
         </div>
-        <p className={style.description}>
+        <p className={"activity_description"}>
           <Translate
             ns={"activity"}
             values={properties}
@@ -106,7 +105,7 @@ export default ({ activity, children }: Props) => {
             components={{ sensitive: <SensitiveValue /> }}
           />
         </p>
-        <div className={style.details}>
+        <div className={"activity_details"}>
           <Tooltip
             placement={"top"}
             content={format(activity.timestamp, "MMM do, yyyy H:mm:ss")}
@@ -120,13 +119,13 @@ export default ({ activity, children }: Props) => {
           {activity.ip && (
             <Link
               to={`#${pathTo({ ip: activity.ip, page: undefined })}`}
-              className={style.ip}
+              className={"activity_ip"}
               aria-label={`Filter by IP address ${activity.ip}`}
             >
               <SensitiveValue>{activity.ip}</SensitiveValue>
             </Link>
           )}
-          <div className={style.icons}>
+          <div className={"activity_icons"}>
             {activity.isApi && (
               <Tooltip placement={"top"} content={"Using API Key"}>
                 <span tabIndex={0} aria-label={"API activity"}>

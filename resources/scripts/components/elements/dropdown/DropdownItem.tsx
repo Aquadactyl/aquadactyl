@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 import { Menu } from "@headlessui/react";
-import styles from "./style.module.css";
+
 import classNames from "classnames";
 
 interface Props {
@@ -26,10 +26,10 @@ const DropdownItem = forwardRef<HTMLAnchorElement, Props>(
             ref={ref}
             href={"#"}
             className={classNames(
-              styles.menu_item,
+              "dropdown-menu_item",
               {
-                [styles.danger]: danger,
-                [styles.disabled]: disabled,
+                danger: danger,
+                disabled: disabled,
               },
               className,
             )}

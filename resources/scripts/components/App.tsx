@@ -15,8 +15,7 @@ import { history } from "@/components/history";
 import { setupInterceptors } from "@/api/interceptors";
 import AuthenticatedRoute from "@/components/elements/AuthenticatedRoute";
 import { ServerContext } from "@/state/server";
-import "@/assets/tailwind.css";
-import "@/assets/css/interface.css";
+import "@/assets/index.css";
 import Spinner from "@/components/elements/Spinner";
 import PrivacyMode from "@/components/elements/PrivacyMode";
 

@@ -66,7 +66,7 @@ browsers fetch the new files.
 ### Colours and layouts
 
 Client dropdowns use the shared `Select` component with the charcoal and aqua
-styles in `interface.css`. Admin selects use Select2, including fields added by
+styles in `index.css`. Admin selects use Select2, including fields added by
 Blueprint; existing AJAX and dependent selectors keep their page-specific setup.
 The server creation form uses a two-column grid with 32px column gutters and
 24px field gaps, switching to one column on phone screens.
@@ -75,8 +75,8 @@ The console displays the Aquadactyl prompt for startup messages from Yolks
 images as well as panel status messages. ANSI colours, game output and image
 registry references retain their original content.
 
-Client utility colours are defined in `tailwind.config.ts`. Interface cards,
-navigation, authentication and server rows use `resources/scripts/assets/css/interface.css`;
+Client utility colours are defined in `index.css`. Interface cards,
+navigation, authentication and server rows use `resources/scripts/assets/index.css`;
 browser defaults and fonts use `resources/scripts/assets/css/GlobalStylesheet.ts`.
 The runtime theme helper in `resources/scripts/lib/theme.ts` and the terminal
 palette should stay aligned with these colours. The admin palette lives

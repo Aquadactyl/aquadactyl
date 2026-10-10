@@ -3,7 +3,6 @@ import { ClipboardList } from "lucide-react";
 import { Dialog } from "@/components/elements/dialog";
 import { Button } from "@/components/elements/button/index";
 import classNames from "classnames";
-import style from "./style.module.css";
 
 export default ({ meta }: { meta: Record<string, unknown> }) => {
   const [open, setOpen] = useState(false);
@@ -32,7 +31,7 @@ export default ({ meta }: { meta: Record<string, unknown> }) => {
       <button
         type={"button"}
         aria-label={"View event details"}
-        className={classNames(style.metadata, "cursor-pointer")}
+        className={classNames("activity_metadata", "cursor-pointer")}
         onClick={() => setOpen(true)}
       >
         <ClipboardList className={"h-5 w-5"} />

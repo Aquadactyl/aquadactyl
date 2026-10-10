@@ -11,7 +11,6 @@ import SelectFileCheckbox from "@/components/server/files/SelectFileCheckbox";
 import { usePermissions } from "@/plugins/usePermissions";
 import { join } from "pathe";
 import { bytesToString } from "@/lib/formatters";
-import styles from "./style.module.css";
 
 const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
   const [canRead] = usePermissions(["file.read"]);
@@ -23,10 +22,10 @@ const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
 
   return (file.isFile && (!file.isEditable() || !canReadContents)) ||
     (!file.isFile && !canRead) ? (
-    <div className={styles.details}>{children}</div>
+    <div className={"details"}>{children}</div>
   ) : (
     <NavLink
-      className={styles.details}
+      className={"details"}
       to={`/server/${id}/files${file.isFile ? "/edit" : ""}#${encodePathSegments(join(directory, file.name))}`}
     >
       {children}
@@ -36,7 +35,7 @@ const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
 
 const FileObjectRow = ({ file }: { file: FileObject }) => (
   <div
-    className={styles.file_row}
+    className={"file_row"}
     key={file.name}
     onContextMenu={(e) => {
       e.preventDefault();

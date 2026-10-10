@@ -1,6 +1,5 @@
 import React, { ElementType, forwardRef, useMemo } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import styles from "./style.module.css";
 import classNames from "classnames";
 import DropdownItem from "@/components/elements/dropdown/DropdownItem";
 import DropdownButton from "@/components/elements/dropdown/DropdownButton";
@@ -40,7 +39,7 @@ const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {
   }
 
   return (
-    <Menu as={as || "div"} className={styles.menu} ref={ref}>
+    <Menu as={as || "div"} className={"dropdown-menu"} ref={ref}>
       {Button}
       <Transition
         enter={"transition duration-100 ease-out"}
@@ -50,7 +49,7 @@ const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {
         leaveFrom={"transform scale-100 opacity-100"}
         leaveTo={"transform scale-95 opacity-0"}
       >
-        <Menu.Items className={classNames(styles.items_container, "w-56")}>
+        <Menu.Items className={classNames("dropdown-items_container", "w-56")}>
           <div className={"px-1 py-1"}>{items}</div>
         </Menu.Items>
       </Transition>
