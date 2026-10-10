@@ -42,6 +42,8 @@ export default defineConfig({
     },
   },
   build: {
+    emptyOutDir: true,
+    cssMinify: 'lightningcss',
     chunkSizeWarningLimit: 1200,
     rollupOptions: {
       output: {
