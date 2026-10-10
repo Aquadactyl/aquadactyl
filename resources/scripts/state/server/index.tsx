@@ -1,25 +1,25 @@
-import React, { createContext, useContext, useEffect, useRef } from 'react';
-import getServer, { Server } from '@/api/server/getServer';
-import createSocketSlice, { SocketStore } from './socket';
-import createFilesSlice, { ServerFileStore } from '@/state/server/files';
+import React, { createContext, useContext, useEffect, useRef } from "react";
+import getServer, { Server } from "@/api/server/getServer";
+import createSocketSlice, { SocketStore } from "./socket";
+import createFilesSlice, { ServerFileStore } from "@/state/server/files";
 import createSubusersSlice, {
   ServerSubuserStore,
-} from '@/state/server/subusers';
+} from "@/state/server/subusers";
 import createSchedulesSlice, {
   ServerScheduleStore,
-} from '@/state/server/schedules';
+} from "@/state/server/schedules";
 import createDatabasesSlice, {
   ServerDatabaseStore,
-} from '@/state/server/databases';
-import isEqual from 'react-fast-compare';
-import { createStore } from 'zustand/vanilla';
-import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
+} from "@/state/server/databases";
+import isEqual from "react-fast-compare";
+import { createStore } from "zustand/vanilla";
+import { useStoreWithEqualityFn } from "@/state/useStoreWithEqualityFn";
 
 export type ServerStatus =
-  | 'offline'
-  | 'starting'
-  | 'stopping'
-  | 'running'
+  | "offline"
+  | "starting"
+  | "stopping"
+  | "running"
   | null;
 
 export interface ServerDataState {
@@ -68,7 +68,7 @@ export const createServerStore = () => {
     };
 
     const computeInstallingState = (data?: Server): boolean => {
-      return data?.status === 'installing' || data?.status === 'install_failed';
+      return data?.status === "installing" || data?.status === "install_failed";
     };
 
     const serverDataSlice: ServerDataStore = {
@@ -177,7 +177,7 @@ export const createServerStore = () => {
             },
             files: {
               ...state.files,
-              directory: '/',
+              directory: "/",
               selectedFiles: [],
             },
             schedules: {

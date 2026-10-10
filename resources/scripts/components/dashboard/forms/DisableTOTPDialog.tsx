@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
-import asDialog from '@/hoc/asDialog';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
-import { Button } from '@/components/elements/button/index';
-import { Input } from '@/components/elements/inputs';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
-import disableAccountTwoFactor from '@/api/account/disableAccountTwoFactor';
-import { useFlashKey } from '@/plugins/useFlash';
-import { useAppStore } from '@/state';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Label from '@/components/elements/Label';
+import React, { useContext, useEffect, useState } from "react";
+import asDialog from "@/hoc/asDialog";
+import { Dialog, DialogWrapperContext } from "@/components/elements/dialog";
+import { Button } from "@/components/elements/button/index";
+import { Input } from "@/components/elements/inputs";
+import Tooltip from "@/components/elements/tooltip/Tooltip";
+import disableAccountTwoFactor from "@/api/account/disableAccountTwoFactor";
+import { useFlashKey } from "@/plugins/useFlash";
+import { useAppStore } from "@/state";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import Label from "@/components/elements/Label";
 
 const DisableTOTPDialog = () => {
   const [submitting, setSubmitting] = useState(false);
-  const [password, setPassword] = useState('');
-  const { clearAndAddHttpError } = useFlashKey('account:two-step');
+  const [password, setPassword] = useState("");
+  const { clearAndAddHttpError } = useFlashKey("account:two-step");
   const { close, setProps } = useContext(DialogWrapperContext);
   const updateUserData = useAppStore((state) => state.user.updateUserData);
 
@@ -39,13 +39,13 @@ const DisableTOTPDialog = () => {
   };
 
   return (
-    <form id={'disable-totp-form'} className={'mt-6'} onSubmit={submit}>
-      <FlashMessageRender byKey={'account:two-step'} className={'-mt-2 mb-6'} />
-      <Label htmlFor={'totp-password'}>Password</Label>
+    <form id={"disable-totp-form"} className={"mt-6"} onSubmit={submit}>
+      <FlashMessageRender byKey={"account:two-step"} className={"-mt-2 mb-6"} />
+      <Label htmlFor={"totp-password"}>Password</Label>
       <Input.Text
-        id={'totp-password'}
-        type={'password'}
-        autoComplete={'current-password'}
+        id={"totp-password"}
+        type={"password"}
+        autoComplete={"current-password"}
         variant={Input.Text.Variants.Loose}
         value={password}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -57,11 +57,11 @@ const DisableTOTPDialog = () => {
         <Tooltip
           delay={100}
           disabled={password.length > 0}
-          content={'You must enter your account password to continue.'}
+          content={"You must enter your account password to continue."}
         >
           <Button.Danger
-            type={'submit'}
-            form={'disable-totp-form'}
+            type={"submit"}
+            form={"disable-totp-form"}
             disabled={submitting || !password.length}
           >
             Disable
@@ -73,7 +73,7 @@ const DisableTOTPDialog = () => {
 };
 
 export default asDialog({
-  title: 'Disable Two-Step Verification',
+  title: "Disable Two-Step Verification",
   description:
-    'Disabling two-step verification will make your account less secure.',
+    "Disabling two-step verification will make your account less secure.",
 })(DisableTOTPDialog);

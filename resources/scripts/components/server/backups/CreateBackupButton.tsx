@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
+import React, { useEffect, useState } from "react";
+import Modal, { RequiredModalProps } from "@/components/elements/Modal";
 import {
   Field as FormikField,
   Form,
   Formik,
   FormikHelpers,
   useFormikContext,
-} from 'formik';
-import { boolean, object, string } from 'yup';
-import Field from '@/components/elements/Field';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import useFlash from '@/plugins/useFlash';
-import createServerBackup from '@/api/server/backups/createServerBackup';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Button from '@/components/elements/Button';
-import { Textarea } from '@/components/elements/Input';
-import getServerBackups from '@/api/server/backups/getServerBackups';
-import { ServerContext } from '@/state/server';
-import FormikSwitch from '@/components/elements/FormikSwitch';
-import Can from '@/components/elements/Can';
+} from "formik";
+import { boolean, object, string } from "yup";
+import Field from "@/components/elements/Field";
+import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
+import useFlash from "@/plugins/useFlash";
+import createServerBackup from "@/api/server/backups/createServerBackup";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import Button from "@/components/elements/Button";
+import { Textarea } from "@/components/elements/Input";
+import getServerBackups from "@/api/server/backups/getServerBackups";
+import { ServerContext } from "@/state/server";
+import FormikSwitch from "@/components/elements/FormikSwitch";
+import Can from "@/components/elements/Can";
 
 interface Values {
   name: string;
@@ -32,19 +32,19 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
   return (
     <Modal {...props} showSpinnerOverlay={isSubmitting}>
       <Form>
-        <FlashMessageRender byKey={'backups:create'} className={'mb-4'} />
-        <h2 className={'mb-6 text-2xl'}>Create server backup</h2>
+        <FlashMessageRender byKey={"backups:create"} className={"mb-4"} />
+        <h2 className={"mb-6 text-2xl"}>Create server backup</h2>
         <Field
-          name={'name'}
-          label={'Backup name'}
+          name={"name"}
+          label={"Backup name"}
           description={
-            'If provided, the name that should be used to reference this backup.'
+            "If provided, the name that should be used to reference this backup."
           }
         />
-        <div className={'mt-6'}>
+        <div className={"mt-6"}>
           <FormikFieldWrapper
-            name={'ignored'}
-            label={'Ignored Files & Directories'}
+            name={"ignored"}
+            label={"Ignored Files & Directories"}
             description={`
                             Enter the files or folders to ignore while generating this backup. Leave blank to use
                             the contents of the .pteroignore file in the root of the server directory if present.
@@ -52,26 +52,26 @@ const ModalContent = ({ ...props }: RequiredModalProps) => {
                             prefixing the path with an exclamation point.
                         `}
           >
-            <FormikField as={Textarea} name={'ignored'} rows={6} />
+            <FormikField as={Textarea} name={"ignored"} rows={6} />
           </FormikFieldWrapper>
         </div>
-        <Can action={'backup.delete'}>
+        <Can action={"backup.delete"}>
           <div
             className={
-              'mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner'
+              "mt-6 rounded border border-neutral-800 bg-neutral-700 p-4 shadow-inner"
             }
           >
             <FormikSwitch
-              name={'isLocked'}
-              label={'Locked'}
+              name={"isLocked"}
+              label={"Locked"}
               description={
-                'Prevents this backup from being deleted until explicitly unlocked.'
+                "Prevents this backup from being deleted until explicitly unlocked."
               }
             />
           </div>
         </Can>
-        <div className={'mt-6 flex justify-end'}>
-          <Button type={'submit'} disabled={isSubmitting}>
+        <div className={"mt-6 flex justify-end"}>
+          <Button type={"submit"} disabled={isSubmitting}>
             Start backup
           </Button>
         </div>
@@ -91,11 +91,11 @@ export default ({ className }: Props) => {
   const { mutate } = getServerBackups();
 
   useEffect(() => {
-    clearFlashes('backups:create');
+    clearFlashes("backups:create");
   }, [visible]);
 
   const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
-    clearFlashes('backups:create');
+    clearFlashes("backups:create");
     createServerBackup(uuid, values)
       .then((backup) => {
         mutate(
@@ -109,7 +109,7 @@ export default ({ className }: Props) => {
         setVisible(false);
       })
       .catch((error) => {
-        clearAndAddHttpError({ key: 'backups:create', error });
+        clearAndAddHttpError({ key: "backups:create", error });
         setSubmitting(false);
       });
   };
@@ -119,7 +119,7 @@ export default ({ className }: Props) => {
       {visible && (
         <Formik
           onSubmit={submit}
-          initialValues={{ name: '', ignored: '', isLocked: false }}
+          initialValues={{ name: "", ignored: "", isLocked: false }}
           validationSchema={object().shape({
             name: string().max(191),
             ignored: string(),
@@ -134,7 +134,7 @@ export default ({ className }: Props) => {
         </Formik>
       )}
       <Button
-        className={className || 'w-full sm:w-auto'}
+        className={className || "w-full sm:w-auto"}
         onClick={() => setVisible(true)}
       >
         Create backup

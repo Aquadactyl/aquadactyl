@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Websocket } from '@/plugins/Websocket';
-import { ServerContext } from '@/state/server';
-import getWebsocketToken from '@/api/server/getWebsocketToken';
-import ContentContainer from '@/components/elements/ContentContainer';
-import Fade from '@/components/elements/Fade';
-import Spinner from '@/components/elements/Spinner';
+import React, { useEffect, useState } from "react";
+import { Websocket } from "@/plugins/Websocket";
+import { ServerContext } from "@/state/server";
+import getWebsocketToken from "@/api/server/getWebsocketToken";
+import ContentContainer from "@/components/elements/ContentContainer";
+import Fade from "@/components/elements/Fade";
+import Spinner from "@/components/elements/Spinner";
 
 const reconnectErrors = [
-  'jwt: exp claim is invalid',
-  'jwt: created too far in past (denylist)',
+  "jwt: exp claim is invalid",
+  "jwt: created too far in past (denylist)",
 ];
 
 export default () => {
   let updatingToken = false;
-  const [error, setError] = useState<'connecting' | string>('');
+  const [error, setError] = useState<"connecting" | string>("");
   const { connected, instance } = ServerContext.useStoreState(
     (state) => state.socket,
   );
@@ -40,47 +40,47 @@ export default () => {
   const connect = (uuid: string) => {
     const socket = new Websocket();
 
-    socket.on('auth success', () => setConnectionState(true));
-    socket.on('SOCKET_CLOSE', () => setConnectionState(false));
-    socket.on('SOCKET_CONNECT_ERROR', () => {
+    socket.on("auth success", () => setConnectionState(true));
+    socket.on("SOCKET_CLOSE", () => setConnectionState(false));
+    socket.on("SOCKET_CONNECT_ERROR", () => {
       setError(
-        'Failed to connect to websocket instance after multiple attempts: try refreshing the page.',
+        "Failed to connect to websocket instance after multiple attempts: try refreshing the page.",
       );
     });
-    socket.on('SOCKET_ERROR', () => {
-      setError('connecting');
+    socket.on("SOCKET_ERROR", () => {
+      setError("connecting");
       setConnectionState(false);
     });
-    socket.on('status', (status) => setServerStatus(status));
+    socket.on("status", (status) => setServerStatus(status));
 
-    socket.on('daemon error', (message) => {
-      console.warn('Got error message from daemon socket:', message);
+    socket.on("daemon error", (message) => {
+      console.warn("Got error message from daemon socket:", message);
     });
 
-    socket.on('token expiring', () => updateToken(uuid, socket));
-    socket.on('token expired', () => updateToken(uuid, socket));
-    socket.on('jwt error', (error: string) => {
+    socket.on("token expiring", () => updateToken(uuid, socket));
+    socket.on("token expired", () => updateToken(uuid, socket));
+    socket.on("jwt error", (error: string) => {
       setConnectionState(false);
-      console.warn('JWT validation error from wings:', error);
+      console.warn("JWT validation error from wings:", error);
 
       if (reconnectErrors.find((v) => error.toLowerCase().indexOf(v) >= 0)) {
         updateToken(uuid, socket);
       } else {
         setError(
-          'There was an error validating the credentials provided for the websocket. Please refresh the page.',
+          "There was an error validating the credentials provided for the websocket. Please refresh the page.",
         );
       }
     });
 
-    socket.on('transfer status', (status: string) => {
-      if (status === 'starting' || status === 'success') {
+    socket.on("transfer status", (status: string) => {
+      if (status === "starting" || status === "success") {
         return;
       }
 
       // This code forces a reconnection to the websocket which will connect us to the target node instead of the source node
       // in order to be able to receive transfer logs from the target node.
       socket.close();
-      setError('connecting');
+      setError("connecting");
       setConnectionState(false);
       setInstance(null);
       connect(uuid);
@@ -98,7 +98,7 @@ export default () => {
   };
 
   useEffect(() => {
-    connected && setError('');
+    connected && setError("");
   }, [connected]);
 
   useEffect(() => {
@@ -119,18 +119,18 @@ export default () => {
 
   return (
     <Fade in={!!error} unmountOnExit timeout={150}>
-      <div className={'bg-red-500 py-2'}>
-        <ContentContainer className={'flex items-center justify-center'}>
-          {error === 'connecting' ? (
+      <div className={"bg-red-500 py-2"}>
+        <ContentContainer className={"flex items-center justify-center"}>
+          {error === "connecting" ? (
             <>
-              <Spinner size={'small'} />
-              <p className={'ml-2 text-sm text-red-100'}>
+              <Spinner size={"small"} />
+              <p className={"ml-2 text-sm text-red-100"}>
                 We&apos;re having some trouble connecting to your server, please
                 wait...
               </p>
             </>
           ) : (
-            <p className={'ml-2 text-sm text-white'}>{error}</p>
+            <p className={"ml-2 text-sm text-white"}>{error}</p>
           )}
         </ContentContainer>
       </div>

@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export default async (
   uuid: string,
@@ -11,7 +11,7 @@ export default async (
     {
       timeout: 300000,
       timeoutErrorMessage:
-        'It looks like this archive is taking a long time to be unarchived. Once completed the unarchived files will appear.',
+        "It looks like this archive is taking a long time to be unarchived. Once completed the unarchived files will appear.",
     },
   );
 };

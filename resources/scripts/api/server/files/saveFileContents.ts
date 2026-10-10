@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export default async (
   uuid: string,
@@ -8,7 +8,7 @@ export default async (
   await http.post(`/api/client/servers/${uuid}/files/write`, content, {
     params: { file },
     headers: {
-      'Content-Type': 'text/plain',
+      "Content-Type": "text/plain",
     },
   });
 };

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useServerStore } from '@/state/server';
-import Modal from '@/components/elements/Modal';
-import Button from '@/components/elements/Button';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
-import { SocketEvent } from '@/components/server/events';
-import { useAppStore } from '@/state';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import React, { useEffect, useState } from "react";
+import { useServerStore } from "@/state/server";
+import Modal from "@/components/elements/Modal";
+import Button from "@/components/elements/Button";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import useFlash from "@/plugins/useFlash";
+import { SocketEvent } from "@/components/server/events";
+import { useAppStore } from "@/state";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 const PIDLimitModalFeature = () => {
   const [visible, setVisible] = useState(false);
@@ -20,14 +20,14 @@ const PIDLimitModalFeature = () => {
   const isAdmin = useAppStore((state) => state.user.data!.rootAdmin);
 
   useEffect(() => {
-    if (!connected || !instance || status === 'running') return;
+    if (!connected || !instance || status === "running") return;
 
     const errors = [
-      'pthread_create failed',
-      'failed to create thread',
-      'unable to create thread',
-      'unable to create native thread',
-      'unable to create new native thread',
+      "pthread_create failed",
+      "failed to create thread",
+      "unable to create thread",
+      "unable to create native thread",
+      "unable to create new native thread",
       'exception in thread "craft async scheduler management thread"',
     ];
 
@@ -45,7 +45,7 @@ const PIDLimitModalFeature = () => {
   }, [connected, instance, status]);
 
   useEffect(() => {
-    clearFlashes('feature:pidLimit');
+    clearFlashes("feature:pidLimit");
   }, []);
 
   return (
@@ -55,42 +55,42 @@ const PIDLimitModalFeature = () => {
       closeOnBackground={false}
       showSpinnerOverlay={loading}
     >
-      <FlashMessageRender key={'feature:pidLimit'} className={'mb-4'} />
+      <FlashMessageRender key={"feature:pidLimit"} className={"mb-4"} />
       {isAdmin ? (
         <>
-          <div className={'mt-4 items-center sm:flex'}>
+          <div className={"mt-4 items-center sm:flex"}>
             <FontAwesomeIcon
-              className={'pr-4'}
+              className={"pr-4"}
               icon={faExclamationTriangle}
-              color={'orange'}
-              size={'4x'}
+              color={"orange"}
+              size={"4x"}
             />
-            <h2 className={'mb-4 text-2xl text-neutral-100'}>
+            <h2 className={"mb-4 text-2xl text-neutral-100"}>
               Memory or process limit reached...
             </h2>
           </div>
-          <p className={'mt-4'}>
+          <p className={"mt-4"}>
             This server has reached the maximum process or memory limit.
           </p>
-          <p className={'mt-4'}>
-            Increasing{' '}
-            <code className={'bg-neutral-900 font-mono'}>
+          <p className={"mt-4"}>
+            Increasing{" "}
+            <code className={"bg-neutral-900 font-mono"}>
               container_pid_limit
-            </code>{' '}
-            in the wings configuration,{' '}
-            <code className={'bg-neutral-900 font-mono'}>config.yml</code>,
+            </code>{" "}
+            in the wings configuration,{" "}
+            <code className={"bg-neutral-900 font-mono"}>config.yml</code>,
             might help resolve this issue.
           </p>
-          <p className={'mt-4'}>
+          <p className={"mt-4"}>
             <b>
               Note: Wings must be restarted for the configuration file changes
               to take effect
             </b>
           </p>
-          <div className={'mt-8 items-center justify-end sm:flex'}>
+          <div className={"mt-8 items-center justify-end sm:flex"}>
             <Button
               onClick={() => setVisible(false)}
-              className={'w-full border-transparent sm:w-auto'}
+              className={"w-full border-transparent sm:w-auto"}
             >
               Close
             </Button>
@@ -98,31 +98,31 @@ const PIDLimitModalFeature = () => {
         </>
       ) : (
         <>
-          <div className={'mt-4 items-center sm:flex'}>
+          <div className={"mt-4 items-center sm:flex"}>
             <FontAwesomeIcon
-              className={'pr-4'}
+              className={"pr-4"}
               icon={faExclamationTriangle}
-              color={'orange'}
-              size={'4x'}
+              color={"orange"}
+              size={"4x"}
             />
-            <h2 className={'mb-4 text-2xl text-neutral-100'}>
+            <h2 className={"mb-4 text-2xl text-neutral-100"}>
               Possible resource limit reached...
             </h2>
           </div>
-          <p className={'mt-4'}>
+          <p className={"mt-4"}>
             This server is attempting to use more resources than allocated.
             Please contact the administrator and give them the error below.
           </p>
-          <p className={'mt-4'}>
-            <code className={'bg-neutral-900 font-mono'}>
+          <p className={"mt-4"}>
+            <code className={"bg-neutral-900 font-mono"}>
               pthread_create failed, Possibly out of memory or process/resource
               limits reached
             </code>
           </p>
-          <div className={'mt-8 items-center justify-end sm:flex'}>
+          <div className={"mt-8 items-center justify-end sm:flex"}>
             <Button
               onClick={() => setVisible(false)}
-              className={'w-full border-transparent sm:w-auto'}
+              className={"w-full border-transparent sm:w-auto"}
             >
               Close
             </Button>

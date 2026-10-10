@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router';
-import performPasswordReset from '@/api/auth/performPasswordReset';
-import { httpErrorToHuman } from '@/api/http';
-import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import useFlash from '@/plugins/useFlash';
-import { Formik, FormikHelpers } from 'formik';
-import { object, ref, string } from 'yup';
-import Field from '@/components/elements/Field';
-import Input from '@/components/elements/Input';
-import Button from '@/components/elements/Button';
+import React, { useState } from "react";
+import { Link, useLocation, useParams } from "react-router";
+import performPasswordReset from "@/api/auth/performPasswordReset";
+import { httpErrorToHuman } from "@/api/http";
+import LoginFormContainer from "@/components/auth/LoginFormContainer";
+import useFlash from "@/plugins/useFlash";
+import { Formik, FormikHelpers } from "formik";
+import { object, ref, string } from "yup";
+import Field from "@/components/elements/Field";
+import Input from "@/components/elements/Input";
+import Button from "@/components/elements/Button";
 
 interface Values {
   password: string;
@@ -18,13 +18,13 @@ interface Values {
 export default () => {
   const { token } = useParams<{ token: string }>();
   const location = useLocation();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const { clearFlashes, addFlash } = useFlash();
 
   const parsed = new URLSearchParams(location.search);
-  if (email.length === 0 && parsed.get('email')) {
-    setEmail(parsed.get('email') || '');
+  if (email.length === 0 && parsed.get("email")) {
+    setEmail(parsed.get("email") || "");
   }
 
   const submit = (
@@ -33,21 +33,21 @@ export default () => {
   ) => {
     clearFlashes();
     performPasswordReset(email, {
-      token: token || '',
+      token: token || "",
       password,
       passwordConfirmation,
     })
       .then(() => {
         // @ts-expect-error this is valid
-        window.location = '/';
+        window.location = "/";
       })
       .catch((error) => {
         console.error(error);
 
         setSubmitting(false);
         addFlash({
-          type: 'error',
-          title: 'Error',
+          type: "error",
+          title: "Error",
           message: httpErrorToHuman(error),
         });
       });
@@ -57,58 +57,58 @@ export default () => {
     <Formik
       onSubmit={submit}
       initialValues={{
-        password: '',
-        passwordConfirmation: '',
+        password: "",
+        passwordConfirmation: "",
       }}
       validationSchema={object().shape({
         password: string()
-          .required('A new password is required.')
+          .required("A new password is required.")
           .min(
             8,
-            'Your new password should be at least 8 characters in length.',
+            "Your new password should be at least 8 characters in length.",
           ),
         passwordConfirmation: string()
-          .required('Your new password does not match.')
+          .required("Your new password does not match.")
           // @ts-expect-error this is valid
-          .oneOf([ref('password'), null], 'Your new password does not match.'),
+          .oneOf([ref("password"), null], "Your new password does not match."),
       })}
     >
       {({ isSubmitting }) => (
-        <LoginFormContainer title={'Reset Password'} className={'flex w-full'}>
+        <LoginFormContainer title={"Reset Password"} className={"flex w-full"}>
           <div>
             <label>Email</label>
             <Input value={email} disabled />
           </div>
-          <div className={'mt-6'}>
+          <div className={"mt-6"}>
             <Field
-              label={'New Password'}
-              name={'password'}
-              type={'password'}
-              description={'Passwords must be at least 8 characters in length.'}
+              label={"New Password"}
+              name={"password"}
+              type={"password"}
+              description={"Passwords must be at least 8 characters in length."}
             />
           </div>
-          <div className={'mt-6'}>
+          <div className={"mt-6"}>
             <Field
-              label={'Confirm New Password'}
-              name={'passwordConfirmation'}
-              type={'password'}
+              label={"Confirm New Password"}
+              name={"passwordConfirmation"}
+              type={"password"}
             />
           </div>
-          <div className={'mt-6'}>
+          <div className={"mt-6"}>
             <Button
-              size={'xlarge'}
-              type={'submit'}
+              size={"xlarge"}
+              type={"submit"}
               disabled={isSubmitting}
               isLoading={isSubmitting}
             >
               Reset Password
             </Button>
           </div>
-          <div className={'mt-6 text-center'}>
+          <div className={"mt-6 text-center"}>
             <Link
-              to={'/auth/login'}
+              to={"/auth/login"}
               className={
-                'text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200'
+                "text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200"
               }
             >
               Return to Login

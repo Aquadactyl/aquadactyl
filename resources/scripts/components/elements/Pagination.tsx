@@ -1,12 +1,12 @@
-import React from 'react';
-import { PaginatedResult } from '@/api/http';
-import classNames from 'classnames';
-import Button from '@/components/elements/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from "react";
+import { PaginatedResult } from "@/api/http";
+import classNames from "classnames";
+import Button from "@/components/elements/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAngleDoubleLeft,
   faAngleDoubleRight,
-} from '@fortawesome/free-solid-svg-icons';
+} from "@fortawesome/free-solid-svg-icons";
 
 interface RenderFuncProps<T> {
   items: T[];
@@ -27,7 +27,7 @@ const Block: React.FC<React.ComponentProps<typeof Button>> = ({
   ...props
 }) => (
   <Button
-    className={classNames('h-10 w-10 p-0! not-last-of-type:mr-2', className)}
+    className={classNames("h-10 w-10 p-0! not-last-of-type:mr-2", className)}
     {...props}
   />
 );
@@ -55,11 +55,11 @@ function Pagination<T>({
     <>
       {children({ items, isFirstPage, isLastPage })}
       {pages.length > 1 && (
-        <div className={'mt-4 flex justify-center'}>
+        <div className={"mt-4 flex justify-center"}>
           {pages[0] > 1 && !isFirstPage && (
             <Block
               isSecondary
-              color={'primary'}
+              color={"primary"}
               onClick={() => onPageSelect(1)}
             >
               <FontAwesomeIcon icon={faAngleDoubleLeft} />
@@ -68,7 +68,7 @@ function Pagination<T>({
           {pages.map((i) => (
             <Block
               isSecondary={pagination.currentPage !== i}
-              color={'primary'}
+              color={"primary"}
               key={`block_page_${i}`}
               onClick={() => onPageSelect(i)}
             >
@@ -78,7 +78,7 @@ function Pagination<T>({
           {pages[4] < pagination.totalPages && !isLastPage && (
             <Block
               isSecondary
-              color={'primary'}
+              color={"primary"}
               onClick={() => onPageSelect(pagination.totalPages)}
             >
               <FontAwesomeIcon icon={faAngleDoubleRight} />

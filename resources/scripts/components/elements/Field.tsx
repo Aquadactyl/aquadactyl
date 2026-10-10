@@ -1,7 +1,7 @@
-import React, { forwardRef, useId } from 'react';
-import { Field as FormikField, FieldProps } from 'formik';
-import Input from '@/components/elements/Input';
-import Label from '@/components/elements/Label';
+import React, { forwardRef, useId } from "react";
+import { Field as FormikField, FieldProps } from "formik";
+import Input from "@/components/elements/Input";
+import Label from "@/components/elements/Label";
 
 interface OwnProps {
   name: string;
@@ -12,7 +12,7 @@ interface OwnProps {
 }
 
 type Props = OwnProps &
-  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'name'>;
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, "name">;
 
 const Field = forwardRef<HTMLInputElement, Props>(
   (
@@ -40,17 +40,17 @@ const Field = forwardRef<HTMLInputElement, Props>(
               aria-invalid={!!(touched[field.name] && errors[field.name])}
               aria-describedby={
                 description || (touched[field.name] && errors[field.name])
-                  ? fieldId + '-help'
+                  ? fieldId + "-help"
                   : undefined
               }
             />
             {touched[field.name] && errors[field.name] ? (
-              <p id={fieldId + '-help'} className={'input-help error'}>
+              <p id={fieldId + "-help"} className={"input-help error"}>
                 {(errors[field.name] as string).charAt(0).toUpperCase() +
                   (errors[field.name] as string).slice(1)}
               </p>
             ) : description ? (
-              <p id={fieldId + '-help'} className={'input-help'}>
+              <p id={fieldId + "-help"} className={"input-help"}>
                 {description}
               </p>
             ) : null}
@@ -60,6 +60,6 @@ const Field = forwardRef<HTMLInputElement, Props>(
     );
   },
 );
-Field.displayName = 'Field';
+Field.displayName = "Field";
 
 export default Field;

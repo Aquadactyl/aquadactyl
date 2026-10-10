@@ -1,7 +1,7 @@
-import React from 'react';
-import Spinner, { SpinnerSize } from '@/components/elements/Spinner';
-import Fade from '@/components/elements/Fade';
-import classNames from 'classnames';
+import React from "react";
+import Spinner, { SpinnerSize } from "@/components/elements/Spinner";
+import Fade from "@/components/elements/Fade";
+import classNames from "classnames";
 
 interface Props {
   visible: boolean;
@@ -21,8 +21,8 @@ const SpinnerOverlay: React.FC<Props> = ({
   <Fade timeout={150} in={visible} unmountOnExit>
     <div
       className={classNames(
-        'top-0 left-0 z-40 flex h-full w-full flex-col items-center justify-center rounded',
-        !fixed ? 'absolute' : 'fixed',
+        "top-0 left-0 z-40 flex h-full w-full flex-col items-center justify-center rounded",
+        !fixed ? "absolute" : "fixed",
       )}
       style={{
         background: `rgba(0, 0, 0, ${backgroundOpacity || 0.45})`,
@@ -30,8 +30,8 @@ const SpinnerOverlay: React.FC<Props> = ({
     >
       <Spinner size={size} />
       {children &&
-        (typeof children === 'string' ? (
-          <p className={'mt-4 text-neutral-400'}>{children}</p>
+        (typeof children === "string" ? (
+          <p className={"mt-4 text-neutral-400"}>{children}</p>
         ) : (
           children
         ))}

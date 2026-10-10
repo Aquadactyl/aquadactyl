@@ -1,5 +1,5 @@
-import Sockette from 'sockette';
-import { EventEmitter } from 'events';
+import Sockette from "sockette";
+import { EventEmitter } from "events";
 
 export class Websocket extends EventEmitter {
   // The socket instance being tracked.
@@ -13,7 +13,7 @@ export class Websocket extends EventEmitter {
   // refreshed at a pretty continuous interval. The socket server will respond
   // with "token expiring" and "token expired" events when approaching 3 minutes
   // and 0 minutes to expiry.
-  private token = '';
+  private token = "";
 
   // Connects to the websocket instance and sets the token for the initial request.
   connect(url: string): this {
@@ -27,11 +27,11 @@ export class Websocket extends EventEmitter {
           const { event, args } = JSON.parse(e.data);
           args ? this.emit(event, ...args) : this.emit(event);
         } catch (ex) {
-          console.warn('Failed to parse incoming websocket message.', ex);
+          console.warn("Failed to parse incoming websocket message.", ex);
         }
       },
       onopen: () => {
-        this.emit('SOCKET_OPEN');
+        this.emit("SOCKET_OPEN");
         this.authenticate();
       },
       onreconnect: (evt) => {
@@ -46,12 +46,12 @@ export class Websocket extends EventEmitter {
         if (evt.code === 4409 || evt.code === 4400) {
           this.close(1000);
         } else {
-          this.emit('SOCKET_RECONNECT');
+          this.emit("SOCKET_RECONNECT");
         }
       },
-      onclose: () => this.emit('SOCKET_CLOSE'),
-      onerror: (error) => this.emit('SOCKET_ERROR', error),
-      onmaximum: () => this.emit('SOCKET_CONNECT_ERROR'),
+      onclose: () => this.emit("SOCKET_CLOSE"),
+      onerror: (error) => this.emit("SOCKET_ERROR", error),
+      onmaximum: () => this.emit("SOCKET_CONNECT_ERROR"),
     });
 
     return this;
@@ -71,13 +71,13 @@ export class Websocket extends EventEmitter {
 
   authenticate() {
     if (this.url && this.token) {
-      this.send('auth', this.token);
+      this.send("auth", this.token);
     }
   }
 
   close(code?: number, reason?: string) {
     this.url = null;
-    this.token = '';
+    this.token = "";
     this.socket?.close(code, reason);
   }
 

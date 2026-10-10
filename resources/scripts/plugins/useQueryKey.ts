@@ -1,6 +1,6 @@
-import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
-import { ServerContext } from '@/state/server';
-import { useAppStore } from '@/state';
+import { useDeepCompareMemo } from "@/plugins/useDeepCompareMemo";
+import { ServerContext } from "@/state/server";
+import { useAppStore } from "@/state";
 
 type Context = string | string[] | (string | number | null | {})[];
 
@@ -11,7 +11,7 @@ function useQueryContextKey(
   const key = useDeepCompareMemo((): string => {
     return (Array.isArray(context) ? context : [context])
       .map((value) => JSON.stringify(value))
-      .join(':');
+      .join(":");
   }, [context]);
 
   if (!key.trim().length) {
@@ -20,7 +20,7 @@ function useQueryContextKey(
     );
   }
 
-  return `query::${prefix ? `${prefix}:` : ''}${key.trim()}`;
+  return `query::${prefix ? `${prefix}:` : ""}${key.trim()}`;
 }
 
 function useServerQueryKey(context: Context): string {

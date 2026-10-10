@@ -2,13 +2,13 @@ export const randomInt = (low: number, high: number) =>
   Math.floor(Math.random() * (high - low) + low);
 
 export const cleanDirectoryPath = (path: string) =>
-  path.replace(/(\/(\/*))|(^$)/g, '/');
+  path.replace(/(\/(\/*))|(^$)/g, "/");
 
 export function fileBitsToString(mode: string, directory: boolean): string {
   const m = parseInt(mode, 8);
 
-  let buf = '';
-  'dalTLDpSugct?'.split('').forEach((c, i) => {
+  let buf = "";
+  "dalTLDpSugct?".split("").forEach((c, i) => {
     if ((m & (1 << (32 - 1 - i))) !== 0) {
       buf = buf + c;
     }
@@ -17,17 +17,17 @@ export function fileBitsToString(mode: string, directory: boolean): string {
   if (buf.length === 0) {
     // If the file is directory, make sure it has the directory flag.
     if (directory) {
-      buf = 'd';
+      buf = "d";
     } else {
-      buf = '-';
+      buf = "-";
     }
   }
 
-  'rwxrwxrwx'.split('').forEach((c, i) => {
+  "rwxrwxrwx".split("").forEach((c, i) => {
     if ((m & (1 << (9 - 1 - i))) !== 0) {
       buf = buf + c;
     } else {
-      buf = buf + '-';
+      buf = buf + "-";
     }
   });
 
@@ -41,11 +41,11 @@ export function fileBitsToString(mode: string, directory: boolean): string {
  */
 export function encodePathSegments(path: string): string {
   return path
-    .split('/')
+    .split("/")
     .map((s) => encodeURIComponent(s))
-    .join('/');
+    .join("/");
 }
 
 export function hashToPath(hash: string): string {
-  return hash.length > 0 ? decodeURIComponent(hash.substr(1)) : '/';
+  return hash.length > 0 ? decodeURIComponent(hash.substr(1)) : "/";
 }

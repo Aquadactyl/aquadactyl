@@ -1,5 +1,5 @@
-import { MarkRequired } from 'ts-essentials';
-import { FractalResponseData, FractalResponseList } from '../http';
+import { MarkRequired } from "ts-essentials";
+import { FractalResponseData, FractalResponseList } from "../http";
 
 export type UUID = string;
 export type Identifier<P extends string = string> = `${P}_${string}`;
@@ -24,9 +24,9 @@ interface ModelWithRelationships extends Model {
  */
 type WithLoaded<
   M extends ModelWithRelationships,
-  R extends keyof M['relationships'],
+  R extends keyof M["relationships"],
 > = M & {
-  relationships: MarkRequired<M['relationships'], R>;
+  relationships: MarkRequired<M["relationships"], R>;
 };
 
 /**

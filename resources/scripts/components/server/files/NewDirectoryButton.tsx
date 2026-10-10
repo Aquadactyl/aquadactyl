@@ -1,32 +1,32 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
-import { join, normalize } from 'pathe';
-import { object, string } from 'yup';
-import createDirectory from '@/api/server/files/createDirectory';
-import { Button } from '@/components/elements/button/index';
-import { FileObject } from '@/api/server/files/loadDirectory';
-import { useFlashKey } from '@/plugins/useFlash';
-import useFileManagerQuery from '@/plugins/useFileManagerQuery';
-import { WithClassname } from '@/components/types';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
-import Code from '@/components/elements/Code';
-import asDialog from '@/hoc/asDialog';
+import React, { useContext, useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import { Form, Formik, FormikHelpers } from "formik";
+import Field from "@/components/elements/Field";
+import { join, normalize } from "pathe";
+import { object, string } from "yup";
+import createDirectory from "@/api/server/files/createDirectory";
+import { Button } from "@/components/elements/button/index";
+import { FileObject } from "@/api/server/files/loadDirectory";
+import { useFlashKey } from "@/plugins/useFlash";
+import useFileManagerQuery from "@/plugins/useFileManagerQuery";
+import { WithClassname } from "@/components/types";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import { Dialog, DialogWrapperContext } from "@/components/elements/dialog";
+import Code from "@/components/elements/Code";
+import asDialog from "@/hoc/asDialog";
 
 interface Values {
   directoryName: string;
 }
 
 const schema = object().shape({
-  directoryName: string().required('A valid directory name must be provided.'),
+  directoryName: string().required("A valid directory name must be provided."),
 });
 
 const displayNameForDirectory = (name: string): string =>
   normalize(name)
-    .replace(/^(\.\.\/|\/)+/, '')
-    .split('/', 1)[0] || name;
+    .replace(/^(\.\.\/|\/)+/, "")
+    .split("/", 1)[0] || name;
 
 const generateDirectoryData = (name: string): FileObject => {
   const displayName = displayNameForDirectory(name);
@@ -34,12 +34,12 @@ const generateDirectoryData = (name: string): FileObject => {
   return {
     key: `dir_${displayName}`,
     name: displayName,
-    mode: 'drwxr-xr-x',
-    modeBits: '0755',
+    mode: "drwxr-xr-x",
+    modeBits: "0755",
     size: 0,
     isFile: false,
     isSymlink: false,
-    mimetype: '',
+    mimetype: "",
     createdAt: new Date(),
     modifiedAt: new Date(),
     isArchiveType: () => false,
@@ -48,7 +48,7 @@ const generateDirectoryData = (name: string): FileObject => {
 };
 
 const NewDirectoryDialog = asDialog({
-  title: 'Create Directory',
+  title: "Create Directory",
 })(() => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const directory = ServerContext.useStoreState(
@@ -57,7 +57,7 @@ const NewDirectoryDialog = asDialog({
 
   const { mutate } = useFileManagerQuery();
   const { close } = useContext(DialogWrapperContext);
-  const { clearAndAddHttpError } = useFlashKey('files:directory-modal');
+  const { clearAndAddHttpError } = useFlashKey("files:directory-modal");
 
   useEffect(() => {
     return () => {
@@ -87,38 +87,38 @@ const NewDirectoryDialog = asDialog({
     <Formik
       onSubmit={submit}
       validationSchema={schema}
-      initialValues={{ directoryName: '' }}
+      initialValues={{ directoryName: "" }}
     >
       {({ submitForm, values }) => (
         <>
-          <FlashMessageRender key={'files:directory-modal'} />
-          <Form className={'m-0'}>
+          <FlashMessageRender key={"files:directory-modal"} />
+          <Form className={"m-0"}>
             <Field
               autoFocus
-              id={'directoryName'}
-              name={'directoryName'}
-              label={'Name'}
+              id={"directoryName"}
+              name={"directoryName"}
+              label={"Name"}
             />
-            <p className={'mt-2 text-sm break-all md:text-base'}>
-              <span className={'text-neutral-200'}>
+            <p className={"mt-2 text-sm break-all md:text-base"}>
+              <span className={"text-neutral-200"}>
                 This directory will be created as&nbsp;
               </span>
               <Code>
                 /home/container/
-                <span className={'text-cyan-200'}>
+                <span className={"text-cyan-200"}>
                   {join(directory, values.directoryName).replace(
                     /^(\.\.\/|\/)+/,
-                    '',
+                    "",
                   )}
                 </span>
               </Code>
             </p>
           </Form>
           <Dialog.Footer>
-            <Button.Text className={'w-full sm:w-auto'} onClick={close}>
+            <Button.Text className={"w-full sm:w-auto"} onClick={close}>
               Cancel
             </Button.Text>
-            <Button className={'w-full sm:w-auto'} onClick={submitForm}>
+            <Button className={"w-full sm:w-auto"} onClick={submitForm}>
               Create
             </Button>
           </Dialog.Footer>

@@ -1,19 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import { CloudUpload, X } from 'lucide-react';
-import asDialog from '@/hoc/asDialog';
-import { Dialog, DialogWrapperContext } from '@/components/elements/dialog';
-import { Button } from '@/components/elements/button/index';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
-import Code from '@/components/elements/Code';
+import React, { useContext, useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import { CloudUpload, X } from "lucide-react";
+import asDialog from "@/hoc/asDialog";
+import { Dialog, DialogWrapperContext } from "@/components/elements/dialog";
+import { Button } from "@/components/elements/button/index";
+import Tooltip from "@/components/elements/tooltip/Tooltip";
+import Code from "@/components/elements/Code";
 
 const svgProps = {
   cx: 16,
   cy: 16,
   r: 14,
   strokeWidth: 3,
-  fill: 'none',
-  stroke: 'currentColor',
+  fill: "none",
+  stroke: "currentColor",
 };
 
 const Spinner = ({
@@ -23,14 +23,14 @@ const Spinner = ({
   progress: number;
   className?: string;
 }) => (
-  <svg viewBox={'0 0 32 32'} className={className}>
-    <circle {...svgProps} className={'opacity-25'} />
+  <svg viewBox={"0 0 32 32"} className={className}>
+    <circle {...svgProps} className={"opacity-25"} />
     <circle
       {...svgProps}
-      stroke={'white'}
+      stroke={"white"}
       strokeDasharray={28 * Math.PI}
       className={
-        'origin-[50%_50%] -rotate-90 transition-[stroke-dashoffset] duration-300'
+        "origin-[50%_50%] -rotate-90 transition-[stroke-dashoffset] duration-300"
       }
       style={{
         strokeDashoffset: ((100 - progress) / 100) * 28 * Math.PI,
@@ -52,31 +52,31 @@ const FileUploadList = () => {
   );
 
   return (
-    <div className={'mt-6 space-y-2'}>
+    <div className={"mt-6 space-y-2"}>
       {uploads.map(([name, file]) => (
         <div
           key={name}
-          className={'flex items-center space-x-3 rounded bg-gray-700 p-3'}
+          className={"flex items-center space-x-3 rounded bg-gray-700 p-3"}
         >
           <Tooltip
             content={`${Math.floor((file.loaded / file.total) * 100)}%`}
-            placement={'left'}
+            placement={"left"}
           >
-            <div className={'shrink-0'}>
+            <div className={"shrink-0"}>
               <Spinner
                 progress={(file.loaded / file.total) * 100}
-                className={'h-6 w-6'}
+                className={"h-6 w-6"}
               />
             </div>
           </Tooltip>
-          <Code className={'flex-1 truncate'}>{name}</Code>
+          <Code className={"flex-1 truncate"}>{name}</Code>
           <button
             onClick={cancelFileUpload.bind(this, name)}
             className={
-              'cursor-pointer text-gray-500 transition-colors duration-75 hover:text-gray-200'
+              "cursor-pointer text-gray-500 transition-colors duration-75 hover:text-gray-200"
             }
           >
-            <X className={'h-5 w-5'} />
+            <X className={"h-5 w-5"} />
           </button>
         </div>
       ))}
@@ -94,8 +94,8 @@ const FileUploadList = () => {
 };
 
 const FileUploadListDialog = asDialog({
-  title: 'File Uploads',
-  description: 'The following files are being uploaded to your server.',
+  title: "File Uploads",
+  description: "The following files are being uploaded to your server.",
 })(FileUploadList);
 
 export default () => {
@@ -127,15 +127,15 @@ export default () => {
         <Tooltip content={`${count} files are uploading, click to view`}>
           <button
             className={
-              'flex h-10 w-10 cursor-pointer items-center justify-center'
+              "flex h-10 w-10 cursor-pointer items-center justify-center"
             }
             onClick={() => setOpen(true)}
           >
             <Spinner
               progress={(progress.uploaded / progress.total) * 100}
-              className={'h-8 w-8'}
+              className={"h-8 w-8"}
             />
-            <CloudUpload className={'absolute mx-auto h-3 w-3 animate-pulse'} />
+            <CloudUpload className={"absolute mx-auto h-3 w-3 animate-pulse"} />
           </button>
         </Tooltip>
       )}

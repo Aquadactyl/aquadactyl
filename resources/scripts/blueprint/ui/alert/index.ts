@@ -1,1 +1,1 @@
-export { default as UiAlert } from './UiAlert';
+export { default as UiAlert } from "./UiAlert";

@@ -1,9 +1,9 @@
-import React, { ElementType, forwardRef, useMemo } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-import styles from './style.module.css';
-import classNames from 'classnames';
-import DropdownItem from '@/components/elements/dropdown/DropdownItem';
-import DropdownButton from '@/components/elements/dropdown/DropdownButton';
+import React, { ElementType, forwardRef, useMemo } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import styles from "./style.module.css";
+import classNames from "classnames";
+import DropdownItem from "@/components/elements/dropdown/DropdownItem";
+import DropdownButton from "@/components/elements/dropdown/DropdownButton";
 
 interface Props {
   as?: ElementType;
@@ -12,9 +12,9 @@ interface Props {
 
 const DropdownGap = ({ invisible }: { invisible?: boolean }) => (
   <div
-    className={classNames('m-2 border', {
-      'border-neutral-700': !invisible,
-      'border-transparent': invisible,
+    className={classNames("m-2 border", {
+      "border-neutral-700": !invisible,
+      "border-transparent": invisible,
     })}
   />
 );
@@ -35,23 +35,23 @@ const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {
 
   if (!Button) {
     throw new Error(
-      'Cannot mount <Dropdown /> component without a child <Dropdown.Button />.',
+      "Cannot mount <Dropdown /> component without a child <Dropdown.Button />.",
     );
   }
 
   return (
-    <Menu as={as || 'div'} className={styles.menu} ref={ref}>
+    <Menu as={as || "div"} className={styles.menu} ref={ref}>
       {Button}
       <Transition
-        enter={'transition duration-100 ease-out'}
-        enterFrom={'transition scale-95 opacity-0'}
-        enterTo={'transform scale-100 opacity-100'}
-        leave={'transition duration-75 ease-out'}
-        leaveFrom={'transform scale-100 opacity-100'}
-        leaveTo={'transform scale-95 opacity-0'}
+        enter={"transition duration-100 ease-out"}
+        enterFrom={"transition scale-95 opacity-0"}
+        enterTo={"transform scale-100 opacity-100"}
+        leave={"transition duration-75 ease-out"}
+        leaveFrom={"transform scale-100 opacity-100"}
+        leaveTo={"transform scale-95 opacity-0"}
       >
-        <Menu.Items className={classNames(styles.items_container, 'w-56')}>
-          <div className={'px-1 py-1'}>{items}</div>
+        <Menu.Items className={classNames(styles.items_container, "w-56")}>
+          <div className={"px-1 py-1"}>{items}</div>
         </Menu.Items>
       </Transition>
     </Menu>

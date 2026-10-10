@@ -1,6 +1,6 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
-export type ServerPowerState = 'offline' | 'starting' | 'running' | 'stopping';
+export type ServerPowerState = "offline" | "starting" | "running" | "stopping";
 
 export interface ServerStats {
   status: ServerPowerState;

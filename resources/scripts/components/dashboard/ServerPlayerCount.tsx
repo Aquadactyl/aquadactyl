@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useTanStackQuery } from '@/lib/queryClient';
-import { Users } from 'lucide-react';
-import getGameQuery from '@/api/server/getGameQuery';
-import { Server } from '@/api/server/getServer';
+import React, { useEffect, useRef, useState } from "react";
+import { useTanStackQuery } from "@/lib/queryClient";
+import { Users } from "lucide-react";
+import getGameQuery from "@/api/server/getGameQuery";
+import { Server } from "@/api/server/getServer";
 
 export default ({ server, state }: { server: Server; state: string }) => {
-  const running = state === 'running';
+  const running = state === "running";
   const pendingPolls = useRef(0);
   const [refreshInterval, setRefreshInterval] = useState(30000);
   const { data, error } = useTanStackQuery(
     running && server.gameQueryType
-      ? ['game-query', server.uuid, server.gameQueryType]
+      ? ["game-query", server.uuid, server.gameQueryType]
       : null,
     () => getGameQuery(server.uuid),
     {
@@ -22,7 +22,7 @@ export default ({ server, state }: { server: Server; state: string }) => {
   useEffect(() => {
     if (data) {
       setRefreshInterval(
-        data.status === 'pending' && pendingPolls.current++ === 0
+        data.status === "pending" && pendingPolls.current++ === 0
           ? 5000
           : 30000,
       );
@@ -30,29 +30,29 @@ export default ({ server, state }: { server: Server; state: string }) => {
   }, [data]);
   if (!server.gameQueryType) return null;
   const value = !running
-    ? state === 'offline'
-      ? 'Offline'
-      : state === 'starting'
-        ? 'Starting...'
-        : 'Unavailable'
-    : error || data?.status === 'unavailable' || data?.status === 'unsupported'
-      ? 'Unavailable'
-      : data?.status === 'available'
+    ? state === "offline"
+      ? "Offline"
+      : state === "starting"
+        ? "Starting..."
+        : "Unavailable"
+    : error || data?.status === "unavailable" || data?.status === "unsupported"
+      ? "Unavailable"
+      : data?.status === "available"
         ? String(data.players) +
-          (data.maxPlayers ? ' / ' + data.maxPlayers : '')
-        : 'Checking...';
+          (data.maxPlayers ? " / " + data.maxPlayers : "")
+        : "Checking...";
   const description = !running
-    ? 'Player counts are queried while the server is running.'
-    : error || data?.status === 'unavailable' || data?.status === 'unsupported'
-      ? 'The game did not respond. Check the game query settings and query port.'
+    ? "Player counts are queried while the server is running."
+    : error || data?.status === "unavailable" || data?.status === "unsupported"
+      ? "The game did not respond. Check the game query settings and query port."
       : data?.checkedAt
-        ? 'Last checked ' + data.checkedAt.toLocaleTimeString()
-        : 'Waiting for the game query.';
+        ? "Last checked " + data.checkedAt.toLocaleTimeString()
+        : "Waiting for the game query.";
   return (
     <span
-      className={'server-player-count'}
+      className={"server-player-count"}
       title={description}
-      aria-label={'Players: ' + value}
+      aria-label={"Players: " + value}
     >
       <Users size={12} aria-hidden />
       <span>Players</span>

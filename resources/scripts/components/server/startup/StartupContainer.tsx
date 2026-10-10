@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import VariableBox from '@/components/server/startup/VariableBox';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import getServerStartup from '@/api/server/startup/getServerStartup';
-import Spinner from '@/components/elements/Spinner';
-import { ServerError } from '@/components/elements/ScreenBlock';
-import { httpErrorToHuman } from '@/api/http';
-import { ServerContext } from '@/state/server';
-import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
-import Select from '@/components/elements/Select';
-import isEqual from 'react-fast-compare';
-import Input from '@/components/elements/Input';
-import setSelectedDockerImage from '@/api/server/setSelectedDockerImage';
-import InputSpinner from '@/components/elements/InputSpinner';
-import useFlash from '@/plugins/useFlash';
+import React, { useCallback, useEffect, useState } from "react";
+import TitledGreyBox from "@/components/elements/TitledGreyBox";
+import VariableBox from "@/components/server/startup/VariableBox";
+import ServerContentBlock from "@/components/elements/ServerContentBlock";
+import getServerStartup from "@/api/server/startup/getServerStartup";
+import Spinner from "@/components/elements/Spinner";
+import { ServerError } from "@/components/elements/ScreenBlock";
+import { httpErrorToHuman } from "@/api/http";
+import { ServerContext } from "@/state/server";
+import { useDeepCompareEffect } from "@/plugins/useDeepCompareEffect";
+import Select from "@/components/elements/Select";
+import isEqual from "react-fast-compare";
+import Input from "@/components/elements/Input";
+import setSelectedDockerImage from "@/api/server/setSelectedDockerImage";
+import InputSpinner from "@/components/elements/InputSpinner";
+import useFlash from "@/plugins/useFlash";
 
-import BeforeContent from '@blueprint/components/Server/Startup/BeforeContent';
-import AfterContent from '@blueprint/components/Server/Startup/AfterContent';
+import BeforeContent from "@blueprint/components/Server/Startup/BeforeContent";
+import AfterContent from "@blueprint/components/Server/Startup/AfterContent";
 
 const StartupContainer = () => {
   const [loading, setLoading] = useState(false);
@@ -66,14 +66,14 @@ const StartupContainer = () => {
   const updateSelectedDockerImage = useCallback(
     (v: React.ChangeEvent<HTMLSelectElement>) => {
       setLoading(true);
-      clearFlashes('startup:image');
+      clearFlashes("startup:image");
 
       const image = v.currentTarget.value;
       setSelectedDockerImage(uuid, image)
         .then(() => setServerFromState((s) => ({ ...s, dockerImage: image })))
         .catch((error) => {
           console.error(error);
-          clearAndAddHttpError({ key: 'startup:image', error });
+          clearAndAddHttpError({ key: "startup:image", error });
         })
         .then(() => setLoading(false));
     },
@@ -85,28 +85,28 @@ const StartupContainer = () => {
       <Spinner centered size={Spinner.Size.LARGE} />
     ) : (
       <ServerError
-        title={'Oops!'}
+        title={"Oops!"}
         message={httpErrorToHuman(error)}
         onRetry={() => mutate()}
       />
     )
   ) : (
     <ServerContentBlock
-      title={'Startup Settings'}
-      showFlashKey={'startup:image'}
+      title={"Startup Settings"}
+      showFlashKey={"startup:image"}
     >
       <BeforeContent />
-      <div className={'md:flex'}>
-        <TitledGreyBox title={'Startup Command'} className={'flex-1'}>
-          <div className={'px-1 py-2'}>
-            <p className={'rounded bg-neutral-900 px-4 py-2 font-mono'}>
+      <div className={"md:flex"}>
+        <TitledGreyBox title={"Startup Command"} className={"flex-1"}>
+          <div className={"px-1 py-2"}>
+            <p className={"rounded bg-neutral-900 px-4 py-2 font-mono"}>
               {data.invocation}
             </p>
           </div>
         </TitledGreyBox>
         <TitledGreyBox
-          title={'Docker Image'}
-          className={'mt-8 flex-1 md:mt-0 md:ml-10 lg:w-1/3 lg:flex-none'}
+          title={"Docker Image"}
+          className={"mt-8 flex-1 md:mt-0 md:ml-10 lg:w-1/3 lg:flex-none"}
         >
           {Object.keys(data.dockerImages).length > 1 && !isCustomImage ? (
             <>
@@ -126,7 +126,7 @@ const StartupContainer = () => {
                   ))}
                 </Select>
               </InputSpinner>
-              <p className={'mt-2 text-xs text-neutral-300'}>
+              <p className={"mt-2 text-xs text-neutral-300"}>
                 This is an advanced feature allowing you to select a Docker
                 image to use when running this server instance.
               </p>
@@ -135,7 +135,7 @@ const StartupContainer = () => {
             <>
               <Input disabled readOnly value={variables.dockerImage} />
               {isCustomImage && (
-                <p className={'mt-2 text-xs text-neutral-300'}>
+                <p className={"mt-2 text-xs text-neutral-300"}>
                   This {"server's"} Docker image has been manually set by an
                   administrator and cannot be changed through this UI.
                 </p>
@@ -144,8 +144,8 @@ const StartupContainer = () => {
           )}
         </TitledGreyBox>
       </div>
-      <h3 className={'mt-8 mb-2 text-2xl'}>Variables</h3>
-      <div className={'grid gap-8 md:grid-cols-2'}>
+      <h3 className={"mt-8 mb-2 text-2xl"}>Variables</h3>
+      <div className={"grid gap-8 md:grid-cols-2"}>
         {data.variables.map((variable) => (
           <VariableBox key={variable.envVariable} variable={variable} />
         ))}

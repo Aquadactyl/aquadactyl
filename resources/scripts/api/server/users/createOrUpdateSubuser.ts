@@ -1,6 +1,6 @@
-import http from '@/api/http';
-import { rawDataToServerSubuser } from '@/api/server/users/getServerSubusers';
-import { Subuser } from '@/state/server/subusers';
+import http from "@/api/http";
+import { rawDataToServerSubuser } from "@/api/server/users/getServerSubusers";
+import { Subuser } from "@/state/server/subusers";
 
 interface Params {
   email: string;
@@ -15,7 +15,7 @@ export default (
   return new Promise((resolve, reject) => {
     http
       .post(
-        `/api/client/servers/${uuid}/users${subuser ? `/${subuser.uuid}` : ''}`,
+        `/api/client/servers/${uuid}/users${subuser ? `/${subuser.uuid}` : ""}`,
         {
           ...params,
         },

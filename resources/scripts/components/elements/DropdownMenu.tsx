@@ -1,6 +1,6 @@
-import React, { createRef } from 'react';
-import classNames from 'classnames';
-import Fade from '@/components/elements/Fade';
+import React, { createRef } from "react";
+import classNames from "classnames";
+import Fade from "@/components/elements/Fade";
 
 interface Props {
   children: React.ReactNode;
@@ -14,10 +14,10 @@ export const DropdownButtonRow: React.FC<
 > = ({ danger, className, ...props }) => (
   <button
     className={classNames(
-      'flex w-full cursor-pointer items-center rounded p-2 text-neutral-200 transition-all duration-150 ease-linear',
+      "flex w-full cursor-pointer items-center rounded p-2 text-neutral-200 transition-all duration-150 ease-linear",
       danger
-        ? 'hover:bg-red-900 hover:text-red-200'
-        : 'hover:bg-neutral-600 hover:text-neutral-50',
+        ? "hover:bg-red-900 hover:text-red-200"
+        : "hover:bg-neutral-600 hover:text-neutral-50",
       className,
     )}
     {...props}
@@ -48,8 +48,8 @@ class DropdownMenu extends React.PureComponent<Props, State> {
       menu.style.left = `${Math.round(this.state.posX - menu.clientWidth)}px`;
       requestAnimationFrame(() => {
         if (this.state.visible) {
-          document.addEventListener('click', this.windowListener);
-          document.addEventListener('contextmenu', this.contextMenuListener);
+          document.addEventListener("click", this.windowListener);
+          document.addEventListener("contextmenu", this.contextMenuListener);
         }
       });
     }
@@ -60,8 +60,8 @@ class DropdownMenu extends React.PureComponent<Props, State> {
   }
 
   removeListeners = () => {
-    document.removeEventListener('click', this.windowListener);
-    document.removeEventListener('contextmenu', this.contextMenuListener);
+    document.removeEventListener("click", this.windowListener);
+    document.removeEventListener("contextmenu", this.contextMenuListener);
   };
 
   onClickHandler = (e: React.MouseEvent<any, MouseEvent>) => {
@@ -105,9 +105,9 @@ class DropdownMenu extends React.PureComponent<Props, State> {
               e.stopPropagation();
               this.setState({ visible: false });
             }}
-            style={{ width: '12rem' }}
+            style={{ width: "12rem" }}
             className={
-              'absolute z-50 rounded-lg border border-neutral-600 bg-neutral-700 p-2 text-neutral-200 shadow-lg'
+              "absolute z-50 rounded-lg border border-neutral-600 bg-neutral-700 p-2 text-neutral-200 shadow-lg"
             }
           >
             {this.props.children}

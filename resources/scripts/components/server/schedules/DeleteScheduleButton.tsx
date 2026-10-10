@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import deleteSchedule from '@/api/server/schedules/deleteSchedule';
-import { ServerContext } from '@/state/server';
-import useFlash from '@/plugins/useFlash';
-import { httpErrorToHuman } from '@/api/http';
-import { Button } from '@/components/elements/button/index';
-import { Dialog } from '@/components/elements/dialog';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import React, { useState } from "react";
+import deleteSchedule from "@/api/server/schedules/deleteSchedule";
+import { ServerContext } from "@/state/server";
+import useFlash from "@/plugins/useFlash";
+import { httpErrorToHuman } from "@/api/http";
+import { Button } from "@/components/elements/button/index";
+import { Dialog } from "@/components/elements/dialog";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 
 interface Props {
   scheduleId: number;
@@ -23,7 +23,7 @@ export default ({ scheduleId, onDeleted }: Props) => {
 
   const onDelete = () => {
     setIsLoading(true);
-    clearFlashes('schedules');
+    clearFlashes("schedules");
     deleteSchedule(uuid, scheduleId)
       .then(() => {
         removeSchedule(scheduleId);
@@ -34,7 +34,7 @@ export default ({ scheduleId, onDeleted }: Props) => {
         console.error(error);
 
         addError({
-          key: 'schedules',
+          key: "schedules",
           message: httpErrorToHuman(error),
         });
         setIsLoading(false);
@@ -47,8 +47,8 @@ export default ({ scheduleId, onDeleted }: Props) => {
       <Dialog.Confirm
         open={visible}
         onClose={() => setVisible(false)}
-        title={'Delete Schedule'}
-        confirm={'Delete'}
+        title={"Delete Schedule"}
+        confirm={"Delete"}
         onConfirmed={onDelete}
       >
         <SpinnerOverlay visible={isLoading} />
@@ -57,7 +57,7 @@ export default ({ scheduleId, onDeleted }: Props) => {
       </Dialog.Confirm>
       <Button.Danger
         variant={Button.Variants.Secondary}
-        className={'mr-4 flex-1 border-transparent sm:flex-none'}
+        className={"mr-4 flex-1 border-transparent sm:flex-none"}
         onClick={() => setVisible(true)}
       >
         Delete

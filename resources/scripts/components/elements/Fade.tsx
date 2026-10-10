@@ -1,5 +1,5 @@
-import React from 'react';
-import { AnimatePresence, motion } from 'motion/react';
+import React from "react";
+import { AnimatePresence, motion } from "motion/react";
 
 export interface FadeProps {
   timeout?: number;
@@ -60,6 +60,6 @@ const Fade: React.FC<FadeProps> = ({
   );
 };
 
-Fade.displayName = 'Fade';
+Fade.displayName = "Fade";
 
 export default Fade;

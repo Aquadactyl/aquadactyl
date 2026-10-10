@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export const restoreServerBackup = async (
   uuid: string,

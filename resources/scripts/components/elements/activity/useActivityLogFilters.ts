@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router';
-import { ActivityLogFilters } from '@/api/activity';
-import useLocationHash from '@/plugins/useLocationHash';
+import { useMemo } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { ActivityLogFilters } from "@/api/activity";
+import useLocationHash from "@/plugins/useLocationHash";
 
 export default () => {
   const { hash, pathTo } = useLocationHash();
@@ -10,10 +10,10 @@ export default () => {
   const filters = useMemo<ActivityLogFilters>(
     () => ({
       page:
-        /^\d+$/.test(hash.page || '') && Number.isSafeInteger(Number(hash.page))
+        /^\d+$/.test(hash.page || "") && Number.isSafeInteger(Number(hash.page))
           ? Math.max(1, Number(hash.page))
           : 1,
-      sorts: { timestamp: hash.sort === 'oldest' ? 1 : -1 },
+      sorts: { timestamp: hash.sort === "oldest" ? 1 : -1 },
       filters: {
         event: hash.event,
         event_exact: hash.event_exact,
@@ -36,7 +36,7 @@ export default () => {
       }),
     });
   };
-  const clear = () => navigate({ ...location, hash: '' });
+  const clear = () => navigate({ ...location, hash: "" });
   const hasFilters = Boolean(
     hash.event ||
     hash.event_exact ||

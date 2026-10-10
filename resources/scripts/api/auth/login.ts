@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export interface LoginResponse {
   complete: boolean;
@@ -19,18 +19,18 @@ export default ({
 }: LoginData): Promise<LoginResponse> => {
   return new Promise((resolve, reject) => {
     http
-      .get('/sanctum/csrf-cookie')
+      .get("/sanctum/csrf-cookie")
       .then(() =>
-        http.post('/auth/login', {
+        http.post("/auth/login", {
           user: username,
           password,
-          'g-recaptcha-response': recaptchaData,
+          "g-recaptcha-response": recaptchaData,
         }),
       )
       .then((response) => {
         if (!(response.data instanceof Object)) {
           return reject(
-            new Error('An error occurred while processing the login request.'),
+            new Error("An error occurred while processing the login request."),
           );
         }
 

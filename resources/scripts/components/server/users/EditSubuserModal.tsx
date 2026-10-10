@@ -1,22 +1,22 @@
-import SensitiveValue from '@/components/elements/SensitiveValue';
-import React, { useContext, useEffect, useRef } from 'react';
-import { Subuser } from '@/state/server/subusers';
-import { Form, Formik } from 'formik';
-import { array, object, string } from 'yup';
-import Field from '@/components/elements/Field';
-import { useAppStore } from '@/state';
-import useFlash from '@/plugins/useFlash';
-import createOrUpdateSubuser from '@/api/server/users/createOrUpdateSubuser';
-import { ServerContext } from '@/state/server';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import Can from '@/components/elements/Can';
-import { usePermissions } from '@/plugins/usePermissions';
-import { useDeepCompareMemo } from '@/plugins/useDeepCompareMemo';
-import Button from '@/components/elements/Button';
-import PermissionTitleBox from '@/components/server/users/PermissionTitleBox';
-import asModal from '@/hoc/asModal';
-import PermissionRow from '@/components/server/users/PermissionRow';
-import ModalContext from '@/context/ModalContext';
+import SensitiveValue from "@/components/elements/SensitiveValue";
+import React, { useContext, useEffect, useRef } from "react";
+import { Subuser } from "@/state/server/subusers";
+import { Form, Formik } from "formik";
+import { array, object, string } from "yup";
+import Field from "@/components/elements/Field";
+import { useAppStore } from "@/state";
+import useFlash from "@/plugins/useFlash";
+import createOrUpdateSubuser from "@/api/server/users/createOrUpdateSubuser";
+import { ServerContext } from "@/state/server";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import Can from "@/components/elements/Can";
+import { usePermissions } from "@/plugins/usePermissions";
+import { useDeepCompareMemo } from "@/plugins/useDeepCompareMemo";
+import Button from "@/components/elements/Button";
+import PermissionTitleBox from "@/components/server/users/PermissionTitleBox";
+import asModal from "@/hoc/asModal";
+import PermissionRow from "@/components/server/users/PermissionRow";
+import ModalContext from "@/context/ModalContext";
 
 type Props = {
   subuser?: Subuser;
@@ -44,7 +44,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
     (state) => state.server.permissions,
   );
   const [canEditUser] = usePermissions(
-    subuser ? ['user.update'] : ['user.create'],
+    subuser ? ["user.update"] : ["user.create"],
   );
 
   // The permissions that can be modified by this user.
@@ -60,7 +60,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
 
     if (
       isRootAdmin ||
-      (loggedInPermissions.length === 1 && loggedInPermissions[0] === '*')
+      (loggedInPermissions.length === 1 && loggedInPermissions[0] === "*")
     ) {
       return list;
     }
@@ -70,7 +70,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
 
   const submit = (values: Values) => {
     setPropOverrides({ showSpinnerOverlay: true });
-    clearFlashes('user:edit');
+    clearFlashes("user:edit");
 
     createOrUpdateSubuser(uuid, values, subuser)
       .then((subuser) => {
@@ -80,7 +80,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
       .catch((error) => {
         console.error(error);
         setPropOverrides(null);
-        clearAndAddHttpError({ key: 'user:edit', error });
+        clearAndAddHttpError({ key: "user:edit", error });
 
         if (ref.current) {
           ref.current.scrollIntoView();
@@ -90,7 +90,7 @@ const EditSubuserModal = ({ subuser }: Props) => {
 
   useEffect(
     () => () => {
-      clearFlashes('user:edit');
+      clearFlashes("user:edit");
     },
     [],
   );
@@ -100,60 +100,60 @@ const EditSubuserModal = ({ subuser }: Props) => {
       onSubmit={submit}
       initialValues={
         {
-          email: subuser?.email || '',
+          email: subuser?.email || "",
           permissions: subuser?.permissions || [],
         } as Values
       }
       validationSchema={object().shape({
         email: string()
-          .max(191, 'Email addresses must not exceed 191 characters.')
-          .email('A valid email address must be provided.')
-          .required('A valid email address must be provided.'),
+          .max(191, "Email addresses must not exceed 191 characters.")
+          .email("A valid email address must be provided.")
+          .required("A valid email address must be provided."),
         permissions: array().of(string()),
       })}
     >
       <Form>
-        <div className={'flex justify-between'}>
-          <h2 className={'text-2xl'} ref={ref}>
+        <div className={"flex justify-between"}>
+          <h2 className={"text-2xl"} ref={ref}>
             {subuser ? (
               <>
-                {canEditUser ? 'Modify' : 'View'} permissions for{' '}
+                {canEditUser ? "Modify" : "View"} permissions for{" "}
                 <SensitiveValue>{subuser.email}</SensitiveValue>
               </>
             ) : (
-              'Create new subuser'
+              "Create new subuser"
             )}
           </h2>
           <div>
-            <Button type={'submit'} className={'w-full sm:w-auto'}>
-              {subuser ? 'Save' : 'Invite User'}
+            <Button type={"submit"} className={"w-full sm:w-auto"}>
+              {subuser ? "Save" : "Invite User"}
             </Button>
           </div>
         </div>
-        <FlashMessageRender byKey={'user:edit'} className={'mt-4'} />
-        {!isRootAdmin && loggedInPermissions[0] !== '*' && (
-          <div className={'mt-4 border-l-4 border-cyan-400 py-2 pl-4'}>
-            <p className={'text-sm text-neutral-300'}>
+        <FlashMessageRender byKey={"user:edit"} className={"mt-4"} />
+        {!isRootAdmin && loggedInPermissions[0] !== "*" && (
+          <div className={"mt-4 border-l-4 border-cyan-400 py-2 pl-4"}>
+            <p className={"text-sm text-neutral-300"}>
               Only permissions which your account is currently assigned may be
               selected when creating or modifying other users.
             </p>
           </div>
         )}
         {!subuser && (
-          <div className={'mt-6'}>
+          <div className={"mt-6"}>
             <Field
-              name={'email'}
-              type={'email'}
-              label={'User Email'}
+              name={"email"}
+              type={"email"}
+              label={"User Email"}
               description={
-                'Enter the email address of the user you wish to invite as a subuser for this server.'
+                "Enter the email address of the user you wish to invite as a subuser for this server."
               }
             />
           </div>
         )}
-        <div className={'my-6'}>
+        <div className={"my-6"}>
           {Object.keys(permissions)
-            .filter((key) => key !== 'websocket')
+            .filter((key) => key !== "websocket")
             .map((key, index) => (
               <PermissionTitleBox
                 key={`permission_${key}`}
@@ -162,9 +162,9 @@ const EditSubuserModal = ({ subuser }: Props) => {
                 permissions={Object.keys(permissions[key].keys).map(
                   (pkey) => `${key}.${pkey}`,
                 )}
-                className={index > 0 ? 'mt-4' : undefined}
+                className={index > 0 ? "mt-4" : undefined}
               >
-                <p className={'mb-4 text-sm text-neutral-400'}>
+                <p className={"mb-4 text-sm text-neutral-400"}>
                   {permissions[key].description}
                 </p>
                 {Object.keys(permissions[key].keys).map((pkey) => (
@@ -180,10 +180,10 @@ const EditSubuserModal = ({ subuser }: Props) => {
               </PermissionTitleBox>
             ))}
         </div>
-        <Can action={subuser ? 'user.update' : 'user.create'}>
-          <div className={'flex justify-end pb-6'}>
-            <Button type={'submit'} className={'w-full sm:w-auto'}>
-              {subuser ? 'Save' : 'Invite User'}
+        <Can action={subuser ? "user.update" : "user.create"}>
+          <div className={"flex justify-end pb-6"}>
+            <Button type={"submit"} className={"w-full sm:w-auto"}>
+              {subuser ? "Save" : "Invite User"}
             </Button>
           </div>
         </Can>

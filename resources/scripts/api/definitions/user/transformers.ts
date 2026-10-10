@@ -1,6 +1,6 @@
-import * as Models from '@definitions/user/models';
-import { FractalResponseData } from '@/api/http';
-import { transform } from '@definitions/helpers';
+import * as Models from "@definitions/user/models";
+import { FractalResponseData } from "@/api/http";
+import { transform } from "@definitions/helpers";
 
 export default class Transformers {
   static toSSHKey = (data: Record<any, any>): Models.SSHKey => {
@@ -19,7 +19,7 @@ export default class Transformers {
       email: attributes.email,
       image: attributes.image,
       avatarUrl: attributes.avatar_url ?? null,
-      twoFactorEnabled: attributes['2fa_enabled'],
+      twoFactorEnabled: attributes["2fa_enabled"],
       permissions: attributes.permissions || [],
       createdAt: new Date(attributes.created_at),
       can(permission): boolean {

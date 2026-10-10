@@ -1,5 +1,5 @@
-import http from '@/api/http';
-import { rawDataToFileObject } from '@/api/transformers';
+import http from "@/api/http";
+import { rawDataToFileObject } from "@/api/transformers";
 
 export interface FileObject {
   key: string;
@@ -21,7 +21,7 @@ export default async (
   directory?: string,
 ): Promise<FileObject[]> => {
   const { data } = await http.get(`/api/client/servers/${uuid}/files/list`, {
-    params: { directory: directory ?? '/' },
+    params: { directory: directory ?? "/" },
   });
 
   return (data.data || []).map(rawDataToFileObject);

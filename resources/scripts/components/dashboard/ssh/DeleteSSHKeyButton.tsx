@@ -1,10 +1,10 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import React, { useState } from 'react';
-import { useFlashKey } from '@/plugins/useFlash';
-import { deleteSSHKey, useSSHKeys } from '@/api/account/ssh-keys';
-import { Dialog } from '@/components/elements/dialog';
-import Code from '@/components/elements/Code';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import React, { useState } from "react";
+import { useFlashKey } from "@/plugins/useFlash";
+import { deleteSSHKey, useSSHKeys } from "@/api/account/ssh-keys";
+import { Dialog } from "@/components/elements/dialog";
+import Code from "@/components/elements/Code";
 
 export default ({
   name,
@@ -13,7 +13,7 @@ export default ({
   name: string;
   fingerprint: string;
 }) => {
-  const { clearAndAddHttpError } = useFlashKey('account');
+  const { clearAndAddHttpError } = useFlashKey("account");
   const [visible, setVisible] = useState(false);
   const { mutate } = useSSHKeys();
 
@@ -36,8 +36,8 @@ export default ({
     <>
       <Dialog.Confirm
         open={visible}
-        title={'Delete SSH Key'}
-        confirm={'Delete Key'}
+        title={"Delete SSH Key"}
+        confirm={"Delete Key"}
         onConfirmed={onClick}
         onClose={() => setVisible(false)}
       >
@@ -45,13 +45,13 @@ export default ({
         across the Panel.
       </Dialog.Confirm>
       <button
-        className={'ml-4 cursor-pointer p-2 text-sm'}
+        className={"ml-4 cursor-pointer p-2 text-sm"}
         onClick={() => setVisible(true)}
       >
         <FontAwesomeIcon
           icon={faTrashAlt}
           className={
-            'text-neutral-400 transition-colors duration-150 hover:text-red-400'
+            "text-neutral-400 transition-colors duration-150 hover:text-red-400"
           }
         />
       </button>

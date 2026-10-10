@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { object, string } from 'yup';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import createApiKey from '@/api/account/createApiKey';
-import useFlash from '@/plugins/useFlash';
-import { httpErrorToHuman } from '@/api/http';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { ApiKey } from '@/api/account/getApiKeys';
-import Button from '@/components/elements/Button';
-import Input, { Textarea } from '@/components/elements/Input';
-import ApiKeyModal from '@/components/dashboard/ApiKeyModal';
+import React, { useState } from "react";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import { object, string } from "yup";
+import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
+import createApiKey from "@/api/account/createApiKey";
+import useFlash from "@/plugins/useFlash";
+import { httpErrorToHuman } from "@/api/http";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import { ApiKey } from "@/api/account/getApiKeys";
+import Button from "@/components/elements/Button";
+import Input, { Textarea } from "@/components/elements/Input";
+import ApiKeyModal from "@/components/dashboard/ApiKeyModal";
 
 interface Values {
   description: string;
@@ -17,14 +17,14 @@ interface Values {
 }
 
 export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
-  const [apiKey, setApiKey] = useState('');
+  const [apiKey, setApiKey] = useState("");
   const { addError, clearFlashes } = useFlash();
 
   const submit = (
     values: Values,
     { setSubmitting, resetForm }: FormikHelpers<Values>,
   ) => {
-    clearFlashes('account');
+    clearFlashes("account");
     createApiKey(values.description, values.allowedIps)
       .then(({ secretToken, ...key }) => {
         resetForm();
@@ -35,7 +35,7 @@ export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
       .catch((error) => {
         console.error(error);
 
-        addError({ key: 'account', message: httpErrorToHuman(error) });
+        addError({ key: "account", message: httpErrorToHuman(error) });
         setSubmitting(false);
       });
   };
@@ -44,12 +44,12 @@ export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
     <>
       <ApiKeyModal
         visible={apiKey.length > 0}
-        onModalDismissed={() => setApiKey('')}
+        onModalDismissed={() => setApiKey("")}
         apiKey={apiKey}
       />
       <Formik
         onSubmit={submit}
-        initialValues={{ description: '', allowedIps: '' }}
+        initialValues={{ description: "", allowedIps: "" }}
         validationSchema={object().shape({
           allowedIps: string(),
           description: string().required().min(4),
@@ -59,28 +59,28 @@ export default ({ onKeyCreated }: { onKeyCreated: (key: ApiKey) => void }) => {
           <Form>
             <SpinnerOverlay visible={isSubmitting} />
             <FormikFieldWrapper
-              label={'Description'}
-              name={'description'}
-              description={'A description of this API key.'}
-              className={'mb-6'}
+              label={"Description"}
+              name={"description"}
+              description={"A description of this API key."}
+              className={"mb-6"}
             >
-              <Field name={'description'} as={Input} />
+              <Field name={"description"} as={Input} />
             </FormikFieldWrapper>
             <FormikFieldWrapper
-              label={'Allowed IPs'}
-              name={'allowedIps'}
+              label={"Allowed IPs"}
+              name={"allowedIps"}
               description={
-                'Leave blank to allow any IP address to use this API key, otherwise provide each IP address on a new line.'
+                "Leave blank to allow any IP address to use this API key, otherwise provide each IP address on a new line."
               }
             >
               <Field
                 data-sensitive
-                name={'allowedIps'}
+                name={"allowedIps"}
                 as={Textarea}
-                className={'h-32'}
+                className={"h-32"}
               />
             </FormikFieldWrapper>
-            <div className={'mt-6 flex justify-end'}>
+            <div className={"mt-6 flex justify-end"}>
               <Button>Create</Button>
             </div>
           </Form>

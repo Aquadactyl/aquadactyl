@@ -1,16 +1,16 @@
-import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router';
-import requestPasswordResetEmail from '@/api/auth/requestPasswordResetEmail';
-import { httpErrorToHuman } from '@/api/http';
-import LoginFormContainer from '@/components/auth/LoginFormContainer';
-import { useAppStore } from '@/state';
-import Field from '@/components/elements/Field';
-import { Formik, FormikHelpers } from 'formik';
-import { object, string } from 'yup';
-import Button from '@/components/elements/Button';
-import Reaptcha, { ReaptchaRef } from '@/components/elements/Reaptcha';
-import useFlash from '@/plugins/useFlash';
+import * as React from "react";
+import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router";
+import requestPasswordResetEmail from "@/api/auth/requestPasswordResetEmail";
+import { httpErrorToHuman } from "@/api/http";
+import LoginFormContainer from "@/components/auth/LoginFormContainer";
+import { useAppStore } from "@/state";
+import Field from "@/components/elements/Field";
+import { Formik, FormikHelpers } from "formik";
+import { object, string } from "yup";
+import Button from "@/components/elements/Button";
+import Reaptcha, { ReaptchaRef } from "@/components/elements/Reaptcha";
+import useFlash from "@/plugins/useFlash";
 
 interface Values {
   email: string;
@@ -18,7 +18,7 @@ interface Values {
 
 export default () => {
   const ref = useRef<ReaptchaRef>(null);
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState("");
 
   const { clearFlashes, addFlash } = useFlash();
   const recaptchaEnabled = useAppStore(
@@ -46,8 +46,8 @@ export default () => {
 
         setSubmitting(false);
         addFlash({
-          type: 'error',
-          title: 'Error',
+          type: "error",
+          title: "Error",
           message: httpErrorToHuman(error),
         });
       });
@@ -59,21 +59,21 @@ export default () => {
       .then((response) => {
         resetForm();
         addFlash({
-          type: 'success',
-          title: 'Success',
+          type: "success",
+          title: "Success",
           message: response,
         });
       })
       .catch((error) => {
         console.error(error);
         addFlash({
-          type: 'error',
-          title: 'Error',
+          type: "error",
+          title: "Error",
           message: httpErrorToHuman(error),
         });
       })
       .then(() => {
-        setToken('');
+        setToken("");
         if (ref.current) ref.current.reset();
 
         setSubmitting(false);
@@ -83,30 +83,30 @@ export default () => {
   return (
     <Formik
       onSubmit={handleSubmission}
-      initialValues={{ email: '' }}
+      initialValues={{ email: "" }}
       validationSchema={object().shape({
         email: string()
-          .email('A valid email address must be provided to continue.')
-          .required('A valid email address must be provided to continue.'),
+          .email("A valid email address must be provided to continue.")
+          .required("A valid email address must be provided to continue."),
       })}
     >
       {({ isSubmitting, setSubmitting, submitForm }) => (
         <LoginFormContainer
-          title={'Request Password Reset'}
-          className={'flex w-full'}
+          title={"Request Password Reset"}
+          className={"flex w-full"}
         >
           <Field
-            label={'Email'}
+            label={"Email"}
             description={
-              'Enter your account email address to receive instructions on resetting your password.'
+              "Enter your account email address to receive instructions on resetting your password."
             }
-            name={'email'}
-            type={'email'}
+            name={"email"}
+            type={"email"}
           />
-          <div className={'mt-6'}>
+          <div className={"mt-6"}>
             <Button
-              type={'submit'}
-              size={'xlarge'}
+              type={"submit"}
+              size={"xlarge"}
               disabled={isSubmitting}
               isLoading={isSubmitting}
             >
@@ -116,23 +116,23 @@ export default () => {
           {recaptchaEnabled && (
             <Reaptcha
               ref={ref}
-              size={'invisible'}
-              sitekey={siteKey || '_invalid_key'}
+              size={"invisible"}
+              sitekey={siteKey || "_invalid_key"}
               onVerify={(response) => {
                 setToken(response);
                 submitForm();
               }}
               onExpire={() => {
                 setSubmitting(false);
-                setToken('');
+                setToken("");
               }}
             />
           )}
-          <div className={'mt-6 text-center'}>
+          <div className={"mt-6 text-center"}>
             <Link
-              to={'/auth/login'}
+              to={"/auth/login"}
               className={
-                'text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200'
+                "text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200"
               }
             >
               Return to Login

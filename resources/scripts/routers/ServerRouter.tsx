@@ -1,28 +1,28 @@
-import TransferListener from '@/components/server/TransferListener';
-import React, { useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router';
-import NavigationBar from '@/components/NavigationBar';
-import WebsocketHandler from '@/components/server/WebsocketHandler';
-import { ServerContext } from '@/state/server';
-import Fade from '@/components/elements/Fade';
-import Spinner from '@/components/elements/Spinner';
-import ErrorBoundary from '@/components/elements/ErrorBoundary';
-import ConflictStateRenderer from '@/components/server/ConflictStateRenderer';
-import { ServerError } from '@/components/elements/ScreenBlock';
-import { httpErrorToHuman } from '@/api/http';
-import { useAppStore } from '@/state';
-import SubNavigation from '@/components/elements/SubNavigation';
-import InstallListener from '@/components/server/InstallListener';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
+import TransferListener from "@/components/server/TransferListener";
+import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router";
+import NavigationBar from "@/components/NavigationBar";
+import WebsocketHandler from "@/components/server/WebsocketHandler";
+import { ServerContext } from "@/state/server";
+import Fade from "@/components/elements/Fade";
+import Spinner from "@/components/elements/Spinner";
+import ErrorBoundary from "@/components/elements/ErrorBoundary";
+import ConflictStateRenderer from "@/components/server/ConflictStateRenderer";
+import { ServerError } from "@/components/elements/ScreenBlock";
+import { httpErrorToHuman } from "@/api/http";
+import { useAppStore } from "@/state";
+import SubNavigation from "@/components/elements/SubNavigation";
+import InstallListener from "@/components/server/InstallListener";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExternalLinkAlt } from "@fortawesome/free-solid-svg-icons";
 
 import {
   NavigationLinks,
   NavigationRouter,
-} from '@blueprint/extends/routers/ServerRouter';
-import BeforeSubNavigation from '@blueprint/components/Navigation/SubNavigation/BeforeSubNavigation';
-import AdditionalServerItems from '@blueprint/components/Navigation/SubNavigation/AdditionalServerItems';
-import AfterSubNavigation from '@blueprint/components/Navigation/SubNavigation/AfterSubNavigation';
+} from "@blueprint/extends/routers/ServerRouter";
+import BeforeSubNavigation from "@blueprint/components/Navigation/SubNavigation/BeforeSubNavigation";
+import AdditionalServerItems from "@blueprint/components/Navigation/SubNavigation/AdditionalServerItems";
+import AfterSubNavigation from "@blueprint/components/Navigation/SubNavigation/AfterSubNavigation";
 
 export default () => {
   const { id: routeId } = useParams<{ id: string }>();
@@ -32,7 +32,7 @@ export default () => {
   );
 
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const id = ServerContext.useStoreState((state) => state.server.data?.id);
   const uuid = ServerContext.useStoreState((state) => state.server.data?.uuid);
@@ -54,7 +54,7 @@ export default () => {
   );
 
   useEffect(() => {
-    setError('');
+    setError("");
 
     getServer(routeId!).catch((error) => {
       console.error(error);
@@ -67,24 +67,24 @@ export default () => {
   }, [routeId]);
 
   return (
-    <React.Fragment key={'server-router'}>
+    <React.Fragment key={"server-router"}>
       <NavigationBar />
       {!uuid || !id ? (
         error ? (
           <ServerError message={error} />
         ) : (
-          <Spinner size={'large'} centered />
+          <Spinner size={"large"} centered />
         )
       ) : (
         <>
           <Fade timeout={150}>
-            <SubNavigation id={'SubNavigation'}>
+            <SubNavigation id={"SubNavigation"}>
               <BeforeSubNavigation />
               <div>
                 <NavigationLinks />
                 <AdditionalServerItems />
                 {rootAdmin && (
-                  <a href={`/admin/servers/view/${serverId}`} target={'_blank'}>
+                  <a href={`/admin/servers/view/${serverId}`} target={"_blank"}>
                     <FontAwesomeIcon icon={faExternalLinkAlt} />
                   </a>
                 )}

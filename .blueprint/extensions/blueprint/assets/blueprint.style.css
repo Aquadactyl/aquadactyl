@@ -207,7 +207,7 @@ tag[blue] {
 }
 
 .blueprint\:push-repo::after {
-  content: ' ';
+  content: " ";
   position: absolute;
   bottom: 100%;
   right: 12px;

@@ -1,6 +1,6 @@
-import React from 'react';
-import { useLocation, type Location } from 'react-router';
-import { AnimatePresence, motion } from 'motion/react';
+import React from "react";
+import { useLocation, type Location } from "react-router";
+import { AnimatePresence, motion } from "motion/react";
 
 interface TransitionRouterProps {
   location?: Location;
@@ -15,7 +15,7 @@ const TransitionRouter: React.FC<TransitionRouterProps> = ({
   const loc = propLocation || routeLocation;
 
   return (
-    <AnimatePresence mode='wait'>
+    <AnimatePresence mode="wait">
       <motion.div
         key={loc.pathname + loc.search}
         initial={{ opacity: 0 }}

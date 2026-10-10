@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import usePrivacyMode from '@/plugins/usePrivacyMode';
+import React, { useRef } from "react";
+import usePrivacyMode from "@/plugins/usePrivacyMode";
 
 export default ({
   children,
@@ -16,7 +16,7 @@ export default ({
       onPointerDown={(event) => {
         revealTouchClick.current =
           enabled &&
-          event.pointerType === 'touch' &&
+          event.pointerType === "touch" &&
           document.activeElement !== event.currentTarget;
         if (revealTouchClick.current) event.currentTarget.focus();
         onPointerDown?.(event);

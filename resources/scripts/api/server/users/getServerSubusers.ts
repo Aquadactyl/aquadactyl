@@ -1,12 +1,12 @@
-import http, { FractalResponseData } from '@/api/http';
-import { Subuser } from '@/state/server/subusers';
+import http, { FractalResponseData } from "@/api/http";
+import { Subuser } from "@/state/server/subusers";
 
 export const rawDataToServerSubuser = (data: FractalResponseData): Subuser => ({
   uuid: data.attributes.uuid,
   username: data.attributes.username,
   email: data.attributes.email,
   image: data.attributes.image,
-  twoFactorEnabled: data.attributes['2fa_enabled'],
+  twoFactorEnabled: data.attributes["2fa_enabled"],
   createdAt: new Date(data.attributes.created_at),
   permissions: data.attributes.permissions || [],
   can: (permission) =>

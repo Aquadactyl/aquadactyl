@@ -36,28 +36,28 @@ resolver, Zod and Zustand are also shared dependencies for addons.
 ## Imports
 
 ```tsx
-import http from '@/api/http';
-import { Settings } from 'lucide-react';
-import { Form, Formik } from 'formik';
-import { object, string } from 'yup';
-import Field from '@/components/elements/Field';
-import Button from '@/components/elements/Button';
+import http from "@/api/http";
+import { Settings } from "lucide-react";
+import { Form, Formik } from "formik";
+import { object, string } from "yup";
+import Field from "@/components/elements/Field";
+import Button from "@/components/elements/Button";
 
 export default function ExtensionSettings() {
   return (
     <Formik
-      initialValues={{ label: '' }}
+      initialValues={{ label: "" }}
       validationSchema={object({
-        label: string().trim().max(80).required('Enter a label.'),
+        label: string().trim().max(80).required("Enter a label."),
       })}
       onSubmit={async (values) => {
-        await http.put('/api/client/extensions/myextension/settings', values);
+        await http.put("/api/client/extensions/myextension/settings", values);
       }}
     >
       {({ isSubmitting }) => (
         <Form>
-          <Field type='text' name='label' label='Label' />
-          <Button type='submit' disabled={isSubmitting}>
+          <Field type="text" name="label" label="Label" />
+          <Button type="submit" disabled={isSubmitting}>
             <Settings size={16} aria-hidden /> Save
           </Button>
         </Form>

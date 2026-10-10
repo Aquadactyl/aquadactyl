@@ -1,30 +1,30 @@
-import React, { lazy } from 'react';
+import React, { lazy } from "react";
 import {
   Route,
   Routes,
   unstable_HistoryRouter as HistoryRouter,
-} from 'react-router';
-import { StoreProvider } from '@/state/hooks';
-import { QueryClientProvider } from '@tanstack/react-query';
-import { queryClient } from '@/lib/queryClient';
-import { store } from '@/state';
-import { SiteSettings } from '@/state/settings';
-import ProgressBar from '@/components/elements/ProgressBar';
-import { NotFound } from '@/components/elements/ScreenBlock';
-import GlobalStylesheet from '@/assets/css/GlobalStylesheet';
-import { history } from '@/components/history';
-import { setupInterceptors } from '@/api/interceptors';
-import AuthenticatedRoute from '@/components/elements/AuthenticatedRoute';
-import { ServerContext } from '@/state/server';
-import '@/assets/tailwind.css';
-import '@/assets/css/interface.css';
-import Spinner from '@/components/elements/Spinner';
-import PrivacyMode from '@/components/elements/PrivacyMode';
+} from "react-router";
+import { StoreProvider } from "@/state/hooks";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/queryClient";
+import { store } from "@/state";
+import { SiteSettings } from "@/state/settings";
+import ProgressBar from "@/components/elements/ProgressBar";
+import { NotFound } from "@/components/elements/ScreenBlock";
+import GlobalStylesheet from "@/assets/css/GlobalStylesheet";
+import { history } from "@/components/history";
+import { setupInterceptors } from "@/api/interceptors";
+import AuthenticatedRoute from "@/components/elements/AuthenticatedRoute";
+import { ServerContext } from "@/state/server";
+import "@/assets/tailwind.css";
+import "@/assets/css/interface.css";
+import Spinner from "@/components/elements/Spinner";
+import PrivacyMode from "@/components/elements/PrivacyMode";
 
-const DashboardRouter = lazy(() => import('@/routers/DashboardRouter'));
-const ServerRouter = lazy(() => import('@/routers/ServerRouter'));
+const DashboardRouter = lazy(() => import("@/routers/DashboardRouter"));
+const ServerRouter = lazy(() => import("@/routers/ServerRouter"));
 const AuthenticationRouter = lazy(
-  () => import('@/routers/AuthenticationRouter'),
+  () => import("@/routers/AuthenticationRouter"),
 );
 
 interface ExtendedWindow extends Window {
@@ -73,11 +73,11 @@ const App = () => {
         <StoreProvider store={store}>
           <PrivacyMode />
           <ProgressBar />
-          <div className={'mx-auto w-auto'}>
+          <div className={"mx-auto w-auto"}>
             <HistoryRouter history={history} useTransitions>
               <Routes>
                 <Route
-                  path={'/auth/*'}
+                  path={"/auth/*"}
                   element={
                     <Spinner.Suspense>
                       <AuthenticationRouter />
@@ -85,7 +85,7 @@ const App = () => {
                   }
                 />
                 <Route
-                  path={'/server/:id/*'}
+                  path={"/server/:id/*"}
                   element={
                     <AuthenticatedRoute>
                       <Spinner.Suspense>
@@ -97,7 +97,7 @@ const App = () => {
                   }
                 />
                 <Route
-                  path={'/*'}
+                  path={"/*"}
                   element={
                     <AuthenticatedRoute>
                       <Spinner.Suspense>
@@ -106,7 +106,7 @@ const App = () => {
                     </AuthenticatedRoute>
                   }
                 />
-                <Route path={'*'} element={<NotFound />} />
+                <Route path={"*"} element={<NotFound />} />
               </Routes>
             </HistoryRouter>
           </div>

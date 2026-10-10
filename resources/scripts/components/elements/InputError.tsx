@@ -1,6 +1,6 @@
-import React from 'react';
-import { FormikErrors, FormikTouched } from 'formik';
-import { capitalize } from '@/lib/strings';
+import React from "react";
+import { FormikErrors, FormikTouched } from "formik";
+import { capitalize } from "@/lib/strings";
 
 interface Props {
   errors: FormikErrors<any>;
@@ -11,15 +11,15 @@ interface Props {
 
 const InputError = ({ errors, touched, name, children }: Props) =>
   touched[name] && errors[name] ? (
-    <p className={'pt-2 text-xs text-red-400'}>
-      {typeof errors[name] === 'string'
+    <p className={"pt-2 text-xs text-red-400"}>
+      {typeof errors[name] === "string"
         ? capitalize(errors[name] as string)
         : capitalize((errors[name] as unknown as string[])[0])}
     </p>
   ) : (
     <>
       {children ? (
-        <p className={'pt-2 text-xs text-neutral-400'}>{children}</p>
+        <p className={"pt-2 text-xs text-neutral-400"}>{children}</p>
       ) : null}
     </>
   );

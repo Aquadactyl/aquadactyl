@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import rotateDatabasePassword from '@/api/server/databases/rotateDatabasePassword';
-import useFlash from '@/plugins/useFlash';
-import { useServerStore } from '@/state/server';
-import { ServerDatabase } from '@/api/server/databases/getServerDatabases';
-import { httpErrorToHuman } from '@/api/http';
-import Button from '@/components/elements/Button';
+import React, { useState } from "react";
+import rotateDatabasePassword from "@/api/server/databases/rotateDatabasePassword";
+import useFlash from "@/plugins/useFlash";
+import { useServerStore } from "@/state/server";
+import { ServerDatabase } from "@/api/server/databases/getServerDatabases";
+import { httpErrorToHuman } from "@/api/http";
+import Button from "@/components/elements/Button";
 
 export default ({
   databaseId,
@@ -30,10 +30,10 @@ export default ({
       .catch((error) => {
         console.error(error);
         addFlash({
-          type: 'error',
-          title: 'Error',
+          type: "error",
+          title: "Error",
           message: httpErrorToHuman(error),
-          key: 'database-connection-modal',
+          key: "database-connection-modal",
         });
       })
       .then(() => setLoading(false));
@@ -42,8 +42,8 @@ export default ({
   return (
     <Button
       isSecondary
-      color={'primary'}
-      className={'mr-2'}
+      color={"primary"}
+      className={"mr-2"}
       onClick={rotate}
       isLoading={loading}
     >

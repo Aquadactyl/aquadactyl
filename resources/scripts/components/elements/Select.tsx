@@ -5,14 +5,14 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from 'react';
+} from "react";
 import ReactSelect, {
   components,
   GroupBase,
   InputProps,
   SelectInstance,
-} from 'react-select';
-import classNames from 'classnames';
+} from "react-select";
+import classNames from "classnames";
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   hideDropdownArrow?: boolean;
@@ -27,7 +27,7 @@ type Group = GroupBase<Option>;
 
 const DescriptionContext = createContext<{
   description?: string;
-  required?: React.AriaAttributes['aria-required'];
+  required?: React.AriaAttributes["aria-required"];
 }>({});
 const SelectInput = (props: InputProps<Option, boolean, Group>) => {
   const { description, required } = useContext(DescriptionContext);
@@ -35,7 +35,7 @@ const SelectInput = (props: InputProps<Option, boolean, Group>) => {
   return (
     <InputComponent
       {...props}
-      aria-describedby={description || props['aria-describedby']}
+      aria-describedby={description || props["aria-describedby"]}
       aria-required={required}
     />
   );
@@ -48,7 +48,7 @@ const text = (children: React.ReactNode): string =>
         ? text(child.props.children)
         : String(child),
     )
-    .join('');
+    .join("");
 
 const optionsFromChildren = (
   children: React.ReactNode,
@@ -59,7 +59,7 @@ const optionsFromChildren = (
     const childProps = (child.props || {}) as Record<string, any>;
     if (child.type === React.Fragment)
       return optionsFromChildren(childProps.children, disabled);
-    if (child.type === 'optgroup') {
+    if (child.type === "optgroup") {
       return [
         {
           label: childProps.label,
@@ -67,12 +67,12 @@ const optionsFromChildren = (
             childProps.children,
             disabled || childProps.disabled,
           ).flatMap((option) =>
-            'options' in option ? option.options : [option],
+            "options" in option ? option.options : [option],
           ),
         },
       ];
     }
-    if (child.type !== 'option') return [];
+    if (child.type !== "option") return [];
     const label = childProps.label ?? text(childProps.children);
     return [
       {
@@ -83,7 +83,7 @@ const optionsFromChildren = (
     ];
   });
 
-const values = (value: SelectProps['value']): string[] | undefined =>
+const values = (value: SelectProps["value"]): string[] | undefined =>
   value === undefined
     ? undefined
     : Array.isArray(value)
@@ -123,7 +123,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const flatOptions = useMemo(
       () =>
         options.flatMap((option) =>
-          'options' in option ? option.options : [option],
+          "options" in option ? option.options : [option],
         ),
       [options],
     );
@@ -134,7 +134,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
         ? []
         : flatOptions.filter((option) => !option.isDisabled).slice(0, 1);
     const dataAttributes = Object.fromEntries(
-      Object.entries(props).filter(([key]) => key.startsWith('data-')),
+      Object.entries(props).filter(([key]) => key.startsWith("data-")),
     );
 
     React.useImperativeHandle(forwardedRef, () => native.current!);
@@ -172,9 +172,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           }
         }, 0);
       };
-      form.addEventListener('reset', reset);
+      form.addEventListener("reset", reset);
       return () => {
-        form.removeEventListener('reset', reset);
+        form.removeEventListener("reset", reset);
         clearTimeout(timeout);
       };
     }, [value]);
@@ -192,34 +192,34 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <div
-        className={classNames('panel-select', className)}
+        className={classNames("panel-select", className)}
         style={style}
         {...dataAttributes}
       >
         <DescriptionContext.Provider
           value={{
-            description: props['aria-describedby'],
-            required: props['aria-required'] ?? props.required,
+            description: props["aria-describedby"],
+            required: props["aria-required"] ?? props.required,
           }}
         >
           <ReactSelect<Option, boolean, Group>
             ref={custom}
             inputId={selectId}
-            classNamePrefix={'panel-select'}
+            classNamePrefix={"panel-select"}
             unstyled
             options={options}
             value={props.multiple ? selected : (selected[0] ?? null)}
             isMulti={!!props.multiple}
             isDisabled={props.disabled}
             tabIndex={props.tabIndex}
-            aria-label={props['aria-label']}
-            aria-labelledby={props['aria-labelledby']}
-            aria-invalid={props['aria-invalid']}
-            aria-errormessage={props['aria-errormessage']}
-            placeholder={'Select an option'}
+            aria-label={props["aria-label"]}
+            aria-labelledby={props["aria-labelledby"]}
+            aria-invalid={props["aria-invalid"]}
+            aria-errormessage={props["aria-errormessage"]}
+            placeholder={"Select an option"}
             menuPortalTarget={portal}
-            menuPosition={'fixed'}
-            menuPlacement={'auto'}
+            menuPosition={"fixed"}
+            menuPlacement={"auto"}
             menuShouldScrollIntoView={false}
             maxMenuHeight={260}
             closeMenuOnSelect={!props.multiple}
@@ -244,10 +244,10 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                   option.selected = nextValues.includes(option.value);
                 });
               } else {
-                element.value = nextValues[0] ?? '';
+                element.value = nextValues[0] ?? "";
               }
-              element.dispatchEvent(new Event('input', { bubbles: true }));
-              element.dispatchEvent(new Event('change', { bubbles: true }));
+              element.dispatchEvent(new Event("input", { bubbles: true }));
+              element.dispatchEvent(new Event("change", { bubbles: true }));
             }}
             onBlur={(event) => onBlur?.(eventTarget(event))}
             onFocus={(event) => onFocus?.(eventTarget(event))}
@@ -264,7 +264,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           tabIndex={-1}
           autoFocus={false}
           aria-hidden
-          className={'panel-select-native'}
+          className={"panel-select-native"}
           onChange={(event) => {
             if (value === undefined) {
               setUncontrolled(
@@ -289,6 +289,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     );
   },
 );
-Select.displayName = 'Select';
+Select.displayName = "Select";
 
 export default Select;

@@ -1,4 +1,4 @@
-import updateAccountEmail from '@/api/account/updateAccountEmail';
+import updateAccountEmail from "@/api/account/updateAccountEmail";
 
 export interface UserData {
   uuid: string;

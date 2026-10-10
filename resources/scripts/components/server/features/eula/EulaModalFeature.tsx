@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
-import Button from '@/components/elements/Button';
-import saveFileContents from '@/api/server/files/saveFileContents';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
-import { SocketEvent, SocketRequest } from '@/components/server/events';
+import React, { useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import Modal from "@/components/elements/Modal";
+import Button from "@/components/elements/Button";
+import saveFileContents from "@/api/server/files/saveFileContents";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import useFlash from "@/plugins/useFlash";
+import { SocketEvent, SocketRequest } from "@/components/server/events";
 
 const EulaModalFeature = () => {
   const [visible, setVisible] = useState(false);
@@ -19,14 +19,14 @@ const EulaModalFeature = () => {
   );
 
   useEffect(() => {
-    if (!connected || !instance || status === 'running') return;
+    if (!connected || !instance || status === "running") return;
 
     const listener = (line: string) => {
       if (
         line
           .toLowerCase()
           .indexOf(
-            'you need to agree to the eula in order to run the server',
+            "you need to agree to the eula in order to run the server",
           ) >= 0
       ) {
         setVisible(true);
@@ -42,12 +42,12 @@ const EulaModalFeature = () => {
 
   const onAcceptEULA = () => {
     setLoading(true);
-    clearFlashes('feature:eula');
+    clearFlashes("feature:eula");
 
-    saveFileContents(uuid, 'eula.txt', 'eula=true')
+    saveFileContents(uuid, "eula.txt", "eula=true")
       .then(() => {
-        if (status === 'offline' && instance) {
-          instance.send(SocketRequest.SET_STATE, 'restart');
+        if (status === "offline" && instance) {
+          instance.send(SocketRequest.SET_STATE, "restart");
         }
 
         setLoading(false);
@@ -55,13 +55,13 @@ const EulaModalFeature = () => {
       })
       .catch((error) => {
         console.error(error);
-        clearAndAddHttpError({ key: 'feature:eula', error });
+        clearAndAddHttpError({ key: "feature:eula", error });
       })
       .then(() => setLoading(false));
   };
 
   useEffect(() => {
-    clearFlashes('feature:eula');
+    clearFlashes("feature:eula");
   }, []);
 
   return (
@@ -71,36 +71,36 @@ const EulaModalFeature = () => {
       closeOnBackground={false}
       showSpinnerOverlay={loading}
     >
-      <FlashMessageRender key={'feature:eula'} className={'mb-4'} />
-      <h2 className={'mb-4 text-2xl text-neutral-100'}>
+      <FlashMessageRender key={"feature:eula"} className={"mb-4"} />
+      <h2 className={"mb-4 text-2xl text-neutral-100"}>
         Accept Minecraft&reg; EULA
       </h2>
-      <p className={'text-neutral-200'}>
+      <p className={"text-neutral-200"}>
         By pressing {'"I Accept"'} below you are indicating your agreement to
         the&nbsp;
         <a
-          target={'_blank'}
+          target={"_blank"}
           className={
-            'text-primary-300 hover:text-primary-400 underline transition-colors duration-150'
+            "text-primary-300 hover:text-primary-400 underline transition-colors duration-150"
           }
-          rel={'noreferrer noopener'}
-          href='https://www.minecraft.net/eula'
+          rel={"noreferrer noopener"}
+          href="https://www.minecraft.net/eula"
         >
           Minecraft&reg; EULA
         </a>
         .
       </p>
-      <div className={'mt-8 items-center justify-end sm:flex'}>
+      <div className={"mt-8 items-center justify-end sm:flex"}>
         <Button
           isSecondary
           onClick={() => setVisible(false)}
-          className={'w-full border-transparent sm:w-auto'}
+          className={"w-full border-transparent sm:w-auto"}
         >
           Cancel
         </Button>
         <Button
           onClick={onAcceptEULA}
-          className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}
+          className={"mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto"}
         >
           I Accept
         </Button>

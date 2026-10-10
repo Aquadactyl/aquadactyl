@@ -1,7 +1,7 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import I18NextHttpBackend, { HttpBackendOptions } from 'i18next-http-backend';
-import I18NextMultiloadBackendAdapter from 'i18next-multiload-backend-adapter';
+import i18n from "i18next";
+import { initReactI18next } from "react-i18next";
+import I18NextHttpBackend, { HttpBackendOptions } from "i18next-http-backend";
+import I18NextMultiloadBackendAdapter from "i18next-multiload-backend-adapter";
 
 // If we're using HMR use a unique hash per page reload so that we're always
 // doing cache busting. Otherwise just use the builder provided hash value in
@@ -14,14 +14,14 @@ i18n
   .use(I18NextMultiloadBackendAdapter)
   .use(initReactI18next)
   .init({
-    debug: process.env.DEBUG === 'true',
-    lng: 'en',
-    fallbackLng: 'en',
-    keySeparator: '.',
+    debug: process.env.DEBUG === "true",
+    lng: "en",
+    fallbackLng: "en",
+    keySeparator: ".",
     backend: {
       backend: I18NextHttpBackend,
       backendOption: {
-        loadPath: '/locales/locale.json?locale={{lng}}&namespace={{ns}}',
+        loadPath: "/locales/locale.json?locale={{lng}}&namespace={{ns}}",
         queryStringParams: { hash },
         allowMultiLoading: true,
       } as HttpBackendOptions,

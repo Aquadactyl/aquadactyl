@@ -1,12 +1,12 @@
-import React from 'react';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { object, string } from 'yup';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import Button from '@/components/elements/Button';
-import Input, { Textarea } from '@/components/elements/Input';
-import { useFlashKey } from '@/plugins/useFlash';
-import { createSSHKey, useSSHKeys } from '@/api/account/ssh-keys';
+import React from "react";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import { object, string } from "yup";
+import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import Button from "@/components/elements/Button";
+import Input, { Textarea } from "@/components/elements/Input";
+import { useFlashKey } from "@/plugins/useFlash";
+import { createSSHKey, useSSHKeys } from "@/api/account/ssh-keys";
 
 interface Values {
   name: string;
@@ -14,7 +14,7 @@ interface Values {
 }
 
 export default () => {
-  const { clearAndAddHttpError } = useFlashKey('account');
+  const { clearAndAddHttpError } = useFlashKey("account");
   const { mutate } = useSSHKeys();
 
   const submit = (
@@ -36,7 +36,7 @@ export default () => {
     <>
       <Formik
         onSubmit={submit}
-        initialValues={{ name: '', publicKey: '' }}
+        initialValues={{ name: "", publicKey: "" }}
         validationSchema={object().shape({
           name: string().required(),
           publicKey: string().required(),
@@ -46,20 +46,20 @@ export default () => {
           <Form>
             <SpinnerOverlay visible={isSubmitting} />
             <FormikFieldWrapper
-              label={'SSH Key Name'}
-              name={'name'}
-              className={'mb-6'}
+              label={"SSH Key Name"}
+              name={"name"}
+              className={"mb-6"}
             >
-              <Field name={'name'} as={Input} />
+              <Field name={"name"} as={Input} />
             </FormikFieldWrapper>
             <FormikFieldWrapper
-              label={'Public Key'}
-              name={'publicKey'}
-              description={'Enter your public SSH key.'}
+              label={"Public Key"}
+              name={"publicKey"}
+              description={"Enter your public SSH key."}
             >
-              <Field name={'publicKey'} as={Textarea} className={'h-32'} />
+              <Field name={"publicKey"} as={Textarea} className={"h-32"} />
             </FormikFieldWrapper>
-            <div className={'mt-6 flex justify-end'}>
+            <div className={"mt-6 flex justify-end"}>
               <Button>Save</Button>
             </div>
           </Form>

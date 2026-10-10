@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import classNames from 'classnames';
-import { useAppStore } from '@/state';
-import { randomInt } from '@/helpers';
-import Fade from '@/components/elements/Fade';
+import React, { useEffect, useRef, useState } from "react";
+import classNames from "classnames";
+import { useAppStore } from "@/state";
+import { randomInt } from "@/helpers";
+import Fade from "@/components/elements/Fade";
 
 const BarFill = React.forwardRef<
   HTMLDivElement,
@@ -11,7 +11,7 @@ const BarFill = React.forwardRef<
   <div
     ref={ref}
     className={classNames(
-      'h-full bg-cyan-400 shadow-[0_0_6px_rgb(85_192_183/25%)] transition-all duration-250 ease-in-out',
+      "h-full bg-cyan-400 shadow-[0_0_6px_rgb(85_192_183/25%)] transition-all duration-250 ease-in-out",
       className,
     )}
     style={style}
@@ -70,11 +70,11 @@ export default () => {
   }, [progress, continuous]);
 
   return (
-    <div className={'fixed w-full'} style={{ height: '2px' }}>
+    <div className={"fixed w-full"} style={{ height: "2px" }}>
       <Fade in={visible} unmountOnExit timeout={150}>
         <BarFill
           style={{
-            width: progress === undefined ? '100%' : `${progress}%`,
+            width: progress === undefined ? "100%" : `${progress}%`,
           }}
         />
       </Fade>

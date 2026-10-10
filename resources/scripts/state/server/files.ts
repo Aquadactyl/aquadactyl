@@ -1,4 +1,4 @@
-import { cleanDirectoryPath } from '@/helpers';
+import { cleanDirectoryPath } from "@/helpers";
 
 export interface FileUploadData {
   loaded: number;
@@ -29,7 +29,7 @@ export type ServerFileStore = ServerFileState & ServerFileActions;
 export const createFilesSlice = (
   set: (fn: (state: any) => any) => void,
 ): ServerFileStore => ({
-  directory: '/',
+  directory: "/",
   selectedFiles: [],
   uploads: {},
 

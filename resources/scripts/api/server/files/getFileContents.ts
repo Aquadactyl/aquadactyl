@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export default (server: string, file: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -6,7 +6,7 @@ export default (server: string, file: string): Promise<string> => {
       .get(`/api/client/servers/${server}/files/contents`, {
         params: { file },
         transformResponse: (res) => res,
-        responseType: 'text',
+        responseType: "text",
       })
       .then(({ data }) => resolve(data))
       .catch(reject);

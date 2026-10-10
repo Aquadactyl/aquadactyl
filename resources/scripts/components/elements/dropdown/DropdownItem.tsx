@@ -1,7 +1,7 @@
-import React, { forwardRef } from 'react';
-import { Menu } from '@headlessui/react';
-import styles from './style.module.css';
-import classNames from 'classnames';
+import React, { forwardRef } from "react";
+import { Menu } from "@headlessui/react";
+import styles from "./style.module.css";
+import classNames from "classnames";
 
 interface Props {
   children:
@@ -24,7 +24,7 @@ const DropdownItem = forwardRef<HTMLAnchorElement, Props>(
         {({ disabled, active }) => (
           <a
             ref={ref}
-            href={'#'}
+            href={"#"}
             className={classNames(
               styles.menu_item,
               {
@@ -36,7 +36,7 @@ const DropdownItem = forwardRef<HTMLAnchorElement, Props>(
             onClick={onClick}
           >
             {IconComponent}
-            {typeof children === 'function'
+            {typeof children === "function"
               ? children({ disabled, active })
               : children}
           </a>

@@ -1,10 +1,10 @@
-import http, { FractalResponseData, FractalResponseList } from '@/api/http';
+import http, { FractalResponseData, FractalResponseList } from "@/api/http";
 import {
   rawDataToServerAllocation,
   rawDataToServerEggVariable,
-} from '@/api/transformers';
-import { ServerEggVariable, ServerStatus } from '@/api/server/types';
-import { Identifier } from '@/api/definitions';
+} from "@/api/transformers";
+import { ServerEggVariable, ServerStatus } from "@/api/server/types";
+import { Identifier } from "@/api/definitions";
 
 export interface Allocation {
   id: number;
@@ -16,8 +16,8 @@ export interface Allocation {
 }
 
 export interface Server {
-  id: Identifier<'serv'>;
-  identifier: Identifier<'serv'>; // Set from "server_identifier" and should be used moving forward to reference a server.
+  id: Identifier<"serv">;
+  identifier: Identifier<"serv">; // Set from "server_identifier" and should be used moving forward to reference a server.
   internalId: number | string;
   uuid: string;
   name: string;
@@ -106,7 +106,7 @@ export default (uuid: string): Promise<[Server, string[]]> => {
         resolve([
           rawDataToServerObject(data),
           data.meta?.is_server_owner
-            ? ['*']
+            ? ["*"]
             : data.meta?.user_permissions || [],
         ]),
       )

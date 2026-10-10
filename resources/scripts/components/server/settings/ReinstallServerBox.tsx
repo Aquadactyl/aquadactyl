@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import reinstallServer from '@/api/server/reinstallServer';
-import useFlash from '@/plugins/useFlash';
-import { httpErrorToHuman } from '@/api/http';
-import { Button } from '@/components/elements/button/index';
-import { Dialog } from '@/components/elements/dialog';
+import React, { useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import TitledGreyBox from "@/components/elements/TitledGreyBox";
+import reinstallServer from "@/api/server/reinstallServer";
+import useFlash from "@/plugins/useFlash";
+import { httpErrorToHuman } from "@/api/http";
+import { Button } from "@/components/elements/button/index";
+import { Dialog } from "@/components/elements/dialog";
 
 export default () => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -16,21 +16,21 @@ export default () => {
   const { addFlash, clearFlashes } = useFlash();
 
   const reinstall = () => {
-    clearFlashes('settings');
+    clearFlashes("settings");
     reinstallServer(uuid)
       .then(() => {
         addFlash({
-          key: 'settings',
-          type: 'success',
-          message: 'Your server has begun the reinstallation process.',
+          key: "settings",
+          type: "success",
+          message: "Your server has begun the reinstallation process.",
         });
       })
       .catch((error) => {
         console.error(error);
 
         addFlash({
-          key: 'settings',
-          type: 'error',
+          key: "settings",
+          type: "error",
           message: httpErrorToHuman(error),
         });
       })
@@ -43,8 +43,8 @@ export default () => {
 
   if (skipScripts) {
     return (
-      <TitledGreyBox title={'Reinstall Server'}>
-        <p className={'text-sm'}>
+      <TitledGreyBox title={"Reinstall Server"}>
+        <p className={"text-sm"}>
           Reinstalling this server has been disabled because it is configured to
           skip its egg&apos;s install script. If you would like to reinstall
           this server, contact a server administrator.
@@ -54,26 +54,26 @@ export default () => {
   }
 
   return (
-    <TitledGreyBox title={'Reinstall Server'} className={'relative'}>
+    <TitledGreyBox title={"Reinstall Server"} className={"relative"}>
       <Dialog.Confirm
         open={modalVisible}
-        title={'Confirm server reinstallation'}
-        confirm={'Yes, reinstall server'}
+        title={"Confirm server reinstallation"}
+        confirm={"Yes, reinstall server"}
         onClose={() => setModalVisible(false)}
         onConfirmed={reinstall}
       >
         Your server will be stopped and some files may be deleted or modified
         during this process, are you sure you wish to continue?
       </Dialog.Confirm>
-      <p className={'text-sm'}>
+      <p className={"text-sm"}>
         Reinstalling your server will stop it, and then re-run the installation
         script that initially set it up.&nbsp;
-        <strong className={'font-medium'}>
+        <strong className={"font-medium"}>
           Some files may be deleted or modified during this process, please back
           up your data before continuing.
         </strong>
       </p>
-      <div className={'mt-6 text-right'}>
+      <div className={"mt-6 text-right"}>
         <Button.Danger
           variant={Button.Variants.Secondary}
           onClick={() => setModalVisible(true)}

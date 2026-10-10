@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
-import 'react';
+import "react";
 
-declare module 'react' {
+declare module "react" {
   interface FunctionComponent<P = {}> {
     (props: P & { children?: ReactNode | undefined }, context?: any): ReactNode;
   }
@@ -11,7 +11,7 @@ declare module 'react' {
   }
 }
 
-declare module '*.jpg';
-declare module '*.png';
-declare module '*.svg';
-declare module '*.css';
+declare module "*.jpg";
+declare module "*.png";
+declare module "*.svg";
+declare module "*.css";

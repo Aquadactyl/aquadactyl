@@ -1,25 +1,25 @@
-import SensitiveValue from '@/components/elements/SensitiveValue';
-import React, { memo, useCallback, useState } from 'react';
-import isEqual from 'react-fast-compare';
-import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faNetworkWired } from '@fortawesome/free-solid-svg-icons';
-import InputSpinner from '@/components/elements/InputSpinner';
-import { Textarea } from '@/components/elements/Input';
-import Can from '@/components/elements/Can';
-import { Button } from '@/components/elements/button/index';
-import GreyRowBox from '@/components/elements/GreyRowBox';
-import { Allocation } from '@/api/server/getServer';
-import debounce from 'debounce';
-import setServerAllocationNotes from '@/api/server/network/setServerAllocationNotes';
-import { useFlashKey } from '@/plugins/useFlash';
-import { ServerContext } from '@/state/server';
-import CopyOnClick from '@/components/elements/CopyOnClick';
-import DeleteAllocationButton from '@/components/server/network/DeleteAllocationButton';
-import setPrimaryServerAllocation from '@/api/server/network/setPrimaryServerAllocation';
-import getServerAllocations from '@/api/server/network/getServerAllocations';
-import { ip } from '@/lib/formatters';
-import Code from '@/components/elements/Code';
+import SensitiveValue from "@/components/elements/SensitiveValue";
+import React, { memo, useCallback, useState } from "react";
+import isEqual from "react-fast-compare";
+import classNames from "classnames";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faNetworkWired } from "@fortawesome/free-solid-svg-icons";
+import InputSpinner from "@/components/elements/InputSpinner";
+import { Textarea } from "@/components/elements/Input";
+import Can from "@/components/elements/Can";
+import { Button } from "@/components/elements/button/index";
+import GreyRowBox from "@/components/elements/GreyRowBox";
+import { Allocation } from "@/api/server/getServer";
+import debounce from "debounce";
+import setServerAllocationNotes from "@/api/server/network/setServerAllocationNotes";
+import { useFlashKey } from "@/plugins/useFlash";
+import { ServerContext } from "@/state/server";
+import CopyOnClick from "@/components/elements/CopyOnClick";
+import DeleteAllocationButton from "@/components/server/network/DeleteAllocationButton";
+import setPrimaryServerAllocation from "@/api/server/network/setPrimaryServerAllocation";
+import getServerAllocations from "@/api/server/network/getServerAllocations";
+import { ip } from "@/lib/formatters";
+import Code from "@/components/elements/Code";
 
 const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({
   className,
@@ -27,7 +27,7 @@ const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({
 }) => (
   <label
     className={classNames(
-      'mt-1 block px-1 text-xs text-neutral-400 uppercase transition-colors duration-150 select-none',
+      "mt-1 block px-1 text-xs text-neutral-400 uppercase transition-colors duration-150 select-none",
       className,
     )}
     {...props}
@@ -40,7 +40,7 @@ interface Props {
 
 const AllocationRow = ({ allocation }: Props) => {
   const [loading, setLoading] = useState(false);
-  const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
+  const { clearFlashes, clearAndAddHttpError } = useFlashKey("server:network");
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const { mutate } = getServerAllocations();
 
@@ -75,15 +75,15 @@ const AllocationRow = ({ allocation }: Props) => {
   };
 
   return (
-    <GreyRowBox $hoverable={false} className={'mt-2 flex-wrap md:flex-nowrap'}>
-      <div className={'flex w-full items-center md:w-auto'}>
-        <div className={'pr-6 pl-4 text-neutral-400'}>
+    <GreyRowBox $hoverable={false} className={"mt-2 flex-wrap md:flex-nowrap"}>
+      <div className={"flex w-full items-center md:w-auto"}>
+        <div className={"pr-6 pl-4 text-neutral-400"}>
           <FontAwesomeIcon icon={faNetworkWired} />
         </div>
-        <div className={'mr-4 flex-1 md:w-40'}>
+        <div className={"mr-4 flex-1 md:w-40"}>
           {allocation.alias ? (
             <CopyOnClick text={allocation.alias}>
-              <Code dark className={'w-40 truncate'}>
+              <Code dark className={"w-40 truncate"}>
                 <SensitiveValue>{allocation.alias}</SensitiveValue>
               </Code>
             </CopyOnClick>
@@ -94,40 +94,40 @@ const AllocationRow = ({ allocation }: Props) => {
               </Code>
             </CopyOnClick>
           )}
-          <Label>{allocation.alias ? 'Hostname' : 'IP Address'}</Label>
+          <Label>{allocation.alias ? "Hostname" : "IP Address"}</Label>
         </div>
-        <div className={'w-16 overflow-hidden md:w-24'}>
+        <div className={"w-16 overflow-hidden md:w-24"}>
           <Code dark>{allocation.port}</Code>
           <Label>Port</Label>
         </div>
       </div>
-      <div className={'mt-4 w-full md:mt-0 md:w-auto md:flex-1'}>
+      <div className={"mt-4 w-full md:mt-0 md:w-auto md:flex-1"}>
         <InputSpinner visible={loading}>
           <Textarea
             className={
-              'border-transparent bg-neutral-800 hover:border-neutral-600'
+              "border-transparent bg-neutral-800 hover:border-neutral-600"
             }
-            placeholder={'Notes'}
+            placeholder={"Notes"}
             defaultValue={allocation.notes || undefined}
             onChange={(e) => setAllocationNotes(e.currentTarget.value)}
           />
         </InputSpinner>
       </div>
-      <div className={'mt-4 flex w-full justify-end space-x-4 md:mt-0 md:w-48'}>
+      <div className={"mt-4 flex w-full justify-end space-x-4 md:mt-0 md:w-48"}>
         {allocation.isDefault ? (
           <Button
             size={Button.Sizes.Small}
-            className={'bg-blue-600! text-gray-50!'}
+            className={"bg-blue-600! text-gray-50!"}
             disabled
           >
             Primary
           </Button>
         ) : (
           <>
-            <Can action={'allocation.delete'}>
+            <Can action={"allocation.delete"}>
               <DeleteAllocationButton allocation={allocation.id} />
             </Can>
-            <Can action={'allocation.update'}>
+            <Can action={"allocation.update"}>
               <Button.Text
                 size={Button.Sizes.Small}
                 onClick={setPrimaryAllocation}

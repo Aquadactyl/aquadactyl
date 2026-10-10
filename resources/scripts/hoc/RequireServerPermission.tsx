@@ -1,6 +1,6 @@
-import React from 'react';
-import Can from '@/components/elements/Can';
-import { ServerError } from '@/components/elements/ScreenBlock';
+import React from "react";
+import Can from "@/components/elements/Can";
+import { ServerError } from "@/components/elements/ScreenBlock";
 
 export interface RequireServerPermissionProps {
   permissions: string | string[];
@@ -16,8 +16,8 @@ const RequireServerPermission: React.FC<RequireServerPermissionProps> = ({
       action={permissions}
       renderOnError={
         <ServerError
-          title={'Access Denied'}
-          message={'You do not have permission to access this page.'}
+          title={"Access Denied"}
+          message={"You do not have permission to access this page."}
         />
       }
     >

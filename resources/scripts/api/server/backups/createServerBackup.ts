@@ -1,6 +1,6 @@
-import http from '@/api/http';
-import { ServerBackup } from '@/api/server/types';
-import { rawDataToServerBackup } from '@/api/transformers';
+import http from "@/api/http";
+import { ServerBackup } from "@/api/server/types";
+import { rawDataToServerBackup } from "@/api/transformers";
 
 interface RequestParameters {
   name?: string;

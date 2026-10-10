@@ -1,18 +1,18 @@
-import React from 'react';
-import { useTanStackQuery } from '@/lib/queryClient';
-import http from '@/api/http';
-import { NavLink, Route, Routes, useLocation, useParams } from 'react-router';
-import TransitionRouter from '@/TransitionRouter';
-import PermissionRoute from '@/components/elements/PermissionRoute';
-import Can from '@/components/elements/Can';
-import Spinner from '@/components/elements/Spinner';
-import { NotFound } from '@/components/elements/ScreenBlock';
-import { useAppStore } from '@/state';
-import { ServerContext } from '@/state/server';
+import React from "react";
+import { useTanStackQuery } from "@/lib/queryClient";
+import http from "@/api/http";
+import { NavLink, Route, Routes, useLocation, useParams } from "react-router";
+import TransitionRouter from "@/TransitionRouter";
+import PermissionRoute from "@/components/elements/PermissionRoute";
+import Can from "@/components/elements/Can";
+import Spinner from "@/components/elements/Spinner";
+import { NotFound } from "@/components/elements/ScreenBlock";
+import { useAppStore } from "@/state";
+import { ServerContext } from "@/state/server";
 
-import routes from '@/routers/routes';
-import blueprintRoutes from './routes';
-import { UiBadge } from '@blueprint/ui';
+import routes from "@/routers/routes";
+import blueprintRoutes from "./routes";
+import { UiBadge } from "@blueprint/ui";
 
 const blueprintExtensions = [
   ...new Set(blueprintRoutes.server.map((route) => route.identifier)),
@@ -24,14 +24,14 @@ const blueprintExtensions = [
 const useExtensionEggs = () => {
   const { data } = useTanStackQuery<{ [x: string]: string[] }>(
     blueprintExtensions.length
-      ? ['blueprint:extension-eggs', blueprintExtensions.join(',')]
+      ? ["blueprint:extension-eggs", blueprintExtensions.join(",")]
       : null,
     async () =>
       Object.fromEntries(
         await Promise.all(
           blueprintExtensions.map(async (id) => {
             const response = await http.get<string[]>(
-              '/api/client/extensions/blueprint/eggs',
+              "/api/client/extensions/blueprint/eggs",
               {
                 params: { id },
               },
@@ -58,10 +58,10 @@ export const NavigationLinks = () => {
   );
   const { id } = useParams<{ id: string }>();
   const to = (value: string) => {
-    if (value === '/') {
+    if (value === "/") {
       return `/server/${id}`;
     }
-    return `/server/${id}/${value.replace(/^\/+/, '')}`;
+    return `/server/${id}/${value.replace(/^\/+/, "")}`;
   };
   const extensionEggs = useExtensionEggs();
 
@@ -90,7 +90,7 @@ export const NavigationLinks = () => {
           .filter((route) => !!route.name)
           .filter((route) => (route.adminOnly ? rootAdmin : true))
           .filter((route) =>
-            extensionEggs[route.identifier].includes('-1')
+            extensionEggs[route.identifier].includes("-1")
               ? true
               : extensionEggs[route.identifier].find(
                   (id) => id === serverEgg?.toString(),
@@ -103,9 +103,9 @@ export const NavigationLinks = () => {
                   {route.name}
                   {route.adminOnly ? (
                     <>
-                      <span className={'hidden'}>(</span>
+                      <span className={"hidden"}>(</span>
                       <UiBadge>ADMIN</UiBadge>
-                      <span className={'hidden'}>)</span>
+                      <span className={"hidden"}>)</span>
                     </>
                   ) : undefined}
                 </NavLink>
@@ -115,9 +115,9 @@ export const NavigationLinks = () => {
                 {route.name}
                 {route.adminOnly ? (
                   <>
-                    <span className={'hidden'}>(</span>
+                    <span className={"hidden"}>(</span>
                     <UiBadge>ADMIN</UiBadge>
-                    <span className={'hidden'}>)</span>
+                    <span className={"hidden"}>)</span>
                   </>
                 ) : undefined}
               </NavLink>
@@ -133,10 +133,10 @@ export const NavigationRouter = () => {
     (state) => state.server.data?.BlueprintFramework.eggId,
   );
   const to = (value: string) => {
-    if (value === '/') {
-      return '';
+    if (value === "/") {
+      return "";
     }
-    return value.replace(/^\/+/, '');
+    return value.replace(/^\/+/, "");
   };
   const extensionEggs = useExtensionEggs();
 
@@ -166,7 +166,7 @@ export const NavigationRouter = () => {
             blueprintRoutes.server
               .filter((route) => (route.adminOnly ? rootAdmin : true))
               .filter((route) =>
-                extensionEggs[route.identifier].includes('-1')
+                extensionEggs[route.identifier].includes("-1")
                   ? true
                   : extensionEggs[route.identifier].find(
                       (id) => id === serverEgg?.toString(),
@@ -186,7 +186,7 @@ export const NavigationRouter = () => {
                 />
               ))}
 
-          <Route path={'*'} element={<NotFound />} />
+          <Route path={"*"} element={<NotFound />} />
         </Routes>
       </TransitionRouter>
     </>

@@ -1,5 +1,5 @@
-import { Model, UUID } from '@/api/definitions';
-import { SubuserPermission } from '@/state/server/subusers';
+import { Model, UUID } from "@/api/definitions";
+import { SubuserPermission } from "@/state/server/subusers";
 
 interface User extends Model {
   uuid: string;
@@ -20,7 +20,7 @@ interface SSHKey extends Model {
   createdAt: Date;
 }
 
-interface ActivityLog extends Model<'actor'> {
+interface ActivityLog extends Model<"actor"> {
   id: string;
   batch: UUID | null;
   event: string;

@@ -2,20 +2,20 @@
 # This example is for configuring a separate installation manually.
 x-common:
   database: &db-environment
-    MYSQL_PASSWORD: &db-password 'CHANGE_ME'
-    MYSQL_ROOT_PASSWORD: 'CHANGE_ME_TOO'
+    MYSQL_PASSWORD: &db-password "CHANGE_ME"
+    MYSQL_ROOT_PASSWORD: "CHANGE_ME_TOO"
   panel:
     &panel-environment # Change this to the address you use to access Aquadactyl.
-    APP_URL: 'http://localhost:8080'
-    APP_TIMEZONE: 'UTC'
-    APP_SERVICE_AUTHOR: 'noreply@example.com'
+    APP_URL: "http://localhost:8080"
+    APP_TIMEZONE: "UTC"
+    APP_SERVICE_AUTHOR: "noreply@example.com"
     # Uncomment and set this when APP_URL uses HTTPS and the container should
     # request a Let's Encrypt certificate itself.
     # LE_EMAIL: ""
   mail: &mail-environment
-    MAIL_MAILER: 'log'
-    MAIL_FROM_ADDRESS: 'noreply@example.com'
-    MAIL_FROM_NAME: 'Aquadactyl'
+    MAIL_MAILER: "log"
+    MAIL_FROM_ADDRESS: "noreply@example.com"
+    MAIL_FROM_NAME: "Aquadactyl"
 
 services:
   database:
@@ -25,10 +25,10 @@ services:
       - aquadactyl-database:/var/lib/mysql
     environment:
       <<: *db-environment
-      MYSQL_DATABASE: 'panel'
-      MYSQL_USER: 'aquadactyl'
+      MYSQL_DATABASE: "panel"
+      MYSQL_USER: "aquadactyl"
     healthcheck:
-      test: ['CMD', 'healthcheck.sh', '--connect', '--innodb_initialized']
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -37,7 +37,7 @@ services:
     image: redis:7-alpine
     restart: unless-stopped
     healthcheck:
-      test: ['CMD', 'redis-cli', 'ping']
+      test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -49,7 +49,7 @@ services:
     image: aquadactyl:local
     restart: unless-stopped
     ports:
-      - '8080:80'
+      - "8080:80"
     depends_on:
       database:
         condition: service_healthy
@@ -61,29 +61,29 @@ services:
     environment:
       <<: [*panel-environment, *mail-environment]
       DB_PASSWORD: *db-password
-      DB_DATABASE: 'panel'
-      DB_USERNAME: 'aquadactyl'
-      DB_HOST: 'database'
-      DB_PORT: '3306'
+      DB_DATABASE: "panel"
+      DB_USERNAME: "aquadactyl"
+      DB_HOST: "database"
+      DB_PORT: "3306"
 
-      APP_ENV: 'production'
-      APP_ENVIRONMENT_ONLY: 'false'
+      APP_ENV: "production"
+      APP_ENVIRONMENT_ONLY: "false"
 
-      CACHE_STORE: 'redis'
-      CACHE_DRIVER: 'redis'
-      SESSION_DRIVER: 'redis'
-      QUEUE_CONNECTION: 'redis'
-      QUEUE_DRIVER: 'redis'
-      REDIS_HOST: 'cache'
-      REDIS_PORT: '6379'
-      REDIS_PASSWORD: 'null'
+      CACHE_STORE: "redis"
+      CACHE_DRIVER: "redis"
+      SESSION_DRIVER: "redis"
+      QUEUE_CONNECTION: "redis"
+      QUEUE_DRIVER: "redis"
+      REDIS_HOST: "cache"
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: "null"
 
       # The example listens over plain HTTP on port 8080.
-      SESSION_SECURE_COOKIE: 'false'
-      SESSION_SAME_SITE: 'lax'
+      SESSION_SECURE_COOKIE: "false"
+      SESSION_SAME_SITE: "lax"
 
-      HASHIDS_LENGTH: '8'
-      ADDONS_HOOKS_ENABLED: 'false'
+      HASHIDS_LENGTH: "8"
+      ADDONS_HOOKS_ENABLED: "false"
 
 volumes:
   aquadactyl-database:

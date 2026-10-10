@@ -1,8 +1,8 @@
 import {
   rawDataToServerDatabase,
   ServerDatabase,
-} from '@/api/server/databases/getServerDatabases';
-import http from '@/api/http';
+} from "@/api/server/databases/getServerDatabases";
+import http from "@/api/http";
 
 export default (
   uuid: string,
@@ -17,7 +17,7 @@ export default (
           remote: data.connectionsFrom,
         },
         {
-          params: { include: 'password' },
+          params: { include: "password" },
         },
       )
       .then((response) =>

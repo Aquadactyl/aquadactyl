@@ -1,12 +1,12 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin '@tailwindcss/forms' {
-  strategy: 'class';
+  strategy: "class";
 }
 
 @theme {
-  --font-sans: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
-  --font-header: 'IBM Plex Sans', 'Roboto', system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-header: "IBM Plex Sans", "Roboto", system-ui, sans-serif;
 
   --color-black: #0c1116;
 
@@ -99,9 +99,9 @@
 
 @layer base {
   button:not(:disabled),
-  [type='button']:not(:disabled),
-  [type='reset']:not(:disabled),
-  [type='submit']:not(:disabled) {
+  [type="button"]:not(:disabled),
+  [type="reset"]:not(:disabled),
+  [type="submit"]:not(:disabled) {
     cursor: pointer;
   }
 }

@@ -1,7 +1,7 @@
-import { useTanStackQuery } from '@/lib/queryClient';
-import http, { FractalResponseList } from '@/api/http';
-import { rawDataToServerEggVariable } from '@/api/transformers';
-import { ServerEggVariable } from '@/api/server/types';
+import { useTanStackQuery } from "@/lib/queryClient";
+import http, { FractalResponseList } from "@/api/http";
+import { rawDataToServerEggVariable } from "@/api/transformers";
+import { ServerEggVariable } from "@/api/server/types";
 
 interface Response {
   invocation: string;
@@ -11,7 +11,7 @@ interface Response {
 
 export default (uuid: string, initialData?: Response | null, config?: any) =>
   useTanStackQuery(
-    [uuid, '/startup'],
+    [uuid, "/startup"],
     async (): Promise<Response> => {
       const { data } = await http.get(`/api/client/servers/${uuid}/startup`);
 

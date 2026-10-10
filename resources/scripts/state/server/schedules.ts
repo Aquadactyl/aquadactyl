@@ -1,4 +1,4 @@
-import { Schedule } from '@/api/server/schedules/getServerSchedules';
+import { Schedule } from "@/api/server/schedules/getServerSchedules";
 
 export interface ServerScheduleState {
   data: Schedule[];

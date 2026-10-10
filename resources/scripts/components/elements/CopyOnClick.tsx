@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Fade from '@/components/elements/Fade';
-import Portal from '@/components/elements/Portal';
-import copy from 'copy-to-clipboard';
-import classNames from 'classnames';
-import usePrivacyMode from '@/plugins/usePrivacyMode';
+import React, { useEffect, useState } from "react";
+import Fade from "@/components/elements/Fade";
+import Portal from "@/components/elements/Portal";
+import copy from "copy-to-clipboard";
+import classNames from "classnames";
+import usePrivacyMode from "@/plugins/usePrivacyMode";
 
 interface CopyOnClickProps {
   text: string | number | null | undefined;
@@ -33,7 +33,7 @@ const CopyOnClick = ({
 
   if (!React.isValidElement(children)) {
     throw new Error(
-      'Component passed to <CopyOnClick/> must be a valid React element.',
+      "Component passed to <CopyOnClick/> must be a valid React element.",
     );
   }
 
@@ -44,11 +44,11 @@ const CopyOnClick = ({
   const child = !text
     ? onlyChild
     : React.cloneElement(onlyChild, {
-        className: classNames(childProps.className || '', 'cursor-pointer'),
+        className: classNames(childProps.className || "", "cursor-pointer"),
         onClick: (e: React.MouseEvent<HTMLElement>) => {
           copy(String(text));
           setCopied(true);
-          if (typeof childProps.onClick === 'function') {
+          if (typeof childProps.onClick === "function") {
             childProps.onClick(e);
           }
         },
@@ -58,17 +58,17 @@ const CopyOnClick = ({
     <>
       {copied && (
         <Portal>
-          <Fade in appear timeout={250} key={copied ? 'visible' : 'invisible'}>
-            <div className={'fixed right-0 bottom-0 z-50 m-4'}>
+          <Fade in appear timeout={250} key={copied ? "visible" : "invisible"}>
+            <div className={"fixed right-0 bottom-0 z-50 m-4"}>
               <div
                 className={
-                  'rounded-md bg-neutral-600/95 px-4 py-3 text-gray-200 shadow-sm'
+                  "rounded-md bg-neutral-600/95 px-4 py-3 text-gray-200 shadow-sm"
                 }
               >
                 <p>
                   {showInNotification && !privacyMode
                     ? `Copied "${String(text)}" to clipboard.`
-                    : 'Copied text to clipboard.'}
+                    : "Copied text to clipboard."}
                 </p>
               </div>
             </div>

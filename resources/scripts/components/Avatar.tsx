@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import BoringAvatar from 'boring-avatars';
-import { useAppStore } from '@/state';
+import React, { useEffect, useState } from "react";
+import BoringAvatar from "boring-avatars";
+import { useAppStore } from "@/state";
 
-const palette = ['#FFAD08', '#EDD75A', '#73B06F', '#0C8F8F', '#587291'];
+const palette = ["#FFAD08", "#EDD75A", "#73B06F", "#0C8F8F", "#587291"];
 
-type Props = Omit<React.ComponentProps<typeof BoringAvatar>, 'colors'> & {
+type Props = Omit<React.ComponentProps<typeof BoringAvatar>, "colors"> & {
   src?: string | null;
   alt?: string;
 };
 
 const _Avatar = ({
   src,
-  alt = 'Profile picture',
-  variant = 'beam',
+  alt = "Profile picture",
+  variant = "beam",
   size = 40,
   square = false,
   ...props
@@ -30,10 +30,10 @@ const _Avatar = ({
       style={{
         width: size,
         height: size,
-        maxWidth: '100%',
-        maxHeight: '100%',
-        objectFit: 'cover',
-        borderRadius: square ? 0 : '50%',
+        maxWidth: "100%",
+        maxHeight: "100%",
+        objectFit: "cover",
+        borderRadius: square ? 0 : "50%",
       }}
     />
   ) : (
@@ -48,18 +48,18 @@ const _Avatar = ({
 };
 
 const _UserAvatar = ({
-  variant = 'beam',
+  variant = "beam",
   size = 40,
   square = false,
   ...props
-}: Omit<Props, 'name'>) => {
+}: Omit<Props, "name">) => {
   const user = useAppStore((state) => state.user.data);
 
   return (
     <_Avatar
       src={user?.avatarUrl}
-      alt={`${user?.username || 'User'}'s profile picture`}
-      name={user?.uuid || 'system'}
+      alt={`${user?.username || "User"}'s profile picture`}
+      name={user?.uuid || "system"}
       variant={variant}
       size={size}
       square={square}
@@ -68,8 +68,8 @@ const _UserAvatar = ({
   );
 };
 
-_Avatar.displayName = 'Avatar';
-_UserAvatar.displayName = 'Avatar.User';
+_Avatar.displayName = "Avatar";
+_UserAvatar.displayName = "Avatar.User";
 
 const Avatar = Object.assign(_Avatar, {
   User: _UserAvatar,

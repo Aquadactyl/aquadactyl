@@ -3,8 +3,8 @@ name: Build
 on:
   pull_request:
     branches:
-      - 'main'
-      - '1.0-develop'
+      - "main"
+      - "1.0-develop"
 
 jobs:
   ui:

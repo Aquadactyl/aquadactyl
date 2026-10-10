@@ -1,5 +1,5 @@
-import http from '@/api/http';
-import { LoginResponse } from '@/api/auth/login';
+import http from "@/api/http";
+import { LoginResponse } from "@/api/auth/login";
 
 export default (
   token: string,
@@ -8,7 +8,7 @@ export default (
 ): Promise<LoginResponse> => {
   return new Promise((resolve, reject) => {
     http
-      .post('/auth/login/checkpoint', {
+      .post("/auth/login/checkpoint", {
         confirmation_token: token,
         authentication_code: code,
         recovery_token:

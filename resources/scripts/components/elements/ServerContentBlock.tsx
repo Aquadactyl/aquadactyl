@@ -1,8 +1,8 @@
 import PageContentBlock, {
   PageContentBlockProps,
-} from '@/components/elements/PageContentBlock';
-import React from 'react';
-import { ServerContext } from '@/state/server';
+} from "@/components/elements/PageContentBlock";
+import React from "react";
+import { ServerContext } from "@/state/server";
 
 interface Props extends PageContentBlockProps {
   title: string;

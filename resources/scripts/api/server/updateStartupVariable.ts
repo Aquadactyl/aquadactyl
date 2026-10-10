@@ -1,6 +1,6 @@
-import http from '@/api/http';
-import { ServerEggVariable } from '@/api/server/types';
-import { rawDataToServerEggVariable } from '@/api/transformers';
+import http from "@/api/http";
+import { ServerEggVariable } from "@/api/server/types";
+import { rawDataToServerEggVariable } from "@/api/transformers";
 
 export default async (
   uuid: string,

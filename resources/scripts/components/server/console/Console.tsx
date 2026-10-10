@@ -1,63 +1,63 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ITerminalOptions, Terminal } from '@xterm/xterm';
-import { FitAddon } from '@xterm/addon-fit';
-import { SearchAddon } from '@xterm/addon-search';
-import { SearchBarAddon } from '@kingironman2011/xterm-addon-search-bar';
-import { WebLinksAddon } from '@xterm/addon-web-links';
-import { Unicode11Addon } from '@xterm/addon-unicode11';
-import { ScrollDownHelperAddon } from '@/plugins/XtermScrollDownHelperAddon';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { ServerContext } from '@/state/server';
-import { usePermissions } from '@/plugins/usePermissions';
-import useEventListener from '@/plugins/useEventListener';
-import debounce from 'debounce';
-import { usePersistedState } from '@/plugins/usePersistedState';
-import { SocketEvent, SocketRequest } from '@/components/server/events';
-import classNames from 'classnames';
-import { ChevronsRight } from 'lucide-react';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ITerminalOptions, Terminal } from "@xterm/xterm";
+import { FitAddon } from "@xterm/addon-fit";
+import { SearchAddon } from "@xterm/addon-search";
+import { SearchBarAddon } from "@kingironman2011/xterm-addon-search-bar";
+import { WebLinksAddon } from "@xterm/addon-web-links";
+import { Unicode11Addon } from "@xterm/addon-unicode11";
+import { ScrollDownHelperAddon } from "@/plugins/XtermScrollDownHelperAddon";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import { ServerContext } from "@/state/server";
+import { usePermissions } from "@/plugins/usePermissions";
+import useEventListener from "@/plugins/useEventListener";
+import debounce from "debounce";
+import { usePersistedState } from "@/plugins/usePersistedState";
+import { SocketEvent, SocketRequest } from "@/components/server/events";
+import classNames from "classnames";
+import { ChevronsRight } from "lucide-react";
 
-import CommandRow from '@blueprint/components/Server/Terminal/CommandRow';
+import CommandRow from "@blueprint/components/Server/Terminal/CommandRow";
 
-import '@xterm/xterm/css/xterm.css';
-import styles from './style.module.css';
-import { th } from '@/lib/theme';
-import { formatConsoleOutput } from './formatConsoleOutput';
+import "@xterm/xterm/css/xterm.css";
+import styles from "./style.module.css";
+import { th } from "@/lib/theme";
+import { formatConsoleOutput } from "./formatConsoleOutput";
 
 const theme = {
-  background: '#0c1116',
-  foreground: '#d7dce1',
-  cursor: 'transparent',
-  black: '#0c1116',
-  red: '#E54B4B',
-  green: '#9ECE58',
-  yellow: '#FAED70',
-  blue: '#82aaff',
-  magenta: '#BB80B3',
-  cyan: '#78d4cc',
-  white: '#d0d0d0',
-  brightBlack: '#8a909d',
-  brightRed: '#FF5370',
-  brightGreen: '#C3E88D',
-  brightYellow: '#FFCB6B',
-  brightBlue: '#82AAFF',
-  brightMagenta: '#C792EA',
-  brightCyan: '#89DDFF',
-  brightWhite: '#ffffff',
-  selectionBackground: '#1d5558',
+  background: "#0c1116",
+  foreground: "#d7dce1",
+  cursor: "transparent",
+  black: "#0c1116",
+  red: "#E54B4B",
+  green: "#9ECE58",
+  yellow: "#FAED70",
+  blue: "#82aaff",
+  magenta: "#BB80B3",
+  cyan: "#78d4cc",
+  white: "#d0d0d0",
+  brightBlack: "#8a909d",
+  brightRed: "#FF5370",
+  brightGreen: "#C3E88D",
+  brightYellow: "#FFCB6B",
+  brightBlue: "#82AAFF",
+  brightMagenta: "#C792EA",
+  brightCyan: "#89DDFF",
+  brightWhite: "#ffffff",
+  selectionBackground: "#1d5558",
 };
 
 const terminalProps: ITerminalOptions = {
   disableStdin: true,
-  cursorStyle: 'underline',
+  cursorStyle: "underline",
   allowTransparency: true,
   fontSize: 12,
-  fontFamily: th('fontFamily.mono'),
+  fontFamily: th("fontFamily.mono"),
   theme: theme,
   allowProposedApi: true,
 };
 
 export default () => {
-  const TERMINAL_PRELUDE = '\u001b[1m\u001b[33mcontainer@aquadactyl~ \u001b[0m';
+  const TERMINAL_PRELUDE = "\u001b[1m\u001b[33mcontainer@aquadactyl~ \u001b[0m";
   const ref = useRef<HTMLDivElement>(null);
   const terminal = useMemo(() => new Terminal({ ...terminalProps }), []);
   const fitAddon = new FitAddon();
@@ -69,7 +69,7 @@ export default () => {
   const { connected, instance } = ServerContext.useStoreState(
     (state) => state.socket,
   );
-  const [canSendCommands] = usePermissions(['control.console']);
+  const [canSendCommands] = usePermissions(["control.console"]);
   const serverId = ServerContext.useStoreState(
     (state) => state.server.data!.id,
   );
@@ -90,16 +90,16 @@ export default () => {
 
   const handleConsoleOutput = (line: string, prelude = false) =>
     terminal.writeln(
-      (prelude ? TERMINAL_PRELUDE : '') +
-        formatConsoleOutput(line).replace(/(?:\r\n|\r|\n)$/im, '') +
-        '\u001b[0m',
+      (prelude ? TERMINAL_PRELUDE : "") +
+        formatConsoleOutput(line).replace(/(?:\r\n|\r|\n)$/im, "") +
+        "\u001b[0m",
     );
 
   const handleTransferStatus = (status: string) => {
     switch (status) {
       // Sent by either the source or target node if a failure occurs.
-      case 'failure':
-        terminal.writeln(TERMINAL_PRELUDE + 'Transfer has failed.\u001b[0m');
+      case "failure":
+        terminal.writeln(TERMINAL_PRELUDE + "Transfer has failed.\u001b[0m");
         return;
     }
   };
@@ -107,42 +107,42 @@ export default () => {
   const handleDaemonErrorOutput = (line: string) =>
     terminal.writeln(
       TERMINAL_PRELUDE +
-        '\u001b[1m\u001b[41m' +
-        line.replace(/(?:\r\n|\r|\n)$/im, '') +
-        '\u001b[0m',
+        "\u001b[1m\u001b[41m" +
+        line.replace(/(?:\r\n|\r|\n)$/im, "") +
+        "\u001b[0m",
     );
 
   const handlePowerChangeEvent = (state: string) =>
     terminal.writeln(
-      TERMINAL_PRELUDE + 'Server marked as ' + state + '...\u001b[0m',
+      TERMINAL_PRELUDE + "Server marked as " + state + "...\u001b[0m",
     );
 
   const handleCommandKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'ArrowUp') {
+    if (e.key === "ArrowUp") {
       const newIndex = Math.min(historyIndex + 1, history!.length - 1);
 
       setHistoryIndex(newIndex);
-      e.currentTarget.value = history![newIndex] || '';
+      e.currentTarget.value = history![newIndex] || "";
 
       // By default up arrow will also bring the cursor to the start of the line,
       // so we'll preventDefault to keep it at the end.
       e.preventDefault();
     }
 
-    if (e.key === 'ArrowDown') {
+    if (e.key === "ArrowDown") {
       const newIndex = Math.max(historyIndex - 1, -1);
 
       setHistoryIndex(newIndex);
-      e.currentTarget.value = history![newIndex] || '';
+      e.currentTarget.value = history![newIndex] || "";
     }
 
     const command = e.currentTarget.value;
-    if (e.key === 'Enter' && command.length > 0) {
+    if (e.key === "Enter" && command.length > 0) {
       setHistory((prevHistory) => [command, ...prevHistory!].slice(0, 32));
       setHistoryIndex(-1);
 
-      instance && instance.send('send command', command);
-      e.currentTarget.value = '';
+      instance && instance.send("send command", command);
+      e.currentTarget.value = "";
     }
   };
 
@@ -158,21 +158,21 @@ export default () => {
       terminal.open(ref.current);
 
       // Activate Unicode 11 for proper emoji and special character width handling
-      terminal.unicode.activeVersion = '11';
+      terminal.unicode.activeVersion = "11";
 
       fitAddon.fit();
       searchBar.addNewStyle(zIndex);
 
       // Add support for capturing keys
       terminal.attachCustomKeyEventHandler((e: KeyboardEvent) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
-          document.execCommand('copy');
+        if ((e.ctrlKey || e.metaKey) && e.key === "c") {
+          document.execCommand("copy");
           return false;
-        } else if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        } else if ((e.ctrlKey || e.metaKey) && e.key === "f") {
           e.preventDefault();
           searchBar.show();
           return false;
-        } else if (e.key === 'Escape') {
+        } else if (e.key === "Escape") {
           searchBar.hidden();
         }
         return true;
@@ -181,7 +181,7 @@ export default () => {
   }, [terminal, connected]);
 
   useEventListener(
-    'resize',
+    "resize",
     debounce(() => {
       if (terminal.element) {
         fitAddon.fit();
@@ -206,7 +206,7 @@ export default () => {
         terminal.clear();
         if (status) {
           terminal.writeln(
-            TERMINAL_PRELUDE + 'Server marked as ' + status + '...\u001b[0m',
+            TERMINAL_PRELUDE + "Server marked as " + status + "...\u001b[0m",
           );
         }
       }
@@ -227,36 +227,36 @@ export default () => {
   }, [connected, instance]);
 
   return (
-    <div className={classNames(styles.terminal, 'relative')}>
-      <SpinnerOverlay visible={!connected} size={'large'} />
+    <div className={classNames(styles.terminal, "relative")}>
+      <SpinnerOverlay visible={!connected} size={"large"} />
       <div
         className={classNames(styles.container, styles.overflows_container, {
-          'rounded-b-lg': !canSendCommands,
+          "rounded-b-lg": !canSendCommands,
         })}
       >
-        <div className={'h-full'}>
+        <div className={"h-full"}>
           <div id={styles.terminal} ref={ref} />
         </div>
       </div>
       {canSendCommands && (
-        <div className={classNames('relative', styles.overflows_container)}>
+        <div className={classNames("relative", styles.overflows_container)}>
           <input
-            className={classNames('peer', styles.command_input)}
-            type={'text'}
-            placeholder={'Type a command...'}
-            aria-label={'Console command input.'}
+            className={classNames("peer", styles.command_input)}
+            type={"text"}
+            placeholder={"Type a command..."}
+            aria-label={"Console command input."}
             disabled={!instance || !connected}
             onKeyDown={handleCommandKeyDown}
-            autoCorrect={'off'}
-            autoCapitalize={'none'}
+            autoCorrect={"off"}
+            autoCapitalize={"none"}
           />
           <div
             className={classNames(
-              'text-gray-100 peer-focus:animate-pulse peer-focus:text-gray-50',
+              "text-gray-100 peer-focus:animate-pulse peer-focus:text-gray-50",
               styles.command_icon,
             )}
           >
-            <ChevronsRight className={'h-4 w-4'} />
+            <ChevronsRight className={"h-4 w-4"} />
           </div>
           <CommandRow />
         </div>

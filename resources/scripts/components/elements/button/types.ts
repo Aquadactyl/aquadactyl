@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 enum Shape {
   Default,
@@ -18,7 +18,7 @@ enum Variant {
 
 export const Options = { Shape, Size, Variant };
 
-export type ButtonProps = React.ComponentPropsWithoutRef<'button'> & {
+export type ButtonProps = React.ComponentPropsWithoutRef<"button"> & {
   shape?: Shape;
   size?: Size;
   variant?: Variant;

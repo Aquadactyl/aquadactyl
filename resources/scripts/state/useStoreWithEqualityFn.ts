@@ -1,7 +1,7 @@
-import { useDebugValue, useRef, useSyncExternalStore } from 'react';
-import type { StoreApi } from 'zustand/vanilla';
+import { useDebugValue, useRef, useSyncExternalStore } from "react";
+import type { StoreApi } from "zustand/vanilla";
 
-type ReadonlyStoreApi<T> = Pick<StoreApi<T>, 'getState' | 'subscribe'>;
+type ReadonlyStoreApi<T> = Pick<StoreApi<T>, "getState" | "subscribe">;
 
 /**
  * Native React 18 store hook supporting selectors and custom equality functions

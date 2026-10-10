@@ -1,12 +1,12 @@
-import { useTanStackQuery } from '@/lib/queryClient';
-import loadDirectory, { FileObject } from '@/api/server/files/loadDirectory';
-import { cleanDirectoryPath } from '@/helpers';
-import { ServerContext } from '@/state/server';
+import { useTanStackQuery } from "@/lib/queryClient";
+import loadDirectory, { FileObject } from "@/api/server/files/loadDirectory";
+import { cleanDirectoryPath } from "@/helpers";
+import { ServerContext } from "@/state/server";
 
 export const getDirectoryQueryKey = (
   uuid: string,
   directory: string,
-): string[] => [uuid, 'files', directory];
+): string[] => [uuid, "files", directory];
 export const getDirectorySwrKey = getDirectoryQueryKey;
 
 export default () => {

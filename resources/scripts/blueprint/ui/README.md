@@ -26,7 +26,7 @@ Aquadactyl's own components and the ones offered in Blueprint UI can look nearly
 ### Badge
 
 ```tsx
-import { UiBadge } from '@blueprint/ui';
+import { UiBadge } from "@blueprint/ui";
 
 export default () => {
   return (

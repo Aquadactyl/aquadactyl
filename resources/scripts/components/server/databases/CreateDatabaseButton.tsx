@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import Modal from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
-import { object, string } from 'yup';
-import createServerDatabase from '@/api/server/databases/createServerDatabase';
-import { ServerContext } from '@/state/server';
-import { httpErrorToHuman } from '@/api/http';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
-import Button from '@/components/elements/Button';
+import React, { useState } from "react";
+import Modal from "@/components/elements/Modal";
+import { Form, Formik, FormikHelpers } from "formik";
+import Field from "@/components/elements/Field";
+import { object, string } from "yup";
+import createServerDatabase from "@/api/server/databases/createServerDatabase";
+import { ServerContext } from "@/state/server";
+import { httpErrorToHuman } from "@/api/http";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import useFlash from "@/plugins/useFlash";
+import Button from "@/components/elements/Button";
 
 interface Values {
   databaseName: string;
@@ -17,16 +17,16 @@ interface Values {
 
 const schema = object().shape({
   databaseName: string()
-    .required('A database name must be provided.')
-    .min(3, 'Database name must be at least 3 characters.')
-    .max(48, 'Database name must not exceed 48 characters.')
+    .required("A database name must be provided.")
+    .min(3, "Database name must be at least 3 characters.")
+    .max(48, "Database name must not exceed 48 characters.")
     .matches(
       /^[\w\-.]{3,48}$/,
-      'Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.',
+      "Database name should only contain alphanumeric characters, underscores, dashes, and/or periods.",
     ),
   connectionsFrom: string().matches(
     /^[\w\-/.%:]+$/,
-    'A valid host address must be provided.',
+    "A valid host address must be provided.",
   ),
 });
 
@@ -44,10 +44,10 @@ export default ({ className }: Props) => {
   );
 
   const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
-    clearFlashes('database:create');
+    clearFlashes("database:create");
     createServerDatabase(uuid, {
       databaseName: values.databaseName,
-      connectionsFrom: values.connectionsFrom || '%',
+      connectionsFrom: values.connectionsFrom || "%",
     })
       .then((database) => {
         appendDatabase(database);
@@ -55,7 +55,7 @@ export default ({ className }: Props) => {
       })
       .catch((error) => {
         addError({
-          key: 'database:create',
+          key: "database:create",
           message: httpErrorToHuman(error),
         });
         setSubmitting(false);
@@ -66,7 +66,7 @@ export default ({ className }: Props) => {
     <>
       <Formik
         onSubmit={submit}
-        initialValues={{ databaseName: '', connectionsFrom: '' }}
+        initialValues={{ databaseName: "", connectionsFrom: "" }}
         validationSchema={schema}
       >
         {({ isSubmitting, resetForm }) => (
@@ -79,39 +79,39 @@ export default ({ className }: Props) => {
               setVisible(false);
             }}
           >
-            <FlashMessageRender byKey={'database:create'} className={'mb-6'} />
-            <h2 className={'mb-6 text-2xl'}>Create new database</h2>
-            <Form className={'m-0'}>
+            <FlashMessageRender byKey={"database:create"} className={"mb-6"} />
+            <h2 className={"mb-6 text-2xl"}>Create new database</h2>
+            <Form className={"m-0"}>
               <Field
-                type={'string'}
-                id={'database_name'}
-                name={'databaseName'}
-                label={'Database Name'}
-                description={'A descriptive name for your database instance.'}
+                type={"string"}
+                id={"database_name"}
+                name={"databaseName"}
+                label={"Database Name"}
+                description={"A descriptive name for your database instance."}
               />
-              <div className={'mt-6'}>
+              <div className={"mt-6"}>
                 <Field
-                  type={'string'}
-                  id={'connections_from'}
-                  name={'connectionsFrom'}
-                  label={'Connections From'}
+                  type={"string"}
+                  id={"connections_from"}
+                  name={"connectionsFrom"}
+                  label={"Connections From"}
                   description={
-                    'Where connections should be allowed from. Leave blank to allow connections from anywhere.'
+                    "Where connections should be allowed from. Leave blank to allow connections from anywhere."
                   }
                 />
               </div>
-              <div className={'mt-6 flex flex-wrap justify-end'}>
+              <div className={"mt-6 flex flex-wrap justify-end"}>
                 <Button
-                  type={'button'}
+                  type={"button"}
                   isSecondary
-                  className={'w-full sm:mr-2 sm:w-auto'}
+                  className={"w-full sm:mr-2 sm:w-auto"}
                   onClick={() => setVisible(false)}
                 >
                   Cancel
                 </Button>
                 <Button
-                  className={'mt-4 w-full sm:mt-0 sm:w-auto'}
-                  type={'submit'}
+                  className={"mt-4 w-full sm:mt-0 sm:w-auto"}
+                  type={"submit"}
                 >
                   Create Database
                 </Button>

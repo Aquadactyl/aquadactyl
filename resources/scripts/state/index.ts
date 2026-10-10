@@ -1,12 +1,12 @@
-import { createStore } from 'zustand/vanilla';
-import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
-import createFlashesSlice, { FlashStore } from '@/state/flashes';
-import createUserSlice, { UserStore } from '@/state/user';
+import { createStore } from "zustand/vanilla";
+import { useStoreWithEqualityFn } from "@/state/useStoreWithEqualityFn";
+import createFlashesSlice, { FlashStore } from "@/state/flashes";
+import createUserSlice, { UserStore } from "@/state/user";
 import createPermissionsSlice, {
   GloablPermissionsStore,
-} from '@/state/permissions';
-import createSettingsSlice, { SettingsStore } from '@/state/settings';
-import createProgressSlice, { ProgressStore } from '@/state/progress';
+} from "@/state/permissions";
+import createSettingsSlice, { SettingsStore } from "@/state/settings";
+import createProgressSlice, { ProgressStore } from "@/state/progress";
 
 export interface ApplicationStore {
   permissions: GloablPermissionsStore;

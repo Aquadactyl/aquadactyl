@@ -1,18 +1,18 @@
-import React, { act } from 'react';
-import { createRoot, Root } from 'react-dom/client';
-import { fireEvent } from '@testing-library/react';
-import { Form, Formik } from 'formik';
-import ScheduleTimingFields, { TimingValues } from './ScheduleTimingFields';
-import { cronFromTiming, defaultTiming } from './scheduleHelpers';
+import React, { act } from "react";
+import { createRoot, Root } from "react-dom/client";
+import { fireEvent } from "@testing-library/react";
+import { Form, Formik } from "formik";
+import ScheduleTimingFields, { TimingValues } from "./ScheduleTimingFields";
+import { cronFromTiming, defaultTiming } from "./scheduleHelpers";
 
-describe('schedule timing editor', () => {
+describe("schedule timing editor", () => {
   let container: HTMLDivElement;
   let root: Root;
   const save = vi.fn();
 
   beforeEach(() => {
     save.mockClear();
-    container = document.createElement('div');
+    container = document.createElement("div");
     document.body.appendChild(container);
     root = createRoot(container);
   });
@@ -30,18 +30,18 @@ describe('schedule timing editor', () => {
         <Formik<TimingValues>
           initialValues={{
             ...defaultTiming,
-            minute: '0',
-            hour: '3',
-            dayOfMonth: '*',
-            month: '*',
-            dayOfWeek: '*',
+            minute: "0",
+            hour: "3",
+            dayOfMonth: "*",
+            month: "*",
+            dayOfWeek: "*",
             ...changes,
           }}
           onSubmit={(values) => save(cronFromTiming(values, values))}
         >
           <Form>
-            <ScheduleTimingFields timezone={'Europe/London'} />
-            <button type={'submit'}>Save</button>
+            <ScheduleTimingFields timezone={"Europe/London"} />
+            <button type={"submit"}>Save</button>
           </Form>
         </Formik>,
       );
@@ -49,7 +49,7 @@ describe('schedule timing editor', () => {
   };
 
   const click = (element: Element) => {
-    for (const type of ['mousedown', 'mouseup', 'click']) {
+    for (const type of ["mousedown", "mouseup", "click"]) {
       element.dispatchEvent(
         new MouseEvent(type, {
           bubbles: true,
@@ -64,8 +64,8 @@ describe('schedule timing editor', () => {
       click(
         container
           .querySelector(`[id="schedule-${name}"]`)!
-          .closest('.panel-select')!
-          .querySelector('.panel-select__control')!,
+          .closest(".panel-select")!
+          .querySelector(".panel-select__control")!,
       );
     });
     await act(async () => {
@@ -78,69 +78,69 @@ describe('schedule timing editor', () => {
   };
   const submit = async () => {
     await act(async () => {
-      fireEvent.submit(container.querySelector('form')!);
+      fireEvent.submit(container.querySelector("form")!);
     });
   };
 
-  it('carries a changed basic time into the advanced dropdown and API fields', async () => {
+  it("carries a changed basic time into the advanced dropdown and API fields", async () => {
     render();
     await act(async () => {
       fireEvent.change(container.querySelector('input[name="time"]')!, {
-        target: { name: 'time', value: '21:15' },
+        target: { name: "time", value: "21:15" },
       });
     });
-    expect(container.textContent).toContain('Every day at 21:15');
-    expect(container.textContent).toContain('Panel timezone: Europe/London');
-    await choose('frequency', 'Custom cron (advanced)');
+    expect(container.textContent).toContain("Every day at 21:15");
+    expect(container.textContent).toContain("Panel timezone: Europe/London");
+    await choose("frequency", "Custom cron (advanced)");
     expect(
       container.querySelector<HTMLInputElement>('input[name="minute"]')!.value,
-    ).toBe('15');
+    ).toBe("15");
     expect(
       container.querySelector<HTMLInputElement>('input[name="hour"]')!.value,
-    ).toBe('21');
+    ).toBe("21");
     await submit();
     expect(save).toHaveBeenCalledWith({
-      minute: '15',
-      hour: '21',
-      dayOfMonth: '*',
-      month: '*',
-      dayOfWeek: '*',
+      minute: "15",
+      hour: "21",
+      dayOfMonth: "*",
+      month: "*",
+      dayOfWeek: "*",
     });
   });
 
-  it('preserves advanced expressions when saving without timing edits', async () => {
+  it("preserves advanced expressions when saving without timing edits", async () => {
     render({
-      frequency: 'custom',
-      minute: '0,30',
-      hour: '6,18',
-      dayOfWeek: 'MON-FRI',
-      month: 'JAN,JUN',
-      dayOfMonth: '*',
+      frequency: "custom",
+      minute: "0,30",
+      hour: "6,18",
+      dayOfWeek: "MON-FRI",
+      month: "JAN,JUN",
+      dayOfMonth: "*",
     });
     await submit();
     expect(save).toHaveBeenCalledWith({
-      minute: '0,30',
-      hour: '6,18',
-      dayOfWeek: 'MON-FRI',
-      month: 'JAN,JUN',
-      dayOfMonth: '*',
+      minute: "0,30",
+      hour: "6,18",
+      dayOfWeek: "MON-FRI",
+      month: "JAN,JUN",
+      dayOfMonth: "*",
     });
   });
 
-  it('explains skipped months for a monthly day that does not exist in every month', async () => {
+  it("explains skipped months for a monthly day that does not exist in every month", async () => {
     render();
-    await choose('frequency', 'Every month');
-    await choose('monthDay', '31');
+    await choose("frequency", "Every month");
+    await choose("monthDay", "31");
     expect(container.textContent).toContain(
-      'Months without day 31 will be skipped.',
+      "Months without day 31 will be skipped.",
     );
     await submit();
     expect(save).toHaveBeenCalledWith({
-      minute: '0',
-      hour: '3',
-      dayOfMonth: '31',
-      month: '*',
-      dayOfWeek: '*',
+      minute: "0",
+      hour: "3",
+      dayOfMonth: "31",
+      month: "*",
+      dayOfWeek: "*",
     });
   });
 });

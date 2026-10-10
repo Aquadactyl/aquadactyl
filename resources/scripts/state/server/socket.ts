@@ -1,4 +1,4 @@
-import { Websocket } from '@/plugins/Websocket';
+import { Websocket } from "@/plugins/Websocket";
 
 export interface SocketState {
   instance: Websocket | null;

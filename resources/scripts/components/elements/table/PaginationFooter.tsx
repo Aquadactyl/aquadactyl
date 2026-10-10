@@ -1,8 +1,8 @@
-import React from 'react';
-import { PaginationDataSet } from '@/api/http';
-import classNames from 'classnames';
-import { Button } from '@/components/elements/button/index';
-import { ChevronsLeft, ChevronsRight } from 'lucide-react';
+import React from "react";
+import { PaginationDataSet } from "@/api/http";
+import classNames from "classnames";
+import { Button } from "@/components/elements/button/index";
+import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
 interface Props {
   className?: string;
@@ -41,30 +41,30 @@ const PaginationFooter = ({ pagination, className, onPageSelect }: Props) => {
   return (
     <div
       className={classNames(
-        'my-2 flex items-center justify-between',
+        "my-2 flex items-center justify-between",
         className,
       )}
     >
-      <p className={'text-sm text-neutral-500'}>
+      <p className={"text-sm text-neutral-500"}>
         Showing&nbsp;
-        <span className={'font-semibold text-neutral-400'}>
+        <span className={"font-semibold text-neutral-400"}>
           {Math.min(start + 1, pagination.total)}
         </span>
         &nbsp;to&nbsp;
-        <span className={'font-semibold text-neutral-400'}>{end}</span> of&nbsp;
-        <span className={'font-semibold text-neutral-400'}>
+        <span className={"font-semibold text-neutral-400"}>{end}</span> of&nbsp;
+        <span className={"font-semibold text-neutral-400"}>
           {pagination.total}
-        </span>{' '}
+        </span>{" "}
         results.
       </p>
       {pagination.totalPages > 1 && (
-        <div className={'flex space-x-1'}>
+        <div className={"flex space-x-1"}>
           <Button.Text
             {...buttonProps(1)}
             disabled={current === 1}
-            aria-label={'First page'}
+            aria-label={"First page"}
           >
-            <ChevronsLeft className={'h-3 w-3'} />
+            <ChevronsLeft className={"h-3 w-3"} />
           </Button.Text>
           {pages.previous.reverse().map((value) => (
             <Button.Text
@@ -78,7 +78,7 @@ const PaginationFooter = ({ pagination, className, onPageSelect }: Props) => {
           <Button
             size={Button.Sizes.Small}
             shape={Button.Shapes.IconSquare}
-            aria-current={'page'}
+            aria-current={"page"}
             aria-label={`Page ${current}`}
           >
             {current}
@@ -95,9 +95,9 @@ const PaginationFooter = ({ pagination, className, onPageSelect }: Props) => {
           <Button.Text
             {...buttonProps(total)}
             disabled={current === total}
-            aria-label={'Last page'}
+            aria-label={"Last page"}
           >
-            <ChevronsRight className={'h-3 w-3'} />
+            <ChevronsRight className={"h-3 w-3"} />
           </Button.Text>
         </div>
       )}

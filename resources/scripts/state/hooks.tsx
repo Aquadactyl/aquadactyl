@@ -1,5 +1,5 @@
-import { useStoreWithEqualityFn } from '@/state/useStoreWithEqualityFn';
-import { appStore, ApplicationStore } from '@/state';
+import { useStoreWithEqualityFn } from "@/state/useStoreWithEqualityFn";
+import { appStore, ApplicationStore } from "@/state";
 
 // Easy-peasy typed hooks compatibility
 export type State<T = ApplicationStore> = T;

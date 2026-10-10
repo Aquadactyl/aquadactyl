@@ -1,14 +1,14 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export interface GameQuery {
-  status: 'available' | 'pending' | 'unavailable' | 'unsupported';
+  status: "available" | "pending" | "unavailable" | "unsupported";
   players: number | null;
   maxPlayers: number | null;
   checkedAt: Date | null;
 }
 
 export default async (uuid: string): Promise<GameQuery> => {
-  const { data } = await http.get('/api/client/servers/' + uuid + '/query');
+  const { data } = await http.get("/api/client/servers/" + uuid + "/query");
   return {
     status: data.attributes.status,
     players: data.attributes.players,

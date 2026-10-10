@@ -1,6 +1,6 @@
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import { ServerContext } from '@/state/server';
-import { SocketEvent } from '@/components/server/events';
+import useWebsocketEvent from "@/plugins/useWebsocketEvent";
+import { ServerContext } from "@/state/server";
+import { SocketEvent } from "@/components/server/events";
 
 const TransferListener = () => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -13,17 +13,17 @@ const TransferListener = () => {
 
   // Listen for the transfer status event, so we can update the state of the server.
   useWebsocketEvent(SocketEvent.TRANSFER_STATUS, (status: string) => {
-    if (status === 'pending' || status === 'processing') {
+    if (status === "pending" || status === "processing") {
       setServerFromState((s) => ({ ...s, isTransferring: true }));
       return;
     }
 
-    if (status === 'failed') {
+    if (status === "failed") {
       setServerFromState((s) => ({ ...s, isTransferring: false }));
       return;
     }
 
-    if (status !== 'completed') {
+    if (status !== "completed") {
       return;
     }
 

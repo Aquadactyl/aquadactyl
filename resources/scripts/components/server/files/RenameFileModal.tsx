@@ -1,14 +1,14 @@
-import React from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
-import { join } from 'pathe';
-import renameFiles from '@/api/server/files/renameFiles';
-import { ServerContext } from '@/state/server';
-import classNames from 'classnames';
-import Button from '@/components/elements/Button';
-import useFileManagerQuery from '@/plugins/useFileManagerQuery';
-import useFlash from '@/plugins/useFlash';
+import React from "react";
+import Modal, { RequiredModalProps } from "@/components/elements/Modal";
+import { Form, Formik, FormikHelpers } from "formik";
+import Field from "@/components/elements/Field";
+import { join } from "pathe";
+import renameFiles from "@/api/server/files/renameFiles";
+import { ServerContext } from "@/state/server";
+import classNames from "classnames";
+import Button from "@/components/elements/Button";
+import useFileManagerQuery from "@/plugins/useFileManagerQuery";
+import useFlash from "@/plugins/useFlash";
 
 interface FormikValues {
   name: string;
@@ -34,9 +34,9 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
     { name }: FormikValues,
     { setSubmitting }: FormikHelpers<FormikValues>,
   ) => {
-    clearFlashes('files');
+    clearFlashes("files");
 
-    const len = name.split('/').length;
+    const len = name.split("/").length;
     if (files.length === 1) {
       if (!useMoveTerminology && len === 1) {
         // Rename the file within this directory.
@@ -65,7 +65,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
       .catch((error) => {
         mutate();
         setSubmitting(false);
-        clearAndAddHttpError({ key: 'files', error });
+        clearAndAddHttpError({ key: "files", error });
       })
       .then(() => props.onDismissed());
   };
@@ -73,7 +73,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
   return (
     <Formik
       onSubmit={submit}
-      initialValues={{ name: files.length > 1 ? '' : files[0] || '' }}
+      initialValues={{ name: files.length > 1 ? "" : files[0] || "" }}
     >
       {({ isSubmitting, values }) => (
         <Modal
@@ -81,38 +81,38 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
           dismissable={!isSubmitting}
           showSpinnerOverlay={isSubmitting}
         >
-          <Form className={'m-0'}>
+          <Form className={"m-0"}>
             <div
               className={classNames(
-                'flex flex-wrap',
-                useMoveTerminology ? 'items-center' : 'items-end',
+                "flex flex-wrap",
+                useMoveTerminology ? "items-center" : "items-end",
               )}
             >
-              <div className={'w-full sm:mr-4 sm:flex-1'}>
+              <div className={"w-full sm:mr-4 sm:flex-1"}>
                 <Field
-                  type={'string'}
-                  id={'file_name'}
-                  name={'name'}
-                  label={'File Name'}
+                  type={"string"}
+                  id={"file_name"}
+                  name={"name"}
+                  label={"File Name"}
                   description={
                     useMoveTerminology
-                      ? 'Enter the new name and directory of this file or folder, relative to the current directory.'
+                      ? "Enter the new name and directory of this file or folder, relative to the current directory."
                       : undefined
                   }
                   autoFocus
                 />
               </div>
-              <div className={'mt-4 w-full sm:mt-0 sm:w-auto'}>
-                <Button className={'w-full'}>
-                  {useMoveTerminology ? 'Move' : 'Rename'}
+              <div className={"mt-4 w-full sm:mt-0 sm:w-auto"}>
+                <Button className={"w-full"}>
+                  {useMoveTerminology ? "Move" : "Rename"}
                 </Button>
               </div>
             </div>
             {useMoveTerminology && (
-              <p className={'mt-2 text-xs text-neutral-400'}>
-                <strong className={'text-neutral-200'}>New location:</strong>
+              <p className={"mt-2 text-xs text-neutral-400"}>
+                <strong className={"text-neutral-200"}>New location:</strong>
                 &nbsp;/home/container/
-                {join(directory, values.name).replace(/^(\.\.\/|\/)+/, '')}
+                {join(directory, values.name).replace(/^(\.\.\/|\/)+/, "")}
               </p>
             )}
           </Form>

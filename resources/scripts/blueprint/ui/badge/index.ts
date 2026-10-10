@@ -1,1 +1,1 @@
-export { default as UiBadge } from './UiBadge';
+export { default as UiBadge } from "./UiBadge";

@@ -14,20 +14,20 @@ function mbToBytes(megabytes: number): number {
 function bytesToString(bytes: number, decimals = 2): string {
   const k = _CONVERSION_UNIT;
 
-  if (bytes < 1) return '0 Bytes';
+  if (bytes < 1) return "0 Bytes";
 
   decimals = Math.floor(Math.max(0, decimals));
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const value = Number((bytes / Math.pow(k, i)).toFixed(decimals));
 
-  return `${value} ${['Bytes', 'KiB', 'MiB', 'GiB', 'TiB'][i]}`;
+  return `${value} ${["Bytes", "KiB", "MiB", "GiB", "TiB"][i]}`;
 }
 
 /**
  * Formats an IPv4 or IPv6 address.
  */
 function ip(value: string): string {
-  const isIPv6Like = value.includes(':') && /^[a-f0-9.:]+$/i.test(value);
+  const isIPv6Like = value.includes(":") && /^[a-f0-9.:]+$/i.test(value);
   return isIPv6Like ? `[${value}]` : value;
 }
 

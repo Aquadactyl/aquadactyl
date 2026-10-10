@@ -1,18 +1,18 @@
-import SensitiveValue from '@/components/elements/SensitiveValue';
-import React, { useEffect, useRef, useState } from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik';
-import { object, string } from 'yup';
-import debounce from 'debounce';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import InputSpinner from '@/components/elements/InputSpinner';
-import getServers from '@/api/getServers';
-import { Server } from '@/api/server/getServer';
-import { useAppStore } from '@/state';
-import useFlash from '@/plugins/useFlash';
-import { Link } from 'react-router';
-import Input from '@/components/elements/Input';
-import { ip } from '@/lib/formatters';
+import SensitiveValue from "@/components/elements/SensitiveValue";
+import React, { useEffect, useRef, useState } from "react";
+import Modal, { RequiredModalProps } from "@/components/elements/Modal";
+import { Field, Form, Formik, FormikHelpers, useFormikContext } from "formik";
+import { object, string } from "yup";
+import debounce from "debounce";
+import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
+import InputSpinner from "@/components/elements/InputSpinner";
+import getServers from "@/api/getServers";
+import { Server } from "@/api/server/getServer";
+import { useAppStore } from "@/state";
+import useFlash from "@/plugins/useFlash";
+import { Link } from "react-router";
+import Input from "@/components/elements/Input";
+import { ip } from "@/lib/formatters";
 
 type Props = RequiredModalProps;
 
@@ -40,10 +40,10 @@ export default ({ ...props }: Props) => {
 
   const search = debounce(
     ({ term }: Values, { setSubmitting }: FormikHelpers<Values>) => {
-      clearFlashes('search');
+      clearFlashes("search");
 
       // if (ref.current) ref.current.focus();
-      getServers({ query: term, type: isAdmin ? 'admin-all' : undefined })
+      getServers({ query: term, type: isAdmin ? "admin-all" : undefined })
         .then((servers) =>
           React.startTransition(() =>
             setServers(servers.items.filter((_, index) => index < 5)),
@@ -51,7 +51,7 @@ export default ({ ...props }: Props) => {
         )
         .catch((error) => {
           console.error(error);
-          clearAndAddHttpError({ key: 'search', error });
+          clearAndAddHttpError({ key: "search", error });
         })
         .then(() => setSubmitting(false))
         .then(() => ref.current?.focus());
@@ -74,41 +74,41 @@ export default ({ ...props }: Props) => {
       validationSchema={object().shape({
         term: string().min(
           3,
-          'Please enter at least three characters to begin searching.',
+          "Please enter at least three characters to begin searching.",
         ),
       })}
-      initialValues={{ term: '' } as Values}
+      initialValues={{ term: "" } as Values}
     >
       {({ isSubmitting }) => (
         <Modal {...props}>
           <Form>
             <FormikFieldWrapper
-              name={'term'}
-              label={'Search term'}
+              name={"term"}
+              label={"Search term"}
               description={
-                'Enter a server name, uuid, or allocation to begin searching.'
+                "Enter a server name, uuid, or allocation to begin searching."
               }
             >
               <SearchWatcher />
               <InputSpinner visible={isSubmitting}>
-                <Field as={InputWithRef} name={'term'} />
+                <Field as={InputWithRef} name={"term"} />
               </InputSpinner>
             </FormikFieldWrapper>
           </Form>
           {servers.length > 0 && (
-            <div className={'mt-6'}>
+            <div className={"mt-6"}>
               {servers.map((server) => (
                 <Link
                   key={server.uuid}
                   to={`/server/${server.id}`}
                   onClick={() => props.onDismissed()}
                   className={
-                    'flex items-center rounded border-l-4 border-neutral-900 bg-neutral-900 p-4 no-underline transition-all duration-150 not-last-of-type:mb-2 hover:border-cyan-500 hover:shadow-sm'
+                    "flex items-center rounded border-l-4 border-neutral-900 bg-neutral-900 p-4 no-underline transition-all duration-150 not-last-of-type:mb-2 hover:border-cyan-500 hover:shadow-sm"
                   }
                 >
-                  <div className={'mr-4 flex-1'}>
-                    <p className={'text-sm'}>{server.name}</p>
-                    <p className={'mt-1 text-xs text-neutral-400'}>
+                  <div className={"mr-4 flex-1"}>
+                    <p className={"text-sm"}>{server.name}</p>
+                    <p className={"mt-1 text-xs text-neutral-400"}>
                       {server.allocations
                         .filter((alloc) => alloc.isDefault)
                         .map((allocation) => (
@@ -123,10 +123,10 @@ export default ({ ...props }: Props) => {
                         ))}
                     </p>
                   </div>
-                  <div className={'flex-none text-right'}>
+                  <div className={"flex-none text-right"}>
                     <span
                       className={
-                        'rounded bg-cyan-800 px-2 py-1 text-xs text-cyan-100'
+                        "rounded bg-cyan-800 px-2 py-1 text-xs text-cyan-100"
                       }
                     >
                       {server.node}

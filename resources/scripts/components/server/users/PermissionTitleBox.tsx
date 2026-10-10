@@ -1,8 +1,8 @@
-import React, { memo, useCallback } from 'react';
-import { useField } from 'formik';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import Input from '@/components/elements/Input';
-import isEqual from 'react-fast-compare';
+import React, { memo, useCallback } from "react";
+import { useField } from "formik";
+import TitledGreyBox from "@/components/elements/TitledGreyBox";
+import Input from "@/components/elements/Input";
+import isEqual from "react-fast-compare";
 
 interface Props {
   isEditable: boolean;
@@ -13,7 +13,7 @@ interface Props {
 
 const PermissionTitleBox: React.FC<Props> = memo(
   ({ isEditable, title, permissions, className, children }) => {
-    const [{ value }, , { setValue }] = useField<string[]>('permissions');
+    const [{ value }, , { setValue }] = useField<string[]>("permissions");
 
     const onCheckboxClicked = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,11 +32,11 @@ const PermissionTitleBox: React.FC<Props> = memo(
     return (
       <TitledGreyBox
         title={
-          <div className={'flex items-center'}>
-            <p className={'flex-1 text-sm uppercase'}>{title}</p>
+          <div className={"flex items-center"}>
+            <p className={"flex-1 text-sm uppercase"}>{title}</p>
             {isEditable && (
               <Input
-                type={'checkbox'}
+                type={"checkbox"}
                 checked={permissions.every((p) => value.includes(p))}
                 onChange={onCheckboxClicked}
               />

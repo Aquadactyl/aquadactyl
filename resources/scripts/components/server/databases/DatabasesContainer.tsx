@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import getServerDatabases from '@/api/server/databases/getServerDatabases';
-import { ServerContext } from '@/state/server';
-import { httpErrorToHuman } from '@/api/http';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import DatabaseRow from '@/components/server/databases/DatabaseRow';
-import Spinner from '@/components/elements/Spinner';
-import CreateDatabaseButton from '@/components/server/databases/CreateDatabaseButton';
-import Can from '@/components/elements/Can';
-import useFlash from '@/plugins/useFlash';
-import Fade from '@/components/elements/Fade';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import { useDeepMemoize } from '@/plugins/useDeepMemoize';
+import React, { useEffect, useState } from "react";
+import getServerDatabases from "@/api/server/databases/getServerDatabases";
+import { ServerContext } from "@/state/server";
+import { httpErrorToHuman } from "@/api/http";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import DatabaseRow from "@/components/server/databases/DatabaseRow";
+import Spinner from "@/components/elements/Spinner";
+import CreateDatabaseButton from "@/components/server/databases/CreateDatabaseButton";
+import Can from "@/components/elements/Can";
+import useFlash from "@/plugins/useFlash";
+import Fade from "@/components/elements/Fade";
+import ServerContentBlock from "@/components/elements/ServerContentBlock";
+import { useDeepMemoize } from "@/plugins/useDeepMemoize";
 
-import BeforeContent from '@blueprint/components/Server/Databases/BeforeContent';
-import AfterContent from '@blueprint/components/Server/Databases/AfterContent';
+import BeforeContent from "@blueprint/components/Server/Databases/BeforeContent";
+import AfterContent from "@blueprint/components/Server/Databases/AfterContent";
 
 export default () => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -34,14 +34,14 @@ export default () => {
 
   useEffect(() => {
     setLoading(!databases.length);
-    clearFlashes('databases');
+    clearFlashes("databases");
 
     getServerDatabases(uuid)
       .then((databases) => setDatabases(databases))
       .catch((error) => {
         console.error(error);
         addError({
-          key: 'databases',
+          key: "databases",
           message: httpErrorToHuman(error),
         });
       })
@@ -49,10 +49,10 @@ export default () => {
   }, []);
 
   return (
-    <ServerContentBlock title={'Databases'}>
-      <FlashMessageRender byKey={'databases'} className={'mb-4'} />
+    <ServerContentBlock title={"Databases"}>
+      <FlashMessageRender byKey={"databases"} className={"mb-4"} />
       {!databases.length && loading ? (
-        <Spinner size={'large'} centered />
+        <Spinner size={"large"} centered />
       ) : (
         <Fade timeout={150}>
           <>
@@ -62,28 +62,28 @@ export default () => {
                 <DatabaseRow
                   key={database.id}
                   database={database}
-                  className={index > 0 ? 'mt-1' : undefined}
+                  className={index > 0 ? "mt-1" : undefined}
                 />
               ))
             ) : (
-              <p className={'text-center text-sm text-neutral-300'}>
+              <p className={"text-center text-sm text-neutral-300"}>
                 {databaseLimit > 0
-                  ? 'It looks like you have no databases.'
-                  : 'Databases cannot be created for this server.'}
+                  ? "It looks like you have no databases."
+                  : "Databases cannot be created for this server."}
               </p>
             )}
-            <Can action={'database.create'}>
-              <div className={'mt-6 flex items-center justify-end'}>
+            <Can action={"database.create"}>
+              <div className={"mt-6 flex items-center justify-end"}>
                 {databaseLimit > 0 && databases.length > 0 && (
                   <p
-                    className={'mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0'}
+                    className={"mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0"}
                   >
                     {databases.length} of {databaseLimit} databases have been
                     allocated to this server.
                   </p>
                 )}
                 {databaseLimit > 0 && databaseLimit !== databases.length && (
-                  <CreateDatabaseButton className={'mt-6 flex justify-end'} />
+                  <CreateDatabaseButton className={"mt-6 flex justify-end"} />
                 )}
               </div>
             </Can>

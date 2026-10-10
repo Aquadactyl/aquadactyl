@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from 'react';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { Button } from '@/components/elements/button/index';
-import triggerScheduleExecution from '@/api/server/schedules/triggerScheduleExecution';
-import { ServerContext } from '@/state/server';
-import useFlash from '@/plugins/useFlash';
-import { Schedule } from '@/api/server/schedules/getServerSchedules';
+import React, { useCallback, useState } from "react";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import { Button } from "@/components/elements/button/index";
+import triggerScheduleExecution from "@/api/server/schedules/triggerScheduleExecution";
+import { ServerContext } from "@/state/server";
+import useFlash from "@/plugins/useFlash";
+import { Schedule } from "@/api/server/schedules/getServerSchedules";
 
 const RunScheduleButton = ({ schedule }: { schedule: Schedule }) => {
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const RunScheduleButton = ({ schedule }: { schedule: Schedule }) => {
   );
 
   const onTriggerExecute = useCallback(() => {
-    clearFlashes('schedule');
+    clearFlashes("schedule");
     setLoading(true);
     triggerScheduleExecution(id, schedule.id)
       .then(() => {
@@ -25,17 +25,17 @@ const RunScheduleButton = ({ schedule }: { schedule: Schedule }) => {
       })
       .catch((error) => {
         console.error(error);
-        clearAndAddHttpError({ error, key: 'schedules' });
+        clearAndAddHttpError({ error, key: "schedules" });
       })
       .then(() => setLoading(false));
   }, [id, schedule, appendSchedule, clearFlashes, clearAndAddHttpError]);
 
   return (
     <>
-      <SpinnerOverlay visible={loading} size={'large'} />
+      <SpinnerOverlay visible={loading} size={"large"} />
       <Button
         variant={Button.Variants.Secondary}
-        className={'flex-1 sm:flex-none'}
+        className={"flex-1 sm:flex-none"}
         disabled={schedule.isProcessing}
         onClick={onTriggerExecute}
       >

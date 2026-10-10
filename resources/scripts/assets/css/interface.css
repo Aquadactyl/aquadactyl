@@ -134,7 +134,7 @@
   padding: 12px;
   color: var(--panel-muted);
 }
-.panel-select:has([aria-invalid='true']) .panel-select__control {
+.panel-select:has([aria-invalid="true"]) .panel-select__control {
   border-color: #e08a94;
 }
 
@@ -341,7 +341,7 @@
 .server-scope button:hover {
   color: #f5f6f7;
 }
-.server-scope button[aria-pressed='true'] {
+.server-scope button[aria-pressed="true"] {
   color: #e9ecef;
   background: #2a343e;
 }
@@ -515,7 +515,7 @@
   border-color: #52616d;
 }
 .server-card-link::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -621,30 +621,30 @@
   white-space: nowrap;
 }
 .server-state::before {
-  content: '';
+  content: "";
   width: 5px;
   height: 5px;
   border-radius: 50%;
   background: currentColor;
   flex-shrink: 0;
 }
-.server-state[data-state='running'] {
+.server-state[data-state="running"] {
   color: #9bceae;
   background: #20322a;
   border-color: #354b3e;
 }
-.server-state[data-state='suspended'],
-.server-state[data-state='unavailable'] {
+.server-state[data-state="suspended"],
+.server-state[data-state="unavailable"] {
   color: #e5aaaa;
   background: #35272b;
   border-color: #4c3539;
 }
-.server-state[data-state='starting'],
-.server-state[data-state='stopping'],
-.server-state[data-state='maintenance'],
-.server-state[data-state='installing'],
-.server-state[data-state='transferring'],
-.server-state[data-state='restoring_backup'] {
+.server-state[data-state="starting"],
+.server-state[data-state="stopping"],
+.server-state[data-state="maintenance"],
+.server-state[data-state="installing"],
+.server-state[data-state="transferring"],
+.server-state[data-state="restoring_backup"] {
   color: #d8c496;
   background: #322e24;
   border-color: #4a4231;
@@ -1163,11 +1163,11 @@
   background: #e9ecef;
   transition: transform 150ms;
 }
-.privacy-switch[aria-checked='true'] {
+.privacy-switch[aria-checked="true"] {
   background: #20696d;
   border-color: #55c0b7;
 }
-.privacy-switch[aria-checked='true'] > span {
+.privacy-switch[aria-checked="true"] > span {
   transform: translateX(18px);
 }
 .privacy-switch:focus-visible {

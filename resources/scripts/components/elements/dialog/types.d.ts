@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type Callback<T> =
   | ((value: T) => void)
@@ -9,10 +9,10 @@ export interface DialogProps {
   onClose: () => void;
 }
 
-export type IconPosition = 'title' | 'container' | undefined;
+export type IconPosition = "title" | "container" | undefined;
 
 export interface DialogIconProps {
-  type: 'danger' | 'info' | 'success' | 'warning';
+  type: "danger" | "info" | "success" | "warning";
   position?: IconPosition;
   className?: string;
 }
@@ -27,7 +27,7 @@ export interface RenderDialogProps extends DialogProps {
 
 export type WrapperProps = Omit<
   RenderDialogProps,
-  'children' | 'open' | 'onClose'
+  "children" | "open" | "onClose"
 >;
 export interface DialogWrapperContextType {
   props: Readonly<WrapperProps>;

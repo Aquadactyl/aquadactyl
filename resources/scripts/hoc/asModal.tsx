@@ -1,7 +1,7 @@
-import React from 'react';
-import PortaledModal, { ModalProps } from '@/components/elements/Modal';
-import ModalContext, { ModalContextValues } from '@/context/ModalContext';
-import isEqual from 'react-fast-compare';
+import React from "react";
+import PortaledModal, { ModalProps } from "@/components/elements/Modal";
+import ModalContext, { ModalContextValues } from "@/context/ModalContext";
+import isEqual from "react-fast-compare";
 
 export interface AsModalProps {
   visible: boolean;
@@ -10,7 +10,7 @@ export interface AsModalProps {
 
 export type SettableModalProps = Omit<
   ModalProps,
-  'appear' | 'visible' | 'onDismissed'
+  "appear" | "visible" | "onDismissed"
 >;
 
 interface State {
@@ -44,7 +44,7 @@ function asModal<P extends {}>(
         SettableModalProps & { visible: boolean }
       > {
         return {
-          ...(typeof modalProps === 'function'
+          ...(typeof modalProps === "function"
             ? modalProps(this.props)
             : modalProps),
           ...this.state.propOverrides,
@@ -74,11 +74,11 @@ function asModal<P extends {}>(
 
       dismiss = () => this.setState({ visible: false });
 
-      setPropOverrides: ModalContextValues['setPropOverrides'] = (value) =>
+      setPropOverrides: ModalContextValues["setPropOverrides"] = (value) =>
         this.setState((state) => ({
           propOverrides: !value
             ? {}
-            : typeof value === 'function'
+            : typeof value === "function"
               ? value(state.propOverrides)
               : value,
         }));
@@ -94,7 +94,7 @@ function asModal<P extends {}>(
             appear
             onDismissed={() =>
               this.setState({ render: false }, () => {
-                if (typeof this.props.onModalDismissed === 'function') {
+                if (typeof this.props.onModalDismissed === "function") {
                   this.props.onModalDismissed();
                 }
               })

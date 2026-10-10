@@ -1,7 +1,7 @@
-import { Allocation } from '@/api/server/getServer';
-import { FractalResponseData } from '@/api/http';
-import { FileObject } from '@/api/server/files/loadDirectory';
-import { ServerBackup, ServerEggVariable } from '@/api/server/types';
+import { Allocation } from "@/api/server/getServer";
+import { FractalResponseData } from "@/api/http";
+import { FileObject } from "@/api/server/files/loadDirectory";
+import { ServerBackup, ServerEggVariable } from "@/api/server/types";
 
 export const rawDataToServerAllocation = (
   data: FractalResponseData,
@@ -15,7 +15,7 @@ export const rawDataToServerAllocation = (
 });
 
 export const rawDataToFileObject = (data: FractalResponseData): FileObject => ({
-  key: `${data.attributes.is_file ? 'file' : 'dir'}_${data.attributes.name}`,
+  key: `${data.attributes.is_file ? "file" : "dir"}_${data.attributes.name}`,
   name: data.attributes.name,
   mode: data.attributes.mode,
   modeBits: data.attributes.mode_bits,
@@ -30,19 +30,19 @@ export const rawDataToFileObject = (data: FractalResponseData): FileObject => ({
     return (
       this.isFile &&
       [
-        'application/vnd.rar', // .rar
-        'application/x-rar-compressed', // .rar (2)
-        'application/x-tar', // .tar
-        'application/x-br', // .tar.br
-        'application/x-bzip2', // .tar.bz2, .bz2
-        'application/gzip', // .tar.gz, .gz
-        'application/x-gzip',
-        'application/x-lzip', // .tar.lz4, .lz4 (not sure if this mime type is correct)
-        'application/x-sz', // .tar.sz, .sz (not sure if this mime type is correct)
-        'application/x-xz', // .tar.xz, .xz
-        'application/zstd', // .tar.zst, .zst
-        'application/zip', // .zip
-        'application/x-7z-compressed', // .7z
+        "application/vnd.rar", // .rar
+        "application/x-rar-compressed", // .rar (2)
+        "application/x-tar", // .tar
+        "application/x-br", // .tar.br
+        "application/x-bzip2", // .tar.bz2, .bz2
+        "application/gzip", // .tar.gz, .gz
+        "application/x-gzip",
+        "application/x-lzip", // .tar.lz4, .lz4 (not sure if this mime type is correct)
+        "application/x-sz", // .tar.sz, .sz (not sure if this mime type is correct)
+        "application/x-xz", // .tar.xz, .xz
+        "application/zstd", // .tar.zst, .zst
+        "application/zip", // .zip
+        "application/x-7z-compressed", // .7z
       ].indexOf(this.mimetype) >= 0
     );
   },
@@ -51,9 +51,9 @@ export const rawDataToFileObject = (data: FractalResponseData): FileObject => ({
     if (this.isArchiveType() || !this.isFile) return false;
 
     const matches = [
-      'application/jar',
-      'application/octet-stream',
-      'inode/directory',
+      "application/jar",
+      "application/octet-stream",
+      "inode/directory",
       /^image\/(?!svg\+xml)/,
     ];
 
@@ -86,5 +86,5 @@ export const rawDataToServerEggVariable = ({
   defaultValue: attributes.default_value,
   serverValue: attributes.server_value,
   isEditable: attributes.is_editable,
-  rules: attributes.rules.split('|'),
+  rules: attributes.rules.split("|"),
 });

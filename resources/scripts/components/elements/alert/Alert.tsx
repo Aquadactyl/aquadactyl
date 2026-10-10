@@ -1,9 +1,9 @@
-import { AlertTriangle, ShieldAlert } from 'lucide-react';
-import React from 'react';
-import classNames from 'classnames';
+import { AlertTriangle, ShieldAlert } from "lucide-react";
+import React from "react";
+import classNames from "classnames";
 
 interface AlertProps {
-  type: 'warning' | 'danger';
+  type: "warning" | "danger";
   className?: string;
   children: React.ReactNode;
 }
@@ -12,18 +12,18 @@ export default ({ type, className, children }: AlertProps) => {
   return (
     <div
       className={classNames(
-        'flex items-center rounded-md border-l-8 px-4 py-3 text-gray-50 shadow-sm',
+        "flex items-center rounded-md border-l-8 px-4 py-3 text-gray-50 shadow-sm",
         {
-          ['border-red-500 bg-red-500/25']: type === 'danger',
-          ['border-yellow-500 bg-yellow-500/25']: type === 'warning',
+          ["border-red-500 bg-red-500/25"]: type === "danger",
+          ["border-yellow-500 bg-yellow-500/25"]: type === "warning",
         },
         className,
       )}
     >
-      {type === 'danger' ? (
-        <ShieldAlert className={'mr-2 h-6 w-6 text-red-400'} />
+      {type === "danger" ? (
+        <ShieldAlert className={"mr-2 h-6 w-6 text-red-400"} />
       ) : (
-        <AlertTriangle className={'mr-2 h-6 w-6 text-yellow-500'} />
+        <AlertTriangle className={"mr-2 h-6 w-6 text-yellow-500"} />
       )}
       {children}
     </div>

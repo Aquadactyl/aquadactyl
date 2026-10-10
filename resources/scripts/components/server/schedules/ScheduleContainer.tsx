@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import getServerSchedules from '@/api/server/schedules/getServerSchedules';
-import { ServerContext } from '@/state/server';
-import Spinner from '@/components/elements/Spinner';
-import { useLocation, useNavigate } from 'react-router';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import ScheduleRow from '@/components/server/schedules/ScheduleRow';
-import { httpErrorToHuman } from '@/api/http';
-import EditScheduleModal from '@/components/server/schedules/EditScheduleModal';
-import Can from '@/components/elements/Can';
-import useFlash from '@/plugins/useFlash';
-import GreyRowBox from '@/components/elements/GreyRowBox';
-import { Button } from '@/components/elements/button/index';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
+import React, { useEffect, useState } from "react";
+import getServerSchedules from "@/api/server/schedules/getServerSchedules";
+import { ServerContext } from "@/state/server";
+import Spinner from "@/components/elements/Spinner";
+import { useLocation, useNavigate } from "react-router";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import ScheduleRow from "@/components/server/schedules/ScheduleRow";
+import { httpErrorToHuman } from "@/api/http";
+import EditScheduleModal from "@/components/server/schedules/EditScheduleModal";
+import Can from "@/components/elements/Can";
+import useFlash from "@/plugins/useFlash";
+import GreyRowBox from "@/components/elements/GreyRowBox";
+import { Button } from "@/components/elements/button/index";
+import ServerContentBlock from "@/components/elements/ServerContentBlock";
 
-import BeforeContent from '@blueprint/components/Server/Schedules/List/BeforeContent';
-import AfterContent from '@blueprint/components/Server/Schedules/List/AfterContent';
+import BeforeContent from "@blueprint/components/Server/Schedules/List/BeforeContent";
+import AfterContent from "@blueprint/components/Server/Schedules/List/AfterContent";
 
 export default () => {
   const navigate = useNavigate();
@@ -33,13 +33,13 @@ export default () => {
   );
 
   useEffect(() => {
-    clearFlashes('schedules');
+    clearFlashes("schedules");
     getServerSchedules(uuid)
       .then((schedules) => setSchedules(schedules))
       .catch((error) => {
         addError({
           message: httpErrorToHuman(error),
-          key: 'schedules',
+          key: "schedules",
         });
         console.error(error);
       })
@@ -47,29 +47,29 @@ export default () => {
   }, []);
 
   return (
-    <ServerContentBlock title={'Schedules'}>
-      <FlashMessageRender byKey={'schedules'} className={'mb-4'} />
+    <ServerContentBlock title={"Schedules"}>
+      <FlashMessageRender byKey={"schedules"} className={"mb-4"} />
       {!schedules.length && loading ? (
-        <Spinner size={'large'} centered />
+        <Spinner size={"large"} centered />
       ) : (
         <>
           <BeforeContent />
-          <p className={'mb-6 text-sm text-neutral-300'}>
+          <p className={"mb-6 text-sm text-neutral-300"}>
             Automate restarts, backups, and console commands. Choose when to
             run, then add the steps to follow.
           </p>
           {schedules.length === 0 ? (
-            <p className={'text-center text-sm text-neutral-300'}>
+            <p className={"text-center text-sm text-neutral-300"}>
               No schedules yet. Create one to automate a daily restart or a
               regular backup.
             </p>
           ) : (
             schedules.map((schedule) => (
               <GreyRowBox
-                as={'a'}
+                as={"a"}
                 key={schedule.id}
                 href={`${location.pathname}/${schedule.id}`}
-                className={'mb-2 cursor-pointer flex-wrap'}
+                className={"mb-2 cursor-pointer flex-wrap"}
                 onClick={(e: any) => {
                   e.preventDefault();
                   navigate(`${location.pathname}/${schedule.id}`);
@@ -79,8 +79,8 @@ export default () => {
               </GreyRowBox>
             ))
           )}
-          <Can action={'schedule.create'}>
-            <div className={'mt-8 flex justify-end'}>
+          <Can action={"schedule.create"}>
+            <div className={"mt-8 flex justify-end"}>
               <EditScheduleModal
                 visible={visible}
                 onModalDismissed={() => setVisible(false)}
@@ -88,7 +88,7 @@ export default () => {
                   navigate(`${location.pathname}/${schedule.id}`)
                 }
               />
-              <Button type={'button'} onClick={() => setVisible(true)}>
+              <Button type={"button"} onClick={() => setVisible(true)}>
                 Create schedule
               </Button>
             </div>

@@ -4,8 +4,8 @@ import {
   useQuery,
   useQueryClient,
   UseQueryOptions,
-} from '@tanstack/react-query';
-import { useCallback } from 'react';
+} from "@tanstack/react-query";
+import { useCallback } from "react";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,7 +44,7 @@ export function useTanStackQuery<TData = unknown, TError = any>(
   queryFn: () => Promise<TData>,
   options?: Omit<
     UseQueryOptions<TData, TError, TData, any>,
-    'queryKey' | 'queryFn'
+    "queryKey" | "queryFn"
   >,
 ): QueryResponse<TData, TError> {
   const qc = useQueryClient();
@@ -65,7 +65,7 @@ export function useTanStackQuery<TData = unknown, TError = any>(
     ): Promise<TData | undefined> => {
       if (!queryKey) return undefined;
 
-      if (typeof newData === 'function') {
+      if (typeof newData === "function") {
         const updater = newData as (current: TData | undefined) => any;
         qc.setQueryData<TData>(queryKey, (old) => updater(old as TData));
       } else if (newData !== undefined) {

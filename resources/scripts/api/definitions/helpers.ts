@@ -4,14 +4,14 @@ import {
   FractalResponseList,
   getPaginationSet,
   PaginatedResult,
-} from '@/api/http';
-import { Model } from '@definitions/index';
+} from "@/api/http";
+import { Model } from "@definitions/index";
 
 type TransformerFunc<T> = (callback: FractalResponseData) => T;
 
 const isList = (
   data: FractalResponseList | FractalResponseData,
-): data is FractalResponseList => data.object === 'list';
+): data is FractalResponseList => data.object === "list";
 
 function transform<T, M>(
   data: null | undefined,
@@ -46,7 +46,7 @@ function transform<T>(
     return data.data.map(transformer);
   }
 
-  if (!data || !data.attributes || data.object === 'null_resource') {
+  if (!data || !data.attributes || data.object === "null_resource") {
     return missing;
   }
 

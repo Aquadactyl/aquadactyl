@@ -1,11 +1,11 @@
-import { useLocation } from 'react-router';
-import { useMemo } from 'react';
+import { useLocation } from "react-router";
+import { useMemo } from "react";
 
 export default () => {
   const location = useLocation();
 
   const getHashObject = (value: string): Record<string, string> =>
-    Object.fromEntries(new URLSearchParams(value.replace(/^#/, '')));
+    Object.fromEntries(new URLSearchParams(value.replace(/^#/, "")));
 
   const pathTo = (params: Record<string, string | undefined>): string => {
     const current = getHashObject(location.hash);

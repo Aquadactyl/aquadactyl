@@ -1,6 +1,6 @@
-import React from 'react';
-import { Field, FieldProps } from 'formik';
-import Input from '@/components/elements/Input';
+import React from "react";
+import { Field, FieldProps } from "formik";
+import Input from "@/components/elements/Input";
 
 interface Props {
   name: string;
@@ -9,22 +9,22 @@ interface Props {
 }
 
 type OmitFields =
-  | 'ref'
-  | 'name'
-  | 'value'
-  | 'type'
-  | 'checked'
-  | 'onClick'
-  | 'onChange';
+  | "ref"
+  | "name"
+  | "value"
+  | "type"
+  | "checked"
+  | "onClick"
+  | "onChange";
 
-type InputProps = Omit<React.ComponentPropsWithoutRef<'input'>, OmitFields>;
+type InputProps = Omit<React.ComponentPropsWithoutRef<"input">, OmitFields>;
 
 const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => (
   <Field name={name}>
     {({ field, form }: FieldProps) => {
       if (!Array.isArray(field.value)) {
         console.error(
-          'Attempting to mount a checkbox using a field value that is not an array.',
+          "Attempting to mount a checkbox using a field value that is not an array.",
         );
 
         return null;
@@ -35,7 +35,7 @@ const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => (
           {...field}
           {...props}
           className={className}
-          type={'checkbox'}
+          type={"checkbox"}
           checked={(field.value || []).includes(value)}
           onClick={() => form.setFieldTouched(field.name, true)}
           onChange={(e) => {

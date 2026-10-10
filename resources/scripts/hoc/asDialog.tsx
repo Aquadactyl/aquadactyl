@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogProps,
   DialogWrapperContext,
   WrapperProps,
-} from '@/components/elements/dialog';
+} from "@/components/elements/dialog";
 
 function asDialog(
   initialProps?: WrapperProps,

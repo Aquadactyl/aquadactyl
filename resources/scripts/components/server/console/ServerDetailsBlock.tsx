@@ -1,5 +1,5 @@
-import SensitiveValue from '@/components/elements/SensitiveValue';
-import React, { useEffect, useMemo, useState } from 'react';
+import SensitiveValue from "@/components/elements/SensitiveValue";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   faClock,
   faCloudDownloadAlt,
@@ -8,20 +8,20 @@ import {
   faMemory,
   faMicrochip,
   faWifi,
-} from '@fortawesome/free-solid-svg-icons';
-import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
-import { ServerContext } from '@/state/server';
-import { SocketEvent, SocketRequest } from '@/components/server/events';
-import UptimeDuration from '@/components/server/UptimeDuration';
-import StatBlock from '@/components/server/console/StatBlock';
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import classNames from 'classnames';
-import { capitalize } from '@/lib/strings';
+} from "@fortawesome/free-solid-svg-icons";
+import { bytesToString, ip, mbToBytes } from "@/lib/formatters";
+import { ServerContext } from "@/state/server";
+import { SocketEvent, SocketRequest } from "@/components/server/events";
+import UptimeDuration from "@/components/server/UptimeDuration";
+import StatBlock from "@/components/server/console/StatBlock";
+import useWebsocketEvent from "@/plugins/useWebsocketEvent";
+import classNames from "classnames";
+import { capitalize } from "@/lib/strings";
 
-import BeforeInformation from '@blueprint/components/Server/Terminal/BeforeInformation';
-import AfterInformation from '@blueprint/components/Server/Terminal/AfterInformation';
+import BeforeInformation from "@blueprint/components/Server/Terminal/BeforeInformation";
+import AfterInformation from "@blueprint/components/Server/Terminal/AfterInformation";
 
-type Stats = Record<'memory' | 'cpu' | 'disk' | 'uptime' | 'rx' | 'tx', number>;
+type Stats = Record<"memory" | "cpu" | "disk" | "uptime" | "rx" | "tx", number>;
 
 const getBackgroundColor = (
   value: number,
@@ -31,9 +31,9 @@ const getBackgroundColor = (
 
   if (delta > 0.8) {
     if (delta > 0.9) {
-      return 'bg-red-500';
+      return "bg-red-500";
     }
-    return 'bg-yellow-500';
+    return "bg-yellow-500";
   }
 
   return undefined;
@@ -48,7 +48,7 @@ const Limit = ({
 }) => (
   <>
     {children}
-    <span className={'ml-1 text-[70%] text-gray-300 select-none'}>
+    <span className={"ml-1 text-[70%] text-gray-300 select-none"}>
       / {limit || <>&infin;</>}
     </span>
   </>
@@ -89,7 +89,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
       (allocation) => allocation.isDefault,
     );
 
-    return !match ? 'n/a' : `${match.alias || ip(match.ip)}:${match.port}`;
+    return !match ? "n/a" : `${match.alias || ip(match.ip)}:${match.port}`;
   });
 
   useEffect(() => {
@@ -119,21 +119,21 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
   });
 
   return (
-    <div className={classNames('grid grid-cols-6 gap-2 md:gap-4', className)}>
+    <div className={classNames("grid grid-cols-6 gap-2 md:gap-4", className)}>
       <BeforeInformation />
-      <StatBlock icon={faWifi} title={'Address'} copyOnClick={allocation}>
+      <StatBlock icon={faWifi} title={"Address"} copyOnClick={allocation}>
         <SensitiveValue>{allocation}</SensitiveValue>
       </StatBlock>
       <StatBlock
         icon={faClock}
-        title={'Uptime'}
+        title={"Uptime"}
         color={getBackgroundColor(
-          status === 'running' ? 0 : status !== 'offline' ? 9 : 10,
+          status === "running" ? 0 : status !== "offline" ? 9 : 10,
           10,
         )}
       >
         {status === null ? (
-          'Offline'
+          "Offline"
         ) : stats.uptime > 0 ? (
           <UptimeDuration uptime={stats.uptime / 1000} />
         ) : (
@@ -142,43 +142,43 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
       </StatBlock>
       <StatBlock
         icon={faMicrochip}
-        title={'CPU Load'}
+        title={"CPU Load"}
         color={getBackgroundColor(stats.cpu, limits.cpu)}
       >
-        {status === 'offline' ? (
-          <span className={'text-gray-400'}>Offline</span>
+        {status === "offline" ? (
+          <span className={"text-gray-400"}>Offline</span>
         ) : (
           <Limit limit={textLimits.cpu}>{stats.cpu.toFixed(2)}%</Limit>
         )}
       </StatBlock>
       <StatBlock
         icon={faMemory}
-        title={'Memory'}
+        title={"Memory"}
         color={getBackgroundColor(stats.memory / 1024, limits.memory * 1024)}
       >
-        {status === 'offline' ? (
-          <span className={'text-gray-400'}>Offline</span>
+        {status === "offline" ? (
+          <span className={"text-gray-400"}>Offline</span>
         ) : (
           <Limit limit={textLimits.memory}>{bytesToString(stats.memory)}</Limit>
         )}
       </StatBlock>
       <StatBlock
         icon={faHdd}
-        title={'Disk'}
+        title={"Disk"}
         color={getBackgroundColor(stats.disk / 1024, limits.disk * 1024)}
       >
         <Limit limit={textLimits.disk}>{bytesToString(stats.disk)}</Limit>
       </StatBlock>
-      <StatBlock icon={faCloudDownloadAlt} title={'Network (Inbound)'}>
-        {status === 'offline' ? (
-          <span className={'text-gray-400'}>Offline</span>
+      <StatBlock icon={faCloudDownloadAlt} title={"Network (Inbound)"}>
+        {status === "offline" ? (
+          <span className={"text-gray-400"}>Offline</span>
         ) : (
           bytesToString(stats.rx)
         )}
       </StatBlock>
-      <StatBlock icon={faCloudUploadAlt} title={'Network (Outbound)'}>
-        {status === 'offline' ? (
-          <span className={'text-gray-400'}>Offline</span>
+      <StatBlock icon={faCloudUploadAlt} title={"Network (Outbound)"}>
+        {status === "offline" ? (
+          <span className={"text-gray-400"}>Offline</span>
         ) : (
           bytesToString(stats.tx)
         )}

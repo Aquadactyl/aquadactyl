@@ -1,4 +1,4 @@
-import getSystemPermissions from '@/api/getSystemPermissions';
+import getSystemPermissions from "@/api/getSystemPermissions";
 
 export interface PanelPermissions {
   [key: string]: {

@@ -1,6 +1,6 @@
-import React from 'react';
-import Icon from '@/components/elements/Icon';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
+import React from "react";
+import Icon from "@/components/elements/Icon";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
 interface FallbackProps {
   error?: Error;
@@ -44,7 +44,7 @@ class ErrorBoundary extends React.Component<Props, State> {
       return this.props.children;
     }
 
-    if (typeof this.props.fallback === 'function') {
+    if (typeof this.props.fallback === "function") {
       return this.props.fallback({
         error: this.state.error,
         resetErrorBoundary: this.resetErrorBoundary,
@@ -56,26 +56,26 @@ class ErrorBoundary extends React.Component<Props, State> {
     }
 
     return (
-      <div className={'my-4 flex w-full items-center justify-center'}>
+      <div className={"my-4 flex w-full items-center justify-center"}>
         <div
           className={
-            'flex flex-col items-center rounded bg-neutral-900 p-4 text-center text-red-500 sm:flex-row sm:text-left'
+            "flex flex-col items-center rounded bg-neutral-900 p-4 text-center text-red-500 sm:flex-row sm:text-left"
           }
         >
           <Icon
             icon={faExclamationTriangle}
-            className={'mb-2 h-5 w-auto sm:mr-3 sm:mb-0'}
+            className={"mb-2 h-5 w-auto sm:mr-3 sm:mb-0"}
           />
-          <div className={'flex-1'}>
-            <p className={'text-sm text-neutral-100'}>
+          <div className={"flex-1"}>
+            <p className={"text-sm text-neutral-100"}>
               An error was encountered by the application while rendering this
               view. Try refreshing the page.
             </p>
           </div>
           <button
-            type={'button'}
+            type={"button"}
             className={
-              'mt-2 cursor-pointer rounded border border-neutral-700 bg-neutral-800 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-neutral-700 sm:mt-0 sm:ml-4'
+              "mt-2 cursor-pointer rounded border border-neutral-700 bg-neutral-800 px-3 py-1 text-xs text-neutral-200 transition-colors hover:bg-neutral-700 sm:mt-0 sm:ml-4"
             }
             onClick={this.resetErrorBoundary}
           >

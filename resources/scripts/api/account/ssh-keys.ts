@@ -1,16 +1,16 @@
-import { useTanStackQuery } from '@/lib/queryClient';
-import http, { FractalResponseList } from '@/api/http';
-import { SSHKey, Transformers } from '@definitions/user';
-import { AxiosError } from 'axios';
-import { useUserQueryKey } from '@/plugins/useQueryKey';
+import { useTanStackQuery } from "@/lib/queryClient";
+import http, { FractalResponseList } from "@/api/http";
+import { SSHKey, Transformers } from "@definitions/user";
+import { AxiosError } from "axios";
+import { useUserQueryKey } from "@/plugins/useQueryKey";
 
 const useSSHKeys = (config?: any) => {
-  const key = useUserQueryKey(['account', 'ssh-keys']);
+  const key = useUserQueryKey(["account", "ssh-keys"]);
 
   return useTanStackQuery<SSHKey[], AxiosError>(
     [key],
     async () => {
-      const { data } = await http.get('/api/client/account/ssh-keys');
+      const { data } = await http.get("/api/client/account/ssh-keys");
 
       return (data as FractalResponseList).data.map((datum: any) => {
         return Transformers.toSSHKey(datum.attributes);
@@ -24,7 +24,7 @@ const createSSHKey = async (
   name: string,
   publicKey: string,
 ): Promise<SSHKey> => {
-  const { data } = await http.post('/api/client/account/ssh-keys', {
+  const { data } = await http.post("/api/client/account/ssh-keys", {
     name,
     public_key: publicKey,
   });
@@ -33,6 +33,6 @@ const createSSHKey = async (
 };
 
 const deleteSSHKey = async (fingerprint: string): Promise<void> =>
-  await http.post('/api/client/account/ssh-keys/remove', { fingerprint });
+  await http.post("/api/client/account/ssh-keys/remove", { fingerprint });
 
 export { useSSHKeys, createSSHKey, deleteSSHKey };

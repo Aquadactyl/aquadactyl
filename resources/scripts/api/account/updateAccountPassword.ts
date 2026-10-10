@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 interface Data {
   current: string;
@@ -13,7 +13,7 @@ export default ({
 }: Data): Promise<void> => {
   return new Promise((resolve, reject) => {
     http
-      .put('/api/client/account/password', {
+      .put("/api/client/account/password", {
         current_password: current,
         password: password,
         password_confirmation: confirmPassword,

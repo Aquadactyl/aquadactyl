@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 interface Data {
   token: string;
@@ -14,7 +14,7 @@ interface PasswordResetResponse {
 export default (email: string, data: Data): Promise<PasswordResetResponse> => {
   return new Promise((resolve, reject) => {
     http
-      .post('/auth/password/reset', {
+      .post("/auth/password/reset", {
         email,
         token: data.token,
         password: data.password,

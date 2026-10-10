@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
-import Button from '@/components/elements/Button';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
-import { SocketEvent, SocketRequest } from '@/components/server/events';
-import Field from '@/components/elements/Field';
-import updateStartupVariable from '@/api/server/updateStartupVariable';
-import { Form, Formik } from 'formik';
+import React, { useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import Modal from "@/components/elements/Modal";
+import Button from "@/components/elements/Button";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import useFlash from "@/plugins/useFlash";
+import { SocketEvent, SocketRequest } from "@/components/server/events";
+import Field from "@/components/elements/Field";
+import updateStartupVariable from "@/api/server/updateStartupVariable";
+import { Form, Formik } from "formik";
 
 interface Values {
   gslToken: string;
@@ -25,9 +25,9 @@ const GSLTokenModalFeature = () => {
   );
 
   useEffect(() => {
-    if (!connected || !instance || status === 'running') return;
+    if (!connected || !instance || status === "running") return;
 
-    const errors = ['(gsl token expired)', '(account not found)'];
+    const errors = ["(gsl token expired)", "(account not found)"];
 
     const listener = (line: string) => {
       if (errors.some((p) => line.toLowerCase().includes(p))) {
@@ -44,12 +44,12 @@ const GSLTokenModalFeature = () => {
 
   const updateGSLToken = (values: Values) => {
     setLoading(true);
-    clearFlashes('feature:gslToken');
+    clearFlashes("feature:gslToken");
 
-    updateStartupVariable(uuid, 'STEAM_ACC', values.gslToken)
+    updateStartupVariable(uuid, "STEAM_ACC", values.gslToken)
       .then(() => {
         if (instance) {
-          instance.send(SocketRequest.SET_STATE, 'restart');
+          instance.send(SocketRequest.SET_STATE, "restart");
         }
 
         setLoading(false);
@@ -57,50 +57,50 @@ const GSLTokenModalFeature = () => {
       })
       .catch((error) => {
         console.error(error);
-        clearAndAddHttpError({ key: 'feature:gslToken', error });
+        clearAndAddHttpError({ key: "feature:gslToken", error });
       })
       .then(() => setLoading(false));
   };
 
   useEffect(() => {
-    clearFlashes('feature:gslToken');
+    clearFlashes("feature:gslToken");
   }, []);
 
   return (
-    <Formik onSubmit={updateGSLToken} initialValues={{ gslToken: '' }}>
+    <Formik onSubmit={updateGSLToken} initialValues={{ gslToken: "" }}>
       <Modal
         visible={visible}
         onDismissed={() => setVisible(false)}
         closeOnBackground={false}
         showSpinnerOverlay={loading}
       >
-        <FlashMessageRender key={'feature:gslToken'} className={'mb-4'} />
+        <FlashMessageRender key={"feature:gslToken"} className={"mb-4"} />
         <Form>
-          <h2 className={'mb-4 text-2xl text-neutral-100'}>
+          <h2 className={"mb-4 text-2xl text-neutral-100"}>
             Invalid GSL token!
           </h2>
-          <p className={'mt-4'}>
+          <p className={"mt-4"}>
             It seems like your Gameserver Login Token (GSL token) is invalid or
             has expired.
           </p>
-          <p className={'mt-4'}>
+          <p className={"mt-4"}>
             You can either generate a new one and enter it below or leave the
             field blank to remove it completely.
           </p>
-          <div className={'mt-4 items-center sm:flex'}>
+          <div className={"mt-4 items-center sm:flex"}>
             <Field
-              name={'gslToken'}
-              label={'GSL Token'}
+              name={"gslToken"}
+              label={"GSL Token"}
               description={
-                'Visit https://steamcommunity.com/dev/managegameservers to generate a token.'
+                "Visit https://steamcommunity.com/dev/managegameservers to generate a token."
               }
               autoFocus
             />
           </div>
-          <div className={'mt-8 items-center justify-end sm:flex'}>
+          <div className={"mt-8 items-center justify-end sm:flex"}>
             <Button
-              type={'submit'}
-              className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}
+              type={"submit"}
+              className={"mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto"}
             >
               Update GSL Token
             </Button>

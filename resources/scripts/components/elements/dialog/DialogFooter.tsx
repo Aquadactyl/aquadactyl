@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import { DialogContext } from './';
-import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
+import React, { useContext } from "react";
+import { DialogContext } from "./";
+import { useDeepCompareEffect } from "@/plugins/useDeepCompareEffect";
 
 export default ({ children }: { children: React.ReactNode }) => {
   const { setFooter } = useContext(DialogContext);
@@ -9,7 +9,7 @@ export default ({ children }: { children: React.ReactNode }) => {
     setFooter(
       <div
         className={
-          'flex items-center justify-end gap-3 rounded-b-lg bg-gray-700 px-6 py-3'
+          "flex items-center justify-end gap-3 rounded-b-lg bg-gray-700 px-6 py-3"
         }
       >
         {children}

@@ -1,18 +1,18 @@
-import React, { memo, useState } from 'react';
-import { ServerEggVariable } from '@/api/server/types';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
-import { usePermissions } from '@/plugins/usePermissions';
-import InputSpinner from '@/components/elements/InputSpinner';
-import Input from '@/components/elements/Input';
-import Switch from '@/components/elements/Switch';
-import debounce from 'debounce';
-import updateStartupVariable from '@/api/server/updateStartupVariable';
-import useFlash from '@/plugins/useFlash';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import getServerStartup from '@/api/server/startup/getServerStartup';
-import Select from '@/components/elements/Select';
-import isEqual from 'react-fast-compare';
-import { ServerContext } from '@/state/server';
+import React, { memo, useState } from "react";
+import { ServerEggVariable } from "@/api/server/types";
+import TitledGreyBox from "@/components/elements/TitledGreyBox";
+import { usePermissions } from "@/plugins/usePermissions";
+import InputSpinner from "@/components/elements/InputSpinner";
+import Input from "@/components/elements/Input";
+import Switch from "@/components/elements/Switch";
+import debounce from "debounce";
+import updateStartupVariable from "@/api/server/updateStartupVariable";
+import useFlash from "@/plugins/useFlash";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import getServerStartup from "@/api/server/startup/getServerStartup";
+import Select from "@/components/elements/Select";
+import isEqual from "react-fast-compare";
+import { ServerContext } from "@/state/server";
 
 interface Props {
   variable: ServerEggVariable;
@@ -23,7 +23,7 @@ const VariableBox = ({ variable }: Props) => {
 
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const [loading, setLoading] = useState(false);
-  const [canEdit] = usePermissions(['startup.update']);
+  const [canEdit] = usePermissions(["startup.update"]);
   const { clearFlashes, clearAndAddHttpError } = useFlash();
   const { mutate } = getServerStartup(uuid);
 
@@ -53,22 +53,22 @@ const VariableBox = ({ variable }: Props) => {
 
   const useSwitch = variable.rules.some(
     (v) =>
-      v === 'boolean' ||
-      v === 'in:0,1' ||
-      v === 'in:1,0' ||
-      v === 'in:true,false' ||
-      v === 'in:false,true',
+      v === "boolean" ||
+      v === "in:0,1" ||
+      v === "in:1,0" ||
+      v === "in:true,false" ||
+      v === "in:false,true",
   );
-  const isStringSwitch = variable.rules.some((v) => v === 'string');
+  const isStringSwitch = variable.rules.some((v) => v === "string");
   const selectValues =
-    variable.rules.find((v) => v.startsWith('in:'))?.split(',') || [];
+    variable.rules.find((v) => v.startsWith("in:"))?.split(",") || [];
 
   return (
     <TitledGreyBox
       title={
-        <p className='text-sm uppercase'>
+        <p className="text-sm uppercase">
           {!variable.isEditable && (
-            <span className='mr-2 mb-1 rounded-full bg-neutral-700 px-2 py-1 text-xs'>
+            <span className="mr-2 mb-1 rounded-full bg-neutral-700 px-2 py-1 text-xs">
               Read Only
             </span>
           )}
@@ -76,7 +76,7 @@ const VariableBox = ({ variable }: Props) => {
         </p>
       }
     >
-      <FlashMessageRender byKey={FLASH_KEY} className='mb-2 md:mb-4' />
+      <FlashMessageRender byKey={FLASH_KEY} className="mb-2 md:mb-4" />
       <InputSpinner visible={loading}>
         {useSwitch ? (
           <>
@@ -85,17 +85,17 @@ const VariableBox = ({ variable }: Props) => {
               name={variable.envVariable}
               defaultChecked={
                 isStringSwitch
-                  ? variable.serverValue === 'true'
-                  : variable.serverValue === '1'
+                  ? variable.serverValue === "true"
+                  : variable.serverValue === "1"
               }
               onChange={() => {
                 if (canEdit && variable.isEditable) {
                   if (isStringSwitch) {
                     setVariableValue(
-                      variable.serverValue === 'true' ? 'false' : 'true',
+                      variable.serverValue === "true" ? "false" : "true",
                     );
                   } else {
-                    setVariableValue(variable.serverValue === '1' ? '0' : '1');
+                    setVariableValue(variable.serverValue === "1" ? "0" : "1");
                   }
                 }
               }}
@@ -113,10 +113,10 @@ const VariableBox = ({ variable }: Props) => {
                 >
                   {selectValues.map((selectValue) => (
                     <option
-                      key={selectValue.replace('in:', '')}
-                      value={selectValue.replace('in:', '')}
+                      key={selectValue.replace("in:", "")}
+                      value={selectValue.replace("in:", "")}
                     >
-                      {selectValue.replace('in:', '')}
+                      {selectValue.replace("in:", "")}
                     </option>
                   ))}
                 </Select>
@@ -131,7 +131,7 @@ const VariableBox = ({ variable }: Props) => {
                   }}
                   readOnly={!canEdit || !variable.isEditable}
                   name={variable.envVariable}
-                  defaultValue={variable.serverValue ?? ''}
+                  defaultValue={variable.serverValue ?? ""}
                   placeholder={variable.defaultValue}
                 />
               </>
@@ -140,7 +140,7 @@ const VariableBox = ({ variable }: Props) => {
         )}
       </InputSpinner>
 
-      <p className='mt-1 text-xs text-neutral-300'>{variable.description}</p>
+      <p className="mt-1 text-xs text-neutral-300">{variable.description}</p>
     </TitledGreyBox>
   );
 };

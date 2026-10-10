@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import features from './index';
-import { getObjectKeys } from '@/lib/objects';
-import ErrorBoundary from '@/components/elements/ErrorBoundary';
+import React, { useMemo } from "react";
+import features from "./index";
+import { getObjectKeys } from "@/lib/objects";
+import ErrorBoundary from "@/components/elements/ErrorBoundary";
 
 type ListItems = [string, React.ComponentType][];
 

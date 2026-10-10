@@ -1,23 +1,23 @@
-import React from 'react';
-import { ServerContext } from '@/state/server';
-import TitledGreyBox from '@/components/elements/TitledGreyBox';
+import React from "react";
+import { ServerContext } from "@/state/server";
+import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import {
   Field as FormikField,
   Form,
   Formik,
   FormikHelpers,
   useFormikContext,
-} from 'formik';
-import useFlash from '@/plugins/useFlash';
-import renameServer from '@/api/server/renameServer';
-import Field from '@/components/elements/Field';
-import { object, string } from 'yup';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import { httpErrorToHuman } from '@/api/http';
-import { Button } from '@/components/elements/button/index';
-import Label from '@/components/elements/Label';
-import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
-import { Textarea } from '@/components/elements/Input';
+} from "formik";
+import useFlash from "@/plugins/useFlash";
+import renameServer from "@/api/server/renameServer";
+import Field from "@/components/elements/Field";
+import { object, string } from "yup";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import { httpErrorToHuman } from "@/api/http";
+import { Button } from "@/components/elements/button/index";
+import Label from "@/components/elements/Label";
+import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
+import { Textarea } from "@/components/elements/Input";
 
 interface Values {
   name: string;
@@ -28,18 +28,18 @@ const RenameServerBox = () => {
   const { isSubmitting } = useFormikContext<Values>();
 
   return (
-    <TitledGreyBox title={'Change Server Details'} className={'relative'}>
+    <TitledGreyBox title={"Change Server Details"} className={"relative"}>
       <SpinnerOverlay visible={isSubmitting} />
-      <Form className={'mb-0'}>
-        <Field id={'name'} name={'name'} label={'Server Name'} type={'text'} />
-        <div className={'mt-6'}>
+      <Form className={"mb-0"}>
+        <Field id={"name"} name={"name"} label={"Server Name"} type={"text"} />
+        <div className={"mt-6"}>
           <Label>Server Description</Label>
-          <FormikFieldWrapper name={'description'}>
-            <FormikField as={Textarea} name={'description'} rows={3} />
+          <FormikFieldWrapper name={"description"}>
+            <FormikField as={Textarea} name={"description"} rows={3} />
           </FormikFieldWrapper>
         </div>
-        <div className={'mt-6 text-right'}>
-          <Button type={'submit'}>Save</Button>
+        <div className={"mt-6 text-right"}>
+          <Button type={"submit"}>Save</Button>
         </div>
       </Form>
     </TitledGreyBox>
@@ -57,12 +57,12 @@ export default () => {
     { name, description }: Values,
     { setSubmitting }: FormikHelpers<Values>,
   ) => {
-    clearFlashes('settings');
+    clearFlashes("settings");
     renameServer(server.uuid, name, description)
       .then(() => setServer({ ...server, name, description }))
       .catch((error) => {
         console.error(error);
-        addError({ key: 'settings', message: httpErrorToHuman(error) });
+        addError({ key: "settings", message: httpErrorToHuman(error) });
       })
       .then(() => setSubmitting(false));
   };

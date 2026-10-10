@@ -1,5 +1,5 @@
-import { rawDataToServerObject, Server } from '@/api/server/getServer';
-import http, { getPaginationSet, PaginatedResult } from '@/api/http';
+import { rawDataToServerObject, Server } from "@/api/server/getServer";
+import http, { getPaginationSet, PaginatedResult } from "@/api/http";
 
 interface QueryParams {
   query?: string;
@@ -13,9 +13,9 @@ export default ({
 }: QueryParams): Promise<PaginatedResult<Server>> => {
   return new Promise((resolve, reject) => {
     http
-      .get('/api/client', {
+      .get("/api/client", {
         params: {
-          'filter[*]': query,
+          "filter[*]": query,
           ...params,
         },
       })

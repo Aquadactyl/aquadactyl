@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export interface ServerDatabase {
   id: string;
@@ -25,7 +25,7 @@ export default (
   return new Promise((resolve, reject) => {
     http
       .get(`/api/client/servers/${uuid}/databases`, {
-        params: includePassword ? { include: 'password' } : undefined,
+        params: includePassword ? { include: "password" } : undefined,
       })
       .then((response) =>
         resolve(

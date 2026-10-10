@@ -1,30 +1,30 @@
-import SensitiveValue from '@/components/elements/SensitiveValue';
-import React from 'react';
-import { Link } from 'react-router';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
-import Translate from '@/components/elements/Translate';
-import { format, formatDistanceToNowStrict } from 'date-fns';
-import { ActivityLog } from '@definitions/user';
-import ActivityLogMetaButton from '@/components/elements/activity/ActivityLogMetaButton';
-import { FolderOpen, Terminal } from 'lucide-react';
-import style from './style.module.css';
-import Avatar from '@/components/Avatar';
-import useLocationHash from '@/plugins/useLocationHash';
-import { getObjectKeys, isObject } from '@/lib/objects';
-import { activityEventLabel } from './events';
-import { useAppStore } from '@/state';
-import { isSensitiveProperty } from './sensitiveProperties';
+import SensitiveValue from "@/components/elements/SensitiveValue";
+import React from "react";
+import { Link } from "react-router";
+import Tooltip from "@/components/elements/tooltip/Tooltip";
+import Translate from "@/components/elements/Translate";
+import { format, formatDistanceToNowStrict } from "date-fns";
+import { ActivityLog } from "@definitions/user";
+import ActivityLogMetaButton from "@/components/elements/activity/ActivityLogMetaButton";
+import { FolderOpen, Terminal } from "lucide-react";
+import style from "./style.module.css";
+import Avatar from "@/components/Avatar";
+import useLocationHash from "@/plugins/useLocationHash";
+import { getObjectKeys, isObject } from "@/lib/objects";
+import { activityEventLabel } from "./events";
+import { useAppStore } from "@/state";
+import { isSensitiveProperty } from "./sensitiveProperties";
 
 interface Props {
   activity: ActivityLog;
   children?: React.ReactNode;
 }
 
-function wrapProperties(value: unknown, key = ''): any {
+function wrapProperties(value: unknown, key = ""): any {
   if (
     value === null ||
-    typeof value === 'string' ||
-    typeof value === 'number'
+    typeof value === "string" ||
+    typeof value === "number"
   ) {
     const content = isSensitiveProperty(key, value)
       ? `<sensitive>${String(value)}</sensitive>`
@@ -36,8 +36,8 @@ function wrapProperties(value: unknown, key = ''): any {
     return getObjectKeys(value).reduce(
       (obj, key) => {
         if (
-          key === 'count' ||
-          (typeof key === 'string' && key.endsWith('_count'))
+          key === "count" ||
+          (typeof key === "string" && key.endsWith("_count"))
         ) {
           return { ...obj, [key]: value[key] };
         }
@@ -72,9 +72,9 @@ export default ({ activity, children }: Props) => {
     <article className={style.entry}>
       <div className={style.avatar}>
         <Avatar
-          name={actor?.uuid || 'system'}
+          name={actor?.uuid || "system"}
           src={avatarUrl}
-          alt={`${actor?.username || 'System'}'s profile picture`}
+          alt={`${actor?.username || "System"}'s profile picture`}
           size={40}
         />
       </div>
@@ -82,7 +82,7 @@ export default ({ activity, children }: Props) => {
         <div className={style.header}>
           <div className={style.identity}>
             <span className={style.username}>
-              {actor?.username || 'System'}
+              {actor?.username || "System"}
             </span>
             <Link
               to={`#${pathTo({ event: undefined, event_exact: activity.event, page: undefined })}`}
@@ -99,17 +99,17 @@ export default ({ activity, children }: Props) => {
         </div>
         <p className={style.description}>
           <Translate
-            ns={'activity'}
+            ns={"activity"}
             values={properties}
-            i18nKey={activity.event.replace(':', '.')}
+            i18nKey={activity.event.replace(":", ".")}
             defaults={activity.description || eventLabel}
             components={{ sensitive: <SensitiveValue /> }}
           />
         </p>
         <div className={style.details}>
           <Tooltip
-            placement={'top'}
-            content={format(activity.timestamp, 'MMM do, yyyy H:mm:ss')}
+            placement={"top"}
+            content={format(activity.timestamp, "MMM do, yyyy H:mm:ss")}
           >
             <time dateTime={activity.timestamp.toISOString()} tabIndex={0}>
               {formatDistanceToNowStrict(activity.timestamp, {
@@ -128,16 +128,16 @@ export default ({ activity, children }: Props) => {
           )}
           <div className={style.icons}>
             {activity.isApi && (
-              <Tooltip placement={'top'} content={'Using API Key'}>
-                <span tabIndex={0} aria-label={'API activity'}>
+              <Tooltip placement={"top"} content={"Using API Key"}>
+                <span tabIndex={0} aria-label={"API activity"}>
                   <Terminal />
                 </span>
               </Tooltip>
             )}
-            {(activity.event.startsWith('server:sftp.') ||
-              activity.event.startsWith('auth:sftp.')) && (
-              <Tooltip placement={'top'} content={'Using SFTP'}>
-                <span tabIndex={0} aria-label={'SFTP activity'}>
+            {(activity.event.startsWith("server:sftp.") ||
+              activity.event.startsWith("auth:sftp.")) && (
+              <Tooltip placement={"top"} content={"Using SFTP"}>
+                <span tabIndex={0} aria-label={"SFTP activity"}>
                   <FolderOpen />
                 </span>
               </Tooltip>

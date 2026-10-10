@@ -1,5 +1,5 @@
-import React from 'react';
-import classNames from 'classnames';
+import React from "react";
+import classNames from "classnames";
 
 export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
   isLight?: boolean;
@@ -9,14 +9,14 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
 const Label: React.FC<LabelProps> = ({
   isLight,
   className,
-  as: Component = 'label',
+  as: Component = "label",
   ...props
 }) => {
   return (
     <Component
       className={classNames(
-        'mb-2 block text-sm font-medium text-neutral-300',
-        isLight && 'text-neutral-700',
+        "mb-2 block text-sm font-medium text-neutral-300",
+        isLight && "text-neutral-700",
         className,
       )}
       {...props}

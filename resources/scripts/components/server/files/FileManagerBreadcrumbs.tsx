@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import { NavLink, useLocation } from 'react-router';
-import { encodePathSegments, hashToPath } from '@/helpers';
+import React, { useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import { NavLink, useLocation } from "react-router";
+import { encodePathSegments, hashToPath } from "@/helpers";
 
 interface Props {
   renderLeft?: React.ReactElement;
@@ -21,14 +21,14 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
     const path = hashToPath(hash);
 
     if (withinFileEditor && !isNewFile) {
-      const name = path.split('/').pop() || null;
+      const name = path.split("/").pop() || null;
       setFile(name);
     }
   }, [withinFileEditor, isNewFile, hash]);
 
   const breadcrumbs = (): { name: string; path?: string }[] =>
     directory
-      .split('/')
+      .split("/")
       .filter((directory) => !!directory)
       .map((directory, index, dirs) => {
         if (!withinFileEditor && index === dirs.length - 1) {
@@ -37,21 +37,21 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
 
         return {
           name: directory,
-          path: `/${dirs.slice(0, index + 1).join('/')}`,
+          path: `/${dirs.slice(0, index + 1).join("/")}`,
         };
       });
 
   return (
     <div
       className={
-        'flex grow-0 items-center overflow-x-hidden text-sm text-neutral-500'
+        "flex grow-0 items-center overflow-x-hidden text-sm text-neutral-500"
       }
     >
-      {renderLeft || <div className={'w-12'} />}/
-      <span className={'px-1 text-neutral-300'}>home</span>/
+      {renderLeft || <div className={"w-12"} />}/
+      <span className={"px-1 text-neutral-300"}>home</span>/
       <NavLink
         to={`/server/${id}/files`}
-        className={'px-1 text-neutral-200 no-underline hover:text-neutral-100'}
+        className={"px-1 text-neutral-200 no-underline hover:text-neutral-100"}
       >
         container
       </NavLink>
@@ -62,7 +62,7 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
             <NavLink
               to={`/server/${id}/files#${encodePathSegments(crumb.path)}`}
               className={
-                'px-1 text-neutral-200 no-underline hover:text-neutral-100'
+                "px-1 text-neutral-200 no-underline hover:text-neutral-100"
               }
             >
               {crumb.name}
@@ -70,14 +70,14 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
             /
           </React.Fragment>
         ) : (
-          <span key={index} className={'px-1 text-neutral-300'}>
+          <span key={index} className={"px-1 text-neutral-300"}>
             {crumb.name}
           </span>
         ),
       )}
       {file && (
         <React.Fragment>
-          <span className={'px-1 text-neutral-300'}>{file}</span>
+          <span className={"px-1 text-neutral-300"}>{file}</span>
         </React.Fragment>
       )}
     </div>

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import Icon from '@/components/elements/Icon';
-import { ServerContext } from '@/state/server';
-import deleteServerAllocation from '@/api/server/network/deleteServerAllocation';
-import getServerAllocations from '@/api/server/network/getServerAllocations';
-import { useFlashKey } from '@/plugins/useFlash';
-import { Dialog } from '@/components/elements/dialog';
-import { Button } from '@/components/elements/button/index';
+import React, { useState } from "react";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import Icon from "@/components/elements/Icon";
+import { ServerContext } from "@/state/server";
+import deleteServerAllocation from "@/api/server/network/deleteServerAllocation";
+import getServerAllocations from "@/api/server/network/getServerAllocations";
+import { useFlashKey } from "@/plugins/useFlash";
+import { Dialog } from "@/components/elements/dialog";
+import { Button } from "@/components/elements/button/index";
 
 interface Props {
   allocation: number;
@@ -21,7 +21,7 @@ const DeleteAllocationButton = ({ allocation }: Props) => {
   );
 
   const { mutate } = getServerAllocations();
-  const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
+  const { clearFlashes, clearAndAddHttpError } = useFlashKey("server:network");
 
   const deleteAllocation = () => {
     clearFlashes();
@@ -43,8 +43,8 @@ const DeleteAllocationButton = ({ allocation }: Props) => {
       <Dialog.Confirm
         open={confirm}
         onClose={() => setConfirm(false)}
-        title={'Remove Allocation'}
-        confirm={'Delete'}
+        title={"Remove Allocation"}
+        confirm={"Delete"}
         onConfirmed={deleteAllocation}
       >
         This allocation will be immediately removed from your server.
@@ -53,10 +53,10 @@ const DeleteAllocationButton = ({ allocation }: Props) => {
         variant={Button.Variants.Secondary}
         size={Button.Sizes.Small}
         shape={Button.Shapes.IconSquare}
-        type={'button'}
+        type={"button"}
         onClick={() => setConfirm(true)}
       >
-        <Icon icon={faTrashAlt} className={'h-auto w-3'} />
+        <Icon icon={faTrashAlt} className={"h-auto w-3"} />
       </Button.Danger>
     </>
   );

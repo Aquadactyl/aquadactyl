@@ -3,8 +3,8 @@
 const ESC = String.fromCharCode(27);
 const PROMPT_REGEX = new RegExp(
   `^((?:${ESC}\\[[\\d;]*m)*)container@pterodactyl(?=~(?:\\s|${ESC}|$))`,
-  'gm',
+  "gm",
 );
 
 export const formatConsoleOutput = (output: string): string =>
-  output.replace(PROMPT_REGEX, '$1container@aquadactyl');
+  output.replace(PROMPT_REGEX, "$1container@aquadactyl");

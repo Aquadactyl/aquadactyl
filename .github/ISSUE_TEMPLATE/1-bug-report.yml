@@ -68,7 +68,7 @@ body:
 
         Wings: `sudo wings diagnostics`
         Panel: `tail -n 150 /var/www/aquadactyl/storage/logs/laravel-$(date +%F).log | nc pteropaste.com 99`
-      placeholder: 'https://pteropaste.com/a1h6z'
+      placeholder: "https://pteropaste.com/a1h6z"
       render: bash
     validations:
       required: false

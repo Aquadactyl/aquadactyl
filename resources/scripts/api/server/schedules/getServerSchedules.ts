@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export interface Schedule {
   id: number;
@@ -71,7 +71,7 @@ export const rawDataToServerSchedule = (data: any): Schedule => ({
 export default async (uuid: string): Promise<Schedule[]> => {
   const { data } = await http.get(`/api/client/servers/${uuid}/schedules`, {
     params: {
-      include: ['tasks'],
+      include: ["tasks"],
     },
   });
 

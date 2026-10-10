@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export function usePersistedState<S = undefined>(
   key: string,
@@ -10,7 +10,7 @@ export function usePersistedState<S = undefined>(
 
       return JSON.parse(item || String(defaultValue));
     } catch (e) {
-      console.warn('Failed to retrieve persisted value from store.', e);
+      console.warn("Failed to retrieve persisted value from store.", e);
 
       return defaultValue;
     }

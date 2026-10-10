@@ -1,8 +1,8 @@
 import {
   rawDataToServerTask,
   Task,
-} from '@/api/server/schedules/getServerSchedules';
-import http from '@/api/http';
+} from "@/api/server/schedules/getServerSchedules";
+import http from "@/api/http";
 
 interface Data {
   action: string;
@@ -18,7 +18,7 @@ export default async (
   data: Data,
 ): Promise<Task> => {
   const { data: response } = await http.post(
-    `/api/client/servers/${uuid}/schedules/${schedule}/tasks${task ? `/${task}` : ''}`,
+    `/api/client/servers/${uuid}/schedules/${schedule}/tasks${task ? `/${task}` : ""}`,
     {
       action: data.action,
       payload: data.payload,

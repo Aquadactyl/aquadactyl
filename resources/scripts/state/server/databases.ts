@@ -1,4 +1,4 @@
-import { ServerDatabase } from '@/api/server/databases/getServerDatabases';
+import { ServerDatabase } from "@/api/server/databases/getServerDatabases";
 
 export interface ServerDatabaseState {
   data: ServerDatabase[];

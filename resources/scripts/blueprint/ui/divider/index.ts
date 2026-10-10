@@ -1,1 +1,1 @@
-export { default as UiDivider } from './UiDivider';
+export { default as UiDivider } from "./UiDivider";

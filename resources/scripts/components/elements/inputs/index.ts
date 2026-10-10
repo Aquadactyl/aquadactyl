@@ -1,5 +1,5 @@
-import Checkbox from '@/components/elements/inputs/Checkbox';
-import InputField from '@/components/elements/inputs/InputField';
+import Checkbox from "@/components/elements/inputs/Checkbox";
+import InputField from "@/components/elements/inputs/InputField";
 
 const Input: { Text: typeof InputField; Checkbox: typeof Checkbox } =
   Object.assign(
@@ -11,4 +11,4 @@ const Input: { Text: typeof InputField; Checkbox: typeof Checkbox } =
   );
 
 export { Input };
-export { default as styles } from './styles.module.css';
+export { default as styles } from "./styles.module.css";

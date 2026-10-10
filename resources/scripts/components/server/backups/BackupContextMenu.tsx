@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   faBoxOpen,
   faCloudDownloadAlt,
@@ -6,25 +6,25 @@ import {
   faLock,
   faTrashAlt,
   faUnlock,
-} from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DropdownMenu, {
   DropdownButtonRow,
-} from '@/components/elements/DropdownMenu';
-import getBackupDownloadUrl from '@/api/server/backups/getBackupDownloadUrl';
-import useFlash from '@/plugins/useFlash';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import deleteBackup from '@/api/server/backups/deleteBackup';
-import Can from '@/components/elements/Can';
-import getServerBackups from '@/api/server/backups/getServerBackups';
-import { ServerBackup } from '@/api/server/types';
-import { ServerContext } from '@/state/server';
-import Input from '@/components/elements/Input';
-import { restoreServerBackup } from '@/api/server/backups';
-import http, { httpErrorToHuman } from '@/api/http';
-import { Dialog } from '@/components/elements/dialog';
+} from "@/components/elements/DropdownMenu";
+import getBackupDownloadUrl from "@/api/server/backups/getBackupDownloadUrl";
+import useFlash from "@/plugins/useFlash";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import deleteBackup from "@/api/server/backups/deleteBackup";
+import Can from "@/components/elements/Can";
+import getServerBackups from "@/api/server/backups/getServerBackups";
+import { ServerBackup } from "@/api/server/types";
+import { ServerContext } from "@/state/server";
+import Input from "@/components/elements/Input";
+import { restoreServerBackup } from "@/api/server/backups";
+import http, { httpErrorToHuman } from "@/api/http";
+import { Dialog } from "@/components/elements/dialog";
 
-import DropdownItems from '@blueprint/components/Server/Backups/DropdownItems';
+import DropdownItems from "@blueprint/components/Server/Backups/DropdownItems";
 
 interface Props {
   backup: ServerBackup;
@@ -35,7 +35,7 @@ export default ({ backup }: Props) => {
   const setServerFromState = ServerContext.useStoreActions(
     (actions) => actions.server.setServerFromState,
   );
-  const [modal, setModal] = useState('');
+  const [modal, setModal] = useState("");
   const [loading, setLoading] = useState(false);
   const [truncate, setTruncate] = useState(false);
   const { clearFlashes, clearAndAddHttpError } = useFlash();
@@ -43,7 +43,7 @@ export default ({ backup }: Props) => {
 
   const doDownload = () => {
     setLoading(true);
-    clearFlashes('backups');
+    clearFlashes("backups");
     getBackupDownloadUrl(uuid, backup.uuid)
       .then((url) => {
         // @ts-expect-error this is valid
@@ -51,14 +51,14 @@ export default ({ backup }: Props) => {
       })
       .catch((error) => {
         console.error(error);
-        clearAndAddHttpError({ key: 'backups', error });
+        clearAndAddHttpError({ key: "backups", error });
       })
       .then(() => setLoading(false));
   };
 
   const doDeletion = () => {
     setLoading(true);
-    clearFlashes('backups');
+    clearFlashes("backups");
     deleteBackup(uuid, backup.uuid)
       .then(() =>
         mutate(
@@ -72,33 +72,33 @@ export default ({ backup }: Props) => {
       )
       .catch((error) => {
         console.error(error);
-        clearAndAddHttpError({ key: 'backups', error });
+        clearAndAddHttpError({ key: "backups", error });
         setLoading(false);
-        setModal('');
+        setModal("");
       });
   };
 
   const doRestorationAction = () => {
     setLoading(true);
-    clearFlashes('backups');
+    clearFlashes("backups");
     restoreServerBackup(uuid, backup.uuid, truncate)
       .then(() =>
         setServerFromState((s) => ({
           ...s,
-          status: 'restoring_backup',
+          status: "restoring_backup",
         })),
       )
       .catch((error) => {
         console.error(error);
-        clearAndAddHttpError({ key: 'backups', error });
+        clearAndAddHttpError({ key: "backups", error });
       })
       .then(() => setLoading(false))
-      .then(() => setModal(''));
+      .then(() => setModal(""));
   };
 
   const onLockToggle = () => {
-    if (backup.isLocked && modal !== 'unlock') {
-      return setModal('unlock');
+    if (backup.isLocked && modal !== "unlock") {
+      return setModal("unlock");
     }
 
     http
@@ -120,14 +120,14 @@ export default ({ backup }: Props) => {
         ),
       )
       .catch((error) => alert(httpErrorToHuman(error)))
-      .then(() => setModal(''));
+      .then(() => setModal(""));
   };
 
   return (
     <>
       <Dialog.Confirm
-        open={modal === 'unlock'}
-        onClose={() => setModal('')}
+        open={modal === "unlock"}
+        onClose={() => setModal("")}
         title={`Unlock "${backup.name}"`}
         onConfirmed={onLockToggle}
       >
@@ -135,9 +135,9 @@ export default ({ backup }: Props) => {
         deletions.
       </Dialog.Confirm>
       <Dialog.Confirm
-        open={modal === 'restore'}
-        onClose={() => setModal('')}
-        confirm={'Restore'}
+        open={modal === "restore"}
+        onClose={() => setModal("")}
+        confirm={"Restore"}
         title={`Restore "${backup.name}"`}
         onConfirmed={() => doRestorationAction()}
       >
@@ -146,16 +146,16 @@ export default ({ backup }: Props) => {
           state, access the file manager, or create additional backups until
           completed.
         </p>
-        <p className={'mt-4 -mb-2 rounded bg-gray-700 p-3'}>
+        <p className={"mt-4 -mb-2 rounded bg-gray-700 p-3"}>
           <label
-            htmlFor={'restore_truncate'}
-            className={'flex cursor-pointer items-center text-base'}
+            htmlFor={"restore_truncate"}
+            className={"flex cursor-pointer items-center text-base"}
           >
             <Input
-              type={'checkbox'}
-              className={'mr-2 h-5! w-5! text-red-500!'}
-              id={'restore_truncate'}
-              value={'true'}
+              type={"checkbox"}
+              className={"mr-2 h-5! w-5! text-red-500!"}
+              id={"restore_truncate"}
+              value={"true"}
               checked={truncate}
               onChange={() => setTruncate((s) => !s)}
             />
@@ -165,9 +165,9 @@ export default ({ backup }: Props) => {
       </Dialog.Confirm>
       <Dialog.Confirm
         title={`Delete "${backup.name}"`}
-        confirm={'Continue'}
-        open={modal === 'delete'}
-        onClose={() => setModal('')}
+        confirm={"Continue"}
+        open={modal === "delete"}
+        onClose={() => setModal("")}
         onConfirmed={doDeletion}
       >
         This is a permanent operation. The backup cannot be recovered once
@@ -180,52 +180,52 @@ export default ({ backup }: Props) => {
             <button
               onClick={onClick}
               className={
-                'cursor-pointer p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'
+                "cursor-pointer p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100"
               }
             >
               <FontAwesomeIcon icon={faEllipsisH} />
             </button>
           )}
         >
-          <div className={'text-sm'}>
-            <Can action={'backup.download'}>
+          <div className={"text-sm"}>
+            <Can action={"backup.download"}>
               <DropdownButtonRow onClick={doDownload}>
                 <FontAwesomeIcon
                   fixedWidth
                   icon={faCloudDownloadAlt}
-                  className={'text-xs'}
+                  className={"text-xs"}
                 />
-                <span className={'ml-2'}>Download</span>
+                <span className={"ml-2"}>Download</span>
               </DropdownButtonRow>
             </Can>
-            <Can action={'backup.restore'}>
-              <DropdownButtonRow onClick={() => setModal('restore')}>
+            <Can action={"backup.restore"}>
+              <DropdownButtonRow onClick={() => setModal("restore")}>
                 <FontAwesomeIcon
                   fixedWidth
                   icon={faBoxOpen}
-                  className={'text-xs'}
+                  className={"text-xs"}
                 />
-                <span className={'ml-2'}>Restore</span>
+                <span className={"ml-2"}>Restore</span>
               </DropdownButtonRow>
             </Can>
-            <Can action={'backup.delete'}>
+            <Can action={"backup.delete"}>
               <>
                 <DropdownButtonRow onClick={onLockToggle}>
                   <FontAwesomeIcon
                     fixedWidth
                     icon={backup.isLocked ? faUnlock : faLock}
-                    className={'mr-2 text-xs'}
+                    className={"mr-2 text-xs"}
                   />
-                  {backup.isLocked ? 'Unlock' : 'Lock'}
+                  {backup.isLocked ? "Unlock" : "Lock"}
                 </DropdownButtonRow>
                 {!backup.isLocked && (
-                  <DropdownButtonRow danger onClick={() => setModal('delete')}>
+                  <DropdownButtonRow danger onClick={() => setModal("delete")}>
                     <FontAwesomeIcon
                       fixedWidth
                       icon={faTrashAlt}
-                      className={'text-xs'}
+                      className={"text-xs"}
                     />
-                    <span className={'ml-2'}>Delete</span>
+                    <span className={"ml-2"}>Delete</span>
                   </DropdownButtonRow>
                 )}
               </>
@@ -235,9 +235,9 @@ export default ({ backup }: Props) => {
         </DropdownMenu>
       ) : (
         <button
-          onClick={() => setModal('delete')}
+          onClick={() => setModal("delete")}
           className={
-            'cursor-pointer p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100'
+            "cursor-pointer p-2 text-gray-200 transition-colors duration-150 hover:text-gray-100"
           }
         >
           <FontAwesomeIcon icon={faTrashAlt} />

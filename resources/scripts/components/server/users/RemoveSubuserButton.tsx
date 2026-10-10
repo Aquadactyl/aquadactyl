@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import ConfirmationModal from '@/components/elements/ConfirmationModal';
-import { ServerContext } from '@/state/server';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { Subuser } from '@/state/server/subusers';
-import deleteSubuser from '@/api/server/users/deleteSubuser';
-import useFlash from '@/plugins/useFlash';
-import { httpErrorToHuman } from '@/api/http';
+import React, { useState } from "react";
+import ConfirmationModal from "@/components/elements/ConfirmationModal";
+import { ServerContext } from "@/state/server";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
+import { Subuser } from "@/state/server/subusers";
+import deleteSubuser from "@/api/server/users/deleteSubuser";
+import useFlash from "@/plugins/useFlash";
+import { httpErrorToHuman } from "@/api/http";
 
 export default ({ subuser }: { subuser: Subuser }) => {
   const [loading, setLoading] = useState(false);
@@ -20,7 +20,7 @@ export default ({ subuser }: { subuser: Subuser }) => {
 
   const doDeletion = () => {
     setLoading(true);
-    clearFlashes('users');
+    clearFlashes("users");
     deleteSubuser(uuid, subuser.uuid)
       .then(() => {
         setLoading(false);
@@ -28,7 +28,7 @@ export default ({ subuser }: { subuser: Subuser }) => {
       })
       .catch((error) => {
         console.error(error);
-        addError({ key: 'users', message: httpErrorToHuman(error) });
+        addError({ key: "users", message: httpErrorToHuman(error) });
         setShowConfirmation(false);
       });
   };
@@ -36,8 +36,8 @@ export default ({ subuser }: { subuser: Subuser }) => {
   return (
     <>
       <ConfirmationModal
-        title={'Delete this subuser?'}
-        buttonText={'Yes, remove subuser'}
+        title={"Delete this subuser?"}
+        buttonText={"Yes, remove subuser"}
         visible={showConfirmation}
         showSpinnerOverlay={loading}
         onConfirmed={() => doDeletion()}
@@ -47,10 +47,10 @@ export default ({ subuser }: { subuser: Subuser }) => {
         to this server revoked immediately.
       </ConfirmationModal>
       <button
-        type={'button'}
-        aria-label={'Delete subuser'}
+        type={"button"}
+        aria-label={"Delete subuser"}
         className={
-          'block cursor-pointer p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-red-600'
+          "block cursor-pointer p-2 text-sm text-neutral-500 transition-colors duration-150 hover:text-red-600"
         }
         onClick={() => setShowConfirmation(true)}
       >

@@ -1,7 +1,7 @@
-import React, { useId } from 'react';
-import { Field, FieldProps } from 'formik';
-import InputError from '@/components/elements/InputError';
-import Label from '@/components/elements/Label';
+import React, { useId } from "react";
+import { Field, FieldProps } from "formik";
+import InputError from "@/components/elements/InputError";
+import Label from "@/components/elements/Label";
 
 interface Props {
   id?: string;
@@ -29,7 +29,7 @@ const FormikFieldWrapper = ({
     <Field name={name} validate={validate}>
       {({ field, form: { errors, touched } }: FieldProps) => (
         <div
-          className={`${className} ${touched[field.name] && errors[field.name] ? 'has-error' : undefined}`}
+          className={`${className} ${touched[field.name] && errors[field.name] ? "has-error" : undefined}`}
         >
           {label && <Label htmlFor={fieldId}>{label}</Label>}
           {children}

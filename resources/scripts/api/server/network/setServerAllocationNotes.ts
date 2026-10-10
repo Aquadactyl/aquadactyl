@@ -1,6 +1,6 @@
-import { Allocation } from '@/api/server/getServer';
-import http from '@/api/http';
-import { rawDataToServerAllocation } from '@/api/transformers';
+import { Allocation } from "@/api/server/getServer";
+import http from "@/api/http";
+import { rawDataToServerAllocation } from "@/api/transformers";
 
 export default async (
   uuid: string,

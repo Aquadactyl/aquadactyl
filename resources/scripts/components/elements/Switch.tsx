@@ -1,8 +1,8 @@
-import React, { useId } from 'react';
-import styled from 'styled-components';
-import classNames from 'classnames';
-import Label from '@/components/elements/Label';
-import Input from '@/components/elements/Input';
+import React, { useId } from "react";
+import styled from "styled-components";
+import classNames from "classnames";
+import Label from "@/components/elements/Label";
+import Input from "@/components/elements/Input";
 
 const ToggleContainer = styled.div`
   position: relative;
@@ -10,7 +10,7 @@ const ToggleContainer = styled.div`
   width: 3rem;
   line-height: 1.5;
 
-  & > input[type='checkbox'] {
+  & > input[type="checkbox"] {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -59,7 +59,7 @@ const ToggleContainer = styled.div`
       border-radius: 9999px;
       top: 0.125rem;
       right: calc(50% + 0.125rem);
-      content: '';
+      content: "";
       transition: all 75ms ease-in;
     }
   }
@@ -90,13 +90,13 @@ const Switch = ({
   const switchId = id || generatedId;
 
   return (
-    <div className={'flex items-center'}>
-      <ToggleContainer className={'flex-none'}>
+    <div className={"flex items-center"}>
+      <ToggleContainer className={"flex-none"}>
         {children || (
           <Input
             id={switchId}
             name={name}
-            type={'checkbox'}
+            type={"checkbox"}
             onChange={(e) => onChange && onChange(e)}
             defaultChecked={defaultChecked}
             disabled={readOnly}
@@ -105,17 +105,17 @@ const Switch = ({
         <Label htmlFor={switchId} />
       </ToggleContainer>
       {(label || description) && (
-        <div className={'ml-4 w-full'}>
+        <div className={"ml-4 w-full"}>
           {label && (
             <Label
-              className={classNames('cursor-pointer', !!description && 'mb-0')}
+              className={classNames("cursor-pointer", !!description && "mb-0")}
               htmlFor={switchId}
             >
               {label}
             </Label>
           )}
           {description && (
-            <p className={'mt-2 text-sm text-neutral-400'}>{description}</p>
+            <p className={"mt-2 text-sm text-neutral-400"}>{description}</p>
           )}
         </div>
       )}

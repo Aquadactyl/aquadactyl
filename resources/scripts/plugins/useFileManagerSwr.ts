@@ -2,4 +2,4 @@ export {
   default,
   getDirectoryQueryKey,
   getDirectorySwrKey,
-} from './useFileManagerQuery';
+} from "./useFileManagerQuery";

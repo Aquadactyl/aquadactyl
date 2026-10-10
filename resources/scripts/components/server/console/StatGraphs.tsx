@@ -1,26 +1,26 @@
-import React, { useEffect, useRef } from 'react';
-import { ServerContext } from '@/state/server';
-import { SocketEvent } from '@/components/server/events';
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import { Line } from 'react-chartjs-2';
-import { useChart, useChartTickLabel } from '@/components/server/console/chart';
-import { hexToRgba } from '@/lib/helpers';
-import { bytesToString } from '@/lib/formatters';
-import { CloudDownload, CloudUpload } from 'lucide-react';
-import { theme } from '@/lib/theme';
-import ChartBlock from '@/components/server/console/ChartBlock';
-import Tooltip from '@/components/elements/tooltip/Tooltip';
+import React, { useEffect, useRef } from "react";
+import { ServerContext } from "@/state/server";
+import { SocketEvent } from "@/components/server/events";
+import useWebsocketEvent from "@/plugins/useWebsocketEvent";
+import { Line } from "react-chartjs-2";
+import { useChart, useChartTickLabel } from "@/components/server/console/chart";
+import { hexToRgba } from "@/lib/helpers";
+import { bytesToString } from "@/lib/formatters";
+import { CloudDownload, CloudUpload } from "lucide-react";
+import { theme } from "@/lib/theme";
+import ChartBlock from "@/components/server/console/ChartBlock";
+import Tooltip from "@/components/elements/tooltip/Tooltip";
 
 export default () => {
   const status = ServerContext.useStoreState((state) => state.status.value);
   const limits = ServerContext.useStoreState(
     (state) => state.server.data!.limits,
   );
-  const previous = useRef<Record<'tx' | 'rx', number>>({ tx: -1, rx: -1 });
+  const previous = useRef<Record<"tx" | "rx", number>>({ tx: -1, rx: -1 });
 
-  const cpu = useChartTickLabel('CPU', limits.cpu, '%', 2);
-  const memory = useChartTickLabel('Memory', limits.memory, 'MiB');
-  const network = useChart('Network', {
+  const cpu = useChartTickLabel("CPU", limits.cpu, "%", 2);
+  const memory = useChartTickLabel("Memory", limits.memory, "MiB");
+  const network = useChart("Network", {
     sets: 2,
     options: {
       scales: {
@@ -28,7 +28,7 @@ export default () => {
           ticks: {
             callback(value) {
               return bytesToString(
-                typeof value === 'string' ? parseInt(value, 10) : value,
+                typeof value === "string" ? parseInt(value, 10) : value,
               );
             },
           },
@@ -38,12 +38,12 @@ export default () => {
     callback(opts, index) {
       return {
         ...opts,
-        label: !index ? 'Network In' : 'Network Out',
+        label: !index ? "Network In" : "Network Out",
         borderColor: !index
-          ? theme('colors.cyan.400')
-          : theme('colors.yellow.400'),
+          ? theme("colors.cyan.400")
+          : theme("colors.yellow.400"),
         backgroundColor: hexToRgba(
-          !index ? theme('colors.cyan.700') : theme('colors.yellow.700'),
+          !index ? theme("colors.cyan.700") : theme("colors.yellow.700"),
           0.5,
         ),
       };
@@ -51,7 +51,7 @@ export default () => {
   });
 
   useEffect(() => {
-    if (status === 'offline') {
+    if (status === "offline") {
       cpu.clear();
       memory.clear();
       network.clear();
@@ -84,21 +84,21 @@ export default () => {
 
   return (
     <>
-      <ChartBlock title={'CPU Load'}>
+      <ChartBlock title={"CPU Load"}>
         <Line {...cpu.props} />
       </ChartBlock>
-      <ChartBlock title={'Memory'}>
+      <ChartBlock title={"Memory"}>
         <Line {...memory.props} />
       </ChartBlock>
       <ChartBlock
-        title={'Network'}
+        title={"Network"}
         legend={
           <>
-            <Tooltip arrow content={'Inbound'}>
-              <CloudDownload className={'mr-2 h-4 w-4 text-yellow-400'} />
+            <Tooltip arrow content={"Inbound"}>
+              <CloudDownload className={"mr-2 h-4 w-4 text-yellow-400"} />
             </Tooltip>
-            <Tooltip arrow content={'Outbound'}>
-              <CloudUpload className={'h-4 w-4 text-cyan-400'} />
+            <Tooltip arrow content={"Outbound"}>
+              <CloudUpload className={"h-4 w-4 text-cyan-400"} />
             </Tooltip>
           </>
         }

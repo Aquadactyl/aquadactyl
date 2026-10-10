@@ -1,9 +1,9 @@
-import { useTanStackQuery } from '@/lib/queryClient';
-import http, { getPaginationSet, PaginatedResult } from '@/api/http';
-import { ServerBackup } from '@/api/server/types';
-import { rawDataToServerBackup } from '@/api/transformers';
-import { ServerContext } from '@/state/server';
-import { createContext, useContext } from 'react';
+import { useTanStackQuery } from "@/lib/queryClient";
+import http, { getPaginationSet, PaginatedResult } from "@/api/http";
+import { ServerBackup } from "@/api/server/types";
+import { rawDataToServerBackup } from "@/api/transformers";
+import { ServerContext } from "@/state/server";
+import { createContext, useContext } from "react";
 
 interface ctx {
   page: number;
@@ -19,7 +19,7 @@ export default () => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
 
   return useTanStackQuery<BackupResponse>(
-    ['server:backups', uuid, page],
+    ["server:backups", uuid, page],
     async () => {
       const { data } = await http.get(`/api/client/servers/${uuid}/backups`, {
         params: { page },

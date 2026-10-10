@@ -1,9 +1,9 @@
-import React, { Suspense } from 'react';
-import styled, { css, keyframes } from 'styled-components';
-import classNames from 'classnames';
-import ErrorBoundary from '@/components/elements/ErrorBoundary';
+import React, { Suspense } from "react";
+import styled, { css, keyframes } from "styled-components";
+import classNames from "classnames";
+import ErrorBoundary from "@/components/elements/ErrorBoundary";
 
-export type SpinnerSize = 'small' | 'base' | 'large';
+export type SpinnerSize = "small" | "base" | "large";
 
 interface Props {
   size?: SpinnerSize;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 interface Spinner extends React.FC<Props> {
-  Size: Record<'SMALL' | 'BASE' | 'LARGE', SpinnerSize>;
+  Size: Record<"SMALL" | "BASE" | "LARGE", SpinnerSize>;
   Suspense: React.FC<Props>;
 }
 
@@ -30,13 +30,13 @@ const SpinnerComponent = styled.div<{ $size?: SpinnerSize; $isBlue?: boolean }>`
   animation: ${spin} 1s cubic-bezier(0.55, 0.25, 0.25, 0.7) infinite;
 
   ${(props) =>
-    props.$size === 'small'
+    props.$size === "small"
       ? css`
           width: 1rem;
           height: 1rem;
           border-width: 2px;
         `
-      : props.$size === 'large'
+      : props.$size === "large"
         ? css`
             width: 4rem;
             height: 4rem;
@@ -44,16 +44,16 @@ const SpinnerComponent = styled.div<{ $size?: SpinnerSize; $isBlue?: boolean }>`
           `
         : null};
 
-  border-color: ${(props) => (!props.$isBlue ? 'rgba(255, 255, 255, 0.2)' : 'hsla(212, 92%, 43%, 0.2)')};
-  border-top-color: ${(props) => (!props.$isBlue ? 'rgb(255, 255, 255)' : 'hsl(212, 92%, 43%)')};
+  border-color: ${(props) => (!props.$isBlue ? "rgba(255, 255, 255, 0.2)" : "hsla(212, 92%, 43%, 0.2)")};
+  border-top-color: ${(props) => (!props.$isBlue ? "rgb(255, 255, 255)" : "hsl(212, 92%, 43%)")};
 `;
 
 const Spinner: Spinner = ({ centered, className, size, isBlue }) =>
   centered ? (
     <div
       className={classNames(
-        'flex items-center justify-center',
-        size === 'large' ? 'm-20' : 'm-6',
+        "flex items-center justify-center",
+        size === "large" ? "m-20" : "m-6",
         className,
       )}
     >
@@ -62,12 +62,12 @@ const Spinner: Spinner = ({ centered, className, size, isBlue }) =>
   ) : (
     <SpinnerComponent className={className} $size={size} $isBlue={isBlue} />
   );
-Spinner.displayName = 'Spinner';
+Spinner.displayName = "Spinner";
 
 Spinner.Size = {
-  SMALL: 'small',
-  BASE: 'base',
-  LARGE: 'large',
+  SMALL: "small",
+  BASE: "base",
+  LARGE: "large",
 };
 
 Spinner.Suspense = ({
@@ -80,6 +80,6 @@ Spinner.Suspense = ({
     <ErrorBoundary>{children}</ErrorBoundary>
   </Suspense>
 );
-Spinner.Suspense.displayName = 'Spinner.Suspense';
+Spinner.Suspense.displayName = "Spinner.Suspense";
 
 export default Spinner;

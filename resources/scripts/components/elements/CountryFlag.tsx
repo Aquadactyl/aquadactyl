@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 export default ({
   code,
   name,
@@ -9,8 +9,8 @@ export default ({
   if (!code || !/^[A-Z]{2}$/.test(code)) return null;
   return (
     <img
-      className={'country-flag'}
-      src={'/flags/' + code.toLowerCase() + '.svg'}
+      className={"country-flag"}
+      src={"/flags/" + code.toLowerCase() + ".svg"}
       alt={name || code}
       title={name || code}
       width={20}

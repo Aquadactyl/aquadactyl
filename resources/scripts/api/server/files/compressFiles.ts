@@ -1,6 +1,6 @@
-import { FileObject } from '@/api/server/files/loadDirectory';
-import http from '@/api/http';
-import { rawDataToFileObject } from '@/api/transformers';
+import { FileObject } from "@/api/server/files/loadDirectory";
+import http from "@/api/http";
+import { rawDataToFileObject } from "@/api/transformers";
 
 export default async (
   uuid: string,
@@ -13,7 +13,7 @@ export default async (
     {
       timeout: 60000,
       timeoutErrorMessage:
-        'It looks like this archive is taking a long time to generate. It will appear once completed.',
+        "It looks like this archive is taking a long time to generate. It will appear once completed.",
     },
   );
 

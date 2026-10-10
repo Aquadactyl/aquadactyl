@@ -5,4 +5,4 @@ export {
   useSWRKey,
   useServerSWRKey,
   useUserSWRKey,
-} from './useQueryKey';
+} from "./useQueryKey";

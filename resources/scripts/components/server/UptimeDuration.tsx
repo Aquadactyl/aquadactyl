@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 export default ({ uptime }: { uptime: number }) => {
   const days = Math.floor(uptime / (24 * 60 * 60));

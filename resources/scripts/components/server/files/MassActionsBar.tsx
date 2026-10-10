@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from '@/components/elements/button/index';
-import Fade from '@/components/elements/Fade';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import useFileManagerQuery from '@/plugins/useFileManagerQuery';
-import useFlash from '@/plugins/useFlash';
-import compressFiles from '@/api/server/files/compressFiles';
-import { ServerContext } from '@/state/server';
-import deleteFiles from '@/api/server/files/deleteFiles';
-import RenameFileModal from '@/components/server/files/RenameFileModal';
-import Portal from '@/components/elements/Portal';
-import { Dialog } from '@/components/elements/dialog';
+import React, { useEffect, useState } from "react";
+import { Button } from "@/components/elements/button/index";
+import Fade from "@/components/elements/Fade";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import useFileManagerQuery from "@/plugins/useFileManagerQuery";
+import useFlash from "@/plugins/useFlash";
+import compressFiles from "@/api/server/files/compressFiles";
+import { ServerContext } from "@/state/server";
+import deleteFiles from "@/api/server/files/deleteFiles";
+import RenameFileModal from "@/components/server/files/RenameFileModal";
+import Portal from "@/components/elements/Portal";
+import { Dialog } from "@/components/elements/dialog";
 
 const MassActionsBar = () => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -17,7 +17,7 @@ const MassActionsBar = () => {
   const { mutate } = useFileManagerQuery();
   const { clearFlashes, clearAndAddHttpError } = useFlash();
   const [loading, setLoading] = useState(false);
-  const [loadingMessage, setLoadingMessage] = useState('');
+  const [loadingMessage, setLoadingMessage] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
   const [showMove, setShowMove] = useState(false);
   const directory = ServerContext.useStoreState(
@@ -32,26 +32,26 @@ const MassActionsBar = () => {
   );
 
   useEffect(() => {
-    if (!loading) setLoadingMessage('');
+    if (!loading) setLoadingMessage("");
   }, [loading]);
 
   const onClickCompress = () => {
     setLoading(true);
-    clearFlashes('files');
-    setLoadingMessage('Archiving files...');
+    clearFlashes("files");
+    setLoadingMessage("Archiving files...");
 
     compressFiles(uuid, directory, selectedFiles)
       .then(() => mutate())
       .then(() => setSelectedFiles([]))
-      .catch((error) => clearAndAddHttpError({ key: 'files', error }))
+      .catch((error) => clearAndAddHttpError({ key: "files", error }))
       .then(() => setLoading(false));
   };
 
   const onClickConfirmDeletion = () => {
     setLoading(true);
     setShowConfirm(false);
-    clearFlashes('files');
-    setLoadingMessage('Deleting files...');
+    clearFlashes("files");
+    setLoadingMessage("Deleting files...");
 
     deleteFiles(uuid, directory, selectedFiles)
       .then(() => {
@@ -63,7 +63,7 @@ const MassActionsBar = () => {
       })
       .catch((error) => {
         mutate();
-        clearAndAddHttpError({ key: 'files', error });
+        clearAndAddHttpError({ key: "files", error });
       })
       .then(() => setLoading(false));
   };
@@ -72,22 +72,22 @@ const MassActionsBar = () => {
     <>
       <div
         className={
-          'pointer-events-none fixed right-0 bottom-0 left-0 z-20 flex justify-center'
+          "pointer-events-none fixed right-0 bottom-0 left-0 z-20 flex justify-center"
         }
       >
-        <SpinnerOverlay visible={loading} size={'large'} fixed>
+        <SpinnerOverlay visible={loading} size={"large"} fixed>
           {loadingMessage}
         </SpinnerOverlay>
         <Dialog.Confirm
-          title={'Delete Files'}
+          title={"Delete Files"}
           open={showConfirm}
-          confirm={'Delete'}
+          confirm={"Delete"}
           onClose={() => setShowConfirm(false)}
           onConfirmed={onClickConfirmDeletion}
         >
-          <p className={'mb-2'}>
+          <p className={"mb-2"}>
             Are you sure you want to delete&nbsp;
-            <span className={'font-semibold text-gray-50'}>
+            <span className={"font-semibold text-gray-50"}>
               {selectedFiles.length} files
             </span>
             ? This is a permanent action and the files cannot be recovered.
@@ -111,13 +111,13 @@ const MassActionsBar = () => {
         <Portal>
           <div
             className={
-              'pointer-events-none fixed bottom-0 z-50 mb-6 flex w-full justify-center'
+              "pointer-events-none fixed bottom-0 z-50 mb-6 flex w-full justify-center"
             }
           >
             <Fade timeout={75} in={selectedFiles.length > 0} unmountOnExit>
               <div
                 className={
-                  'pointer-events-auto flex items-center space-x-4 rounded bg-black/50 p-4'
+                  "pointer-events-auto flex items-center space-x-4 rounded bg-black/50 p-4"
                 }
               >
                 <Button onClick={() => setShowMove(true)}>Move</Button>

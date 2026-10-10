@@ -1,4 +1,4 @@
-import http from '@/api/http';
+import http from "@/api/http";
 
 export default (uuid: string, backup: string): Promise<string> => {
   return new Promise((resolve, reject) => {

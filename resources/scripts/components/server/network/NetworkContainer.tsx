@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import Spinner from '@/components/elements/Spinner';
-import { useFlashKey } from '@/plugins/useFlash';
-import ServerContentBlock from '@/components/elements/ServerContentBlock';
-import { ServerContext } from '@/state/server';
-import AllocationRow from '@/components/server/network/AllocationRow';
-import Button from '@/components/elements/Button';
-import createServerAllocation from '@/api/server/network/createServerAllocation';
-import Can from '@/components/elements/Can';
-import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
-import getServerAllocations from '@/api/server/network/getServerAllocations';
-import isEqual from 'react-fast-compare';
-import { useDeepCompareEffect } from '@/plugins/useDeepCompareEffect';
+import React, { useEffect, useState } from "react";
+import Spinner from "@/components/elements/Spinner";
+import { useFlashKey } from "@/plugins/useFlash";
+import ServerContentBlock from "@/components/elements/ServerContentBlock";
+import { ServerContext } from "@/state/server";
+import AllocationRow from "@/components/server/network/AllocationRow";
+import Button from "@/components/elements/Button";
+import createServerAllocation from "@/api/server/network/createServerAllocation";
+import Can from "@/components/elements/Can";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+import getServerAllocations from "@/api/server/network/getServerAllocations";
+import isEqual from "react-fast-compare";
+import { useDeepCompareEffect } from "@/plugins/useDeepCompareEffect";
 
-import BeforeContent from '@blueprint/components/Server/Network/BeforeContent';
-import AfterContent from '@blueprint/components/Server/Network/AfterContent';
+import BeforeContent from "@blueprint/components/Server/Network/BeforeContent";
+import AfterContent from "@blueprint/components/Server/Network/AfterContent";
 
 const NetworkContainer = () => {
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const NetworkContainer = () => {
     (actions) => actions.server.setServerFromState,
   );
 
-  const { clearFlashes, clearAndAddHttpError } = useFlashKey('server:network');
+  const { clearFlashes, clearAndAddHttpError } = useFlashKey("server:network");
   const { data, error, mutate } = getServerAllocations();
 
   useEffect(() => {
@@ -63,9 +63,9 @@ const NetworkContainer = () => {
   };
 
   return (
-    <ServerContentBlock showFlashKey={'server:network'} title={'Network'}>
+    <ServerContentBlock showFlashKey={"server:network"} title={"Network"}>
       {!data ? (
-        <Spinner size={'large'} centered />
+        <Spinner size={"large"} centered />
       ) : (
         <>
           <BeforeContent />
@@ -76,17 +76,17 @@ const NetworkContainer = () => {
             />
           ))}
           {allocationLimit > 0 && (
-            <Can action={'allocation.create'}>
+            <Can action={"allocation.create"}>
               <SpinnerOverlay visible={loading} />
-              <div className={'mt-6 items-center justify-end sm:flex'}>
-                <p className={'mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0'}>
-                  You are currently using {data.length} of {allocationLimit}{' '}
+              <div className={"mt-6 items-center justify-end sm:flex"}>
+                <p className={"mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0"}>
+                  You are currently using {data.length} of {allocationLimit}{" "}
                   allowed allocations for this server.
                 </p>
                 {allocationLimit > data.length && (
                   <Button
-                    className={'w-full sm:w-auto'}
-                    color={'primary'}
+                    className={"w-full sm:w-auto"}
+                    color={"primary"}
                     onClick={onCreateAllocation}
                   >
                     Create Allocation

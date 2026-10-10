@@ -1,8 +1,8 @@
-import useWebsocketEvent from '@/plugins/useWebsocketEvent';
-import { ServerContext } from '@/state/server';
-import { SocketEvent } from '@/components/server/events';
-import { mutateGlobal } from '@/lib/queryClient';
-import { getDirectoryQueryKey } from '@/plugins/useFileManagerQuery';
+import useWebsocketEvent from "@/plugins/useWebsocketEvent";
+import { ServerContext } from "@/state/server";
+import { SocketEvent } from "@/components/server/events";
+import { mutateGlobal } from "@/lib/queryClient";
+import { getDirectoryQueryKey } from "@/plugins/useFileManagerQuery";
 
 const InstallListener = () => {
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -14,7 +14,7 @@ const InstallListener = () => {
   );
 
   useWebsocketEvent(SocketEvent.BACKUP_RESTORE_COMPLETED, () => {
-    mutateGlobal(getDirectoryQueryKey(uuid, '/'));
+    mutateGlobal(getDirectoryQueryKey(uuid, "/"));
     setServerFromState((s) => ({ ...s, status: null }));
   });
 
@@ -28,7 +28,7 @@ const InstallListener = () => {
   // When we see the install started event immediately update the state to indicate such so that the
   // screens automatically update.
   useWebsocketEvent(SocketEvent.INSTALL_STARTED, () => {
-    setServerFromState((s) => ({ ...s, status: 'installing' }));
+    setServerFromState((s) => ({ ...s, status: "installing" }));
   });
 
   return null;

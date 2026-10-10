@@ -1,5 +1,5 @@
-import { DependencyList, useRef } from 'react';
-import isEqual from 'react-fast-compare';
+import { DependencyList, useRef } from "react";
+import isEqual from "react-fast-compare";
 
 export const useDeepMemoize = <T = DependencyList>(value: T): T => {
   const ref = useRef<T | undefined>(undefined);

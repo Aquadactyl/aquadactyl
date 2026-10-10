@@ -1,27 +1,27 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faFileAlt,
   faFileArchive,
   faFileImport,
   faFolder,
-} from '@fortawesome/free-solid-svg-icons';
-import { encodePathSegments } from '@/helpers';
-import { differenceInHours, format, formatDistanceToNow } from 'date-fns';
-import React, { memo } from 'react';
-import { FileObject } from '@/api/server/files/loadDirectory';
-import FileDropdownMenu from '@/components/server/files/FileDropdownMenu';
-import { ServerContext } from '@/state/server';
-import { NavLink } from 'react-router';
-import isEqual from 'react-fast-compare';
-import SelectFileCheckbox from '@/components/server/files/SelectFileCheckbox';
-import { usePermissions } from '@/plugins/usePermissions';
-import { join } from 'pathe';
-import { bytesToString } from '@/lib/formatters';
-import styles from './style.module.css';
+} from "@fortawesome/free-solid-svg-icons";
+import { encodePathSegments } from "@/helpers";
+import { differenceInHours, format, formatDistanceToNow } from "date-fns";
+import React, { memo } from "react";
+import { FileObject } from "@/api/server/files/loadDirectory";
+import FileDropdownMenu from "@/components/server/files/FileDropdownMenu";
+import { ServerContext } from "@/state/server";
+import { NavLink } from "react-router";
+import isEqual from "react-fast-compare";
+import SelectFileCheckbox from "@/components/server/files/SelectFileCheckbox";
+import { usePermissions } from "@/plugins/usePermissions";
+import { join } from "pathe";
+import { bytesToString } from "@/lib/formatters";
+import styles from "./style.module.css";
 
 const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
-  const [canRead] = usePermissions(['file.read']);
-  const [canReadContents] = usePermissions(['file.read-content']);
+  const [canRead] = usePermissions(["file.read"]);
+  const [canReadContents] = usePermissions(["file.read-content"]);
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
   const directory = ServerContext.useStoreState(
     (state) => state.files.directory,
@@ -33,7 +33,7 @@ const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
   ) : (
     <NavLink
       className={styles.details}
-      to={`/server/${id}/files${file.isFile ? '/edit' : ''}#${encodePathSegments(join(directory, file.name))}`}
+      to={`/server/${id}/files${file.isFile ? "/edit" : ""}#${encodePathSegments(join(directory, file.name))}`}
     >
       {children}
     </NavLink>
@@ -55,7 +55,7 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
   >
     <SelectFileCheckbox name={file.name} />
     <Clickable file={file}>
-      <div className={'mr-4 ml-6 flex-none pl-3 text-lg text-neutral-400'}>
+      <div className={"mr-4 ml-6 flex-none pl-3 text-lg text-neutral-400"}>
         {file.isFile ? (
           <FontAwesomeIcon
             icon={
@@ -70,18 +70,18 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
           <FontAwesomeIcon icon={faFolder} />
         )}
       </div>
-      <div className={'flex-1 truncate'}>{file.name}</div>
+      <div className={"flex-1 truncate"}>{file.name}</div>
       {file.isFile && (
-        <div className={'mr-4 hidden w-1/6 text-right sm:block'}>
+        <div className={"mr-4 hidden w-1/6 text-right sm:block"}>
           {bytesToString(file.size)}
         </div>
       )}
       <div
-        className={'mr-4 hidden w-1/5 text-right md:block'}
+        className={"mr-4 hidden w-1/5 text-right md:block"}
         title={file.modifiedAt.toString()}
       >
         {Math.abs(differenceInHours(file.modifiedAt, new Date())) > 48
-          ? format(file.modifiedAt, 'MMM do, yyyy h:mma')
+          ? format(file.modifiedAt, "MMM do, yyyy h:mma")
           : formatDistanceToNow(file.modifiedAt, { addSuffix: true })}
       </div>
     </Clickable>

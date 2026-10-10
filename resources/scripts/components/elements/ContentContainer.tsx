@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const ContentContainer = styled.div`
   width: calc(100% - 64px);
@@ -14,6 +14,6 @@ const ContentContainer = styled.div`
     width: calc(100% - 40px);
   }
 `;
-ContentContainer.displayName = 'ContentContainer';
+ContentContainer.displayName = "ContentContainer";
 
 export default ContentContainer;

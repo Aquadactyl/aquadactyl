@@ -1,5 +1,5 @@
-import { FlashMessageType } from '@/components/MessageBox';
-import { httpErrorToHuman } from '@/api/http';
+import { FlashMessageType } from "@/components/MessageBox";
+import { httpErrorToHuman } from "@/api/http";
 
 export interface FlashMessage {
   id?: string;
@@ -44,7 +44,7 @@ export const createFlashesSlice = (
         ...state.flashes,
         items: [
           ...state.flashes.items,
-          { type: 'error', title: 'Error', ...payload },
+          { type: "error", title: "Error", ...payload },
         ],
       },
     })),
@@ -67,8 +67,8 @@ export const createFlashesSlice = (
           ...state.flashes,
           items: [
             {
-              type: 'error',
-              title: 'Error',
+              type: "error",
+              title: "Error",
               key: payload.key,
               message: httpErrorToHuman(payload.error),
             },

@@ -1,13 +1,13 @@
-import { fileBitsToString } from '@/helpers';
-import useFileManagerQuery from '@/plugins/useFileManagerQuery';
-import React from 'react';
-import Modal, { RequiredModalProps } from '@/components/elements/Modal';
-import { Form, Formik, FormikHelpers } from 'formik';
-import Field from '@/components/elements/Field';
-import chmodFiles from '@/api/server/files/chmodFiles';
-import { ServerContext } from '@/state/server';
-import Button from '@/components/elements/Button';
-import useFlash from '@/plugins/useFlash';
+import { fileBitsToString } from "@/helpers";
+import useFileManagerQuery from "@/plugins/useFileManagerQuery";
+import React from "react";
+import Modal, { RequiredModalProps } from "@/components/elements/Modal";
+import { Form, Formik, FormikHelpers } from "formik";
+import Field from "@/components/elements/Field";
+import chmodFiles from "@/api/server/files/chmodFiles";
+import { ServerContext } from "@/state/server";
+import Button from "@/components/elements/Button";
+import useFlash from "@/plugins/useFlash";
 
 interface FormikValues {
   mode: string;
@@ -35,7 +35,7 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
     { mode }: FormikValues,
     { setSubmitting }: FormikHelpers<FormikValues>,
   ) => {
-    clearFlashes('files');
+    clearFlashes("files");
 
     mutate(
       (data) =>
@@ -61,7 +61,7 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
       .catch((error) => {
         mutate();
         setSubmitting(false);
-        clearAndAddHttpError({ key: 'files', error });
+        clearAndAddHttpError({ key: "files", error });
       })
       .then(() => props.onDismissed());
   };
@@ -70,7 +70,7 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
     <Formik
       onSubmit={submit}
       initialValues={{
-        mode: files.length > 1 ? '' : files[0].mode || '',
+        mode: files.length > 1 ? "" : files[0].mode || "",
       }}
     >
       {({ isSubmitting }) => (
@@ -79,19 +79,19 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
           dismissable={!isSubmitting}
           showSpinnerOverlay={isSubmitting}
         >
-          <Form className={'m-0'}>
-            <div className={'flex flex-wrap items-end'}>
-              <div className={'w-full sm:mr-4 sm:flex-1'}>
+          <Form className={"m-0"}>
+            <div className={"flex flex-wrap items-end"}>
+              <div className={"w-full sm:mr-4 sm:flex-1"}>
                 <Field
-                  type={'string'}
-                  id={'file_mode'}
-                  name={'mode'}
-                  label={'File Mode'}
+                  type={"string"}
+                  id={"file_mode"}
+                  name={"mode"}
+                  label={"File Mode"}
                   autoFocus
                 />
               </div>
-              <div className={'mt-4 w-full sm:mt-0 sm:w-auto'}>
-                <Button className={'w-full'}>Update</Button>
+              <div className={"mt-4 w-full sm:mt-0 sm:w-auto"}>
+                <Button className={"w-full"}>Update</Button>
               </div>
             </div>
           </Form>

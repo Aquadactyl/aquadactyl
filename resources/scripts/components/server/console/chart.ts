@@ -7,16 +7,16 @@ import {
   LinearScale,
   LineElement,
   PointElement,
-} from 'chart.js';
-import { DeepPartial } from 'ts-essentials';
-import { useState } from 'react';
-import { deepmerge, deepmergeCustom } from 'deepmerge-ts';
-import { theme } from '@/lib/theme';
-import { hexToRgba } from '@/lib/helpers';
+} from "chart.js";
+import { DeepPartial } from "ts-essentials";
+import { useState } from "react";
+import { deepmerge, deepmergeCustom } from "deepmerge-ts";
+import { theme } from "@/lib/theme";
+import { hexToRgba } from "@/lib/helpers";
 
 ChartJS.register(LineElement, PointElement, Filler, LinearScale);
 
-const options: ChartOptions<'line'> = {
+const options: ChartOptions<"line"> = {
   responsive: true,
   animation: false,
   plugins: {
@@ -31,7 +31,7 @@ const options: ChartOptions<'line'> = {
     x: {
       min: 0,
       max: 19,
-      type: 'linear',
+      type: "linear",
       grid: {
         display: false,
       },
@@ -44,10 +44,10 @@ const options: ChartOptions<'line'> = {
     },
     y: {
       min: 0,
-      type: 'linear',
+      type: "linear",
       grid: {
         display: true,
-        color: theme('colors.gray.700'),
+        color: theme("colors.gray.700"),
       },
       border: {
         display: false,
@@ -55,9 +55,9 @@ const options: ChartOptions<'line'> = {
       ticks: {
         display: true,
         count: 3,
-        color: theme('colors.gray.200'),
+        color: theme("colors.gray.200"),
         font: {
-          family: theme('fontFamily.sans'),
+          family: theme("fontFamily.sans"),
           size: 11,
           weight: 400,
         },
@@ -75,21 +75,21 @@ const options: ChartOptions<'line'> = {
 };
 
 function getOptions(
-  opts?: DeepPartial<ChartOptions<'line'>> | undefined,
-): ChartOptions<'line'> {
+  opts?: DeepPartial<ChartOptions<"line">> | undefined,
+): ChartOptions<"line"> {
   return deepmerge(options, opts || {});
 }
 
 type ChartDatasetCallback = (
-  value: ChartDataset<'line'>,
+  value: ChartDataset<"line">,
   index: number,
-) => ChartDataset<'line'>;
+) => ChartDataset<"line">;
 
 function getEmptyData(
   label: string,
   sets = 1,
   callback?: ChartDatasetCallback | undefined,
-): ChartData<'line'> {
+): ChartData<"line"> {
   const next = callback || ((value) => value);
 
   return {
@@ -104,8 +104,8 @@ function getEmptyData(
             fill: true,
             label,
             data: Array(20).fill(-5),
-            borderColor: theme('colors.cyan.400'),
-            backgroundColor: hexToRgba(theme('colors.cyan.700'), 0.5),
+            borderColor: theme("colors.cyan.400"),
+            backgroundColor: hexToRgba(theme("colors.cyan.700"), 0.5),
           },
           index,
         ),
@@ -117,13 +117,13 @@ const merge = deepmergeCustom({ mergeArrays: false });
 
 interface UseChartOptions {
   sets: number;
-  options?: DeepPartial<ChartOptions<'line'>> | number | undefined;
+  options?: DeepPartial<ChartOptions<"line">> | number | undefined;
   callback?: ChartDatasetCallback | undefined;
 }
 
 function useChart(label: string, opts?: UseChartOptions) {
   const options = getOptions(
-    typeof opts?.options === 'number'
+    typeof opts?.options === "number"
       ? { scales: { y: { min: 0, suggestedMax: opts.options } } }
       : opts?.options,
   );
@@ -140,7 +140,7 @@ function useChart(label: string, opts?: UseChartOptions) {
             data: state.datasets[index].data
               .slice(1)
               .concat(
-                typeof item === 'number' ? Number(item.toFixed(2)) : item,
+                typeof item === "number" ? Number(item.toFixed(2)) : item,
               ),
           }),
         ),

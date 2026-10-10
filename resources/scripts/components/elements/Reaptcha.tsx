@@ -3,7 +3,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   useRef,
-} from 'react';
+} from "react";
 
 declare global {
   interface Window {
@@ -13,13 +13,13 @@ declare global {
         container: HTMLElement,
         parameters: {
           sitekey: string;
-          size?: 'invisible' | 'normal' | 'compact';
-          badge?: 'bottomright' | 'bottomleft' | 'inline';
-          theme?: 'light' | 'dark';
+          size?: "invisible" | "normal" | "compact";
+          badge?: "bottomright" | "bottomleft" | "inline";
+          theme?: "light" | "dark";
           tabindex?: number;
           callback?: (token: string) => void;
-          'expired-callback'?: () => void;
-          'error-callback'?: () => void;
+          "expired-callback"?: () => void;
+          "error-callback"?: () => void;
           isolated?: boolean;
           hl?: string;
         },
@@ -39,9 +39,9 @@ export interface ReaptchaRef {
 
 export interface ReaptchaProps {
   sitekey: string;
-  size?: 'invisible' | 'normal' | 'compact';
-  badge?: 'bottomright' | 'bottomleft' | 'inline';
-  theme?: 'light' | 'dark';
+  size?: "invisible" | "normal" | "compact";
+  badge?: "bottomright" | "bottomleft" | "inline";
+  theme?: "light" | "dark";
   tabindex?: number;
   hl?: string;
   isolated?: boolean;
@@ -61,10 +61,10 @@ function injectScript(hl?: string) {
     SCRIPT_URL_REGEX.test(s.src),
   );
   if (!isAlreadyInjected) {
-    const script = document.createElement('script');
+    const script = document.createElement("script");
     script.async = true;
     script.defer = true;
-    script.src = `https://recaptcha.net/recaptcha/api.js?render=explicit${hl ? `&hl=${hl}` : ''}`;
+    script.src = `https://recaptcha.net/recaptcha/api.js?render=explicit${hl ? `&hl=${hl}` : ""}`;
     document.head?.appendChild(script);
   }
 }
@@ -73,14 +73,14 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
   (
     {
       sitekey,
-      size = 'invisible',
-      badge = 'bottomright',
-      theme = 'light',
+      size = "invisible",
+      badge = "bottomright",
+      theme = "light",
       tabindex = 0,
-      hl = '',
+      hl = "",
       isolated = false,
       inject = true,
-      className = 'g-recaptcha',
+      className = "g-recaptcha",
       id,
       onVerify,
       onExpire,
@@ -115,7 +115,7 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
               !isRenderedRef.current ||
               !window.grecaptcha
             ) {
-              return reject(new Error('reCAPTCHA is not rendered yet.'));
+              return reject(new Error("reCAPTCHA is not rendered yet."));
             }
             try {
               window.grecaptcha.execute(widgetIdRef.current);
@@ -132,7 +132,7 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
               !isRenderedRef.current ||
               !window.grecaptcha
             ) {
-              return reject(new Error('reCAPTCHA is not rendered yet.'));
+              return reject(new Error("reCAPTCHA is not rendered yet."));
             }
             try {
               window.grecaptcha.reset(widgetIdRef.current);
@@ -149,7 +149,7 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
               !isRenderedRef.current ||
               !window.grecaptcha
             ) {
-              return reject(new Error('reCAPTCHA is not rendered yet.'));
+              return reject(new Error("reCAPTCHA is not rendered yet."));
             }
             try {
               resolve(window.grecaptcha.getResponse(widgetIdRef.current));
@@ -194,18 +194,18 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
             const widgetId = window.grecaptcha.render(containerRef.current, {
               sitekey,
               size,
-              badge: size === 'invisible' ? badge : undefined,
+              badge: size === "invisible" ? badge : undefined,
               theme,
               tabindex,
-              isolated: size === 'invisible' ? isolated : undefined,
-              hl: size === 'invisible' ? undefined : hl,
+              isolated: size === "invisible" ? isolated : undefined,
+              hl: size === "invisible" ? undefined : hl,
               callback: (response: string) => {
                 onVerifyRef.current?.(response);
               },
-              'expired-callback': () => {
+              "expired-callback": () => {
                 onExpireRef.current?.();
               },
-              'error-callback': () => {
+              "error-callback": () => {
                 onErrorRef.current?.();
               },
             });
@@ -214,7 +214,7 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
             isRenderedRef.current = true;
             onRenderRef.current?.();
           } catch (e) {
-            console.error('Failed to render reCAPTCHA:', e);
+            console.error("Failed to render reCAPTCHA:", e);
           }
         });
       };
@@ -242,6 +242,6 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
   },
 );
 
-Reaptcha.displayName = 'Reaptcha';
+Reaptcha.displayName = "Reaptcha";
 
 export default Reaptcha;

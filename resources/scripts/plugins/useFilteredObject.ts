@@ -3,10 +3,10 @@
  * undefined, or empty string key values. This allows the parameters to be used for
  * caching without having to account for all of the different data combinations.
  */
-import { isEmptyObject, isObject } from '@/lib/objects';
+import { isEmptyObject, isObject } from "@/lib/objects";
 
 export default <T extends {}>(data: T): T => {
-  const empty = [undefined, null, ''] as unknown[];
+  const empty = [undefined, null, ""] as unknown[];
 
   const removeEmptyValues = (input: T): T =>
     Object.entries(input)

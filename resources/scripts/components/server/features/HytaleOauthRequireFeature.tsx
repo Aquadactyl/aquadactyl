@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { ServerContext } from '@/state/server';
-import Modal from '@/components/elements/Modal';
-import Button from '@/components/elements/Button';
-import FlashMessageRender from '@/components/FlashMessageRender';
-import useFlash from '@/plugins/useFlash';
-import { SocketEvent } from '@/components/server/events';
+import React, { useEffect, useState } from "react";
+import { ServerContext } from "@/state/server";
+import Modal from "@/components/elements/Modal";
+import Button from "@/components/elements/Button";
+import FlashMessageRender from "@/components/FlashMessageRender";
+import useFlash from "@/plugins/useFlash";
+import { SocketEvent } from "@/components/server/events";
 
 const HytaleOauthRequireFeature = () => {
   const [visible, setVisible] = useState(false);
-  const [link, setLink] = useState('');
+  const [link, setLink] = useState("");
 
   const status = ServerContext.useStoreState((state) => state.status.value);
   const { clearFlashes } = useFlash();
@@ -17,7 +17,7 @@ const HytaleOauthRequireFeature = () => {
   );
 
   useEffect(() => {
-    if (!connected || !instance || status === 'running') return;
+    if (!connected || !instance || status === "running") return;
 
     const listener = (line: string) => {
       if (
@@ -38,14 +38,14 @@ const HytaleOauthRequireFeature = () => {
   }, [connected, instance, status]);
 
   useEffect(() => {
-    clearFlashes('feature:hytaleOauth');
+    clearFlashes("feature:hytaleOauth");
   }, []);
 
   const handleLogin = () => {
     if (link) {
-      window.open(link, '_blank', 'noopener,noreferrer');
+      window.open(link, "_blank", "noopener,noreferrer");
       setVisible(false);
-      setLink('');
+      setLink("");
     }
   };
 
@@ -54,30 +54,30 @@ const HytaleOauthRequireFeature = () => {
       visible={visible}
       onDismissed={() => {
         setVisible(false);
-        setLink('');
+        setLink("");
       }}
       closeOnBackground={false}
       showSpinnerOverlay={false}
     >
-      <FlashMessageRender key={'feature:hytaleOauth'} className={'mb-4'} />
-      <h2 className={'mb-4 text-2xl text-neutral-100'}>
+      <FlashMessageRender key={"feature:hytaleOauth"} className={"mb-4"} />
+      <h2 className={"mb-4 text-2xl text-neutral-100"}>
         Authentication Required
       </h2>
-      <p className={'text-neutral-200'}>
+      <p className={"text-neutral-200"}>
         You need to authenticate with your Hytale account to download or update
         server files. Please log in to continue.
       </p>
-      <div className={'mt-8 items-center justify-end sm:flex'}>
+      <div className={"mt-8 items-center justify-end sm:flex"}>
         <Button
           isSecondary
           onClick={() => setVisible(false)}
-          className={'w-full border-transparent sm:w-auto'}
+          className={"w-full border-transparent sm:w-auto"}
         >
           Cancel
         </Button>
         <Button
           onClick={handleLogin}
-          className={'mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto'}
+          className={"mt-4 w-full sm:mt-0 sm:ml-4 sm:w-auto"}
         >
           Log in
         </Button>
