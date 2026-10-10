@@ -55,7 +55,9 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
         // Rename the file within this directory.
         mutate(
           (data) =>
-            data.map((f) => (f.name === files[0] ? { ...f, name: newName } : f)),
+            data.map((f) =>
+              f.name === files[0] ? { ...f, name: newName } : f,
+            ),
           false,
         );
       } else if (useMoveTerminology || len > 1) {

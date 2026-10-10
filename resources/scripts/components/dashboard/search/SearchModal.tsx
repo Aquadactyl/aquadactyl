@@ -114,9 +114,7 @@ export default ({ ...props }: Props) => {
                   {server.allocations
                     .filter((alloc) => alloc.isDefault)
                     .map((allocation) => (
-                      <span
-                        key={allocation.ip + allocation.port.toString()}
-                      >
+                      <span key={allocation.ip + allocation.port.toString()}>
                         <SensitiveValue>
                           {allocation.alias || ip(allocation.ip)}:
                           {allocation.port}

@@ -128,9 +128,7 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
   return (
     <FormProvider {...methods}>
       <form className={"m-0"} onSubmit={methods.handleSubmit(submit)}>
-        <h2 className={"mb-2 text-2xl"}>
-          {task ? "Edit step" : "Add a step"}
-        </h2>
+        <h2 className={"mb-2 text-2xl"}>{task ? "Edit step" : "Add a step"}</h2>
         <p className={"mb-6 text-sm text-neutral-300"}>
           Steps run in order. Add a wait if the previous action needs time to
           finish.
@@ -165,8 +163,8 @@ const TaskDetailsModal = ({ schedule, task }: Props) => {
         )}
         {values.kind === "start" && schedule.onlyWhenOnline && (
           <p className={"mt-3 text-sm text-yellow-200"}>
-            To start an offline server, edit this schedule&apos;s timing and turn
-            off &ldquo;Skip when server is offline&rdquo;.
+            To start an offline server, edit this schedule&apos;s timing and
+            turn off &ldquo;Skip when server is offline&rdquo;.
           </p>
         )}
         {values.kind === "kill" && (

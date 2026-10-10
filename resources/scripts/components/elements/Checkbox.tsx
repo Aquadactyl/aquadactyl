@@ -22,7 +22,8 @@ type InputProps = Omit<React.ComponentPropsWithoutRef<"input">, OmitFields>;
 const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => {
   const { watch, setValue } = useFormContext();
   const currentValues: string[] = watch(name) || [];
-  const isChecked = Array.isArray(currentValues) && currentValues.includes(value);
+  const isChecked =
+    Array.isArray(currentValues) && currentValues.includes(value);
 
   const onChange = () => {
     const list = Array.isArray(currentValues) ? currentValues : [];

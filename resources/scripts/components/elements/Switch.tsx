@@ -3,8 +3,10 @@ import classNames from "classnames";
 import Label from "@/components/elements/Label";
 import Input from "@/components/elements/Input";
 
-export interface SwitchProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "children"> {
+export interface SwitchProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "children"
+> {
   id?: string;
   name: string;
   label?: string;
@@ -73,7 +75,10 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
           <div className="ml-4 w-full">
             {label && (
               <Label
-                className={classNames("cursor-pointer", !!description && "mb-0")}
+                className={classNames(
+                  "cursor-pointer",
+                  !!description && "mb-0",
+                )}
                 htmlFor={switchId}
               >
                 {label}

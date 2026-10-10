@@ -22,7 +22,7 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `chart.js`, `react-chartjs-2`                              | Charts                                                 |
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
 | `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
-| `react-hook-form`                                           | Form management                                        |
+| `react-hook-form`                                          | Form management                                        |
 | `@hookform/resolvers`, `zod`                               | Schema validation and resolvers                        |
 | `zustand`                                                  | Lightweight addon state stores                         |
 | `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |

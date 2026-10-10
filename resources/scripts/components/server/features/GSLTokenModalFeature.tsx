@@ -83,8 +83,8 @@ const GSLTokenModalFeature = () => {
           has expired.
         </p>
         <p className={"mt-4"}>
-          You can either generate a new one and enter it below or leave the field
-          blank to remove it completely.
+          You can either generate a new one and enter it below or leave the
+          field blank to remove it completely.
         </p>
         <div className={"mt-4 items-center sm:flex"}>
           <FormField
