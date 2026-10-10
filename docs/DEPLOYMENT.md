@@ -12,7 +12,7 @@ updates so that the panel and Blueprint stay compatible.
 
 ## Requirements
 
-Use PHP 8.5 with FPM (PHP 8.4 is also supported), Composer 2, Node.js 22.13 or later,
+Use PHP 8.5 with FPM (PHP 8.4 is also supported), Composer 2, Node.js 24 or later,
 pnpm 12.10.1, Nginx, MariaDB/MySQL, Redis, and systemd. The panel's Composer extensions include bcmath,
 curl, gd, mbstring, PDO MySQL, posix, XML and zip. Deployment also uses bash, curl,
 git, zip, unzip, rsync, flock, runuser and mariadb-dump (or mysqldump). On Debian or

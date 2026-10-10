@@ -60,7 +60,7 @@ automatically. See
 ## Linux installation
 
 Prepare a Linux host with PHP 8.5 and PHP-FPM (PHP 8.4 is also supported), Composer 2,
-Node.js 22.13 or later, pnpm 12.10.1, Nginx, MariaDB or MySQL, Redis and systemd. Required PHP
+Node.js 24 or later, pnpm 12.10.1, Nginx, MariaDB or MySQL, Redis and systemd. Required PHP
 extensions and command-line utilities are listed in the
 [installation guide](https://aquadactyl.uk/docs#requirements).
 

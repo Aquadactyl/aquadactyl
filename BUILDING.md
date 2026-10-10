@@ -145,7 +145,7 @@ containers are managed by Wings rather than Compose.
 
 ## Requirements
 
-- Node.js 22.13 or later.
+- Node.js 24 or later.
 - pnpm 12.10.1, pinned in `package.json`.
 - PHP 8.4 or 8.5 and Composer 2 for backend work. Deployment defaults to PHP 8.5.
   GD must support PNG, JPEG and WebP for profile-picture uploads.
@@ -221,7 +221,7 @@ their bootstrap resets and seeds that database. On Windows, the
 `tests/runtime/Dockerfile` provides the Linux verification tools. Its
 `PHP_VERSION` build argument defaults to `8.5` and also accepts `8.4`.
 
-The Nix development shell uses PHP 8.5, Node.js 22 and pnpm. Install the pinned
+The Nix development shell uses PHP 8.5, Node.js 24 and pnpm. Install the pinned
 pnpm version above if the version provided by your Nix package set differs.
 
 ## Site settings
