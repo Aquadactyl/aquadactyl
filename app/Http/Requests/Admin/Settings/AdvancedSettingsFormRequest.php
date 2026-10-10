@@ -13,6 +13,7 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
     {
         return [
             'recaptcha:enabled' => 'required|in:true,false',
+            'recaptcha:provider' => 'nullable|required_if:recaptcha:enabled,true|in:recaptcha,hcaptcha,turnstile',
             'recaptcha:secret_key' => 'nullable|required_if:recaptcha:enabled,true|string|max:191',
             'recaptcha:website_key' => 'nullable|required_if:recaptcha:enabled,true|string|max:191',
             'pterodactyl:guzzle:timeout' => 'required|integer|between:1,60',
@@ -37,9 +38,10 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
     public function attributes(): array
     {
         return [
-            'recaptcha:enabled' => 'reCAPTCHA Enabled',
-            'recaptcha:secret_key' => 'reCAPTCHA Secret Key',
-            'recaptcha:website_key' => 'reCAPTCHA Website Key',
+            'recaptcha:enabled' => 'Captcha Status',
+            'recaptcha:provider' => 'Captcha Provider',
+            'recaptcha:secret_key' => 'Captcha Secret Key',
+            'recaptcha:website_key' => 'Captcha Site Key',
             'pterodactyl:guzzle:timeout' => 'HTTP Request Timeout',
             'pterodactyl:guzzle:connect_timeout' => 'HTTP Connection Timeout',
             'pterodactyl:client_features:allocations:enabled' => 'Auto Create Allocations Enabled',

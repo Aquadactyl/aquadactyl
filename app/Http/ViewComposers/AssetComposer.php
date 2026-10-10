@@ -41,6 +41,7 @@ class AssetComposer
             ],
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),
+                'provider' => config('recaptcha.provider', 'recaptcha'),
                 'siteKey' => config('recaptcha.website_key') ?? '',
             ],
             'blueprint' => [

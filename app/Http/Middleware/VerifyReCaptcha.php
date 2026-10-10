@@ -28,19 +28,28 @@ class VerifyReCaptcha
             return $next($request);
         }
 
-        if ($request->filled('g-recaptcha-response')) {
+        $responseToken = $request->input('g-recaptcha-response')
+            ?? $request->input('h-captcha-response')
+            ?? $request->input('cf-turnstile-response');
+
+        if (!empty($responseToken)) {
+            $provider = $this->config->get('recaptcha.provider', 'recaptcha');
+            $endpoints = $this->config->get('recaptcha.endpoints', []);
+            $endpoint = $endpoints[$provider] ?? $this->config->get('recaptcha.domain');
+
             $client = new Client();
-            $res = $client->post($this->config->get('recaptcha.domain'), [
+            $res = $client->post($endpoint, [
                 'form_params' => [
                     'secret' => $this->config->get('recaptcha.secret_key'),
-                    'response' => $request->input('g-recaptcha-response'),
+                    'response' => $responseToken,
+                    'remoteip' => $request->ip(),
                 ],
             ]);
 
             if ($res->getStatusCode() === 200) {
                 $result = json_decode($res->getBody());
 
-                if ($result->success && (!$this->config->get('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
+                if (!empty($result?->success) && (!$this->config->get('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
                     return $next($request);
                 }
             }
@@ -53,7 +62,7 @@ class VerifyReCaptcha
             )
         );
 
-        throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate reCAPTCHA data.');
+        throw new HttpException(Response::HTTP_BAD_REQUEST, 'Failed to validate captcha data.');
     }
 
     /**

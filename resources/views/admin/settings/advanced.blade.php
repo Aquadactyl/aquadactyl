@@ -20,18 +20,25 @@
             <form action="" method="POST">
                 <div class="box">
                     <div class="box-header with-border">
-                        <h3 class="box-title">reCAPTCHA</h3>
+                        <h3 class="box-title">Captcha</h3>
                     </div>
                     <div class="box-body">
                         <div class="row">
                             <div class="form-group col-md-4">
-                                <label class="control-label">Status</label>
+                                <label class="control-label">Provider</label>
                                 <div>
-                                    <select class="form-control" name="recaptcha:enabled">
-                                        <option value="true">Enabled</option>
-                                        <option value="false" @if(old('recaptcha:enabled', config('recaptcha.enabled')) == '0') selected @endif>Disabled</option>
+                                    @php
+                                        $currentEnabled = old('recaptcha:enabled', config('recaptcha.enabled'));
+                                        $currentProvider = old('recaptcha:provider', config('recaptcha.provider', 'recaptcha'));
+                                    @endphp
+                                    <input type="hidden" name="recaptcha:enabled" id="recaptcha_enabled" value="{{ $currentEnabled ? 'true' : 'false' }}">
+                                    <select class="form-control" name="recaptcha:provider" id="captcha_provider_select" onchange="document.getElementById('recaptcha_enabled').value = this.value === 'disabled' ? 'false' : 'true'">
+                                        <option value="disabled" @if(!$currentEnabled) selected @endif>Disabled</option>
+                                        <option value="recaptcha" @if($currentEnabled && $currentProvider === 'recaptcha') selected @endif>Google reCAPTCHA</option>
+                                        <option value="hcaptcha" @if($currentEnabled && $currentProvider === 'hcaptcha') selected @endif>hCaptcha</option>
+                                        <option value="turnstile" @if($currentEnabled && $currentProvider === 'turnstile') selected @endif>Cloudflare Turnstile</option>
                                     </select>
-                                    <p class="text-muted small">If enabled, login forms and password reset forms will do a silent captcha check and display a visible captcha if needed.</p>
+                                    <p class="text-muted small">Choose the captcha provider to protect authentication forms, or disable captcha completely.</p>
                                 </div>
                             </div>
                             <div class="form-group col-md-4">
@@ -44,7 +51,7 @@
                                 <label class="control-label">Secret Key</label>
                                 <div>
                                     <input type="text" class="form-control" name="recaptcha:secret_key" value="{{ old('recaptcha:secret_key', config('recaptcha.secret_key')) }}">
-                                    <p class="text-muted small">Used for communication between your site and Google. Be sure to keep it a secret.</p>
+                                    <p class="text-muted small">Used for server-side verification with your captcha provider. Keep this secret.</p>
                                 </div>
                             </div>
                         </div>
