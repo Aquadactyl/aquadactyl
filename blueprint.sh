@@ -126,7 +126,7 @@ depend() {
   ! [ -x "$(command -v node)" ] ||                                                # node
   { ! [ -x "$(command -v inotifywait)" ] && [[ "$DeveloperWatch" == true ]]; } || # inotify-tools (devdep)
   [[ $nodeMajor -lt 22 ]] ||                                                      # node version
-  { [[ $nodeMajor -eq 22 ]] && [[ $nodeMinor -lt 13 ]]; } ||
+  { [[ $nodeMajor -eq 22 ]] && [[ $nodeMinor -lt 23 ]]; } ||
   [[ $phpSupported != "yes" ]] ||                                                # PHP version
   [[ $pnpmVersion != "$requiredPnpm" ]] ||                                        # pnpm version
   ! [ -e "node_modules/vite" ] ||                                                 # vite
