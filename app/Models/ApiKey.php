@@ -160,14 +160,31 @@ class ApiKey extends Model implements HasAbilities
         'r_' . AdminAcl::RESOURCE_SERVERS => 'integer|min:0|max:3',
     ];
 
-    public function can($ability)
+    public function can($ability): bool
     {
-        // todo: this was never initially implemented and only became obvious once
-        //  internal tooling was updated and started catching this mistake.
-        return false;
+        if ($this->key_type === self::TYPE_ACCOUNT) {
+            return true;
+        }
+
+        if ($ability === '*') {
+            return true;
+        }
+
+        if (str_contains($ability, ':')) {
+            [$resource, $actionStr] = explode(':', $ability, 2);
+            $action = match (strtolower($actionStr)) {
+                'write' => AdminAcl::WRITE,
+                default => AdminAcl::READ,
+            };
+        } else {
+            $resource = $ability;
+            $action = AdminAcl::READ;
+        }
+
+        return AdminAcl::check($this, $resource, $action);
     }
 
-    public function cant($ability)
+    public function cant($ability): bool
     {
         return !$this->can($ability);
     }

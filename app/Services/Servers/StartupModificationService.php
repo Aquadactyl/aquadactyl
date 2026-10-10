@@ -51,13 +51,7 @@ class StartupModificationService
                 $this->updateAdministrativeSettings($data, $server);
             }
 
-            // Calling ->refresh() rather than ->fresh() here causes it to return the
-            // variables as triplicates for some reason? Not entirely sure, should dig
-            // in more to figure it out, but luckily we have a test case covering this
-            // specific call so we can be assured we're not breaking it _here_ at least.
-            //
-            // TODO(dane): this seems like a red-flag for the code powering the relationship
-            //  that should be looked into more.
+            // Use fresh() to reload the server and its relations cleanly from the database.
             return $server->fresh();
         });
     }

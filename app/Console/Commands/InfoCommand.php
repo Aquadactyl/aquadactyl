@@ -58,17 +58,24 @@ class InfoCommand extends Command
             ['Username', $this->config->get("database.connections.$driver.username")],
         ], 'compact');
 
-        // TODO: Update this to handle other mail drivers
         $this->output->title('Email Configuration');
-        $this->table([], [
-            ['Driver', $this->config->get('mail.default')],
-            ['Host', $this->config->get('mail.mailers.smtp.host')],
-            ['Port', $this->config->get('mail.mailers.smtp.port')],
-            ['Username', $this->config->get('mail.mailers.smtp.username')],
+        $mailer = $this->config->get('mail.default');
+        $mailRows = [
+            ['Driver', $mailer],
             ['From Address', $this->config->get('mail.from.address')],
             ['From Name', $this->config->get('mail.from.name')],
-            ['Encryption', $this->config->get('mail.mailers.smtp.encryption')],
-        ], 'compact');
+        ];
+
+        if ($mailer === 'smtp') {
+            $mailRows[] = ['Host', $this->config->get("mail.mailers.{$mailer}.host")];
+            $mailRows[] = ['Port', $this->config->get("mail.mailers.{$mailer}.port")];
+            $mailRows[] = ['Username', $this->config->get("mail.mailers.{$mailer}.username")];
+            $mailRows[] = ['Encryption', $this->config->get("mail.mailers.{$mailer}.encryption")];
+        } elseif ($this->config->has("mail.mailers.{$mailer}.transport")) {
+            $mailRows[] = ['Transport', $this->config->get("mail.mailers.{$mailer}.transport")];
+        }
+
+        $this->table([], $mailRows, 'compact');
     }
 
     /**

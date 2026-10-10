@@ -39,7 +39,10 @@ class AssignmentService
      */
     public function handle(Node $node, array $data): void
     {
-        $explode = explode('/', $data['allocation_ip']);
+        $rawIp = $data['allocation_ip'];
+        $explode = explode('/', $rawIp);
+        $baseIp = $explode[0];
+
         if (count($explode) !== 1) {
             if (!ctype_digit($explode[1]) || ($explode[1] > self::CIDR_MIN_BITS || $explode[1] < self::CIDR_MAX_BITS)) {
                 throw new CidrOutOfRangeException();
@@ -47,15 +50,21 @@ class AssignmentService
         }
 
         try {
-            // TODO: how should we approach supporting IPv6 with this?
-            // gethostbyname only supports IPv4, but the alternative (dns_get_record) returns
-            // an array of records, which is not ideal for this use case, we need a SINGLE
-            // IP to use, not multiple.
-            $underlying = gethostbyname($data['allocation_ip']);
+            if (filter_var($baseIp, FILTER_VALIDATE_IP)) {
+                $underlying = $rawIp;
+            } else {
+                $resolved = gethostbyname($baseIp);
+                if ($resolved === $baseIp) {
+                    $records = @dns_get_record($baseIp, DNS_AAAA);
+                    if (!empty($records) && isset($records[0]['ipv6'])) {
+                        $resolved = $records[0]['ipv6'];
+                    }
+                }
+                $underlying = count($explode) > 1 ? "{$resolved}/{$explode[1]}" : $resolved;
+            }
             $parsed = Network::parse($underlying);
         } catch (\Exception $exception) {
-            // @phpstan-ignore-next-line variable.undefined
-            throw new DisplayException("Could not parse provided allocation IP address ({$underlying}): {$exception->getMessage()}", $exception);
+            throw new DisplayException('Could not parse provided allocation IP address (' . ($underlying ?? $rawIp) . "): {$exception->getMessage()}", $exception);
         }
 
         $this->connection->beginTransaction();
