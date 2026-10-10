@@ -292,9 +292,6 @@ importers:
       classnames:
         specifier: ^2.5.1
         version: 2.5.1
-      copy-to-clipboard:
-        specifier: ^4.0.2
-        version: 4.0.2
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -361,9 +358,6 @@ importers:
       react-select:
         specifier: ^5.10.2
         version: 5.10.2(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-      sockette:
-        specifier: ^2.0.6
-        version: 2.0.6
       yup:
         specifier: ^1.7.1
         version: 1.7.1
@@ -1810,9 +1804,6 @@ packages:
   cookie-es@3.1.1:
     resolution: {integrity: sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg==}
 
-  copy-to-clipboard@4.0.2:
-    resolution: {integrity: sha512-gklSft7IuhriZKHKpuoA1fpJSLPNgvUMWMo5BlnzAJm0zNKnznoSv23IjtNqclx8eKi6ZcdvFFzYEER/+U1LoQ==}
-
   core-js@3.50.0:
     resolution: {integrity: sha512-BRWgOLKkFeCgRudR6zrs8p9XJZcE14grzKMMssoYrk6krtuEZ7MTKPIY5RzOnqsEKIR9kst7wNzphttraT+Yqw==}
 
@@ -2617,9 +2608,6 @@ packages:
   seek-bzip@2.0.0:
     resolution: {integrity: sha512-SMguiTnYrhpLdk3PwfzHeotrcwi8bNV4iemL9tx9poR/yeaMYwB9VzR1w7b57DuWpuqR8n6oZboi0hj3AxZxQg==}
     hasBin: true
-
-  sockette@2.0.6:
-    resolution: {integrity: sha512-W6iG8RGV6Zife3Cj+FhuyHV447E6fqFM2hKmnaQrTvg3OydINV3Msj3WPFbX76blUlUxvQSMMMdrJxce8NqI5Q==}
 
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
@@ -4006,8 +3994,6 @@ snapshots:
 
   cookie-es@3.1.1: {}
 
-  copy-to-clipboard@4.0.2: {}
-
   core-js@3.50.0: {}
 
   core-util-is@1.0.3: {}
@@ -4780,8 +4766,6 @@ snapshots:
   seek-bzip@2.0.0:
     dependencies:
       commander: 6.2.1
-
-  sockette@2.0.6: {}
 
   source-map-js@1.2.2: {}
 

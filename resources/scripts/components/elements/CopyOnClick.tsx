@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Fade from "@/components/elements/Fade";
 import Portal from "@/components/elements/Portal";
-import copy from "copy-to-clipboard";
 import classNames from "classnames";
 import usePrivacyMode from "@/plugins/usePrivacyMode";
 
@@ -10,6 +9,32 @@ interface CopyOnClickProps {
   showInNotification?: boolean;
   children: React.ReactNode;
 }
+
+const copyToClipboard = async (value: string): Promise<boolean> => {
+  if (navigator?.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(value);
+      return true;
+    } catch {
+      // Fallback to execCommand if navigator.clipboard fails
+    }
+  }
+
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = value;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+    const successful = document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return successful;
+  } catch {
+    return false;
+  }
+};
 
 const CopyOnClick = ({
   text,
@@ -41,13 +66,18 @@ const CopyOnClick = ({
   const onlyChild = React.Children.only(children) as React.ReactElement<
     Record<string, any>
   >;
+
   const child = !text
     ? onlyChild
     : React.cloneElement(onlyChild, {
         className: classNames(childProps.className || "", "cursor-pointer"),
         onClick: (e: React.MouseEvent<HTMLElement>) => {
-          copy(String(text));
-          setCopied(true);
+          copyToClipboard(String(text)).then((success) => {
+            if (success) {
+              setCopied(true);
+            }
+          });
+
           if (typeof childProps.onClick === "function") {
             childProps.onClick(e);
           }

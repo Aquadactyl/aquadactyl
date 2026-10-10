@@ -1,64 +1,92 @@
-import Sockette from "sockette";
 import { EventEmitter } from "events";
 
 export class Websocket extends EventEmitter {
-  // The socket instance being tracked.
-  private socket: Sockette | null = null;
-
-  // The URL being connected to for the socket.
+  private socket: WebSocket | null = null;
   private url: string | null = null;
-
-  // The authentication token passed along with every request to the Daemon.
-  // By default this token expires every 15 minutes and must therefore be
-  // refreshed at a pretty continuous interval. The socket server will respond
-  // with "token expiring" and "token expired" events when approaching 3 minutes
-  // and 0 minutes to expiry.
   private token = "";
+  private attempts = 0;
+  private maxAttempts = 20;
+  private reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+  private manualClose = false;
 
-  // Connects to the websocket instance and sets the token for the initial request.
   connect(url: string): this {
     this.url = url;
-
-    this.socket = new Sockette(`${this.url}`, {
-      timeout: 1000,
-      maxAttempts: 20,
-      onmessage: (e) => {
-        try {
-          const { event, args } = JSON.parse(e.data);
-          args ? this.emit(event, ...args) : this.emit(event);
-        } catch (ex) {
-          console.warn("Failed to parse incoming websocket message.", ex);
-        }
-      },
-      onopen: () => {
-        this.emit("SOCKET_OPEN");
-        this.authenticate();
-      },
-      onreconnect: (evt) => {
-        // We return code 4409 from Wings when a server is suspended. We've
-        // gone ahead and reserved 4400 as well here for future expansion without
-        // having to loop back around.
-        //
-        // If either of those codes is returned go ahead and abort here. Unfortunately
-        // the underlying sockette logic always calls reconnect for any code that isn't
-        // 1000/1001/1003, which is painful but we can just stop the flow here.
-        // @ts-expect-error code is actually present here.
-        if (evt.code === 4409 || evt.code === 4400) {
-          this.close(1000);
-        } else {
-          this.emit("SOCKET_RECONNECT");
-        }
-      },
-      onclose: () => this.emit("SOCKET_CLOSE"),
-      onerror: (error) => this.emit("SOCKET_ERROR", error),
-      onmaximum: () => this.emit("SOCKET_CONNECT_ERROR"),
-    });
-
+    this.manualClose = false;
+    this.attempts = 0;
+    this.initSocket();
     return this;
   }
 
-  // Sets the authentication token to use when sending commands back and forth
-  // between the websocket instance.
+  private initSocket() {
+    if (!this.url || this.manualClose) return;
+
+    this.clearReconnectTimeout();
+
+    try {
+      this.socket = new WebSocket(this.url);
+    } catch (error) {
+      this.emit("SOCKET_ERROR", error);
+      this.handleReconnect();
+      return;
+    }
+
+    this.socket.onopen = () => {
+      this.attempts = 0;
+      this.emit("SOCKET_OPEN");
+      this.authenticate();
+    };
+
+    this.socket.onmessage = (e) => {
+      try {
+        const { event, args } = JSON.parse(e.data);
+        args ? this.emit(event, ...args) : this.emit(event);
+      } catch (ex) {
+        console.warn("Failed to parse incoming websocket message.", ex);
+      }
+    };
+
+    this.socket.onerror = (error) => {
+      this.emit("SOCKET_ERROR", error);
+    };
+
+    this.socket.onclose = (evt) => {
+      this.emit("SOCKET_CLOSE");
+
+      if (this.manualClose) return;
+
+      if (evt.code === 4409 || evt.code === 4400) {
+        this.close(1000);
+        return;
+      }
+
+      this.handleReconnect();
+    };
+  }
+
+  private handleReconnect() {
+    if (this.manualClose) return;
+
+    if (this.attempts >= this.maxAttempts) {
+      this.emit("SOCKET_CONNECT_ERROR");
+      return;
+    }
+
+    this.attempts++;
+    this.emit("SOCKET_RECONNECT");
+
+    this.clearReconnectTimeout();
+    this.reconnectTimeout = setTimeout(() => {
+      this.initSocket();
+    }, 1000);
+  }
+
+  private clearReconnectTimeout() {
+    if (this.reconnectTimeout) {
+      clearTimeout(this.reconnectTimeout);
+      this.reconnectTimeout = null;
+    }
+  }
+
   setToken(token: string, isUpdate = false): this {
     this.token = token;
 
@@ -76,23 +104,34 @@ export class Websocket extends EventEmitter {
   }
 
   close(code?: number, reason?: string) {
+    this.manualClose = true;
+    this.clearReconnectTimeout();
     this.url = null;
     this.token = "";
-    this.socket?.close(code, reason);
+    if (this.socket) {
+      this.socket.close(code, reason);
+      this.socket = null;
+    }
   }
 
   open() {
-    this.socket?.open();
+    this.manualClose = false;
+    this.initSocket();
   }
 
   reconnect() {
-    this.socket?.reconnect();
+    this.close();
+    this.open();
   }
 
   send(event: string, payload?: string | string[]) {
-    this.socket?.json({
-      event,
-      args: Array.isArray(payload) ? payload : [payload],
-    });
+    if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(
+        JSON.stringify({
+          event,
+          args: Array.isArray(payload) ? payload : [payload],
+        }),
+      );
+    }
   }
 }
