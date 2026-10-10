@@ -54,7 +54,7 @@ jobs:
           sed -i "s/    'version' => 'canary',/    'version' => '${REF:1}',/" config/app.php
 
       - name: Build and Push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: ./Dockerfile
