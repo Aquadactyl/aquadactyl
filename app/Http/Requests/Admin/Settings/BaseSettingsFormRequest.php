@@ -19,6 +19,7 @@ class BaseSettingsFormRequest extends AdminFormRequest
             'aquadactyl:features:custom_profile_pictures' => 'sometimes|required|in:true,false',
             'aquadactyl:features:privacy_mode' => 'sometimes|required|in:true,false',
             'aquadactyl:features:server_quick_actions' => 'sometimes|required|in:true,false',
+            'aquadactyl:features:registration' => 'sometimes|required|in:true,false',
             'pterodactyl:auth:2fa_required' => 'required|integer|in:0,1,2',
             'app:locale' => ['required', 'string', Rule::in(array_keys($this->getAvailableLanguages()))],
         ];
@@ -33,6 +34,7 @@ class BaseSettingsFormRequest extends AdminFormRequest
             'aquadactyl:features:custom_profile_pictures' => 'Custom Profile Pictures',
             'aquadactyl:features:privacy_mode' => 'Sensitive Data Blur',
             'aquadactyl:features:server_quick_actions' => 'Server Quick Actions',
+            'aquadactyl:features:registration' => 'Self Account Creation',
             'pterodactyl:auth:2fa_required' => 'Require 2-Factor Authentication',
             'app:locale' => 'Default Language',
         ];

@@ -10,6 +10,7 @@ export interface SiteSettings {
     customProfilePictures: boolean;
     privacyMode: boolean;
     serverQuickActions: boolean;
+    registration: boolean;
   };
   recaptcha: {
     enabled: boolean;

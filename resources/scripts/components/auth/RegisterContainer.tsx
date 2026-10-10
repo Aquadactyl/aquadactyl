@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
-import login from "@/api/auth/login";
+import registerApi from "@/api/auth/register";
 import LoginFormContainer from "@/components/auth/LoginFormContainer";
 import { useAppStore } from "@/state";
 import { useForm } from "react-hook-form";
@@ -12,20 +12,47 @@ import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
 import useFlash from "@/plugins/useFlash";
 import { Eye, EyeOff } from "lucide-react";
 
-const schema = z.object({
-  username: z.string().min(1, "A username or email must be provided."),
-  password: z.string().min(1, "Please enter your account password."),
-});
+const schema = z
+  .object({
+    username: z
+      .string()
+      .min(1, "A username must be provided.")
+      .max(191, "Username may not exceed 191 characters.")
+      .regex(
+        /^[a-zA-Z0-9_\-.]+$/,
+        "Username must only contain letters, numbers, hyphens, underscores, or periods.",
+      ),
+    email: z
+      .string()
+      .min(1, "An email address must be provided.")
+      .email("A valid email address must be provided."),
+    name_first: z
+      .string()
+      .min(1, "First name must be provided.")
+      .max(191, "First name may not exceed 191 characters."),
+    name_last: z
+      .string()
+      .min(1, "Last name must be provided.")
+      .max(191, "Last name may not exceed 191 characters."),
+    password: z.string().min(8, "Password must be at least 8 characters long."),
+    password_confirmation: z.string().min(1, "Please confirm your password."),
+  })
+  .refine((data) => data.password === data.password_confirmation, {
+    message: "Passwords do not match.",
+    path: ["password_confirmation"],
+  });
 
 type Values = z.infer<typeof schema>;
 
-const LoginContainer = () => {
+const RegisterContainer = () => {
   const navigate = useNavigate();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { clearFlashes, clearAndAddHttpError } = useFlash();
+
   const registrationEnabled = useAppStore(
     (state) => state.settings.data?.features?.registration ?? false,
   );
@@ -45,18 +72,29 @@ const LoginContainer = () => {
     formState: { errors, isSubmitting },
   } = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { username: "", password: "" },
+    defaultValues: {
+      username: "",
+      email: "",
+      name_first: "",
+      name_last: "",
+      password: "",
+      password_confirmation: "",
+    },
   });
 
   useEffect(() => {
     clearFlashes();
   }, []);
 
+  useEffect(() => {
+    if (!registrationEnabled) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [registrationEnabled, navigate]);
+
   const onSubmit = async (values: Values) => {
     clearFlashes();
 
-    // If there is no token in the state yet, request the token and then abort this submit request
-    // since it will be re-submitted when the recaptcha data is returned by the component.
     if (recaptchaEnabled && !token) {
       try {
         await ref.current!.execute();
@@ -68,16 +106,13 @@ const LoginContainer = () => {
     }
 
     try {
-      const response = await login({ ...values, recaptchaData: token });
+      const response = await registerApi({ ...values, recaptchaData: token });
       if (response.complete) {
         window.location.assign(response.intended || "/");
         return;
       }
 
-      navigate("/auth/login/checkpoint", {
-        replace: true,
-        state: { token: response.confirmationToken },
-      });
+      navigate("/auth/login");
     } catch (error) {
       console.error(error);
       setToken("");
@@ -88,13 +123,13 @@ const LoginContainer = () => {
 
   return (
     <LoginFormContainer
-      title={"Welcome back"}
-      description={"Sign in to manage your servers."}
+      title={"Create an account"}
+      description={"Sign up to start managing your servers."}
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormField
         type={"text"}
-        label={"Username or email"}
+        label={"Username"}
         autoComplete={"username"}
         autoCapitalize={"none"}
         spellCheck={false}
@@ -102,11 +137,41 @@ const LoginContainer = () => {
         error={errors.username}
         {...register("username")}
       />
+      <div className={"mt-5"}>
+        <FormField
+          type={"email"}
+          label={"Email address"}
+          autoComplete={"email"}
+          autoCapitalize={"none"}
+          spellCheck={false}
+          disabled={isSubmitting}
+          error={errors.email}
+          {...register("email")}
+        />
+      </div>
+      <div className={"mt-5 grid grid-cols-2 gap-4"}>
+        <FormField
+          type={"text"}
+          label={"First name"}
+          autoComplete={"given-name"}
+          disabled={isSubmitting}
+          error={errors.name_first}
+          {...register("name_first")}
+        />
+        <FormField
+          type={"text"}
+          label={"Last name"}
+          autoComplete={"family-name"}
+          disabled={isSubmitting}
+          error={errors.name_last}
+          {...register("name_last")}
+        />
+      </div>
       <div className={"password-field mt-5"}>
         <FormField
           type={showPassword ? "text" : "password"}
           label={"Password"}
-          autoComplete={"current-password"}
+          autoComplete={"new-password"}
           disabled={isSubmitting}
           error={errors.password}
           {...register("password")}
@@ -126,6 +191,30 @@ const LoginContainer = () => {
           )}
         </button>
       </div>
+      <div className={"password-field mt-5"}>
+        <FormField
+          type={showConfirmPassword ? "text" : "password"}
+          label={"Confirm password"}
+          autoComplete={"new-password"}
+          disabled={isSubmitting}
+          error={errors.password_confirmation}
+          {...register("password_confirmation")}
+        />
+        <button
+          type={"button"}
+          className={"password-reveal"}
+          aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+          aria-pressed={showConfirmPassword}
+          disabled={isSubmitting}
+          onClick={() => setShowConfirmPassword((value) => !value)}
+        >
+          {showConfirmPassword ? (
+            <EyeOff size={18} aria-hidden />
+          ) : (
+            <Eye size={18} aria-hidden />
+          )}
+        </button>
+      </div>
       <div className={"mt-6"}>
         <Button
           type={"submit"}
@@ -133,7 +222,7 @@ const LoginContainer = () => {
           isLoading={isSubmitting}
           disabled={isSubmitting}
         >
-          Sign in
+          Create account
         </Button>
       </div>
       {recaptchaEnabled && (
@@ -150,22 +239,13 @@ const LoginContainer = () => {
           }}
         />
       )}
-      <div
-        className={`mt-5 flex items-center ${
-          registrationEnabled ? "justify-between" : "justify-center"
-        }`}
-      >
-        <Link to={"/auth/password"} className={"login-recovery !mt-0"}>
-          Forgot password?
+      <div className={"mt-5 text-center"}>
+        <Link to={"/auth/login"} className={"login-recovery mt-0!"}>
+          Already have an account? Sign in
         </Link>
-        {registrationEnabled && (
-          <Link to={"/auth/register"} className={"login-recovery !mt-0"}>
-            Create an account
-          </Link>
-        )}
       </div>
     </LoginFormContainer>
   );
 };
 
-export default LoginContainer;
+export default RegisterContainer;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
 import LoginContainer from "@/components/auth/LoginContainer";
+import RegisterContainer from "@/components/auth/RegisterContainer";
 import ForgotPasswordContainer from "@/components/auth/ForgotPasswordContainer";
 import ResetPasswordContainer from "@/components/auth/ResetPasswordContainer";
 import LoginCheckpointContainer from "@/components/auth/LoginCheckpointContainer";
@@ -14,6 +15,7 @@ export default () => {
     <div className={"authentication-page"}>
       <Routes location={location}>
         <Route path={"login"} element={<LoginContainer />} />
+        <Route path={"register"} element={<RegisterContainer />} />
         <Route
           path={"login/checkpoint"}
           element={<LoginCheckpointContainer />}

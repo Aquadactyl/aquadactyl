@@ -82,13 +82,15 @@
                                 'custom_profile_pictures' => ['Custom Profile Pictures', 'Allow users to upload and display their own profile pictures. Saved pictures are retained while disabled.'],
                                 'privacy_mode' => ['Sensitive Data Blur', 'Allow users to blur sensitive text until hovered or focused. Saved preferences are retained while disabled.'],
                                 'server_quick_actions' => ['Server Quick Actions', 'Show console, files and power shortcuts on server cards. Users can still manage servers from their server pages.'],
+                                'registration' => ['Self Account Creation', 'Allow users to create their own accounts from the login page. When disabled, only administrators can create new users.'],
                             ];
                         @endphp
                         <div class="row">
                             @foreach($features as $key => [$label, $description])
                                 @php
                                     $field = 'aquadactyl:features:' . $key;
-                                    $enabled = in_array(old($field, config('aquadactyl.features.' . $key, true)), [true, 'true', 1, '1'], true);
+                                    $default = $key === 'registration' ? false : true;
+                                    $enabled = in_array(old($field, config('aquadactyl.features.' . $key, $default)), [true, 'true', 1, '1'], true);
                                 @endphp
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="feature-{{ $key }}">{{ $label }}</label>

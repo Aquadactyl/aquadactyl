@@ -18,6 +18,7 @@ pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in(
     'Integration/Blueprint',
     'Integration/Http',
     'Integration/Jobs',
+    'Integration/Providers',
     'Integration/Services',
     'Integration/Api/Remote'
 );

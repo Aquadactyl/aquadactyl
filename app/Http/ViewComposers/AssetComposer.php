@@ -38,6 +38,7 @@ class AssetComposer
                 'customProfilePictures' => (bool) config('aquadactyl.features.custom_profile_pictures', true),
                 'privacyMode' => (bool) config('aquadactyl.features.privacy_mode', true),
                 'serverQuickActions' => (bool) config('aquadactyl.features.server_quick_actions', true),
+                'registration' => (bool) config('aquadactyl.features.registration', false),
             ],
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),

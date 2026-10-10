@@ -28,12 +28,13 @@
                                 <label class="control-label">Provider</label>
                                 <div>
                                     @php
-                                        $currentEnabled = old('recaptcha:enabled', config('recaptcha.enabled'));
+                                        $rawEnabled = old('recaptcha:enabled', config('recaptcha.enabled'));
+                                        $currentEnabled = filter_var($rawEnabled, FILTER_VALIDATE_BOOLEAN);
                                         $currentProvider = old('recaptcha:provider', config('recaptcha.provider', 'recaptcha'));
                                     @endphp
                                     <input type="hidden" name="recaptcha:enabled" id="recaptcha_enabled" value="{{ $currentEnabled ? 'true' : 'false' }}">
                                     <select class="form-control" name="recaptcha:provider" id="captcha_provider_select" onchange="document.getElementById('recaptcha_enabled').value = this.value === 'disabled' ? 'false' : 'true'">
-                                        <option value="disabled" @if(!$currentEnabled) selected @endif>Disabled</option>
+                                        <option value="disabled" @if(!$currentEnabled || $currentProvider === 'disabled') selected @endif>Disabled</option>
                                         <option value="recaptcha" @if($currentEnabled && $currentProvider === 'recaptcha') selected @endif>Google reCAPTCHA</option>
                                         <option value="hcaptcha" @if($currentEnabled && $currentProvider === 'hcaptcha') selected @endif>hCaptcha</option>
                                         <option value="turnstile" @if($currentEnabled && $currentProvider === 'turnstile') selected @endif>Cloudflare Turnstile</option>
@@ -91,7 +92,7 @@
                                 <div>
                                     <select class="form-control" name="pterodactyl:client_features:allocations:enabled">
                                         <option value="false">Disabled</option>
-                                        <option value="true" @if(old('pterodactyl:client_features:allocations:enabled', config('pterodactyl.client_features.allocations.enabled'))) selected @endif>Enabled</option>
+                                        <option value="true" @if(filter_var(old('pterodactyl:client_features:allocations:enabled', config('pterodactyl.client_features.allocations.enabled')), FILTER_VALIDATE_BOOLEAN)) selected @endif>Enabled</option>
                                     </select>
                                     <p class="text-muted small">If enabled users will have the option to automatically create new allocations for their server via the frontend.</p>
                                 </div>
