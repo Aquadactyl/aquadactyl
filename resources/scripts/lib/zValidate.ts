@@ -1,8 +1,11 @@
 import { z } from "zod";
-import type { FormikErrors } from "formik";
+
+export type FormikErrors<T> = {
+  [K in keyof T]?: string;
+} & Record<string, any>;
 
 /**
- * Creates a Formik-compatible validate function from a Zod schema.
+ * Creates a validate function from a Zod schema.
  */
 export function toFormikValidate<T>(
   schema: z.ZodType<any>,

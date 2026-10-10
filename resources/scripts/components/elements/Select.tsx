@@ -90,7 +90,7 @@ const values = (value: SelectProps["value"]): string[] | undefined =>
       ? value.map(String)
       : [String(value)];
 
-// Preserve native form values, refs and change events for Formik and Blueprint
+// Preserve native form values, refs and change events for forms and Blueprint
 // addons while react-select handles the visible, keyboard-accessible dropdown.
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   (

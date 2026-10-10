@@ -2,10 +2,10 @@ import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useState } from "react";
 import { Database, Eye, Trash2 } from "lucide-react";
 import Modal from "@/components/elements/Modal";
-import { Form, Formik, FormikHelpers } from "formik";
-import Field from "@/components/elements/Field";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FormField from "@/components/elements/FormField";
 import { z } from "zod";
-import { toFormikValidate } from "@/lib/zValidate";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import { ServerContext } from "@/state/server";
 import deleteServerDatabase from "@/api/server/databases/deleteServerDatabase";
@@ -56,76 +56,85 @@ export default ({ database, className }: Props) => {
       ),
   });
 
-  const submit = (
-    values: { confirm: string },
-    { setSubmitting }: FormikHelpers<{ confirm: string }>,
-  ) => {
+  type Values = z.infer<typeof schema>;
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isValid, isSubmitting },
+  } = useForm<Values>({
+    resolver: zodResolver(schema),
+    mode: "onChange",
+    defaultValues: { confirm: "" },
+  });
+
+  const onSubmit = async () => {
     clearFlashes();
-    deleteServerDatabase(uuid, database.id)
-      .then(() => {
-        setVisible(false);
-        setTimeout(() => removeDatabase(database.id), 150);
-      })
-      .catch((error) => {
-        console.error(error);
-        setSubmitting(false);
-        addError({
-          key: "database:delete",
-          message: httpErrorToHuman(error),
-        });
+    try {
+      await deleteServerDatabase(uuid, database.id);
+      setVisible(false);
+      reset();
+      setTimeout(() => removeDatabase(database.id), 150);
+    } catch (error) {
+      console.error(error);
+      addError({
+        key: "database:delete",
+        message: httpErrorToHuman(error),
       });
+    }
   };
 
   return (
     <>
-      <Formik
-        onSubmit={submit}
-        initialValues={{ confirm: "" }}
-        validate={toFormikValidate(schema)}
-        isInitialValid={false}
+      <Modal
+        visible={visible}
+        dismissable={!isSubmitting}
+        showSpinnerOverlay={isSubmitting}
+        onDismissed={() => {
+          setVisible(false);
+          reset();
+        }}
       >
-        {({ isSubmitting, isValid, resetForm }) => (
-          <Modal
-            visible={visible}
-            dismissable={!isSubmitting}
-            showSpinnerOverlay={isSubmitting}
-            onDismissed={() => {
-              setVisible(false);
-              resetForm();
-            }}
-          >
-            <FlashMessageRender byKey={"database:delete"} className={"mb-6"} />
-            <h2 className={"mb-6 text-2xl"}>Confirm database deletion</h2>
-            <p className={"text-sm"}>
-              Deleting a database is a permanent action, it cannot be undone.
-              This will permanently delete the <strong>{database.name}</strong>{" "}
-              database and remove all associated data.
-            </p>
-            <Form className={"m-0 mt-6"}>
-              <Field
-                type={"text"}
-                id={"confirm_name"}
-                name={"confirm"}
-                label={"Confirm Database Name"}
-                description={"Enter the database name to confirm deletion."}
-              />
-              <div className={"mt-6 text-right"}>
-                <Button
-                  type={"button"}
-                  isSecondary
-                  className={"mr-2"}
-                  onClick={() => setVisible(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type={"submit"} color={"red"} disabled={!isValid}>
-                  Delete Database
-                </Button>
-              </div>
-            </Form>
-          </Modal>
-        )}
-      </Formik>
+        <FlashMessageRender byKey={"database:delete"} className={"mb-6"} />
+        <h2 className={"mb-6 text-2xl"}>Confirm database deletion</h2>
+        <p className={"text-sm"}>
+          Deleting a database is a permanent action, it cannot be undone. This
+          will permanently delete the <strong>{database.name}</strong> database
+          and remove all associated data.
+        </p>
+        <form className={"m-0 mt-6"} onSubmit={handleSubmit(onSubmit)}>
+          <FormField
+            type={"text"}
+            id={"confirm_name"}
+            label={"Confirm Database Name"}
+            description={"Enter the database name to confirm deletion."}
+            error={errors.confirm}
+            {...register("confirm")}
+          />
+          <div className={"mt-6 text-right"}>
+            <Button
+              type={"button"}
+              isSecondary
+              className={"mr-2"}
+              onClick={() => {
+                setVisible(false);
+                reset();
+              }}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              type={"submit"}
+              color={"red"}
+              disabled={!isValid || isSubmitting}
+            >
+              Delete Database
+            </Button>
+          </div>
+        </form>
+      </Modal>
       <Modal
         visible={connectionVisible}
         onDismissed={() => setConnectionVisible(false)}

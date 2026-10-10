@@ -1,15 +1,15 @@
 import { fileBitsToString } from "@/helpers";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
-import React from "react";
+import React, { useEffect } from "react";
 import Modal, { RequiredModalProps } from "@/components/elements/Modal";
-import { Form, Formik, FormikHelpers } from "formik";
-import Field from "@/components/elements/Field";
+import { useForm } from "react-hook-form";
+import FormField from "@/components/elements/FormField";
 import chmodFiles from "@/api/server/files/chmodFiles";
 import { ServerContext } from "@/state/server";
 import Button from "@/components/elements/Button";
 import useFlash from "@/plugins/useFlash";
 
-interface FormikValues {
+interface Values {
   mode: string;
 }
 
@@ -31,16 +31,30 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
     (actions) => actions.files.setSelectedFiles,
   );
 
-  const submit = (
-    { mode }: FormikValues,
-    { setSubmitting }: FormikHelpers<FormikValues>,
-  ) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>({
+    defaultValues: {
+      mode: files.length > 1 ? "" : files[0]?.mode || "",
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      mode: files.length > 1 ? "" : files[0]?.mode || "",
+    });
+  }, [files, reset]);
+
+  const onSubmit = async ({ mode }: Values) => {
     clearFlashes("files");
 
     mutate(
       (data) =>
         data.map((f) =>
-          f.name === files[0].file
+          f.name === files[0]?.file
             ? {
                 ...f,
                 mode: fileBitsToString(mode, !f.isFile),
@@ -53,51 +67,44 @@ const ChmodFileModal = ({ files, ...props }: OwnProps) => {
 
     const data = files.map((f) => ({ file: f.file, mode: mode }));
 
-    chmodFiles(uuid, directory, data)
-      .then((): Promise<any> =>
-        files.length > 0 ? mutate() : Promise.resolve(),
-      )
-      .then(() => setSelectedFiles([]))
-      .catch((error) => {
-        mutate();
-        setSubmitting(false);
-        clearAndAddHttpError({ key: "files", error });
-      })
-      .then(() => props.onDismissed());
+    try {
+      await chmodFiles(uuid, directory, data);
+      if (files.length > 0) {
+        await mutate();
+      }
+      setSelectedFiles([]);
+      props.onDismissed();
+    } catch (error) {
+      mutate();
+      clearAndAddHttpError({ key: "files", error });
+    }
   };
 
   return (
-    <Formik
-      onSubmit={submit}
-      initialValues={{
-        mode: files.length > 1 ? "" : files[0].mode || "",
-      }}
+    <Modal
+      {...props}
+      dismissable={!isSubmitting}
+      showSpinnerOverlay={isSubmitting}
     >
-      {({ isSubmitting }) => (
-        <Modal
-          {...props}
-          dismissable={!isSubmitting}
-          showSpinnerOverlay={isSubmitting}
-        >
-          <Form className={"m-0"}>
-            <div className={"flex flex-wrap items-end"}>
-              <div className={"w-full sm:mr-4 sm:flex-1"}>
-                <Field
-                  type={"string"}
-                  id={"file_mode"}
-                  name={"mode"}
-                  label={"File Mode"}
-                  autoFocus
-                />
-              </div>
-              <div className={"mt-4 w-full sm:mt-0 sm:w-auto"}>
-                <Button className={"w-full"}>Update</Button>
-              </div>
-            </div>
-          </Form>
-        </Modal>
-      )}
-    </Formik>
+      <form className={"m-0"} onSubmit={handleSubmit(onSubmit)}>
+        <div className={"flex flex-wrap items-end"}>
+          <div className={"w-full sm:mr-4 sm:flex-1"}>
+            <FormField
+              id={"file_mode"}
+              label={"File Mode"}
+              autoFocus
+              error={errors.mode}
+              {...register("mode")}
+            />
+          </div>
+          <div className={"mt-4 w-full sm:mt-0 sm:w-auto"}>
+            <Button className={"w-full"} disabled={isSubmitting}>
+              Update
+            </Button>
+          </div>
+        </div>
+      </form>
+    </Modal>
   );
 };
 

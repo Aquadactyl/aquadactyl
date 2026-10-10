@@ -1,73 +1,75 @@
 import React from "react";
-import { Field, Form, Formik, FormikHelpers } from "formik";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toFormikValidate } from "@/lib/zValidate";
-import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import Button from "@/components/elements/Button";
-import Input, { Textarea } from "@/components/elements/Input";
+import { Textarea } from "@/components/elements/Input";
 import { useFlashKey } from "@/plugins/useFlash";
 import { createSSHKey, useSSHKeys } from "@/api/account/ssh-keys";
+import FormField from "@/components/elements/FormField";
+import FormFieldWrapper from "@/components/elements/FormFieldWrapper";
 
-interface Values {
-  name: string;
-  publicKey: string;
-}
+const schema = z.object({
+  name: z.string().min(1, "A name must be provided for this SSH key."),
+  publicKey: z.string().min(1, "You must provide a public SSH key."),
+});
+
+type Values = z.infer<typeof schema>;
 
 export default () => {
   const { clearAndAddHttpError } = useFlashKey("account");
   const { mutate } = useSSHKeys();
 
-  const submit = (
-    values: Values,
-    { setSubmitting, resetForm }: FormikHelpers<Values>,
-  ) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { name: "", publicKey: "" },
+  });
+
+  const onSubmit = async (values: Values) => {
     clearAndAddHttpError();
 
-    createSSHKey(values.name, values.publicKey)
-      .then((key) => {
-        resetForm();
-        mutate((data) => (data || []).concat(key));
-      })
-      .catch((error) => clearAndAddHttpError(error))
-      .then(() => setSubmitting(false));
+    try {
+      const key = await createSSHKey(values.name, values.publicKey);
+      reset();
+      mutate((data) => (data || []).concat(key));
+    } catch (error) {
+      clearAndAddHttpError(error as Error);
+    }
   };
 
   return (
-    <>
-      <Formik
-        onSubmit={submit}
-        initialValues={{ name: "", publicKey: "" }}
-        validate={toFormikValidate(
-          z.object({
-            name: z.string().min(1),
-            publicKey: z.string().min(1),
-          }),
-        )}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <SpinnerOverlay visible={isSubmitting} />
+      <FormField
+        id={"name"}
+        label={"SSH Key Name"}
+        className={"mb-6"}
+        disabled={isSubmitting}
+        error={errors.name}
+        {...register("name")}
+      />
+      <FormFieldWrapper
+        id={"publicKey"}
+        label={"Public Key"}
+        description={"Enter your public SSH key."}
+        error={errors.publicKey}
       >
-        {({ isSubmitting }) => (
-          <Form>
-            <SpinnerOverlay visible={isSubmitting} />
-            <FormikFieldWrapper
-              label={"SSH Key Name"}
-              name={"name"}
-              className={"mb-6"}
-            >
-              <Field name={"name"} as={Input} />
-            </FormikFieldWrapper>
-            <FormikFieldWrapper
-              label={"Public Key"}
-              name={"publicKey"}
-              description={"Enter your public SSH key."}
-            >
-              <Field name={"publicKey"} as={Textarea} className={"h-32"} />
-            </FormikFieldWrapper>
-            <div className={"mt-6 flex justify-end"}>
-              <Button>Save</Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </>
+        <Textarea
+          id={"publicKey"}
+          className={"h-32"}
+          disabled={isSubmitting}
+          {...register("publicKey")}
+        />
+      </FormFieldWrapper>
+      <div className={"mt-6 flex justify-end"}>
+        <Button disabled={isSubmitting}>Save</Button>
+      </div>
+    </form>
   );
 };

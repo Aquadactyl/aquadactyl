@@ -1,7 +1,7 @@
 import React from "react";
-import { Field as FormikField, useFormikContext } from "formik";
-import Field from "@/components/elements/Field";
-import FormikFieldWrapper from "@/components/elements/FormikFieldWrapper";
+import { useFormContext } from "react-hook-form";
+import FormField from "@/components/elements/FormField";
+import FormFieldWrapper from "@/components/elements/FormFieldWrapper";
 import Select from "@/components/elements/Select";
 import ScheduleCheatsheetCards from "./ScheduleCheatsheetCards";
 import {
@@ -27,27 +27,47 @@ export const ScheduleSelect = ({
   label: string;
   children: React.ReactNode;
   onChange?: React.ChangeEventHandler<HTMLSelectElement>;
-}) => (
-  <FormikFieldWrapper id={`schedule-${name}`} name={name} label={label}>
-    <FormikField
-      as={Select}
-      id={`schedule-${name}`}
-      name={name}
-      {...(onChange ? { onChange } : {})}
-    >
-      {children}
-    </FormikField>
-  </FormikFieldWrapper>
-);
+}) => {
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
+  const registration = register(name);
+  const error = (errors as Record<string, any>)[name];
+
+  return (
+    <FormFieldWrapper id={`schedule-${name}`} label={label} error={error}>
+      <Select
+        id={`schedule-${name}`}
+        {...registration}
+        onChange={(e) => {
+          registration.onChange(e);
+          onChange?.(e);
+        }}
+      >
+        {children}
+      </Select>
+    </FormFieldWrapper>
+  );
+};
 
 export default ({ timezone }: { timezone: string }) => {
-  const { values, setValues } = useFormikContext<TimingValues>();
+  const {
+    watch,
+    setValue,
+    getValues,
+    register,
+    formState: { errors },
+  } = useFormContext<TimingValues>();
+  const values = watch();
+
   let preview = "Choose a valid time to see when this schedule will run.";
   try {
     preview = describeCron(cronFromTiming(values, values));
   } catch {
     // Incomplete time/number inputs are normal while editing.
   }
+
   return (
     <div className={"mt-6 space-y-4"}>
       <ScheduleSelect
@@ -63,7 +83,11 @@ export default ({ timezone }: { timezone: string }) => {
               /* Keep the existing cron if a basic input is incomplete. */
             }
           }
-          void setValues({ ...values, ...cron, frequency });
+          const currentValues = getValues();
+          const next = { ...currentValues, ...cron, frequency };
+          Object.keys(next).forEach((key) => {
+            setValue(key as any, (next as any)[key]);
+          });
         }}
       >
         <option value={"minutes"}>Every few minutes</option>
@@ -91,13 +115,15 @@ export default ({ timezone }: { timezone: string }) => {
               </option>
             ))}
           </ScheduleSelect>
-          <Field
-            name={"hourMinute"}
+          <FormField
+            id={"schedule-hourMinute"}
             label={"Minutes past the hour"}
             type={"number"}
             min={0}
             max={59}
             step={1}
+            error={errors.hourMinute}
+            {...register("hourMinute")}
           />
         </div>
       )}
@@ -121,11 +147,13 @@ export default ({ timezone }: { timezone: string }) => {
               ))}
             </ScheduleSelect>
           )}
-          <Field
-            name={"time"}
+          <FormField
+            id={"schedule-time"}
             label={"Time (24-hour)"}
             type={"time"}
             step={60}
+            error={errors.time}
+            {...register("time")}
           />
         </div>
       )}
@@ -137,30 +165,40 @@ export default ({ timezone }: { timezone: string }) => {
       {values.frequency === "custom" && (
         <>
           <div className={"grid grid-cols-2 gap-4 sm:grid-cols-3"}>
-            <Field
-              name={"minute"}
+            <FormField
+              id={"schedule-minute"}
               label={"Minute"}
               description={"0–59, or * for every minute"}
+              error={errors.minute}
+              {...register("minute")}
             />
-            <Field
-              name={"hour"}
+            <FormField
+              id={"schedule-hour"}
               label={"Hour"}
               description={"0–23, or * for every hour"}
+              error={errors.hour}
+              {...register("hour")}
             />
-            <Field
-              name={"dayOfMonth"}
+            <FormField
+              id={"schedule-dayOfMonth"}
               label={"Day of month"}
               description={"1–31, or * for every day"}
+              error={errors.dayOfMonth}
+              {...register("dayOfMonth")}
             />
-            <Field
-              name={"month"}
+            <FormField
+              id={"schedule-month"}
               label={"Month"}
               description={"1–12, or * for every month"}
+              error={errors.month}
+              {...register("month")}
             />
-            <Field
-              name={"dayOfWeek"}
+            <FormField
+              id={"schedule-dayOfWeek"}
               label={"Day of week"}
               description={"0–6 (Sunday–Saturday), or *"}
+              error={errors.dayOfWeek}
+              {...register("dayOfWeek")}
             />
           </div>
           <details className={"rounded bg-neutral-800 p-4 text-sm"}>
@@ -197,10 +235,15 @@ export default ({ timezone }: { timezone: string }) => {
           }
           onClick={() => {
             try {
-              void setValues({
-                ...values,
-                ...cronFromTiming(values, values),
-                frequency: "custom",
+              const currentValues = getValues();
+              const cron = cronFromTiming(currentValues, currentValues);
+              const next = {
+                ...currentValues,
+                ...cron,
+                frequency: "custom" as const,
+              };
+              Object.keys(next).forEach((key) => {
+                setValue(key as any, (next as any)[key]);
               });
             } catch {
               // Keep invalid basic values visible so the user can finish editing them.

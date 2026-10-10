@@ -1,10 +1,10 @@
 import SensitiveValue from "@/components/elements/SensitiveValue";
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useMemo, useRef } from "react";
 import { Subuser } from "@/state/server/subusers";
-import { Form, Formik } from "formik";
+import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toFormikValidate } from "@/lib/zValidate";
-import Field from "@/components/elements/Field";
+import FormField from "@/components/elements/FormField";
 import { useAppStore } from "@/state";
 import useFlash from "@/plugins/useFlash";
 import createOrUpdateSubuser from "@/api/server/users/createOrUpdateSubuser";
@@ -39,8 +39,6 @@ const EditSubuserModal = ({ subuser }: Props) => {
 
   const isRootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
   const permissions = useAppStore((state) => state.permissions.data);
-  // The currently logged in user's permissions. We're going to filter out any permissions
-  // that they should not need.
   const loggedInPermissions = ServerContext.useStoreState(
     (state) => state.server.permissions,
   );
@@ -48,7 +46,6 @@ const EditSubuserModal = ({ subuser }: Props) => {
     subuser ? ["user.update"] : ["user.create"],
   );
 
-  // The permissions that can be modified by this user.
   const editablePermissions = useDeepCompareMemo(() => {
     const cleaned = Object.keys(permissions).map((key) =>
       Object.keys(permissions[key].keys).map((pkey) => `${key}.${pkey}`),
@@ -68,6 +65,29 @@ const EditSubuserModal = ({ subuser }: Props) => {
 
     return list.filter((key) => loggedInPermissions.indexOf(key) >= 0);
   }, [isRootAdmin, permissions, loggedInPermissions]);
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        email: subuser
+          ? z.string()
+          : z
+              .string()
+              .min(1, "A valid email address must be provided.")
+              .max(191, "Email addresses must not exceed 191 characters.")
+              .email("A valid email address must be provided."),
+        permissions: z.array(z.string()),
+      }),
+    [subuser],
+  );
+
+  const methods = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      email: subuser?.email || "",
+      permissions: subuser?.permissions || [],
+    },
+  });
 
   const submit = (values: Values) => {
     setPropOverrides({ showSpinnerOverlay: true });
@@ -97,26 +117,8 @@ const EditSubuserModal = ({ subuser }: Props) => {
   );
 
   return (
-    <Formik
-      onSubmit={submit}
-      initialValues={
-        {
-          email: subuser?.email || "",
-          permissions: subuser?.permissions || [],
-        } as Values
-      }
-      validate={toFormikValidate(
-        z.object({
-          email: z
-            .string()
-            .min(1, "A valid email address must be provided.")
-            .max(191, "Email addresses must not exceed 191 characters.")
-            .email("A valid email address must be provided."),
-          permissions: z.array(z.string()),
-        }),
-      )}
-    >
-      <Form>
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(submit)}>
         <div className={"flex justify-between"}>
           <h2 className={"text-2xl"} ref={ref}>
             {subuser ? (
@@ -129,7 +131,11 @@ const EditSubuserModal = ({ subuser }: Props) => {
             )}
           </h2>
           <div>
-            <Button type={"submit"} className={"w-full sm:w-auto"}>
+            <Button
+              type={"submit"}
+              className={"w-full sm:w-auto"}
+              disabled={methods.formState.isSubmitting}
+            >
               {subuser ? "Save" : "Invite User"}
             </Button>
           </div>
@@ -145,13 +151,15 @@ const EditSubuserModal = ({ subuser }: Props) => {
         )}
         {!subuser && (
           <div className={"mt-6"}>
-            <Field
-              name={"email"}
+            <FormField
+              id={"email"}
               type={"email"}
               label={"User Email"}
               description={
                 "Enter the email address of the user you wish to invite as a subuser for this server."
               }
+              error={methods.formState.errors.email}
+              {...methods.register("email")}
             />
           </div>
         )}
@@ -186,13 +194,17 @@ const EditSubuserModal = ({ subuser }: Props) => {
         </div>
         <Can action={subuser ? "user.update" : "user.create"}>
           <div className={"flex justify-end pb-6"}>
-            <Button type={"submit"} className={"w-full sm:w-auto"}>
+            <Button
+              type={"submit"}
+              className={"w-full sm:w-auto"}
+              disabled={methods.formState.isSubmitting}
+            >
               {subuser ? "Save" : "Invite User"}
             </Button>
           </div>
         </Can>
-      </Form>
-    </Formik>
+      </form>
+    </FormProvider>
   );
 };
 

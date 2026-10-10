@@ -1,5 +1,5 @@
 import React from "react";
-import { Field, FieldProps } from "formik";
+import { useFormContext } from "react-hook-form";
 import Input from "@/components/elements/Input";
 
 interface Props {
@@ -19,36 +19,35 @@ type OmitFields =
 
 type InputProps = Omit<React.ComponentPropsWithoutRef<"input">, OmitFields>;
 
-const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => (
-  <Field name={name}>
-    {({ field, form }: FieldProps) => {
-      if (!Array.isArray(field.value)) {
-        console.error(
-          "Attempting to mount a checkbox using a field value that is not an array.",
-        );
+const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => {
+  const { watch, setValue } = useFormContext();
+  const currentValues: string[] = watch(name) || [];
+  const isChecked = Array.isArray(currentValues) && currentValues.includes(value);
 
-        return null;
-      }
+  const onChange = () => {
+    const list = Array.isArray(currentValues) ? currentValues : [];
+    const set = new Set(list);
+    if (set.has(value)) {
+      set.delete(value);
+    } else {
+      set.add(value);
+    }
+    setValue(name, Array.from(set), {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true,
+    });
+  };
 
-      return (
-        <Input
-          {...field}
-          {...props}
-          className={className}
-          type={"checkbox"}
-          checked={(field.value || []).includes(value)}
-          onClick={() => form.setFieldTouched(field.name, true)}
-          onChange={(e) => {
-            const set = new Set(field.value);
-            set.has(value) ? set.delete(value) : set.add(value);
-
-            field.onChange(e);
-            form.setFieldValue(field.name, Array.from(set));
-          }}
-        />
-      );
-    }}
-  </Field>
-);
+  return (
+    <Input
+      {...props}
+      className={className}
+      type={"checkbox"}
+      checked={isChecked}
+      onChange={onChange}
+    />
+  );
+};
 
 export default Checkbox;

@@ -1,7 +1,7 @@
 import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
 import { fireEvent } from "@testing-library/react";
-import { Form, Formik } from "formik";
+import { FormProvider, useForm } from "react-hook-form";
 import ScheduleTimingFields, { TimingValues } from "./ScheduleTimingFields";
 import { cronFromTiming, defaultTiming } from "./scheduleHelpers";
 
@@ -24,27 +24,36 @@ describe("schedule timing editor", () => {
     container.remove();
   });
 
+  const Wrapper = ({ changes }: { changes: Partial<TimingValues> }) => {
+    const methods = useForm<TimingValues>({
+      defaultValues: {
+        ...defaultTiming,
+        minute: "0",
+        hour: "3",
+        dayOfMonth: "*",
+        month: "*",
+        dayOfWeek: "*",
+        ...changes,
+      },
+    });
+
+    return (
+      <FormProvider {...methods}>
+        <form
+          onSubmit={methods.handleSubmit((values) =>
+            save(cronFromTiming(values, values)),
+          )}
+        >
+          <ScheduleTimingFields timezone={"Europe/London"} />
+          <button type={"submit"}>Save</button>
+        </form>
+      </FormProvider>
+    );
+  };
+
   const render = (changes: Partial<TimingValues> = {}) => {
     act(() => {
-      root.render(
-        <Formik<TimingValues>
-          initialValues={{
-            ...defaultTiming,
-            minute: "0",
-            hour: "3",
-            dayOfMonth: "*",
-            month: "*",
-            dayOfWeek: "*",
-            ...changes,
-          }}
-          onSubmit={(values) => save(cronFromTiming(values, values))}
-        >
-          <Form>
-            <ScheduleTimingFields timezone={"Europe/London"} />
-            <button type={"submit"}>Save</button>
-          </Form>
-        </Formik>,
-      );
+      root.render(<Wrapper changes={changes} />);
     });
   };
 

@@ -1,20 +1,15 @@
 import React, { useState } from "react";
 import Modal from "@/components/elements/Modal";
-import { Form, Formik, FormikHelpers } from "formik";
-import Field from "@/components/elements/Field";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import FormField from "@/components/elements/FormField";
 import { z } from "zod";
-import { toFormikValidate } from "@/lib/zValidate";
 import createServerDatabase from "@/api/server/databases/createServerDatabase";
 import { ServerContext } from "@/state/server";
 import { httpErrorToHuman } from "@/api/http";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import useFlash from "@/plugins/useFlash";
 import Button from "@/components/elements/Button";
-
-interface Values {
-  databaseName: string;
-  connectionsFrom: string;
-}
 
 const schema = z.object({
   databaseName: z
@@ -27,8 +22,13 @@ const schema = z.object({
     ),
   connectionsFrom: z
     .string()
-    .regex(/^[\w\-/.%:]+$/, "A valid host address must be provided."),
+    .refine(
+      (val) => !val || /^[\w\-/.%:]+$/.test(val),
+      "A valid host address must be provided.",
+    ),
 });
+
+type Values = z.infer<typeof schema>;
 
 interface Props {
   className?: string;
@@ -43,83 +43,91 @@ export default ({ className }: Props) => {
     (actions) => actions.databases.appendDatabase,
   );
 
-  const submit = (values: Values, { setSubmitting }: FormikHelpers<Values>) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { databaseName: "", connectionsFrom: "" },
+  });
+
+  const onSubmit = async (values: Values) => {
     clearFlashes("database:create");
-    createServerDatabase(uuid, {
-      databaseName: values.databaseName,
-      connectionsFrom: values.connectionsFrom || "%",
-    })
-      .then((database) => {
-        appendDatabase(database);
-        setVisible(false);
-      })
-      .catch((error) => {
-        addError({
-          key: "database:create",
-          message: httpErrorToHuman(error),
-        });
-        setSubmitting(false);
+    try {
+      const database = await createServerDatabase(uuid, {
+        databaseName: values.databaseName,
+        connectionsFrom: values.connectionsFrom || "%",
       });
+      appendDatabase(database);
+      setVisible(false);
+      reset();
+    } catch (error) {
+      addError({
+        key: "database:create",
+        message: httpErrorToHuman(error),
+      });
+    }
   };
 
   return (
     <>
-      <Formik
-        onSubmit={submit}
-        initialValues={{ databaseName: "", connectionsFrom: "" }}
-        validate={toFormikValidate(schema)}
+      <Modal
+        visible={visible}
+        dismissable={!isSubmitting}
+        showSpinnerOverlay={isSubmitting}
+        onDismissed={() => {
+          reset();
+          setVisible(false);
+        }}
       >
-        {({ isSubmitting, resetForm }) => (
-          <Modal
-            visible={visible}
-            dismissable={!isSubmitting}
-            showSpinnerOverlay={isSubmitting}
-            onDismissed={() => {
-              resetForm();
-              setVisible(false);
-            }}
-          >
-            <FlashMessageRender byKey={"database:create"} className={"mb-6"} />
-            <h2 className={"mb-6 text-2xl"}>Create new database</h2>
-            <Form className={"m-0"}>
-              <Field
-                type={"string"}
-                id={"database_name"}
-                name={"databaseName"}
-                label={"Database Name"}
-                description={"A descriptive name for your database instance."}
-              />
-              <div className={"mt-6"}>
-                <Field
-                  type={"string"}
-                  id={"connections_from"}
-                  name={"connectionsFrom"}
-                  label={"Connections From"}
-                  description={
-                    "Where connections should be allowed from. Leave blank to allow connections from anywhere."
-                  }
-                />
-              </div>
-              <div className={"mt-6 flex flex-wrap justify-end"}>
-                <Button
-                  type={"button"}
-                  isSecondary
-                  className={"w-full sm:mr-2 sm:w-auto"}
-                  onClick={() => setVisible(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  className={"mt-4 w-full sm:mt-0 sm:w-auto"}
-                  type={"submit"}
-                >
-                  Create Database
-                </Button>
-              </div>
-            </Form>
-          </Modal>
-        )}
-      </Formik>
+        <FlashMessageRender byKey={"database:create"} className={"mb-6"} />
+        <h2 className={"mb-6 text-2xl"}>Create new database</h2>
+        <form className={"m-0"} onSubmit={handleSubmit(onSubmit)}>
+          <FormField
+            type={"text"}
+            id={"database_name"}
+            label={"Database Name"}
+            description={"A descriptive name for your database instance."}
+            error={errors.databaseName}
+            {...register("databaseName")}
+          />
+          <div className={"mt-6"}>
+            <FormField
+              type={"text"}
+              id={"connections_from"}
+              label={"Connections From"}
+              description={
+                "Where connections should be allowed from. Leave blank to allow connections from anywhere."
+              }
+              error={errors.connectionsFrom}
+              {...register("connectionsFrom")}
+            />
+          </div>
+          <div className={"mt-6 flex flex-wrap justify-end"}>
+            <Button
+              type={"button"}
+              isSecondary
+              className={"w-full sm:mr-2 sm:w-auto"}
+              onClick={() => {
+                reset();
+                setVisible(false);
+              }}
+              disabled={isSubmitting}
+            >
+              Cancel
+            </Button>
+            <Button
+              className={"mt-4 w-full sm:mt-0 sm:w-auto"}
+              type={"submit"}
+              disabled={isSubmitting}
+            >
+              Create Database
+            </Button>
+          </div>
+        </form>
+      </Modal>
       <Button className={className} onClick={() => setVisible(true)}>
         New Database
       </Button>

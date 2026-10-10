@@ -22,7 +22,7 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `chart.js`, `react-chartjs-2`                              | Charts                                                 |
 | `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
 | `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
-| `formik`, `react-hook-form`                                | Form libraries                                         |
+| `react-hook-form`                                           | Form management                                        |
 | `@hookform/resolvers`, `zod`                               | Schema validation and resolvers                        |
 | `zustand`                                                  | Lightweight addon state stores                         |
 | `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |
@@ -30,41 +30,51 @@ adding a dependency alone does not include it in the panel's browser bundle.
 
 React and React DOM remain on 16.14 for compatibility with this panel and Blueprint.
 Use the panel's React installation so extension hooks share the same runtime.
-Formik, React Hook Form, Zod and Zustand are shared dependencies for addons.
+React Hook Form, Zod and Zustand are shared dependencies for addons.
 
 ## Imports
 
 ```tsx
 import http from "@/api/http";
 import { Settings } from "lucide-react";
-import { Form, Formik } from "formik";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toFormikValidate } from "@/lib/zValidate";
-import Field from "@/components/elements/Field";
+import FormField from "@/components/elements/FormField";
 import Button from "@/components/elements/Button";
 
 const schema = z.object({
   label: z.string().trim().max(80).min(1, "Enter a label."),
 });
 
+type Values = z.infer<typeof schema>;
+
 export default function ExtensionSettings() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<Values>({
+    resolver: zodResolver(schema),
+    defaultValues: { label: "" },
+  });
+
+  const onSubmit = async (values: Values) => {
+    await http.put("/api/client/extensions/myextension/settings", values);
+  };
+
   return (
-    <Formik
-      initialValues={{ label: "" }}
-      validate={toFormikValidate(schema)}
-      onSubmit={async (values) => {
-        await http.put("/api/client/extensions/myextension/settings", values);
-      }}
-    >
-      {({ isSubmitting }) => (
-        <Form>
-          <Field type="text" name="label" label="Label" />
-          <Button type="submit" disabled={isSubmitting}>
-            <Settings size={16} aria-hidden /> Save
-          </Button>
-        </Form>
-      )}
-    </Formik>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <FormField
+        type="text"
+        label="Label"
+        error={errors.label}
+        {...register("label")}
+      />
+      <Button type="submit" disabled={isSubmitting}>
+        <Settings size={16} aria-hidden /> Save
+      </Button>
+    </form>
   );
 }
 ```
@@ -79,7 +89,7 @@ Import `Select` from `@/components/elements/Select` for the panel's custom dark
 dropdown. It accepts `<option>` and `<optgroup>` children and the existing native
 select props, including `value`, `defaultValue`, `multiple`, `disabled`, `required`
 and `onChange`. Change handlers receive an actual select element as both
-`target` and `currentTarget`; native form values, refs and Formik fields continue
+`target` and `currentTarget`; native form values, refs and form fields continue
 to work. Give the control an `id` with a matching label, or an `aria-label`.
 Menus support search and keyboard navigation and stay within dialog focus traps.
 

@@ -30,7 +30,7 @@ Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprin
   session cookies, Nginx rules that protect hidden files and limit PHP execution
   to the front controller, and validation of update archives before extraction.
 - **Addon libraries:** Axios, Lucide icons, React Select and Lodash ES,
-  alongside the panel's Formik, Yup, UI and chart libraries.
+  alongside the panel's React Hook Form, Zod, UI and chart libraries.
   See the [addon development guide](docs/ADDONS.md).
 - **Simple server schedules:** Choose daily, weekly, monthly, or regular interval
   timings, then add restart, backup, or command steps with readable delays.

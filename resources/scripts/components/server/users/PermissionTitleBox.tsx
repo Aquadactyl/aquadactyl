@@ -1,5 +1,5 @@
 import React, { memo, useCallback } from "react";
-import { useField } from "formik";
+import { useFormContext } from "react-hook-form";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import Input from "@/components/elements/Input";
 import isEqual from "react-fast-compare";
@@ -9,24 +9,31 @@ interface Props {
   title: string;
   permissions: string[];
   className?: string;
+  children?: React.ReactNode;
 }
 
 const PermissionTitleBox: React.FC<Props> = memo(
   ({ isEditable, title, permissions, className, children }) => {
-    const [{ value }, , { setValue }] = useField<string[]>("permissions");
+    const { watch, setValue } = useFormContext<{ permissions: string[] }>();
+    const value = watch("permissions") || [];
 
     const onCheckboxClicked = useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.currentTarget.checked) {
-          setValue([
-            ...value,
-            ...permissions.filter((p) => !value.includes(p)),
-          ]);
+          setValue(
+            "permissions",
+            [...value, ...permissions.filter((p) => !value.includes(p))],
+            { shouldValidate: true, shouldDirty: true, shouldTouch: true },
+          );
         } else {
-          setValue(value.filter((p) => !permissions.includes(p)));
+          setValue(
+            "permissions",
+            value.filter((p) => !permissions.includes(p)),
+            { shouldValidate: true, shouldDirty: true, shouldTouch: true },
+          );
         }
       },
-      [permissions, value],
+      [permissions, value, setValue],
     );
 
     return (
@@ -37,7 +44,10 @@ const PermissionTitleBox: React.FC<Props> = memo(
             {isEditable && (
               <Input
                 type={"checkbox"}
-                checked={permissions.every((p) => value.includes(p))}
+                checked={
+                  permissions.length > 0 &&
+                  permissions.every((p) => value.includes(p))
+                }
                 onChange={onCheckboxClicked}
               />
             )}
