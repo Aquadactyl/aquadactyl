@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import styled, { css, keyframes } from "styled-components";
 import classNames from "classnames";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 
@@ -17,38 +16,35 @@ interface Spinner extends React.FC<Props> {
   Suspense: React.FC<Props>;
 }
 
-const spin = keyframes`
-    to { transform: rotate(360deg); }
-`;
+const sizeClasses: Record<SpinnerSize, string> = {
+  small: "w-4 h-4 border-2",
+  base: "w-8 h-8 border-[3px]",
+  large: "w-16 h-16 border-[6px]",
+};
 
-// noinspection CssOverwrittenProperties
-const SpinnerComponent = styled.div<{ $size?: SpinnerSize; $isBlue?: boolean }>`
-  width: 2rem;
-  height: 2rem;
-  border-width: 3px;
-  border-radius: 50%;
-  animation: ${spin} 1s cubic-bezier(0.55, 0.25, 0.25, 0.7) infinite;
+const SpinnerElement = ({
+  size = "base",
+  isBlue,
+  className,
+}: {
+  size?: SpinnerSize;
+  isBlue?: boolean;
+  className?: string;
+}) => (
+  <div
+    role="status"
+    className={classNames(
+      "animate-spin rounded-full border-solid",
+      sizeClasses[size],
+      isBlue
+        ? "border-primary-500/20 border-t-primary-500"
+        : "border-white/20 border-t-white",
+      className,
+    )}
+  />
+);
 
-  ${(props) =>
-    props.$size === "small"
-      ? css`
-          width: 1rem;
-          height: 1rem;
-          border-width: 2px;
-        `
-      : props.$size === "large"
-        ? css`
-            width: 4rem;
-            height: 4rem;
-            border-width: 6px;
-          `
-        : null};
-
-  border-color: ${(props) => (!props.$isBlue ? "rgba(255, 255, 255, 0.2)" : "hsla(212, 92%, 43%, 0.2)")};
-  border-top-color: ${(props) => (!props.$isBlue ? "rgb(255, 255, 255)" : "hsl(212, 92%, 43%)")};
-`;
-
-const Spinner: Spinner = ({ centered, className, size, isBlue }) =>
+const Spinner: Spinner = ({ centered, className, size = "base", isBlue }) =>
   centered ? (
     <div
       className={classNames(
@@ -57,11 +53,12 @@ const Spinner: Spinner = ({ centered, className, size, isBlue }) =>
         className,
       )}
     >
-      <SpinnerComponent $size={size} $isBlue={isBlue} />
+      <SpinnerElement size={size} isBlue={isBlue} />
     </div>
   ) : (
-    <SpinnerComponent className={className} $size={size} $isBlue={isBlue} />
+    <SpinnerElement className={className} size={size} isBlue={isBlue} />
   );
+
 Spinner.displayName = "Spinner";
 
 Spinner.Size = {

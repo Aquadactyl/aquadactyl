@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "@fontsource-variable/ibm-plex-sans";
 
 @plugin '@tailwindcss/forms' {
   strategy: "class";
@@ -79,14 +80,6 @@
   --border-color-default: #9ca5af;
 }
 
-/*
-  The default border color has changed to `currentcolor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
-
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
-*/
 @layer base {
   *,
   ::after,
@@ -95,13 +88,122 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
-}
 
-@layer base {
   button:not(:disabled),
   [type="button"]:not(:disabled),
   [type="reset"]:not(:disabled),
   [type="submit"]:not(:disabled) {
     cursor: pointer;
+  }
+
+  :root {
+    color-scheme: dark;
+    scrollbar-color: #39424b #11161b;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #171c21;
+    color: #d7dce1;
+    letter-spacing: 0;
+    -webkit-font-smoothing: antialiased;
+    min-width: 320px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 500;
+    letter-spacing: normal;
+    font-family: var(--font-header);
+  }
+
+  p {
+    color: #d7dce1;
+    line-height: 1.625;
+    font-family: var(--font-sans);
+  }
+
+  form {
+    margin: 0;
+  }
+
+  ::selection {
+    background: #1d5558;
+    color: #effcfa;
+  }
+
+  textarea,
+  select,
+  input,
+  button,
+  button:focus,
+  button:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  a:focus-visible,
+  button:focus-visible,
+  [role="button"]:focus-visible {
+    outline: 2px solid #78d4cc;
+    outline-offset: 3px;
+  }
+
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    appearance: textfield !important;
+    -moz-appearance: textfield !important;
+  }
+
+  /* Scrollbar Styles */
+  ::-webkit-scrollbar {
+    background: none;
+    width: 16px;
+    height: 16px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: solid 0 rgb(0 0 0 / 0%);
+    border-right-width: 4px;
+    border-left-width: 4px;
+    -webkit-border-radius: 9px 4px;
+    -webkit-box-shadow:
+      inset 0 0 0 1px #78838f,
+      inset 0 0 0 4px #39424b;
+  }
+
+  ::-webkit-scrollbar-track-piece {
+    margin: 4px 0;
+  }
+
+  ::-webkit-scrollbar-thumb:horizontal {
+    border-right-width: 0;
+    border-left-width: 0;
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    -webkit-border-radius: 4px 9px;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

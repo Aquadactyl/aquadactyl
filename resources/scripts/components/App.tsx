@@ -11,7 +11,6 @@ import { store } from "@/state";
 import { SiteSettings } from "@/state/settings";
 import ProgressBar from "@/components/elements/ProgressBar";
 import { NotFound } from "@/components/elements/ScreenBlock";
-import GlobalStylesheet from "@/assets/css/GlobalStylesheet";
 import { history } from "@/components/history";
 import { setupInterceptors } from "@/api/interceptors";
 import AuthenticatedRoute from "@/components/elements/AuthenticatedRoute";
@@ -67,52 +66,49 @@ const App = () => {
   }
 
   return (
-    <>
-      <GlobalStylesheet />
-      <QueryClientProvider client={queryClient}>
-        <StoreProvider store={store}>
-          <PrivacyMode />
-          <ProgressBar />
-          <div className={"mx-auto w-auto"}>
-            <HistoryRouter history={history} useTransitions>
-              <Routes>
-                <Route
-                  path={"/auth/*"}
-                  element={
+    <QueryClientProvider client={queryClient}>
+      <StoreProvider store={store}>
+        <PrivacyMode />
+        <ProgressBar />
+        <div className={"mx-auto w-auto"}>
+          <HistoryRouter history={history} useTransitions>
+            <Routes>
+              <Route
+                path={"/auth/*"}
+                element={
+                  <Spinner.Suspense>
+                    <AuthenticationRouter />
+                  </Spinner.Suspense>
+                }
+              />
+              <Route
+                path={"/server/:id/*"}
+                element={
+                  <AuthenticatedRoute>
                     <Spinner.Suspense>
-                      <AuthenticationRouter />
+                      <ServerContext.Provider>
+                        <ServerRouter />
+                      </ServerContext.Provider>
                     </Spinner.Suspense>
-                  }
-                />
-                <Route
-                  path={"/server/:id/*"}
-                  element={
-                    <AuthenticatedRoute>
-                      <Spinner.Suspense>
-                        <ServerContext.Provider>
-                          <ServerRouter />
-                        </ServerContext.Provider>
-                      </Spinner.Suspense>
-                    </AuthenticatedRoute>
-                  }
-                />
-                <Route
-                  path={"/*"}
-                  element={
-                    <AuthenticatedRoute>
-                      <Spinner.Suspense>
-                        <DashboardRouter />
-                      </Spinner.Suspense>
-                    </AuthenticatedRoute>
-                  }
-                />
-                <Route path={"*"} element={<NotFound />} />
-              </Routes>
-            </HistoryRouter>
-          </div>
-        </StoreProvider>
-      </QueryClientProvider>
-    </>
+                  </AuthenticatedRoute>
+                }
+              />
+              <Route
+                path={"/*"}
+                element={
+                  <AuthenticatedRoute>
+                    <Spinner.Suspense>
+                      <DashboardRouter />
+                    </Spinner.Suspense>
+                  </AuthenticatedRoute>
+                }
+              />
+              <Route path={"*"} element={<NotFound />} />
+            </Routes>
+          </HistoryRouter>
+        </div>
+      </StoreProvider>
+    </QueryClientProvider>
   );
 };
 

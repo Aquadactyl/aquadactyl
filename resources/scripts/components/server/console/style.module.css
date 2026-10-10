@@ -11,7 +11,7 @@
   }
 
   & > .icon {
-    @apply hidden h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg;
+    @apply hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg;
     @apply transition-colors duration-500;
     @apply sm:mr-4 sm:flex;
 

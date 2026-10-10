@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import styled from "styled-components";
 import { Compartment, EditorState, Extension } from "@codemirror/state";
 import {
   crosshairCursor,
@@ -102,22 +101,6 @@ const basicSetup: Extension = [
     ...lintKeymap,
   ]),
 ];
-
-const EditorContainer = styled.div`
-  min-height: 16rem;
-  height: calc(100vh - 20rem);
-  position: relative;
-
-  > div {
-    border-radius: 0.5rem;
-    height: 100%;
-  }
-
-  .cm-editor {
-    height: 100%;
-    border-radius: 0.5rem;
-  }
-`;
 
 export interface Props {
   style?: React.CSSProperties;
@@ -399,8 +382,11 @@ export default ({
   }, [fetchContent]);
 
   return (
-    <EditorContainer style={style}>
+    <div
+      style={style}
+      className="relative h-[calc(100vh-20rem)] min-h-64 [&_.cm-editor]:h-full [&_.cm-editor]:rounded-lg [&>div]:h-full [&>div]:rounded-lg"
+    >
       <div ref={editorRef} />
-    </EditorContainer>
+    </div>
   );
 };

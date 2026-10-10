@@ -1,19 +1,24 @@
-import styled from "styled-components";
+import type { HTMLAttributes } from "react";
+import classNames from "classnames";
 
-const ContentContainer = styled.div`
-  width: calc(100% - 64px);
-  max-width: 1136px;
-  margin-left: auto;
-  margin-right: auto;
+const ContentContainer = ({
+  className,
+  children,
+  ...props
+}: HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div
+      className={classNames(
+        "mx-auto w-full max-w-[1136px] px-5 min-[641px]:px-6 min-[801px]:px-8",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
 
-  @media (max-width: 800px) {
-    width: calc(100% - 48px);
-  }
-
-  @media (max-width: 640px) {
-    width: calc(100% - 40px);
-  }
-`;
 ContentContainer.displayName = "ContentContainer";
 
 export default ContentContainer;
