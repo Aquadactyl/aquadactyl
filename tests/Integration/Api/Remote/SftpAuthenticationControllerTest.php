@@ -1,6 +1,6 @@
 <?php
 
-use phpseclib3\Crypt\EC;
+use phpseclib4\Crypt\EC;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Permission;
 use Pterodactyl\Models\UserSSHKey;

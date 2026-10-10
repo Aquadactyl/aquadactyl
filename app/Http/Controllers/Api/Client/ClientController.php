@@ -32,13 +32,13 @@ class ClientController extends ClientApiController
         // Start the query builder and ensure we eager load any requested relationships from the request.
         $builder = QueryBuilder::for(
             Server::query()->with($this->getIncludesForTransformer($transformer, ['node']))
-        )->allowedFilters([
+        )->allowedFilters(
             'uuid',
             'name',
             'description',
             'external_id',
             AllowedFilter::custom('*', new MultiFieldServerFilter()),
-        ]);
+        );
 
         $type = $request->input('type');
         // Either return all the servers the user has access to because they are an admin `?type=admin` or

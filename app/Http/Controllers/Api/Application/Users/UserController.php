@@ -36,8 +36,8 @@ class UserController extends ApplicationApiController
     public function index(GetUsersRequest $request): array
     {
         $users = QueryBuilder::for(User::query())
-            ->allowedFilters(['email', 'uuid', 'username', 'external_id'])
-            ->allowedSorts(['id', 'uuid'])
+            ->allowedFilters('email', 'uuid', 'username', 'external_id')
+            ->allowedSorts('id', 'uuid')
             ->paginate($request->query('per_page') ?? 50);
 
         return $this->fractal->collection($users)

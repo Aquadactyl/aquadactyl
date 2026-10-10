@@ -53,9 +53,9 @@ class UserController extends Controller
                 ->leftJoin('servers', 'servers.owner_id', '=', 'users.id')
                 ->groupBy('users.id')
         )
-            ->allowedFilters(['username', 'email', 'uuid'])
+            ->allowedFilters('username', 'email', 'uuid')
             ->defaultSort('-root_admin')
-            ->allowedSorts(['id', 'uuid'])
+            ->allowedSorts('id', 'uuid')
             ->paginate(50);
 
         return view('admin.users.index', ['users' => $users]);
@@ -135,7 +135,7 @@ class UserController extends Controller
      */
     public function json(Request $request): Model|Collection
     {
-        $users = QueryBuilder::for(User::query())->allowedFilters(['email'])->paginate(25);
+        $users = QueryBuilder::for(User::query())->allowedFilters('email')->paginate(25);
 
         // Handle single user requests.
         if ($request->query('user_id')) {

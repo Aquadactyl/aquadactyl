@@ -21,8 +21,8 @@ class ActivityLogController extends ClientApiController
 
         $activity = QueryBuilder::for($query)
             ->with('actor')
-            ->allowedFilters($filters->allowedFilters($request->user()))
-            ->allowedSorts(['timestamp'])
+            ->allowedFilters(...$filters->allowedFilters($request->user()))
+            ->allowedSorts('timestamp')
             ->defaultSort('-timestamp')
             ->orderBy('activity_logs.id', 'desc')
             ->paginate(min($request->query('per_page', 25), 100))

@@ -18,8 +18,8 @@ class NodeController extends Controller
         $nodes = QueryBuilder::for(
             Node::query()->with('location')->withCount('servers')
         )
-            ->allowedFilters(['uuid', 'name'])
-            ->allowedSorts(['id'])
+            ->allowedFilters('uuid', 'name')
+            ->allowedSorts('id')
             ->paginate(25);
 
         return view('admin.nodes.index', ['nodes' => $nodes]);

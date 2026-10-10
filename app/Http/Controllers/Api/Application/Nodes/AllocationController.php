@@ -34,7 +34,7 @@ class AllocationController extends ApplicationApiController
     public function index(GetAllocationsRequest $request, Node $node): array
     {
         $allocations = QueryBuilder::for($node->allocations())
-            ->allowedFilters([
+            ->allowedFilters(
                 AllowedFilter::exact('ip'),
                 AllowedFilter::exact('port'),
                 'ip_alias',
@@ -45,7 +45,7 @@ class AllocationController extends ApplicationApiController
 
                     return $builder->where('server_id', $value);
                 }),
-            ])
+            )
             ->paginate($request->query('per_page') ?? 50);
 
         return $this->fractal->collection($allocations)
