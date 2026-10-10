@@ -35,7 +35,6 @@
         @yield('assets')
 
         @include('layouts.scripts')
-        <link rel="stylesheet" href="/css/privacy.css?v={{ filemtime(public_path('css/privacy.css')) }}">
     </head>
     <body class="{{ $css['body'] ?? 'bg-neutral-50' }}">
         @section('content')
