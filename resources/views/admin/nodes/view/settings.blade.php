@@ -84,11 +84,18 @@
                     <div class="form-group col-xs-12">
                         <label for="fqdn" class="control-label">Fully Qualified Domain Name</label>
                         <div>
-                            <input type="text" autocomplete="off" name="fqdn" class="form-control" value="{{ old('fqdn', $node->fqdn) }}" />
+                            <input data-sensitive type="text" autocomplete="off" name="fqdn" class="form-control" value="{{ old('fqdn', $node->fqdn) }}" />
                         </div>
                         <p class="text-muted"><small>Please enter domain name (e.g <code>node.example.com</code>) to be used for connecting to the daemon. An IP address may only be used if you are not using SSL for this node.
                                 <a tabindex="0" data-toggle="popover" data-trigger="focus" title="Why do I need a FQDN?" data-content="In order to secure communications between your server and this node we use SSL. We cannot generate a SSL certificate for IP Addresses, and as such you will need to provide a FQDN.">Why?</a>
                             </small></p>
+                    </div>
+                    <div class="form-group col-xs-12">
+                        <label for="sftp_domain" class="control-label">Custom SFTP Domain <span class="field-optional"></span></label>
+                        <div>
+                            <input data-sensitive type="text" autocomplete="off" name="sftp_domain" class="form-control" value="{{ old('sftp_domain', $node->sftp_domain) }}" placeholder="{{ $node->fqdn }}" />
+                        </div>
+                        <p class="text-muted"><small>Optional domain or IP to override the FQDN for all SFTP logic (e.g. if SFTP traffic is proxied through a separate hostname). Leave blank to default to the node's FQDN.</small></p>
                     </div>
                     <div class="form-group col-xs-12">
                         <label class="form-label"><span class="label label-warning"><i class="fa fa-power-off"></i></span> Communicate Over SSL</label>

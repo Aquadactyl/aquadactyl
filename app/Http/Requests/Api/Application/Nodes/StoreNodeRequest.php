@@ -23,6 +23,7 @@ class StoreNodeRequest extends ApplicationApiRequest
             'description',
             'country_code',
             'query_address',
+            'sftp_domain',
             'location_id',
             'fqdn',
             'scheme',

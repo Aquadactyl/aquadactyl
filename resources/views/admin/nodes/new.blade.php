@@ -71,8 +71,13 @@
                     </div>
                     <div class="form-group">
                         <label for="pFQDN" class="form-label">FQDN</label>
-                        <input type="text" name="fqdn" id="pFQDN" class="form-control" value="{{ old('fqdn') }}"/>
+                        <input data-sensitive type="text" name="fqdn" id="pFQDN" class="form-control" value="{{ old('fqdn') }}"/>
                         <p class="text-muted small">Please enter domain name (e.g <code>node.example.com</code>) to be used for connecting to the daemon. An IP address may be used <em>only</em> if you are not using SSL for this node.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="pSftpDomain" class="control-label">Custom SFTP Domain <span class="field-optional"></span></label>
+                        <input data-sensitive type="text" name="sftp_domain" id="pSftpDomain" class="form-control" value="{{ old('sftp_domain') }}"/>
+                        <p class="text-muted small">Optional domain or IP to override the FQDN for all SFTP logic (e.g. if SFTP traffic is proxied through a separate hostname). Leave blank to default to the node's FQDN.</p>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Communicate Over SSL</label>

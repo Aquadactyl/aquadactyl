@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property string $name
  * @property string|null $country_code
  * @property string|null $query_address
+ * @property string|null $sftp_domain
  * @property string|null $description
  * @property int $location_id
  * @property string $fqdn
@@ -99,6 +100,7 @@ class Node extends Model implements Identifiable
         'description', 'maintenance_mode',
         'country_code',
         'query_address',
+        'sftp_domain',
     ];
 
     public static array $validationRules = [
@@ -120,6 +122,7 @@ class Node extends Model implements Identifiable
         'upload_size' => 'int|min:1',
         'country_code' => 'sometimes|nullable|string|size:2',
         'query_address' => ['sometimes', 'nullable', 'string', 'max:253', 'regex:/^(?:[a-zA-Z0-9][a-zA-Z0-9.-]*|[a-fA-F0-9:]+)$/'],
+        'sftp_domain' => ['sometimes', 'nullable', 'string', 'max:253', 'regex:/^(?:[a-zA-Z0-9][a-zA-Z0-9.-]*|[a-fA-F0-9:]+)$/'],
     ];
 
     /**
@@ -155,6 +158,28 @@ class Node extends Model implements Identifiable
     public function setCountryCodeAttribute(?string $code): void
     {
         $this->attributes['country_code'] = Countries::normalize($code);
+    }
+
+    public function setSftpDomainAttribute(?string $value): void
+    {
+        $this->attributes['sftp_domain'] = !empty(trim($value ?? '')) ? trim($value) : null;
+    }
+
+    /**
+     * Get the domain/IP to use for SFTP connections to this node,
+     * defaulting to the node's FQDN if no custom SFTP domain is set.
+     */
+    public function getSftpDomain(): string
+    {
+        return $this->sftp_domain ?: $this->fqdn;
+    }
+
+    /**
+     * Alias for getSftpDomain().
+     */
+    public function getSftpHost(): string
+    {
+        return $this->getSftpDomain();
     }
 
     /**

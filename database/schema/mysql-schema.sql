@@ -417,6 +417,7 @@ CREATE TABLE `nodes` (
   `updated_at` timestamp NULL DEFAULT NULL,
   `country_code` char(2) DEFAULT NULL,
   `query_address` varchar(253) DEFAULT NULL,
+  `sftp_domain` varchar(253) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nodes_uuid_unique` (`uuid`),
   UNIQUE KEY `nodes_daemon_token_id_unique` (`daemon_token_id`),
@@ -906,5 +907,6 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (197,'2026_10_08_00
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (198,'2026_10_08_000001_add_blur_sensitive_data_to_users_table',3);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (199,'2026_10_08_000002_add_node_countries_and_game_queries',3);
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (200,'2026_10_09_000000_drop_uuid_short_from_servers_table',4);
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES (201,'2026_10_10_000000_add_sftp_domain_to_nodes_table',5);
 COMMIT;
 SET AUTOCOMMIT=@OLD_AUTOCOMMIT;

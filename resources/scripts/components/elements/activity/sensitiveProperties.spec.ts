@@ -11,6 +11,8 @@ describe("activity sensitive properties", () => {
     "totpSecret",
     "connectionString",
     "credentials.password",
+    "sftp_domain",
+    "fqdn",
   ])("recognizes the %s property", (key) =>
     expect(isSensitiveProperty(key, "example")).toBe(true),
   );

@@ -53,7 +53,7 @@ class ServerTransformer extends BaseClientTransformer
             'game_query_type' => Container::getInstance()->make(GameQuerySettingsService::class)->game($server),
             'is_node_under_maintenance' => $server->node->isUnderMaintenance(),
             'sftp_details' => [
-                'ip' => $server->node->fqdn,
+                'ip' => $server->node->getSftpDomain(),
                 'port' => $server->node->daemonSFTP,
             ],
             'description' => $server->description,

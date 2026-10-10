@@ -29,6 +29,7 @@ test('can update node properties', function () {
         'disk_overallocate' => 20,
         'daemon_sftp' => 1101,
         'daemon_listen' => 1102,
+        'sftp_domain' => 'sftp.example.com',
     ])
         ->assertOk()
         ->assertJsonPath('object', 'node')
@@ -41,7 +42,9 @@ test('can update node properties', function () {
         ->assertJsonPath('attributes.disk', 200)
         ->assertJsonPath('attributes.disk_overallocate', 20)
         ->assertJsonPath('attributes.daemon_sftp', 1101)
-        ->assertJsonPath('attributes.daemon_listen', 1102);
+        ->assertJsonPath('attributes.daemon_listen', 1102)
+        ->assertJsonPath('attributes.sftp_domain', 'sftp.example.com');
 
-    expect($node->refresh()->location_id)->toBe($location->id);
+    expect($node->refresh()->location_id)->toBe($location->id)
+        ->and($node->sftp_domain)->toBe('sftp.example.com');
 });
