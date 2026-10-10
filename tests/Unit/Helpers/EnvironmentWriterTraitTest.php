@@ -1,14 +1,15 @@
 <?php
 
+namespace Pterodactyl\Tests\Unit\Helpers;
+
 use Pterodactyl\Traits\Commands\EnvironmentWriterTrait;
 
-class FooClass
-{
-    use EnvironmentWriterTrait;
-}
-
 test('variable is escaped properly', function (string $input, string $expected) {
-    expect((new FooClass())->escapeEnvironmentValue($input))->toBe($expected);
+    $helper = new class {
+        use EnvironmentWriterTrait;
+    };
+
+    expect($helper->escapeEnvironmentValue($input))->toBe($expected);
 })->with([
     ['foo', 'foo'],
     ['abc123', 'abc123'],

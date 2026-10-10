@@ -1,5 +1,8 @@
 <?php
 
+namespace Pterodactyl\Tests\Unit\Blueprint;
+
+use ReflectionMethod;
 use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\BlueprintBaseLibrary;
 
 function decodeSetting(string $value): mixed
@@ -7,16 +10,6 @@ function decodeSetting(string $value): mixed
     $method = new ReflectionMethod(BlueprintBaseLibrary::class, 'decodeValue');
 
     return $method->invoke(new BlueprintBaseLibrary(), $value);
-}
-
-class SerializationProbe
-{
-    public static bool $awakened = false;
-
-    public function __wakeup(): void
-    {
-        self::$awakened = true;
-    }
 }
 
 test('plain settings and serialized values are both preserved', function () {
@@ -29,8 +22,17 @@ test('plain settings and serialized values are both preserved', function () {
 });
 
 test('reading settings does not execute object wakeup', function () {
-    SerializationProbe::$awakened = false;
-    decodeSetting(serialize(new SerializationProbe()));
+    $probe = new class {
+        public static bool $awakened = false;
 
-    expect(SerializationProbe::$awakened)->toBeFalse();
+        public function __wakeup(): void
+        {
+            self::$awakened = true;
+        }
+    };
+
+    $probe::$awakened = false;
+    decodeSetting(serialize($probe));
+
+    expect($probe::$awakened)->toBeFalse();
 });
