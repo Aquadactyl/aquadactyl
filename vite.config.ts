@@ -18,7 +18,6 @@ const httpsOptions =
     : undefined;
 
 export default defineConfig({
-  base: "/",
   plugins: [
     // Vitest uses Vite's server API without serving the panel through Laravel.
     process.env.VITEST !== "true" &&
