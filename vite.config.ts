@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import laravel from 'laravel-vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'node:path';
 import fs from 'node:fs';
@@ -17,6 +18,7 @@ const httpsOptions =
         : undefined;
 
 export default defineConfig({
+    base: '/',
     plugins: [
         // Vitest uses Vite's server API without serving the panel through Laravel.
         process.env.VITEST !== 'true' &&
@@ -25,18 +27,10 @@ export default defineConfig({
                 refresh: true,
             }),
         react(),
+        tailwindcss(),
     ],
-    resolve: {
-        alias: {
-            '@': path.resolve(import.meta.dirname, 'resources/scripts'),
-            '@definitions': path.resolve(import.meta.dirname, 'resources/scripts/api/definitions'),
-            '@feature': path.resolve(import.meta.dirname, 'resources/scripts/components/server/features'),
-            '@blueprint': path.resolve(import.meta.dirname, 'resources/scripts/blueprint'),
-        },
-    },
-    define: {
-        'process.env.DEBUG': JSON.stringify(process.env.NODE_ENV !== 'production'),
-        'process.env.WEBPACK_BUILD_HASH': JSON.stringify(Date.now().toString(16)),
+    optimizeDeps: {
+        exclude: ['lucide-react'],
     },
     server: {
         host: '0.0.0.0',
@@ -49,7 +43,36 @@ export default defineConfig({
         },
     },
     build: {
-        chunkSizeWarningLimit: 2000,
+        chunkSizeWarningLimit: 1200,
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('@codemirror')) {
+                            return 'codemirror';
+                        }
+                        if (id.includes('@xterm')) {
+                            return 'xterm';
+                        }
+                        if (id.includes('chart.js') || id.includes('react-chartjs-2')) {
+                            return 'charts';
+                        }
+                    }
+                },
+            },
+        },
+    },
+    resolve: {
+        alias: {
+            '@': path.resolve(import.meta.dirname, 'resources/scripts'),
+            '@definitions': path.resolve(import.meta.dirname, 'resources/scripts/api/definitions'),
+            '@feature': path.resolve(import.meta.dirname, 'resources/scripts/components/server/features'),
+            '@blueprint': path.resolve(import.meta.dirname, 'resources/scripts/blueprint'),
+        },
+    },
+    define: {
+        'process.env.DEBUG': JSON.stringify(process.env.NODE_ENV !== 'production'),
+        'process.env.WEBPACK_BUILD_HASH': JSON.stringify(Date.now().toString(16)),
     },
     test: {
         globals: true,
