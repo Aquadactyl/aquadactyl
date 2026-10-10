@@ -1,6 +1,6 @@
 ARG PHP_VERSION=8.5
 FROM composer:2 AS composer
-FROM node:22-bookworm-slim AS node
+FROM node:24-bookworm-slim AS node
 FROM php:${PHP_VERSION}-cli-bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git zip unzip rsync shellcheck mariadb-client libonig-dev libzip-dev libpng-dev libjpeg62-turbo-dev libwebp-dev libsqlite3-dev \
