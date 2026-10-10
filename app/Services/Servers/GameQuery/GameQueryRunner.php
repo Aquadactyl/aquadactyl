@@ -9,7 +9,12 @@ class GameQueryRunner
     public function query(array $target): array
     {
         try {
-            $process = new Process([config('game-query.node_binary'), '--max-old-space-size=96', base_path('scripts/game-query.cjs')]);
+            $process = new Process([
+                config('game-query.node_binary'),
+                '--max-old-space-size=96',
+                base_path('node_modules/tsx/dist/cli.mjs'),
+                base_path('scripts/game-query.ts'),
+            ]);
             $process->setInput(json_encode($target, JSON_THROW_ON_ERROR))->setTimeout(7)->run();
             $result = json_decode($process->getOutput(), true, 8, JSON_THROW_ON_ERROR);
             if ($process->isSuccessful() && ($result['status'] ?? null) === 'available'

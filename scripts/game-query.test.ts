@@ -1,13 +1,26 @@
-const { test } = require('node:test');
-const assert = require('node:assert/strict');
-const net = require('node:net');
-const dgram = require('node:dgram');
-const { spawn } = require('node:child_process');
-const path = require('node:path');
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import net from 'node:net';
+import dgram from 'node:dgram';
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const query = (target) =>
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+interface QueryOptions {
+    type: string;
+    port: number;
+    host?: string;
+    givenPortOnly?: boolean;
+}
+
+const query = (target: QueryOptions): Promise<any> =>
     new Promise((resolve, reject) => {
-        const child = spawn(process.execPath, [path.join(__dirname, 'game-query.cjs')]);
+        const tsxCli = path.resolve(__dirname, '../node_modules/tsx/dist/cli.mjs');
+        const scriptPath = path.join(__dirname, 'game-query.ts');
+        const child = spawn(process.execPath, [tsxCli, scriptPath]);
         let output = '';
         child.stdout.on('data', (chunk) => {
             output += chunk;
@@ -24,8 +37,8 @@ const query = (target) =>
         child.stdin.end(JSON.stringify({ host: '127.0.0.1', givenPortOnly: true, ...target }));
     });
 
-const varint = (number) => {
-    const bytes = [];
+const varint = (number: number): Buffer => {
+    const bytes: number[] = [];
     do {
         let byte = number & 127;
         number >>>= 7;
@@ -37,7 +50,7 @@ const varint = (number) => {
 
 test('Minecraft Java status counts include a legitimately empty server', async () => {
     for (const online of [7, 0]) {
-        const sockets = new Set();
+        const sockets = new Set<net.Socket>();
         const server = net.createServer((socket) => {
             sockets.add(socket);
             socket.on('close', () => sockets.delete(socket));
@@ -55,16 +68,16 @@ test('Minecraft Java status counts include a legitimately empty server', async (
             });
             socket.on('error', () => {});
         });
-        await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+        await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
         try {
-            assert.deepEqual(await query({ type: 'protocol-minecraftvanilla', port: server.address().port }), {
+            assert.deepEqual(await query({ type: 'protocol-minecraftvanilla', port: (server.address() as net.AddressInfo).port }), {
                 status: 'available',
                 players: online,
                 max_players: 20,
             });
         } finally {
             for (const socket of sockets) socket.destroy();
-            await new Promise((resolve) => server.close(resolve));
+            await new Promise<void>((resolve) => server.close(() => resolve()));
         }
     }
 });
@@ -89,7 +102,7 @@ test('Minecraft Bedrock ping reads its advertised player counts', async () => {
             remote.address
         );
     });
-    await new Promise((resolve) => server.bind(0, '127.0.0.1', resolve));
+    await new Promise<void>((resolve) => server.bind(0, '127.0.0.1', () => resolve()));
     try {
         assert.deepEqual(await query({ type: 'protocol-minecraftbedrock', port: server.address().port }), {
             status: 'available',
@@ -107,7 +120,7 @@ test('Source A2S_INFO reads counts without requesting player names', async () =>
     server.on('message', (message, remote) => {
         requests++;
         assert.equal(message[4], 0x54, 'Only the A2S_INFO request should be sent');
-        const cstring = (text) => Buffer.from(text + '\0');
+        const cstring = (text: string) => Buffer.from(text + '\0');
         const appid = Buffer.alloc(2);
         appid.writeUInt16LE(440);
         const response = Buffer.concat([
@@ -123,7 +136,7 @@ test('Source A2S_INFO reads counts without requesting player names', async () =>
         ]);
         server.send(response, remote.port, remote.address);
     });
-    await new Promise((resolve) => server.bind(0, '127.0.0.1', resolve));
+    await new Promise<void>((resolve) => server.bind(0, '127.0.0.1', () => resolve()));
     try {
         assert.deepEqual(await query({ type: 'protocol-valve', port: server.address().port }), {
             status: 'available',
@@ -148,7 +161,7 @@ test('Invalid targets cannot initiate a query', async () => {
 
 test('A silent UDP game cannot leave the runner waiting indefinitely', async () => {
     const server = dgram.createSocket('udp4');
-    await new Promise((resolve) => server.bind(0, '127.0.0.1', resolve));
+    await new Promise<void>((resolve) => server.bind(0, '127.0.0.1', () => resolve()));
     const started = Date.now();
     try {
         assert.deepEqual(await query({ type: 'protocol-valve', port: server.address().port }), {
@@ -159,3 +172,4 @@ test('A silent UDP game cannot leave the runner waiting indefinitely', async () 
         server.close();
     }
 });
+

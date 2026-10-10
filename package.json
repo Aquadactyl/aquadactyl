@@ -10,7 +10,8 @@
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
     "types": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:game-query": "tsx --test scripts/game-query.test.ts"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.20.3",
@@ -72,6 +73,7 @@
     "react-i18next": "^17.0.16",
     "react-router": "^8.4.0",
     "react-select": "^5.10.2",
+    "tsx": "^4.23.15",
     "zod": "^4.6.5",
     "zustand": "^5.0.15"
   },
@@ -91,7 +93,6 @@
     "oxlint": "^1.87.0",
     "tailwindcss": "^4.3.3",
     "ts-essentials": "^10.2.1",
-    "tsx": "^4.23.15",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
     "vitest": "^5.0.3"

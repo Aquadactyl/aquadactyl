@@ -288,7 +288,7 @@ Node and the dependencies. Set `GAME_QUERY_ENABLED=false` to disable querying or
 The protocol fixtures can be checked without running game servers:
 
 ```bash
-node --test scripts/game-query.test.cjs
+pnpm test:game-query
 ```
 
 ## Wings

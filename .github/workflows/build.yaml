@@ -34,5 +34,5 @@ jobs:
       - run: pnpm run types
       - run: pnpm run lint
       - run: pnpm run test
-      - run: node --test scripts/game-query.test.cjs
+      - run: pnpm run test:game-query
       - run: pnpm run build
