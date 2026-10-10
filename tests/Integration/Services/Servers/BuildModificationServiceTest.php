@@ -4,8 +4,8 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Allocation;
-use GuzzleHttp\Exception\RequestException;
 use Pterodactyl\Exceptions\DisplayException;
+use GuzzleHttp\Exception\BadResponseException;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 use Pterodactyl\Services\Servers\BuildModificationService;
 use Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException;
@@ -112,7 +112,7 @@ test('connection exception is ignored when updating server settings', function (
 
     $this->daemonServerRepository->expects('setServer->sync')->andThrows(
         new DaemonConnectionException(
-            new RequestException('Bad request', new Request('GET', '/test'), new Response())
+            new BadResponseException('Bad request', new Request('GET', '/test'), new Response())
         )
     );
 

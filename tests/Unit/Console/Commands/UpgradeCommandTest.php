@@ -8,7 +8,7 @@ test('legacy upgrade directs operators to the fork updater', function () {
     $command->setLaravel($this->app);
 
     $application = new Symfony\Component\Console\Application();
-    $application->add($command);
+    $application->addCommand($command);
     $tester = new Symfony\Component\Console\Tester\CommandTester($command);
     $status = $tester->execute([
         '--url' => 'https://example.invalid/upstream.tar.gz',

@@ -1,5 +1,6 @@
 <?php
 
+use GuzzleHttp\Psr7\Request;
 use Pterodactyl\Models\Node;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Jobs\RevokeSftpAccessJob;
@@ -22,7 +23,7 @@ test('job releases back to queue on failure', function () {
 
     $mock = $this->mock(DaemonRevocationRepository::class, function ($mock) {
         $mock->expects('setNode->deauthorize')->andThrows(
-            new DaemonConnectionException(new TransferException('Connection failed'))
+            new DaemonConnectionException(new TransferException('Connection failed', new Request('POST', '/api/deauthorize-user')))
         );
     });
 
