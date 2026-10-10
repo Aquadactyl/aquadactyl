@@ -10,10 +10,18 @@ blueprint_extension_artisan() {
 blueprint_extension_permissions() {
   PRINT INFO "Restoring panel and runtime permissions.."
   if [[ $OWNERSHIP == root:* ]]; then
-    # Keep the permissions established by the managed Linux installer.
-    WEB_USER="$WEBUSER" WEB_GROUP="${OWNERSHIP#*:}" \
-      bash -c 'source "$1/scripts/deploy/common.sh"; cd "$PANEL_ROOT"; permissions' bash "$FOLDER" \
-      &>> "$BLUEPRINT__DEBUG" || return 1
+    local web_group="${OWNERSHIP#*:}"
+    chown -R "root:$web_group" "$FOLDER" &>> "$BLUEPRINT__DEBUG" || return 1
+    find "$FOLDER" -path "$FOLDER/node_modules" -prune -o -type d -exec chmod 0750 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    find "$FOLDER" -path "$FOLDER/node_modules" -prune -o -type f -exec chmod 0640 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    find "$FOLDER/scripts" -type f -name '*.sh' -exec chmod 0750 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    chmod 0750 "$FOLDER/blueprint.sh" &>> "$BLUEPRINT__DEBUG" || return 1
+    find "$FOLDER/vendor/bin" "$FOLDER/node_modules/.bin" -type f -exec chmod 0750 {} + 2>/dev/null || true
+    mkdir -p "$FOLDER/storage/framework/"{cache/data,sessions,views} "$FOLDER/storage/logs" "$FOLDER/bootstrap/cache" &>> "$BLUEPRINT__DEBUG" || return 1
+    chown -R "$WEBUSER:$web_group" "$FOLDER/storage" "$FOLDER/bootstrap/cache" &>> "$BLUEPRINT__DEBUG" || return 1
+    find "$FOLDER/storage" "$FOLDER/bootstrap/cache" -type d -exec chmod 0750 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    find "$FOLDER/storage" "$FOLDER/bootstrap/cache" -type f -exec chmod 0640 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    chmod 0640 "$FOLDER/.env" &>> "$BLUEPRINT__DEBUG" || return 1
   else
     # Avoid copying unchanged files into Docker's writable layer just to chown them.
     if [[ $OWNERSHIP == *:* ]]; then
