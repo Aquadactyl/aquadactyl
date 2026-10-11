@@ -47,6 +47,9 @@ class PasskeyAuthenticator
     public function registration(string $challenge, string $origin = 'http://localhost:8083', bool $verified = true): array
     {
         $ec = openssl_pkey_get_details($this->key)['ec'];
+        // OpenSSL drops leading zero bytes; WebAuthn requires 32-byte P-256 coordinates.
+        $ec['x'] = str_pad($ec['x'], 32, "\0", STR_PAD_LEFT);
+        $ec['y'] = str_pad($ec['y'], 32, "\0", STR_PAD_LEFT);
         $cose = $this->header(5, 5) . $this->number(1) . $this->number(2) . $this->number(3) . $this->number(-7)
             . $this->number(-1) . $this->number(1) . $this->number(-2) . $this->bytes($ec['x']) . $this->number(-3) . $this->bytes($ec['y']);
         $authData = hash('sha256', 'localhost', true) . chr($verified ? 0x45 : 0x41) . pack('N', 0)
