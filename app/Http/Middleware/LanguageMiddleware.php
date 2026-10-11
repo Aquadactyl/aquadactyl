@@ -20,7 +20,7 @@ class LanguageMiddleware
      */
     public function handle(Request $request, \Closure $next): mixed
     {
-        $this->app->setLocale($this->languages->resolve($request->user()?->language, $request->getLanguages()));
+        $this->app->setLocale($this->languages->forRequest($request, $request->user()?->language));
 
         return $next($request);
     }

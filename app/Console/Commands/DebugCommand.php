@@ -10,8 +10,9 @@ class DebugCommand extends Command
     protected $description = 'Uploads a redacted panel log tail to the Aquadactyl debug service.';
 
     protected $signature = 'p:debug
-                            {--file= : A log file to upload instead of storage/logs/laravel.log}
-                            {--expires= : Expiration in seconds, or 0 to omit expiration}';
+                            {--file= : A log file to use instead of the configured panel log}
+                            {--dry-run : Preview the redacted log locally without uploading it}
+                            {--expires= : Expiration in seconds: 3600, 86400, 172800, 604800, 2592000; 0 disables expiration}';
 
     public function __construct(private DebugPasteService $debugPasteService)
     {
@@ -22,9 +23,20 @@ class DebugCommand extends Command
     {
         try {
             $expires = $this->option('expires');
-            $expiresIn = $expires === null ? null : max(0, (int) $expires);
+            if ($expires !== null && filter_var($expires, FILTER_VALIDATE_INT, ['options' => ['min_range' => 0]]) === false) {
+                $this->components->error('Expiration must be a non-negative number of seconds.');
+
+                return self::FAILURE;
+            }
+            $content = $this->debugPasteService->readLog($this->option('file'));
+            if ($this->option('dry-run')) {
+                $this->output->write($this->debugPasteService->redact($content), false, \Symfony\Component\Console\Output\OutputInterface::OUTPUT_RAW);
+
+                return self::SUCCESS;
+            }
+            $expiresIn = $expires === null ? null : (int) $expires;
             $url = $this->debugPasteService->upload(
-                $this->debugPasteService->readLog($this->option('file')),
+                $content,
                 $expiresIn,
             );
         } catch (\Throwable $exception) {

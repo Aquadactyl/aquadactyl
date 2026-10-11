@@ -11,22 +11,22 @@ adding a dependency alone does not include it in the panel's browser bundle.
 
 ## Shared frontend libraries
 
-| Package                                                    | Use                                                    |
-| ---------------------------------------------------------- | ------------------------------------------------------ |
-| `axios`                                                    | HTTP requests; prefer `@/api/http` for panel API calls |
-| `lucide-react`                                             | SVG icons through named component imports              |
-| `react-select`                                             | Searchable and multi-value selects                     |
-| `lodash-es`                                                | Utility functions with ES module imports               |
-| `date-fns`                                                 | Date formatting and arithmetic                         |
-| `motion`                                                   | Animation (import from `motion/react`)                 |
-| `chart.js`, `react-chartjs-2`                              | Charts                                                 |
-| `@headlessui/react`, `@floating-ui/react`                  | Accessible UI behaviour and positioning                |
-| `tailwindcss`, `classnames`                                | Styling and conditional classes                        |
-| `react-hook-form`                                          | Form management                                        |
-| `@hookform/resolvers`, `zod`                               | Schema validation and resolvers                        |
-| `zustand`                                                  | Lightweight addon state stores                         |
-| `@tanstack/react-query`, `zustand`                          | The panel's fetching and state tools                   |
-| `i18next`, `react-i18next`                                 | Translation                                            |
+| Package                                   | Use                                                    |
+| ----------------------------------------- | ------------------------------------------------------ |
+| `axios`                                   | HTTP requests; prefer `@/api/http` for panel API calls |
+| `lucide-react`                            | SVG icons through named component imports              |
+| `react-select`                            | Searchable and multi-value selects                     |
+| `lodash-es`                               | Utility functions with ES module imports               |
+| `date-fns`                                | Date formatting and arithmetic                         |
+| `motion`                                  | Animation (import from `motion/react`)                 |
+| `chart.js`, `react-chartjs-2`             | Charts                                                 |
+| `@headlessui/react`, `@floating-ui/react` | Accessible UI behaviour and positioning                |
+| `tailwindcss`, `classnames`               | Styling and conditional classes                        |
+| `react-hook-form`                         | Form management                                        |
+| `@hookform/resolvers`, `zod`              | Schema validation and resolvers                        |
+| `zustand`                                 | Lightweight addon state stores                         |
+| `@tanstack/react-query`, `zustand`        | The panel's fetching and state tools                   |
+| `i18next`, `react-i18next`                | Translation                                            |
 
 This checkout uses React 19, Tailwind CSS 4, React Router 8, and Zustand. Use the
 panel's React installation so extension hooks share the same runtime. React Hook

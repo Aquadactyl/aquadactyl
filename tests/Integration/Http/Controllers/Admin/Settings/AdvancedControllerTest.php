@@ -7,6 +7,21 @@ beforeEach(function () {
     $this->admin = User::factory()->create(['root_admin' => true]);
 });
 
+test('telemetry opt in is saved only when explicitly included', function () {
+    $settings = app(SettingsRepositoryInterface::class);
+    $settings->set('settings::aquadactyl:telemetry:enabled', 'false');
+    $payload = [
+        'recaptcha:enabled' => 'false', 'pterodactyl:guzzle:timeout' => 30,
+        'pterodactyl:guzzle:connect_timeout' => 10, 'pterodactyl:client_features:allocations:enabled' => 'false',
+    ];
+    $this->actingAs($this->admin)->patch(route('admin.settings.advanced'), $payload)->assertRedirect();
+    expect($settings->get('settings::aquadactyl:telemetry:enabled'))->toBe('false');
+    $this->patch(route('admin.settings.advanced'), [...$payload, 'aquadactyl:telemetry:enabled' => 'true'])->assertRedirect();
+    expect($settings->get('settings::aquadactyl:telemetry:enabled'))->toBe('true');
+    $this->patch(route('admin.settings.advanced'), [...$payload, 'aquadactyl:telemetry:enabled' => 'false'])->assertRedirect();
+    expect($settings->get('settings::aquadactyl:telemetry:enabled'))->toBe('false');
+});
+
 test('non-admin cannot access or update advanced settings', function () {
     $user = User::factory()->create(['root_admin' => false]);
 

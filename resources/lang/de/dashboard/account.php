@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'email' => [
+        'title' => 'E-Mail-Adresse ändern',
+        'updated' => 'Ihre E-Mail-Adresse wurde aktualisiert.',
+    ],
+    'password' => [
+        'title' => 'Passwort ändern',
+        'requirements' => 'Ihr neues Passwort muss mindestens 8 Zeichen lang sein.',
+        'updated' => 'Ihr Passwort wurde aktualisiert.',
+    ],
+    'two_factor' => [
+        'button' => 'Zwei-Faktor-Authentifizierung einrichten',
+        'disabled' => 'Die Zwei-Faktor-Authentifizierung wurde für Ihr Konto deaktiviert. Bei der Anmeldung wird kein zusätzlicher Code mehr angefordert.',
+        'enabled' => 'Die Zwei-Faktor-Authentifizierung wurde für Ihr Konto aktiviert! Bei der Anmeldung müssen Sie ab jetzt den von Ihrem Gerät erzeugten Code eingeben.',
+        'invalid' => 'Der eingegebene Code ist ungültig.',
+        'setup' => [
+            'title' => 'Zwei-Faktor-Authentifizierung einrichten',
+            'help' => 'Sie können den Code nicht scannen? Geben Sie den folgenden Code in Ihre App ein:',
+            'field' => 'Code eingeben',
+        ],
+        'disable' => [
+            'title' => 'Zwei-Faktor-Authentifizierung deaktivieren',
+            'field' => 'Code eingeben',
+        ],
+    ],
+];

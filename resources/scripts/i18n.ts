@@ -31,7 +31,7 @@ i18n
       backend: I18NextHttpBackend,
       backendOption: {
         loadPath: "/locales/locale.json?locale={{lng}}&namespace={{ns}}",
-        queryStringParams: { hash },
+        queryStringParams: { hash: `${hash}.${localization.revision ?? ""}` },
         allowMultiLoading: true,
       } as HttpBackendOptions,
     } as Record<string, any>,

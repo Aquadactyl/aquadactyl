@@ -56,7 +56,7 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
                 'between:1024,65535',
                 'gt:pterodactyl:client_features:allocations:range_start',
             ],
-            'aquadactyl:telemetry:enabled' => 'required|in:true,false',
+            'aquadactyl:telemetry:enabled' => 'sometimes|in:true,false',
         ];
     }
 
@@ -89,7 +89,7 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
             if (!in_array($currentProvider, ['recaptcha', 'hcaptcha', 'turnstile'], true)) {
                 $currentProvider = 'recaptcha';
             }
-            $data['recaptcha:provider'] = ($data['recaptcha:provider'] === 'disabled')
+            $data['recaptcha:provider'] = (($data['recaptcha:provider'] ?? null) === 'disabled')
                 ? $currentProvider
                 : ($data['recaptcha:provider'] ?? $currentProvider);
         }

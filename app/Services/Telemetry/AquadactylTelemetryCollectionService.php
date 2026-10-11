@@ -4,8 +4,8 @@ namespace Pterodactyl\Services\Telemetry;
 
 use Ramsey\Uuid\Uuid;
 use Pterodactyl\Models\Node;
-use Pterodactyl\Models\Server;
 use Pterodactyl\Models\User;
+use Pterodactyl\Models\Server;
 use Illuminate\Support\Facades\Http;
 use Pterodactyl\Repositories\Eloquent\SettingsRepository;
 
@@ -18,7 +18,7 @@ class AquadactylTelemetryCollectionService
     public function __invoke(): void
     {
         $endpoint = config('aquadactyl.telemetry.endpoint');
-        if (!config('aquadactyl.telemetry.enabled') || !$endpoint) {
+        if (!filter_var(config('aquadactyl.telemetry.enabled', false), FILTER_VALIDATE_BOOLEAN) || !$endpoint) {
             return;
         }
 

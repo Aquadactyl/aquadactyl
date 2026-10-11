@@ -4,6 +4,12 @@ This file is a running track of new features and fixes to each version of the pa
 
 This project follows [Semantic Versioning](http://semver.org) guidelines.
 
+## Unreleased (Aquadactyl)
+
+### Removed
+
+- Removed upstream Pterodactyl telemetry collection, its scheduled job, environment setting, and console command. Aquadactyl and Blueprint retain their separate opt-in controls.
+
 ## v1.12.3
 
 ### Fixed

@@ -14,7 +14,7 @@ class AccountLanguageController extends ClientApiController
 
         return [
             'language' => $user->language,
-            'locale' => $languages->resolve($user->language, $request->getLanguages()),
+            'locale' => $languages->forRequest($request, $user->language),
         ];
     }
 }

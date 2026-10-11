@@ -2,6 +2,7 @@
 
 use Mockery as m;
 use Matriphe\ISO639\ISO639;
+use Illuminate\Http\Request;
 use Illuminate\Filesystem\Filesystem;
 use Pterodactyl\Services\Users\LanguageService;
 
@@ -52,3 +53,13 @@ test('unknown site defaults safely fall back to an installed language', function
     $languages = new LanguageService($this->files, new ISO639());
     expect($languages->resolve('auto', []))->toBe('en');
 });
+
+test('automatic selection honors header weights and excludes refused languages', function (string $header, string $expected) {
+    $request = Request::create('/');
+    $request->headers->set('Accept-Language', $header);
+    expect($this->languages->forRequest($request, 'auto'))->toBe($expected);
+})->with([
+    ['fr;q=0.3,pt-BR;q=0.8,en;q=0.5', 'pt_BR'],
+    ['fr;q=0,de;q=1', 'en'],
+    ['fr;q=0,*;q=0', 'en'],
+]);

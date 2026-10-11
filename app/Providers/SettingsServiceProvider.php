@@ -76,7 +76,6 @@ class SettingsServiceProvider extends ServiceProvider
         'aquadactyl:features:privacy_mode' => ['AQUADACTYL_FEATURE_PRIVACY_MODE'],
         'aquadactyl:features:server_quick_actions' => ['AQUADACTYL_FEATURE_SERVER_QUICK_ACTIONS'],
         'aquadactyl:features:registration' => ['AQUADACTYL_FEATURE_REGISTRATION'],
-        'aquadactyl:telemetry:enabled' => ['AQUADACTYL_TELEMETRY_ENABLED'],
         'recaptcha:enabled' => ['RECAPTCHA_ENABLED'],
         'recaptcha:provider' => ['RECAPTCHA_PROVIDER'],
         'recaptcha:secret_key' => ['RECAPTCHA_SECRET_KEY'],
