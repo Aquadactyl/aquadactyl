@@ -63,6 +63,8 @@ class Handler extends ExceptionHandler
         'secret',
         'password',
         'password_confirmation',
+        'current_password',
+        'providers', // Includes nested OAuth client secrets in the admin form.
     ];
 
     /**

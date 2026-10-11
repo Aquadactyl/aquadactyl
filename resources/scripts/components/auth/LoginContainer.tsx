@@ -11,6 +11,15 @@ import Button from "@/components/elements/Button";
 import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
 import useFlash from "@/plugins/useFlash";
 import { Eye, EyeOff } from "lucide-react";
+import {
+  getSignInMethods,
+  loginWithPasskey,
+  passkeysSupported,
+  securityError,
+  SignInMethods,
+} from "@/api/account/security";
+import MessageBox from "@/components/MessageBox";
+import { httpErrorToHuman } from "@/api/http";
 
 const schema = z.object({
   username: z.string().min(1, "A username or email must be provided."),
@@ -24,6 +33,9 @@ const LoginContainer = () => {
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [methods, setMethods] = useState<SignInMethods | null>(null);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
+  const [methodError, setMethodError] = useState("");
 
   const { clearFlashes, clearAndAddHttpError } = useFlash();
   const registrationEnabled = useAppStore(
@@ -50,9 +62,39 @@ const LoginContainer = () => {
 
   useEffect(() => {
     clearFlashes();
+    void getSignInMethods()
+      .then((data) => {
+        setMethods(data);
+        if (data.error) setMethodError(data.error);
+        if (data.confirmation_token)
+          navigate("/auth/login/checkpoint", {
+            replace: true,
+            state: { token: data.confirmation_token },
+          });
+      })
+      .catch(() => setMethods(null));
   }, []);
 
+  const onPasskey = async () => {
+    setPasskeyBusy(true);
+    setMethodError("");
+    try {
+      const response = await loginWithPasskey();
+      if (response.complete) window.location.assign(response.intended || "/");
+      else
+        navigate("/auth/login/checkpoint", {
+          replace: true,
+          state: { token: response.confirmationToken },
+        });
+    } catch (error) {
+      setMethodError(httpErrorToHuman(securityError(error)));
+    } finally {
+      setPasskeyBusy(false);
+    }
+  };
+
   const onSubmit = async (values: Values) => {
+    if (passkeyBusy) return;
     clearFlashes();
 
     // If there is no token in the state yet, request the token and then abort this submit request
@@ -92,13 +134,20 @@ const LoginContainer = () => {
       description={"Sign in to manage your servers."}
       onSubmit={handleSubmit(onSubmit)}
     >
+      {methodError && (
+        <div className="mb-5">
+          <MessageBox type="error" title="Sign in">
+            {methodError}
+          </MessageBox>
+        </div>
+      )}
       <FormField
         type={"text"}
         label={"Username or email"}
         autoComplete={"username"}
         autoCapitalize={"none"}
         spellCheck={false}
-        disabled={isSubmitting}
+        disabled={isSubmitting || passkeyBusy}
         error={errors.username}
         {...register("username")}
       />
@@ -107,7 +156,7 @@ const LoginContainer = () => {
           type={showPassword ? "text" : "password"}
           label={"Password"}
           autoComplete={"current-password"}
-          disabled={isSubmitting}
+          disabled={isSubmitting || passkeyBusy}
           error={errors.password}
           {...register("password")}
         />
@@ -116,7 +165,7 @@ const LoginContainer = () => {
           className={"password-reveal"}
           aria-label={showPassword ? "Hide password" : "Show password"}
           aria-pressed={showPassword}
-          disabled={isSubmitting}
+          disabled={isSubmitting || passkeyBusy}
           onClick={() => setShowPassword((value) => !value)}
         >
           {showPassword ? (
@@ -131,11 +180,41 @@ const LoginContainer = () => {
           type={"submit"}
           size={"xlarge"}
           isLoading={isSubmitting}
-          disabled={isSubmitting}
+          disabled={isSubmitting || passkeyBusy}
         >
           Sign in
         </Button>
       </div>
+      {(methods?.passkeys_enabled || !!methods?.providers.length) && (
+        <div className="mt-5 space-y-3 border-t border-neutral-600 pt-5">
+          {methods?.passkeys_enabled && passkeysSupported() && (
+            <Button
+              type="button"
+              size="xlarge"
+              isSecondary
+              disabled={passkeyBusy || isSubmitting}
+              isLoading={passkeyBusy}
+              onClick={() => void onPasskey()}
+            >
+              Sign in with a passkey
+            </Button>
+          )}
+          {methods?.providers.map((provider) => (
+            <a
+              key={provider.id}
+              href={`/auth/oauth/${provider.id}`}
+              className="block rounded border border-neutral-600 px-4 py-3 text-center text-sm text-neutral-200 hover:border-neutral-400 hover:bg-neutral-700"
+            >
+              Continue with {provider.label}
+            </a>
+          ))}
+          {!!methods?.providers.length && (
+            <p className="text-center text-xs text-neutral-400">
+              Link your provider in Account settings before using it to sign in.
+            </p>
+          )}
+        </div>
+      )}
       {recaptchaEnabled && (
         <Captcha
           ref={ref}

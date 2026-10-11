@@ -70,6 +70,11 @@ storage volume. The `public/storage` link exposes them to the web server. Linux
 installations need `php artisan storage:link` and GD with PNG, JPEG and WebP support;
 retain these files alongside the database when backing up or moving the panel.
 
+Passkeys and connected Discord, GitHub, Google, and OpenID Connect accounts are
+managed in Account settings. Administrators configure providers and passkeys under
+**Settings → OAuth**. See the [account security guide](docs/ACCOUNT-SECURITY.md) for
+callback URLs, HTTPS requirements, and deployment steps.
+
 To choose a different port or initial credentials, set `AQUADACTYL_PORT`,
 `AQUADACTYL_ADMIN_EMAIL`, `AQUADACTYL_ADMIN_USERNAME` and/or
 `AQUADACTYL_ADMIN_PASSWORD` in your shell before the first start. In PowerShell:

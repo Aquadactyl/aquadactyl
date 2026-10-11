@@ -5,6 +5,7 @@ import UpdateEmailAddressForm from "@/components/dashboard/forms/UpdateEmailAddr
 import ProfilePictureForm from "@/components/dashboard/forms/ProfilePictureForm";
 import PrivacySettingsForm from "@/components/dashboard/forms/PrivacySettingsForm";
 import ConfigureTwoFactorForm from "@/components/dashboard/forms/ConfigureTwoFactorForm";
+import AccountSignInMethods from "@/components/dashboard/forms/AccountSignInMethods";
 import PageContentBlock from "@/components/elements/PageContentBlock";
 import MessageBox from "@/components/MessageBox";
 import { useLocation } from "react-router";
@@ -85,6 +86,7 @@ export default () => {
           <ConfigureTwoFactorForm />
         </ContentBox>
       </div>
+      <AccountSignInMethods />
       <AfterContent />
     </PageContentBlock>
   );
