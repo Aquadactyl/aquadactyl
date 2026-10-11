@@ -155,8 +155,8 @@ test('disabled personalization is enforced and saved choices return when enabled
     $this->putJson('/api/client/account/privacy', ['blur_sensitive_data' => false])->assertForbidden();
     $this->getJson('/api/client/account')->assertOk()->assertJsonPath('attributes.avatar_url', null)
         ->assertJsonPath('attributes.blur_sensitive_data', false);
-    $this->actingAs($user, 'web')->get('/account')->assertOk()->assertSee('<html class="">', false)->assertDontSee('/storage/' . $path, false);
-    $this->get('/admin/users')->assertOk()->assertSee('<html class="">', false)->assertDontSee('/storage/' . $path, false);
+    $this->actingAs($user, 'web')->get('/account')->assertOk()->assertSee('<html class=""', false)->assertDontSee('/storage/' . $path, false);
+    $this->get('/admin/users')->assertOk()->assertSee('<html class=""', false)->assertDontSee('/storage/' . $path, false);
     expect($user->toVueObject()['blur_sensitive_data'])->toBeFalse()
         ->and($user->refresh()->avatar)->toBe($path)
         ->and($user->blur_sensitive_data)->toBeTrue();

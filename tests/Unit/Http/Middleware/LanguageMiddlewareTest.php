@@ -1,8 +1,8 @@
 <?php
 
 use Mockery as m;
-use Pterodactyl\Models\User;
 use Illuminate\Foundation\Application;
+use Pterodactyl\Models\User;
 use Pterodactyl\Http\Middleware\LanguageMiddleware;
 use Pterodactyl\Services\Users\LanguageService;
 

@@ -14,5 +14,7 @@ class TrimStrings extends BaseTrimmer
         'password_confirmation',
         'current_password',
         'providers.*.client_secret',
+        'locale',
+        'namespace',
     ];
 }
