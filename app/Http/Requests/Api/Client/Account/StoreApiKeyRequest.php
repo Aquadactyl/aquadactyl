@@ -2,7 +2,7 @@
 
 namespace Pterodactyl\Http\Requests\Api\Client\Account;
 
-use IPTools\Range;
+use IPLib\Factory;
 use Pterodactyl\Models\ApiKey;
 use Illuminate\Validation\Validator;
 use Pterodactyl\Http\Requests\Api\Client\ClientApiRequest;
@@ -31,16 +31,8 @@ class StoreApiKeyRequest extends ClientApiRequest
             }
 
             foreach ($ips as $index => $ip) {
-                $valid = false;
-                try {
-                    $valid = Range::parse($ip)->valid();
-                } catch (\Exception $exception) {
-                    if ($exception->getMessage() !== 'Invalid IP address format') {
-                        throw $exception;
-                    }
-                } finally {
-                    $validator->errors()->addIf(!$valid, "allowed_ips.{$index}", '"' . $ip . '" is not a valid IP address or CIDR range.');
-                }
+                $valid = is_string($ip) && Factory::parseRangeString($ip) !== null;
+                $validator->errors()->addIf(!$valid, "allowed_ips.{$index}", '"' . $ip . '" is not a valid IP address or CIDR range.');
             }
         });
     }

@@ -81,15 +81,13 @@ it.each(["/account", "/server/test", "/"])(
 );
 
 it("removes the background element when there is no configured image", () => {
-  store
-    .getActions()
-    .settings.setSettings({
-      ...settings,
-      appearance: {
-        ...settings.appearance!,
-        loginBackground: { url: null, blur: 8, overlay: 45 },
-      },
-    });
+  store.getActions().settings.setSettings({
+    ...settings,
+    appearance: {
+      ...settings.appearance!,
+      loginBackground: { url: null, blur: 8, overlay: 45 },
+    },
+  });
   const { container } = render(
     <MemoryRouter initialEntries={["/auth/login"]}>
       <PanelBackground />
@@ -113,12 +111,10 @@ it("places the brand opposite the form and falls back above the form for centre 
     ),
   ).toBeNull();
   act(() =>
-    store
-      .getActions()
-      .settings.setSettings({
-        ...settings,
-        appearance: { ...settings.appearance!, loginLayout: "center" },
-      }),
+    store.getActions().settings.setSettings({
+      ...settings,
+      appearance: { ...settings.appearance!, loginLayout: "center" },
+    }),
   );
   expect(container.querySelector(".authentication-side-brand")).toBeNull();
   expect(
@@ -129,12 +125,10 @@ it("places the brand opposite the form and falls back above the form for centre 
 });
 
 it("places the brand inside the login card when selected", () => {
-  store
-    .getActions()
-    .settings.setSettings({
-      ...settings,
-      appearance: { ...settings.appearance!, loginLogoPosition: "inside" },
-    });
+  store.getActions().settings.setSettings({
+    ...settings,
+    appearance: { ...settings.appearance!, loginLogoPosition: "inside" },
+  });
   const { container } = render(
     <LoginFormContainer title="Sign in">
       <input />

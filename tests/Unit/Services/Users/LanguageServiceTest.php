@@ -1,7 +1,6 @@
 <?php
 
 use Mockery as m;
-use Matriphe\ISO639\ISO639;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\Filesystem;
 use Pterodactyl\Services\Users\LanguageService;
@@ -14,7 +13,7 @@ beforeEach(function () {
     ]);
     $this->files->shouldReceive('exists')->andReturnUsing(fn (string $path) => str_ends_with($path, '/ar/locale.json'));
     $this->files->shouldReceive('get')->andReturn('{"name":"Arabic","nativeName":"العربية","direction":"rtl"}');
-    $this->languages = new LanguageService($this->files, new ISO639());
+    $this->languages = new LanguageService($this->files);
 });
 
 test('automatic selection respects preference order and regional language tags', function (?string $preference, array $browser, string $expected) {
@@ -50,7 +49,7 @@ test('a request locale cannot become the site default for another viewer', funct
 test('unknown site defaults safely fall back to an installed language', function () {
     config()->set('app.locale', 'missing');
     config()->set('app.fallback_locale', 'missing');
-    $languages = new LanguageService($this->files, new ISO639());
+    $languages = new LanguageService($this->files);
     expect($languages->resolve('auto', []))->toBe('en');
 });
 

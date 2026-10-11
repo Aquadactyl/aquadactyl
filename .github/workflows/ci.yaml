@@ -45,7 +45,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, cli, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          extensions: bcmath, cli, curl, gd, intl, mbstring, mysql, openssl, pdo, redis, tokenizer, xml, zip
           tools: composer:v2
           coverage: none
       - run: cp .env.ci .env

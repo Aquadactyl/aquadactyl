@@ -2,7 +2,6 @@
 
 namespace Pterodactyl\Services\Users;
 
-use Matriphe\ISO639\ISO639;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\AcceptHeader;
@@ -19,7 +18,7 @@ class LanguageService
 
     private string $fallbackLocale;
 
-    public function __construct(private Filesystem $files, private ISO639 $iso639)
+    public function __construct(private Filesystem $files)
     {
         // Application::setLocale also changes app.locale. Remember the site
         // defaults before applying a viewer's preference to this request.
@@ -52,12 +51,12 @@ class LanguageService
                 : [];
             $metadata = is_array($metadata) ? $metadata : [];
             $base = preg_split('/[-_]/', $code)[0];
-            $name = $this->iso639->languageByCode1($base) ?: $code;
-            $nativeName = $this->iso639->nativeByCode1($base) ?: $name;
+            $name = \Locale::getDisplayLanguage($base, 'en') ?: $code;
+            $nativeName = \Locale::getDisplayLanguage($base, $base) ?: $name;
 
             $languages[$code] = [
-                'name' => $this->label($metadata['name'] ?? null, ucfirst($name)),
-                'nativeName' => $this->label($metadata['nativeName'] ?? null, ucfirst($nativeName)),
+                'name' => $this->label($metadata['name'] ?? null, mb_ucfirst($name)),
+                'nativeName' => $this->label($metadata['nativeName'] ?? null, mb_ucfirst($nativeName)),
                 'direction' => ($metadata['direction'] ?? 'ltr') === 'rtl' ? 'rtl' : 'ltr',
             ];
         }

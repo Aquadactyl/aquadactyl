@@ -2,8 +2,7 @@
 
 namespace Pterodactyl\Http\Middleware\Api;
 
-use IPTools\IP;
-use IPTools\Range;
+use IPLib\Factory;
 use Illuminate\Http\Request;
 use Pterodactyl\Facades\Activity;
 use Laravel\Sanctum\TransientToken;
@@ -30,10 +29,13 @@ class AuthenticateIPAccess
             return $next($request);
         }
 
-        $find = new IP($request->ip());
-        foreach ($token->allowed_ips as $ip) {
-            if (Range::parse($ip)->contains($find)) {
-                return $next($request);
+        $address = Factory::parseAddressString($request->ip() ?? '');
+        if ($address !== null) {
+            foreach ($token->allowed_ips as $ip) {
+                $range = Factory::parseRangeString($ip);
+                if ($range !== null && $range->contains($address)) {
+                    return $next($request);
+                }
             }
         }
 

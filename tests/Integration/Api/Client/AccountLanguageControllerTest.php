@@ -1,7 +1,6 @@
 <?php
 
 use Mockery as m;
-use Matriphe\ISO639\ISO639;
 use Pterodactyl\Models\User;
 use Illuminate\Filesystem\Filesystem;
 use Pterodactyl\Services\Users\LanguageService;
@@ -12,7 +11,7 @@ beforeEach(function () {
     $files->shouldReceive('directories')->andReturn([resource_path('lang/en'), resource_path('lang/fr-CA')]);
     $files->shouldReceive('exists')->andReturnFalse();
     $files->shouldReceive('allFiles')->andReturn([]);
-    $this->app->instance(LanguageService::class, new LanguageService($files, new ISO639()));
+    $this->app->instance(LanguageService::class, new LanguageService($files));
 });
 
 test('users can save explicit and automatic preferences across requests', function () {

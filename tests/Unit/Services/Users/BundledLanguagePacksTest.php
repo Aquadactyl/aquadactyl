@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Arr;
-use Matriphe\ISO639\ISO639;
 use Illuminate\Http\Request;
 use Illuminate\Filesystem\Filesystem;
 use Pterodactyl\Services\Users\LanguageService;
@@ -48,13 +47,13 @@ test('bundled language catalogs preserve all English keys and interpolation', fu
 });
 
 test('bundled languages are discovered with their native names', function () {
-    $languages = new LanguageService(new Filesystem(), new ISO639());
+    $languages = new LanguageService(new Filesystem());
     expect($languages->available()['fr'])->toBe(['name' => 'French', 'nativeName' => 'Français', 'direction' => 'ltr'])
         ->and($languages->available()['de'])->toBe(['name' => 'German', 'nativeName' => 'Deutsch', 'direction' => 'ltr']);
 });
 
 test('bundled languages respect browser regions and saved preferences', function (string $header, string $preference, string $expected) {
-    $languages = new LanguageService(new Filesystem(), new ISO639());
+    $languages = new LanguageService(new Filesystem());
     $request = Request::create('/');
     $request->headers->set('Accept-Language', $header);
     expect($languages->forRequest($request, $preference))->toBe($expected);
