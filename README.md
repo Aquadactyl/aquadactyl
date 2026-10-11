@@ -1,8 +1,8 @@
 <p align="center">
   <a href="https://aquadactyl.uk">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg">
-      <img alt="Aquadactyl" src=".github/assets/logo-light.svg" height="72">
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/aquadactyl-wordmark.png">
+      <img alt="Aquadactyl" src=".github/assets/aquadactyl-wordmark.png" height="72">
     </picture>
   </a>
 </p>
