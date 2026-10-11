@@ -1,10 +1,10 @@
 <?php
 
 use Mockery as m;
-use Illuminate\Foundation\Application;
 use Pterodactyl\Models\User;
-use Pterodactyl\Http\Middleware\LanguageMiddleware;
+use Illuminate\Foundation\Application;
 use Pterodactyl\Services\Users\LanguageService;
+use Pterodactyl\Http\Middleware\LanguageMiddleware;
 
 beforeEach(function () {
     $this->appMock = m::mock(Application::class);

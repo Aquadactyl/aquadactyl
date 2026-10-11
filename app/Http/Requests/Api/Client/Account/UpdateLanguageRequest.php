@@ -11,10 +11,14 @@ class UpdateLanguageRequest extends ClientApiRequest
     public function rules(): array
     {
         return [
-            'language' => ['required', 'string', Rule::in([
-                LanguageService::AUTOMATIC,
-                ...array_keys(app(LanguageService::class)->available()),
-            ])],
+            'language' => [
+                'required',
+                'string',
+                Rule::in([
+                    LanguageService::AUTOMATIC,
+                    ...array_keys(app(LanguageService::class)->available()),
+                ]),
+            ],
         ];
     }
 }

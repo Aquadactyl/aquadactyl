@@ -1,17 +1,42 @@
-# Aquadactyl
+<p align="center">
+  <a href="https://aquadactyl.uk">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg">
+      <img alt="Aquadactyl" src=".github/assets/logo-light.svg" height="72">
+    </picture>
+  </a>
+</p>
 
-[Website](https://aquadactyl.uk) · [Documentation](https://aquadactyl.uk/docs) ·
-[Source](https://github.com/Aquadactyl/aquadactyl)
+![Tests](https://img.shields.io/github/actions/workflow/status/Aquadactyl/aquadactyl/ci.yaml?label=Tests&style=for-the-badge)
+![GitHub release](https://img.shields.io/github/v/release/Aquadactyl/aquadactyl?style=for-the-badge)
+![GitHub contributors](https://img.shields.io/github/contributors/Aquadactyl/aquadactyl?style=for-the-badge)
 
-Aquadactyl is a game server management panel built on Pterodactyl, with Blueprint
-bundled and tools for installing and updating the panel on Linux with Nginx and
-PHP-FPM.
+# Aquadactyl Panel
+
+Aquadactyl is a free, open-source game server management panel built with PHP and
+React. It is an independent Pterodactyl fork with Blueprint bundled into the
+panel, managed releases, and a focused deployment experience for hosting
+providers and communities.
 
 Manage your servers through Aquadactyl's interface, extend the panel
 with Blueprint, and deploy updates using pinned dependencies and automatic backups.
 Game servers run on separate Wings nodes using Docker containers.
 
-Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprint release.
+Aquadactyl is an independent project and is not an official Pterodactyl or
+Blueprint release.
+
+## Supported games
+
+Aquadactyl runs game servers in isolated Docker containers through Wings. It
+supports the games available through the Pterodactyl ecosystem, including:
+
+- Minecraft and its Paper, Sponge, BungeeCord and Waterfall variants
+- Rust, Terraria, TeamSpeak and Mumble
+- Team Fortress 2, Counter-Strike 2, Garry's Mod and ARK: Survival Evolved
+- Factorio, Squad, Xonotic, Starmade and Node.js/Python applications
+
+The community [egg library](https://eggs.pterodactyl.io/) provides additional
+server definitions.
 
 ## What Aquadactyl includes
 
