@@ -80,4 +80,3 @@ test('environment variables override database settings for registration and time
     $bootProvider();
     expect(config('pterodactyl.guzzle.timeout'))->toBe('15');
 });
-

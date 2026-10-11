@@ -68,4 +68,3 @@ class RegisterRequest extends FormRequest
         return $data;
     }
 }
-

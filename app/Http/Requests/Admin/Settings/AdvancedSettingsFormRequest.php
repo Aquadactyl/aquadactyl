@@ -95,4 +95,3 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
         return $data;
     }
 }
-
