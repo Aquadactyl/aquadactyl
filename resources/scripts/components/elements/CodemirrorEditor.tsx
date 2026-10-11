@@ -1,36 +1,8 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import { Compartment, EditorState, Extension } from "@codemirror/state";
-import {
-  crosshairCursor,
-  drawSelection,
-  dropCursor,
-  EditorView,
-  highlightActiveLine,
-  highlightActiveLineGutter,
-  highlightSpecialChars,
-  keymap,
-  lineNumbers,
-  rectangularSelection,
-} from "@codemirror/view";
-import {
-  bracketMatching,
-  defaultHighlightStyle,
-  foldGutter,
-  foldKeymap,
-  indentOnInput,
-  indentUnit,
-  StreamLanguage,
-  syntaxHighlighting,
-} from "@codemirror/language";
-import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
-import { highlightSelectionMatches, searchKeymap } from "@codemirror/search";
-import {
-  autocompletion,
-  closeBrackets,
-  closeBracketsKeymap,
-  completionKeymap,
-} from "@codemirror/autocomplete";
-import { lintKeymap } from "@codemirror/lint";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { EditorState, Extension } from "@codemirror/state";
+import { EditorView, keymap } from "@codemirror/view";
+import { indentUnit, StreamLanguage } from "@codemirror/language";
 import { oneDark } from "@codemirror/theme-one-dark";
 
 // Language packages
@@ -72,35 +44,6 @@ import { julia } from "@codemirror/legacy-modes/mode/julia";
 import { perl } from "@codemirror/legacy-modes/mode/perl";
 
 import modes from "@/modes";
-
-const basicSetup: Extension = [
-  lineNumbers(),
-  highlightActiveLineGutter(),
-  highlightSpecialChars(),
-  history(),
-  foldGutter(),
-  drawSelection(),
-  dropCursor(),
-  EditorState.allowMultipleSelections.of(true),
-  indentOnInput(),
-  syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-  bracketMatching(),
-  closeBrackets(),
-  autocompletion(),
-  rectangularSelection(),
-  crosshairCursor(),
-  highlightActiveLine(),
-  highlightSelectionMatches(),
-  keymap.of([
-    ...closeBracketsKeymap,
-    ...defaultKeymap,
-    ...searchKeymap,
-    ...historyKeymap,
-    ...foldKeymap,
-    ...completionKeymap,
-    ...lintKeymap,
-  ]),
-];
 
 export interface Props {
   style?: React.CSSProperties;
@@ -290,9 +233,9 @@ export default ({
   onModeChanged,
   onContentChanged,
 }: Props) => {
-  const editorRef = useRef<HTMLDivElement>(null);
-  const viewRef = useRef<EditorView | null>(null);
-  const languageConf = useMemo(() => new Compartment(), []);
+  const editorRef = useRef<ReactCodeMirrorRef>(null);
+  const [content, setContent] = useState<string>(initialContent ?? "");
+  const contentRef = useRef<string>(initialContent ?? "");
 
   const onContentSavedRef = useRef(onContentSaved);
   onContentSavedRef.current = onContentSaved;
@@ -301,8 +244,26 @@ export default ({
   onContentChangedRef.current = onContentChanged;
 
   useEffect(() => {
-    if (!editorRef.current) return;
+    if (filename === undefined) return;
+    onModeChanged(findModeByFilename(filename)?.mime || "text/plain");
+  }, [filename]);
 
+  useEffect(() => {
+    if (initialContent !== undefined) {
+      setContent(initialContent);
+      contentRef.current = initialContent;
+    }
+  }, [initialContent]);
+
+  useEffect(() => {
+    fetchContent(() => {
+      const currentDoc =
+        editorRef.current?.view?.state.doc.toString() ?? contentRef.current;
+      return Promise.resolve(currentDoc);
+    });
+  }, [fetchContent]);
+
+  const extensions = useMemo(() => {
     const saveKeymap = keymap.of([
       {
         key: "Mod-s",
@@ -313,80 +274,39 @@ export default ({
       },
     ]);
 
-    const changeListener = EditorView.updateListener.of((update) => {
-      if (update.docChanged && onContentChangedRef.current) {
-        onContentChangedRef.current(update.state.doc.toString());
-      }
-    });
+    const lang = getLanguageExtension(mode);
 
-    const state = EditorState.create({
-      doc: initialContent || "",
-      extensions: [
-        basicSetup,
-        EditorView.lineWrapping,
-        EditorState.tabSize.of(4),
-        indentUnit.of("    "),
-        oneDark,
-        customTheme,
-        languageConf.of(getLanguageExtension(mode)),
-        saveKeymap,
-        changeListener,
-      ],
-    });
+    return [
+      EditorView.lineWrapping,
+      EditorState.tabSize.of(4),
+      indentUnit.of("    "),
+      customTheme,
+      saveKeymap,
+      ...(Array.isArray(lang) ? lang : [lang]),
+    ];
+  }, [mode]);
 
-    const view = new EditorView({
-      state,
-      parent: editorRef.current,
-    });
-
-    viewRef.current = view;
-
-    return () => {
-      view.destroy();
-      viewRef.current = null;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (filename === undefined) return;
-    onModeChanged(findModeByFilename(filename)?.mime || "text/plain");
-  }, [filename]);
-
-  useEffect(() => {
-    if (viewRef.current) {
-      viewRef.current.dispatch({
-        effects: languageConf.reconfigure(getLanguageExtension(mode)),
-      });
-    }
-  }, [mode, languageConf]);
-
-  useEffect(() => {
-    if (viewRef.current && initialContent !== undefined) {
-      const currentContent = viewRef.current.state.doc.toString();
-      if (currentContent !== initialContent) {
-        viewRef.current.dispatch({
-          changes: {
-            from: 0,
-            to: currentContent.length,
-            insert: initialContent,
-          },
-        });
-      }
-    }
-  }, [initialContent]);
-
-  useEffect(() => {
-    fetchContent(() =>
-      Promise.resolve(viewRef.current?.state.doc.toString() ?? ""),
-    );
-  }, [fetchContent]);
+  const handleChange = (val: string) => {
+    contentRef.current = val;
+    setContent(val);
+    onContentChangedRef.current?.(val);
+  };
 
   return (
     <div
       style={style}
       className="relative h-[calc(100vh-20rem)] min-h-64 [&_.cm-editor]:h-full [&_.cm-editor]:rounded-lg [&>div]:h-full [&>div]:rounded-lg"
     >
-      <div ref={editorRef} />
+      <CodeMirror
+        ref={editorRef}
+        value={content}
+        height="100%"
+        className="h-full rounded-lg"
+        theme={oneDark}
+        basicSetup={true}
+        extensions={extensions}
+        onChange={handleChange}
+      />
     </div>
   );
 };
