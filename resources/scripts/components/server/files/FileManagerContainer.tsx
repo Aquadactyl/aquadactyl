@@ -4,6 +4,8 @@ import React, {
   useMemo,
   useDeferredValue,
   startTransition,
+  useRef,
+  useState,
 } from "react";
 import { httpErrorToHuman } from "@/api/http";
 import Fade from "@/components/elements/Fade";
@@ -26,6 +28,8 @@ import useFlash from "@/plugins/useFlash";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 import { FileActionCheckbox } from "@/components/server/files/SelectFileCheckbox";
 import { hashToPath } from "@/helpers";
+import { Search, X } from "lucide-react";
+import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 import BeforeContent from "@blueprint/components/Server/Files/Browse/BeforeContent";
 import FileButtons from "@blueprint/components/Server/Files/Browse/FileButtons";
@@ -60,15 +64,64 @@ export default () => {
     (state) => state.files.selectedFiles.length,
   );
 
-  const sortedFiles = useMemo(
-    () => (files ? sortFiles(files.slice(0, 250)) : null),
-    [files],
-  );
-  const deferredSortedFiles = useDeferredValue(sortedFiles);
+  const [searchTerm, setSearchTerm] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  const filesCount = useMemo(() => {
+    if (!files) return undefined;
+    let fileCount = 0;
+    let folderCount = 0;
+    for (const f of files) {
+      if (f.isFile) fileCount++;
+      else folderCount++;
+    }
+    return { files: fileCount, folders: folderCount };
+  }, [files]);
+
+  const filteredFiles = useMemo(() => {
+    if (!files) return null;
+    const trimmed = searchTerm.trim().toLowerCase();
+    if (!trimmed) {
+      return sortFiles(files);
+    }
+    const terms = trimmed.split(/\s+/);
+    return sortFiles(
+      files.filter((file) =>
+        terms.every((term) => file.name.toLowerCase().includes(term)),
+      ),
+    );
+  }, [files, searchTerm]);
+
+  const deferredFilteredFiles = useDeferredValue(filteredFiles);
+
+  const rowVirtualizer = useWindowVirtualizer({
+    count: deferredFilteredFiles?.length ?? 0,
+    estimateSize: () => 41,
+    overscan: 12,
+    scrollMargin: listRef.current?.offsetTop ?? 0,
+  });
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        e.key === "/" &&
+        !["INPUT", "TEXTAREA"].includes(
+          (e.target as HTMLElement)?.tagName || "",
+        )
+      ) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     clearFlashes("files");
     setSelectedFiles([]);
+    setSearchTerm("");
     startTransition(() => {
       setDirectory(hashToPath(hash));
     });
@@ -80,7 +133,9 @@ export default () => {
 
   const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedFiles(
-      e.currentTarget.checked ? files?.map((file) => file.name) || [] : [],
+      e.currentTarget.checked
+        ? (deferredFilteredFiles || []).map((file) => file.name)
+        : [],
     );
   };
 
@@ -97,15 +152,72 @@ export default () => {
     >
       <ErrorBoundary>
         <BeforeContent />
-        <div className={"mb-4 flex flex-wrap-reverse md:flex-nowrap"}>
+        {files && (
+          <div className={"mb-4 w-full"}>
+            <div className={"relative flex w-full items-center"}>
+              <Search
+                className={
+                  "pointer-events-none absolute left-3 text-neutral-400"
+                }
+                size={16}
+                aria-hidden
+              />
+              <input
+                ref={searchInputRef}
+                type={"search"}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setSearchTerm("");
+                    searchInputRef.current?.blur();
+                  }
+                }}
+                placeholder={t(
+                  "files.search_files_placeholder",
+                  "Search files… (Press '/' to focus)",
+                )}
+                className={
+                  "w-full rounded border border-neutral-700 bg-neutral-900/80 py-2 pr-9 pl-9 text-sm text-neutral-200 placeholder-neutral-500 transition-colors focus:border-blue-500 focus:bg-neutral-900 focus:ring-1 focus:ring-blue-500 focus:outline-none"
+                }
+                aria-label={t("files.search_files", "Search files…")}
+              />
+              {searchTerm && (
+                <button
+                  type={"button"}
+                  onClick={() => {
+                    setSearchTerm("");
+                    searchInputRef.current?.focus();
+                  }}
+                  className={
+                    "absolute right-2.5 text-neutral-400 transition-colors hover:text-neutral-200"
+                  }
+                  aria-label={t("files.clear_search", "Clear search")}
+                >
+                  <X size={15} />
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div
+          className={
+            "mb-4 flex flex-wrap-reverse items-center justify-between gap-4 md:flex-nowrap"
+          }
+        >
           <FileManagerBreadcrumbs
+            filesCount={filesCount}
             renderLeft={
               <FileActionCheckbox
                 type={"checkbox"}
                 className={"mx-4"}
                 checked={
+                  selectedFilesLength > 0 &&
                   selectedFilesLength ===
-                  (files?.length === 0 ? -1 : files?.length)
+                    (deferredFilteredFiles?.length === 0
+                      ? -1
+                      : deferredFilteredFiles?.length)
                 }
                 onChange={onSelectAllClick}
               />
@@ -138,20 +250,55 @@ export default () => {
           ) : (
             <Fade timeout={150}>
               <div>
-                {files.length > 250 && (
-                  <div className={"mb-px rounded bg-yellow-400 p-3"}>
-                    <p className={"text-center text-sm text-yellow-900"}>
+                {!deferredFilteredFiles?.length ? (
+                  <div className={"py-12 text-center"}>
+                    <p className={"mb-3 text-sm text-neutral-400"}>
                       {t(
-                        "files.this_directory_is_too_large_to_display_in_the_browser",
-                        "This directory is too large to display in the browser, limiting the output to the first 250 files.",
+                        "files.no_matching_files",
+                        'No files or directories matching "{{query}}".',
+                        { query: searchTerm },
                       )}
                     </p>
+                    <Button
+                      variant={Button.Variants.Secondary}
+                      size={Button.Sizes.Small}
+                      onClick={() => setSearchTerm("")}
+                    >
+                      {t("files.clear_search", "Clear search")}
+                    </Button>
+                  </div>
+                ) : (
+                  <div ref={listRef}>
+                    <div
+                      style={{
+                        height: `${rowVirtualizer.getTotalSize()}px`,
+                        width: "100%",
+                        position: "relative",
+                      }}
+                    >
+                      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                        const file = deferredFilteredFiles[virtualRow.index];
+                        return (
+                          <div
+                            key={file.key}
+                            data-index={virtualRow.index}
+                            ref={rowVirtualizer.measureElement}
+                            style={{
+                              position: "absolute",
+                              top: 0,
+                              left: 0,
+                              width: "100%",
+                              transform: `translateY(${virtualRow.start - (rowVirtualizer.options.scrollMargin ?? 0)}px)`,
+                            }}
+                          >
+                            <FileObjectRow file={file} />
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <MassActionsBar />
                   </div>
                 )}
-                {(deferredSortedFiles || []).map((file) => (
-                  <FileObjectRow key={file.key} file={file} />
-                ))}
-                <MassActionsBar />
               </div>
             </Fade>
           )}

@@ -2,14 +2,22 @@ import React, { useEffect, useState } from "react";
 import { ServerContext } from "@/state/server";
 import { NavLink, useLocation } from "react-router";
 import { encodePathSegments, hashToPath } from "@/helpers";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 
 interface Props {
   renderLeft?: React.ReactElement;
   withinFileEditor?: boolean;
   isNewFile?: boolean;
+  filesCount?: { files: number; folders: number };
 }
 
-export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
+export default ({
+  renderLeft,
+  withinFileEditor,
+  isNewFile,
+  filesCount,
+}: Props) => {
+  const { t } = usePanelTranslation();
   const [file, setFile] = useState<string | null>(null);
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
   const directory = ServerContext.useStoreState(
@@ -79,6 +87,30 @@ export default ({ renderLeft, withinFileEditor, isNewFile }: Props) => {
         <React.Fragment>
           <span className={"px-1 text-neutral-300"}>{file}</span>
         </React.Fragment>
+      )}
+      {filesCount && (
+        <span
+          className={
+            "ml-2 flex-none text-xs whitespace-nowrap text-neutral-400"
+          }
+        >
+          {t(
+            "files.counter",
+            "{{files}} {{files_label}} ({{folders}} {{folders_label}})",
+            {
+              files: filesCount.files,
+              files_label:
+                filesCount.files === 1
+                  ? t("files.file", "file")
+                  : t("files.files", "files"),
+              folders: filesCount.folders,
+              folders_label:
+                filesCount.folders === 1
+                  ? t("files.folder", "folder")
+                  : t("files.folders", "folders"),
+            },
+          )}
+        </span>
       )}
     </div>
   );
