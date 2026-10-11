@@ -186,21 +186,21 @@ The local guides retain deployment details, developer references and validation 
 ## Optional telemetry
 
 Aquadactyl telemetry is **disabled by default**. An administrator can enable it
-under **Admin → Settings → Advanced Settings → Aquadactyl Telemetry** after
-configuring the backend endpoint and bearer token:
+under **Admin → Settings → Advanced Settings → Aquadactyl Telemetry**. Public
+panel installations do not need to create or configure a telemetry token:
 
 ```dotenv
 AQUADACTYL_TELEMETRY_ENDPOINT=https://api.euphoriadevelopment.uk/telemetry/panel
-AQUADACTYL_TELEMETRY_TOKEN=replace-with-your-shared-backend-token
 ```
 
 When enabled, the panel sends one daily aggregate report containing an anonymous
 installation UUID, panel/PHP versions, driver names, Docker availability, and
 counts of users, servers, and nodes. It does not send names, email addresses,
 IP addresses, domains, server names, credentials, tokens, or request contents.
-The backend retains the latest report for 90 days. The setting can be disabled
-at any time; no telemetry request is made while it is disabled or while the
-endpoint/token is unset.
+the backend retains the latest report for 90 days. The public endpoint validates
+the schema and payload size, rate-limits submissions, and stores one snapshot per
+anonymous installation UUID. The setting can be disabled at any time; no
+telemetry request is made while it is disabled or while the endpoint is unset.
 
 ## Credits and license
 

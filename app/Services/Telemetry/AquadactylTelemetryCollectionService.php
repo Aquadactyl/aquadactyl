@@ -18,13 +18,12 @@ class AquadactylTelemetryCollectionService
     public function __invoke(): void
     {
         $endpoint = config('aquadactyl.telemetry.endpoint');
-        $token = config('aquadactyl.telemetry.token');
-        if (!config('aquadactyl.telemetry.enabled') || !$endpoint || !$token) {
+        if (!config('aquadactyl.telemetry.enabled') || !$endpoint) {
             return;
         }
 
         try {
-            Http::withToken($token)->connectTimeout(5)->timeout(10)->post($endpoint, $this->collect())->throw();
+            Http::connectTimeout(5)->timeout(10)->post($endpoint, $this->collect())->throw();
         } catch (\Throwable $exception) {
             report($exception);
         }
