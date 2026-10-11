@@ -84,6 +84,10 @@ Route::group(['prefix' => 'settings'], function () {
     Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
     Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
 
+    Route::get('/logs', [Admin\Settings\LogController::class, 'index'])->name('admin.settings.logs');
+    Route::get('/logs/download/{file}', [Admin\Settings\LogController::class, 'download'])->name('admin.settings.logs.download');
+    Route::delete('/logs/{file}', [Admin\Settings\LogController::class, 'delete'])->name('admin.settings.logs.delete');
+
     Route::post('/mail/test', [Admin\Settings\MailController::class, 'test'])->name('admin.settings.mail.test');
 
     Route::patch('/', [Admin\Settings\IndexController::class, 'update']);

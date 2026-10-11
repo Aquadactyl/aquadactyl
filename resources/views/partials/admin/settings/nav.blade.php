@@ -11,6 +11,7 @@
                     <li @if($activeTab === 'appearance')class="active"@endif><a href="{{ route('admin.settings.appearance') }}">{{ __('admin/custom.appearance') }}</a></li>
                     <li @if($activeTab === 'advanced')class="active"@endif><a href="{{ route('admin.settings.advanced') }}">{{ __('admin/ui.advanced_9f088d') }}</a></li>
                     <li @if($activeTab === 'oauth')class="active"@endif><a href="{{ route('admin.settings.oauth') }}">OAuth</a></li>
+                    <li @if($activeTab === 'logs')class="active"@endif><a href="{{ route('admin.settings.logs') }}">{{ __('admin/custom.logs') }}</a></li>
                 </ul>
             </div>
         </div>
