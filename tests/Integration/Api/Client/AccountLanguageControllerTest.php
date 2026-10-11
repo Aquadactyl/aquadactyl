@@ -51,7 +51,15 @@ test('invalid or uninstalled preferences are rejected', function (mixed $value) 
     $user = User::factory()->create(['language' => 'en']);
     $this->actingAs($user)->putJson('/api/client/account/language', ['language' => $value])->assertUnprocessable();
     expect($user->refresh()->language)->toBe('en');
-})->with(['missing', '../en', '', null, ['en'], 'de', '<script>']);
+})->with([
+    'missing' => 'missing',
+    'path traversal' => '../en',
+    'empty' => '',
+    'null' => null,
+    'array' => ['de'],
+    'uninstalled' => 'fr',
+    'script' => '<script>',
+]);
 
 test('language changes require authentication', function () {
     $this->putJson('/api/client/account/language', ['language' => 'en'])->assertUnauthorized();
