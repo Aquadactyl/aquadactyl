@@ -8,4 +8,3 @@ export default async (password: string): Promise<string[]> => {
 
   return data.attributes.tokens;
 };
-

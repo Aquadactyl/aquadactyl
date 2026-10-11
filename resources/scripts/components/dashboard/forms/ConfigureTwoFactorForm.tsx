@@ -81,10 +81,7 @@ export default () => {
             <Button.Danger onClick={() => setVisible("disable")}>
               {t("two_factor.disable_two_step", "Disable Two-Step")}
             </Button.Danger>
-            <Button
-              variant={Button.Variants.Secondary}
-              onClick={() => setVisible("regenerate")}
-            >
+            <Button onClick={() => setVisible("regenerate")}>
               {t(
                 "two_factor.regenerate_recovery_codes",
                 "Regenerate Backup Codes",
