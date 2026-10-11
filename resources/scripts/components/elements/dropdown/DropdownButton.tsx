@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { ChevronDown } from "lucide-react";
-import { Menu } from "@headlessui/react";
+import { Menu } from "@base-ui/react/menu";
 import React from "react";
 
 interface Props {
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default ({ className, animate = true, children }: Props) => (
-  <Menu.Button className={clsx("dropdown-button", className || "px-4")}>
+  <Menu.Trigger className={clsx("dropdown-button", className || "px-4")}>
     {typeof children === "string" ? (
       <>
         <span className={"mr-2"}>{children}</span>
@@ -19,5 +19,5 @@ export default ({ className, animate = true, children }: Props) => (
     ) : (
       children
     )}
-  </Menu.Button>
+  </Menu.Trigger>
 );

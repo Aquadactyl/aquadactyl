@@ -7,13 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Combobox,
-  ComboboxButton,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from "@headlessui/react";
+import { Combobox } from "@base-ui/react/combobox";
 import clsx from "clsx";
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -109,8 +103,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const selectId = id || generatedId;
     const native = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const [query, setQuery] = useState("");
+    const [open, setOpen] = useState(false);
 
     const [uncontrolled, setUncontrolled] = useState(() =>
       values(defaultValue),
@@ -136,29 +129,6 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       const firstAvailable = flatOptions.find((option) => !option.isDisabled);
       return firstAvailable ? [firstAvailable] : [];
     }, [flatOptions, selectedValues, props.multiple]);
-
-    const filteredOptions = useMemo(() => {
-      if (!query.trim()) return options;
-      const lower = query.toLowerCase();
-      return options
-        .map((groupOrOption) => {
-          if ("options" in groupOrOption) {
-            return {
-              ...groupOrOption,
-              options: groupOrOption.options.filter((opt) =>
-                opt.label.toLowerCase().includes(lower),
-              ),
-            };
-          }
-          return groupOrOption;
-        })
-        .filter((groupOrOption) => {
-          if ("options" in groupOrOption) {
-            return groupOrOption.options.length > 0;
-          }
-          return groupOrOption.label.toLowerCase().includes(lower);
-        });
-    }, [options, query]);
 
     const dataAttributes = Object.fromEntries(
       Object.entries(props).filter(([key]) => key.startsWith("data-")),
@@ -214,11 +184,13 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       isPropagationStopped: () => event.isPropagationStopped(),
     });
 
-    const handleSelectionChange = (nextValue: string | string[] | null) => {
-      const nextValues = Array.isArray(nextValue)
-        ? nextValue
-        : nextValue !== undefined && nextValue !== null
-          ? [String(nextValue)]
+    const handleSelectionChange = (
+      next: Option | Option[] | null | undefined,
+    ) => {
+      const nextValues = Array.isArray(next)
+        ? next.map((o) => o.value)
+        : next
+          ? [next.value]
           : [];
 
       const element = native.current;
@@ -238,9 +210,9 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
       }
     };
 
-    const currentValue = props.multiple
-      ? selectedOptions.map((opt) => opt.value)
-      : (selectedOptions[0]?.value ?? "");
+    const isItemEqualToValue = (a: Option, b: Option) => a?.value === b?.value;
+    const itemToStringLabel = (item: Option) => item?.label ?? "";
+    const itemToStringValue = (item: Option) => item?.value ?? "";
 
     return (
       <div
@@ -254,151 +226,167 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             required: props["aria-required"] ?? props.required,
           }}
         >
-          <Combobox
-            value={currentValue}
-            onChange={handleSelectionChange}
+          <Combobox.Root<Option, any>
+            items={flatOptions}
+            value={
+              props.multiple ? selectedOptions : (selectedOptions[0] ?? null)
+            }
+            onValueChange={handleSelectionChange}
             multiple={!!props.multiple as any}
             disabled={props.disabled}
-            immediate
-            onClose={() => setQuery("")}
+            open={open}
+            onOpenChange={setOpen}
+            openOnInputClick
+            isItemEqualToValue={isItemEqualToValue}
+            itemToStringLabel={itemToStringLabel}
+            itemToStringValue={itemToStringValue}
           >
-            {({ open }) => (
-              <>
-                <div
-                  className={clsx(
-                    "panel-select__control",
-                    "flex items-center justify-between",
-                    open && "panel-select__control--is-focused",
-                    props.disabled && "panel-select__control--is-disabled",
-                  )}
+            <div
+              className={clsx(
+                "panel-select__control",
+                "flex items-center justify-between",
+                open && "panel-select__control--is-focused",
+                props.disabled && "panel-select__control--is-disabled",
+              )}
+              onMouseDown={(event) => {
+                // Prevent enclosing <label> from activating native form controls.
+                event.preventDefault();
+                const isIndicator = (event.target as HTMLElement).closest(
+                  ".panel-select__dropdown-indicator",
+                );
+                if (!isIndicator && !open) {
+                  setOpen(true);
+                }
+                inputRef.current?.focus();
+              }}
+            >
+              <div
+                className={
+                  "panel-select__value-container flex flex-1 items-center overflow-hidden"
+                }
+              >
+                <Combobox.Input
+                  ref={inputRef}
+                  id={selectId}
+                  className={
+                    "panel-select__input w-full border-none bg-transparent p-0 text-inherit outline-none focus:ring-0"
+                  }
+                  placeholder={"Select an option"}
+                  aria-label={props["aria-label"]}
+                  aria-labelledby={props["aria-labelledby"]}
+                  aria-describedby={props["aria-describedby"]}
+                  aria-invalid={props["aria-invalid"]}
+                  aria-errormessage={props["aria-errormessage"]}
+                  aria-required={props["aria-required"] ?? props.required}
+                  tabIndex={props.tabIndex}
+                  onBlur={(event) => onBlur?.(eventTarget(event))}
+                  onFocus={(event) => onFocus?.(eventTarget(event))}
+                  onKeyDown={(event) => onKeyDown?.(eventTarget(event))}
+                />
+              </div>
+              <div className={"panel-select__indicators flex items-center"}>
+                <Combobox.Trigger
+                  className={"panel-select__dropdown-indicator cursor-pointer"}
+                  tabIndex={-1}
                   onMouseDown={(event) => {
-                    // Prevent enclosing <label> from activating native form controls.
                     event.preventDefault();
-                    const isIndicator = (event.target as HTMLElement).closest(
-                      ".panel-select__dropdown-indicator",
-                    );
-                    if (!isIndicator && !open) {
-                      buttonRef.current?.click();
-                    }
                     inputRef.current?.focus();
                   }}
                 >
-                  <div
-                    className={
-                      "panel-select__value-container flex flex-1 items-center overflow-hidden"
-                    }
-                  >
-                    <ComboboxInput
-                      ref={inputRef}
-                      id={selectId}
-                      className={
-                        "panel-select__input w-full border-none bg-transparent p-0 text-inherit outline-none focus:ring-0"
-                      }
-                      displayValue={() => selectedOptions[0]?.label ?? ""}
-                      placeholder={"Select an option"}
-                      aria-label={props["aria-label"]}
-                      aria-labelledby={props["aria-labelledby"]}
-                      aria-describedby={props["aria-describedby"]}
-                      aria-invalid={props["aria-invalid"]}
-                      aria-errormessage={props["aria-errormessage"]}
-                      aria-required={props["aria-required"] ?? props.required}
-                      tabIndex={props.tabIndex}
-                      onChange={(event) => setQuery(event.target.value)}
-                      onBlur={(event) => onBlur?.(eventTarget(event))}
-                      onFocus={(event) => onFocus?.(eventTarget(event))}
-                      onKeyDown={(event) => onKeyDown?.(eventTarget(event))}
-                    />
-                  </div>
-                  <div className={"panel-select__indicators flex items-center"}>
-                    <ComboboxButton
-                      ref={buttonRef}
-                      as={"div"}
-                      className={
-                        "panel-select__dropdown-indicator cursor-pointer"
-                      }
-                      onMouseDown={(event) => {
-                        event.preventDefault();
-                        inputRef.current?.focus();
-                      }}
+                  {!hideDropdownArrow && (
+                    <svg
+                      className={"h-5 w-5 text-gray-400"}
+                      viewBox={"0 0 20 20"}
+                      fill={"currentColor"}
                     >
-                      {!hideDropdownArrow && (
-                        <svg
-                          className={"h-5 w-5 text-gray-400"}
-                          viewBox={"0 0 20 20"}
-                          fill={"currentColor"}
-                        >
-                          <path
-                            fillRule={"evenodd"}
-                            d={
-                              "M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.51a.75.75 0 01-1.08 0l-4.25-4.51a.75.75 0 01.02-1.06z"
-                            }
-                            clipRule={"evenodd"}
-                          />
-                        </svg>
-                      )}
-                    </ComboboxButton>
-                  </div>
-                </div>
+                      <path
+                        fillRule={"evenodd"}
+                        d={
+                          "M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.51a.75.75 0 01-1.08 0l-4.25-4.51a.75.75 0 01.02-1.06z"
+                        }
+                        clipRule={"evenodd"}
+                      />
+                    </svg>
+                  )}
+                </Combobox.Trigger>
+              </div>
+            </div>
 
-                <ComboboxOptions
-                  anchor={{ to: "bottom start", gap: 6, offset: 0 }}
+            <Combobox.Portal keepMounted>
+              <Combobox.Positioner
+                side={"bottom"}
+                align={"start"}
+                sideOffset={6}
+                className={"z-50 w-(--anchor-width)"}
+              >
+                <Combobox.Popup
                   className={
-                    "panel-select__menu panel-select__menu-list z-50 max-h-64 w-(--button-width) overflow-y-auto"
+                    "panel-select__menu panel-select__menu-list max-h-64 overflow-y-auto"
                   }
                 >
-                  {filteredOptions.map((groupOrOption, groupIndex) => {
-                    if ("options" in groupOrOption) {
+                  <Combobox.List>
+                    {options.map((groupOrOption, groupIndex) => {
+                      if ("options" in groupOrOption) {
+                        return (
+                          <Combobox.Group
+                            key={groupOrOption.label ?? groupIndex}
+                          >
+                            {groupOrOption.label && (
+                              <Combobox.GroupLabel
+                                className={"panel-select__group-heading"}
+                              >
+                                {groupOrOption.label}
+                              </Combobox.GroupLabel>
+                            )}
+                            {groupOrOption.options.map((option) => (
+                              <Combobox.Item
+                                key={option.value}
+                                value={option}
+                                disabled={option.isDisabled}
+                                className={(state) =>
+                                  clsx(
+                                    "panel-select__option",
+                                    state.selected &&
+                                      "panel-select__option--is-selected",
+                                    state.highlighted &&
+                                      "panel-select__option--is-focused",
+                                    state.disabled &&
+                                      "panel-select__option--is-disabled",
+                                  )
+                                }
+                              >
+                                {option.label}
+                              </Combobox.Item>
+                            ))}
+                          </Combobox.Group>
+                        );
+                      }
                       return (
-                        <div key={groupOrOption.label ?? groupIndex}>
-                          {groupOrOption.label && (
-                            <div className={"panel-select__group-heading"}>
-                              {groupOrOption.label}
-                            </div>
-                          )}
-                          {groupOrOption.options.map((option) => (
-                            <ComboboxOption
-                              key={option.value}
-                              value={option.value}
-                              disabled={option.isDisabled}
-                              className={({ selected, focus, disabled }) =>
-                                clsx(
-                                  "panel-select__option",
-                                  selected &&
-                                    "panel-select__option--is-selected",
-                                  focus && "panel-select__option--is-focused",
-                                  disabled &&
-                                    "panel-select__option--is-disabled",
-                                )
-                              }
-                            >
-                              {option.label}
-                            </ComboboxOption>
-                          ))}
-                        </div>
+                        <Combobox.Item
+                          key={groupOrOption.value}
+                          value={groupOrOption}
+                          disabled={groupOrOption.isDisabled}
+                          className={(state) =>
+                            clsx(
+                              "panel-select__option",
+                              state.selected &&
+                                "panel-select__option--is-selected",
+                              state.highlighted &&
+                                "panel-select__option--is-focused",
+                              state.disabled &&
+                                "panel-select__option--is-disabled",
+                            )
+                          }
+                        >
+                          {groupOrOption.label}
+                        </Combobox.Item>
                       );
-                    }
-                    return (
-                      <ComboboxOption
-                        key={groupOrOption.value}
-                        value={groupOrOption.value}
-                        disabled={groupOrOption.isDisabled}
-                        className={({ selected, focus, disabled }) =>
-                          clsx(
-                            "panel-select__option",
-                            selected && "panel-select__option--is-selected",
-                            focus && "panel-select__option--is-focused",
-                            disabled && "panel-select__option--is-disabled",
-                          )
-                        }
-                      >
-                        {groupOrOption.label}
-                      </ComboboxOption>
-                    );
-                  })}
-                </ComboboxOptions>
-              </>
-            )}
-          </Combobox>
+                    })}
+                  </Combobox.List>
+                </Combobox.Popup>
+              </Combobox.Positioner>
+            </Combobox.Portal>
+          </Combobox.Root>
         </DescriptionContext.Provider>
         <select
           {...props}

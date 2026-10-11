@@ -1,6 +1,5 @@
 import React, { forwardRef } from "react";
-import { Menu } from "@headlessui/react";
-
+import { Menu } from "@base-ui/react/menu";
 import clsx from "clsx";
 
 interface Props {
@@ -20,28 +19,33 @@ const DropdownItem = forwardRef<HTMLAnchorElement, Props>(
     ref,
   ) => {
     return (
-      <Menu.Item disabled={disabled}>
-        {({ disabled, active }) => (
+      <Menu.Item
+        disabled={disabled}
+        onClick={onClick}
+        render={(props, state) => (
           <a
+            {...props}
             ref={ref}
             href={"#"}
             className={clsx(
               "dropdown-menu_item",
               {
                 danger: danger,
-                disabled: disabled,
+                disabled: state.disabled,
               },
               className,
             )}
-            onClick={onClick}
           >
             {IconComponent}
             {typeof children === "function"
-              ? children({ disabled, active })
+              ? children({
+                  disabled: state.disabled,
+                  active: state.highlighted,
+                })
               : children}
           </a>
         )}
-      </Menu.Item>
+      />
     );
   },
 );

@@ -3,9 +3,9 @@
 namespace Pterodactyl\Models\Attributes;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
-readonly class Identifiable
+class Identifiable
 {
-    public function __construct(public string $prefix, public string $column = 'uuid')
+    public function __construct(public readonly string $prefix, public readonly string $column = 'uuid')
     {
     }
 }

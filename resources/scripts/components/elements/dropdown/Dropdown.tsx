@@ -1,5 +1,5 @@
 import React, { ElementType, forwardRef, useMemo } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu } from "@base-ui/react/menu";
 import clsx from "clsx";
 import DropdownItem from "@/components/elements/dropdown/DropdownItem";
 import DropdownButton from "@/components/elements/dropdown/DropdownButton";
@@ -22,7 +22,7 @@ type TypedChild = React.ReactNode & {
   type?: unknown;
 };
 
-const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {
+const Dropdown = forwardRef<HTMLElement, Props>(({ children }, ref) => {
   const [Button, items] = useMemo(() => {
     const list = React.Children.toArray(children) as unknown as TypedChild[];
 
@@ -32,28 +32,36 @@ const Dropdown = forwardRef<HTMLElement, Props>(({ as, children }, ref) => {
     ];
   }, [children]);
 
-  if (!Button) {
+  if (!Button || Button.length === 0) {
     throw new Error(
       "Cannot mount <Dropdown /> component without a child <Dropdown.Button />.",
     );
   }
 
   return (
-    <Menu as={as || "div"} className={"dropdown-menu"} ref={ref}>
-      {Button}
-      <Transition
-        enter={"transition duration-100 ease-out"}
-        enterFrom={"transition scale-95 opacity-0"}
-        enterTo={"transform scale-100 opacity-100"}
-        leave={"transition duration-75 ease-out"}
-        leaveFrom={"transform scale-100 opacity-100"}
-        leaveTo={"transform scale-95 opacity-0"}
-      >
-        <Menu.Items className={clsx("dropdown-items_container", "w-56")}>
-          <div className={"px-1 py-1"}>{items}</div>
-        </Menu.Items>
-      </Transition>
-    </Menu>
+    <div className={"dropdown-menu"} ref={ref as any}>
+      <Menu.Root>
+        {Button}
+        <Menu.Portal>
+          <Menu.Positioner
+            side={"bottom"}
+            align={"end"}
+            sideOffset={4}
+            className={"z-10"}
+          >
+            <Menu.Popup
+              className={clsx(
+                "dropdown-items_container w-56 rounded bg-neutral-900 shadow-lg",
+                "transition duration-75 ease-out",
+                "data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0",
+              )}
+            >
+              <div className={"px-1 py-1"}>{items}</div>
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
+      </Menu.Root>
+    </div>
   );
 });
 
