@@ -1,5 +1,5 @@
 import React, { forwardRef, useState } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import ThemedInput from "@/components/elements/Input";
 import { Eye, EyeOff } from "lucide-react";
 import usePanelTranslation from "@/plugins/usePanelTranslation";
@@ -34,7 +34,7 @@ const Component = forwardRef<
 
     if (isPassword) {
       return (
-        <div className={classNames("password-field", className)}>
+        <div className={clsx("password-field", className)}>
           <ThemedInput
             ref={ref}
             type={showPassword ? "text" : "password"}
@@ -69,7 +69,7 @@ const Component = forwardRef<
         ref={ref}
         type={type}
         disabled={disabled}
-        className={classNames(
+        className={clsx(
           variant === Variant.Loose ? "px-6 py-3" : "px-4 py-2",
           className,
         )}

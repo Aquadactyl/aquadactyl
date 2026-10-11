@@ -1,7 +1,7 @@
 import React from "react";
 import Spinner from "@/components/elements/Spinner";
 import Fade from "@/components/elements/Fade";
-import classNames from "classnames";
+import clsx from "clsx";
 
 const InputSpinner = ({
   visible,
@@ -10,7 +10,7 @@ const InputSpinner = ({
   visible: boolean;
   children: React.ReactNode;
 }) => (
-  <div className={classNames("relative", visible && "[&_select]:bg-none")}>
+  <div className={clsx("relative", visible && "[&_select]:bg-none")}>
     <Fade appear unmountOnExit in={visible} timeout={150}>
       <div
         className={"absolute right-0 flex h-full items-center justify-end pr-3"}

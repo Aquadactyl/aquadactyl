@@ -11,7 +11,7 @@ import createSchedulesSlice, {
 import createDatabasesSlice, {
   ServerDatabaseStore,
 } from "@/state/server/databases";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import { createStore } from "zustand/vanilla";
 import { useStoreWithEqualityFn } from "@/state/useStoreWithEqualityFn";
 

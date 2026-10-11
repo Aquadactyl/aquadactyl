@@ -16,7 +16,7 @@ import { SocketEvent, SocketRequest } from "@/components/server/events";
 import UptimeDuration from "@/components/server/UptimeDuration";
 import StatBlock from "@/components/server/console/StatBlock";
 import useWebsocketEvent from "@/plugins/useWebsocketEvent";
-import classNames from "classnames";
+import clsx from "clsx";
 import { capitalize } from "@/lib/strings";
 
 import BeforeInformation from "@blueprint/components/Server/Terminal/BeforeInformation";
@@ -121,7 +121,7 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
   });
 
   return (
-    <div className={classNames("grid grid-cols-6 gap-2 md:gap-4", className)}>
+    <div className={clsx("grid grid-cols-6 gap-2 md:gap-4", className)}>
       <BeforeInformation />
       <StatBlock
         icon={Wifi}

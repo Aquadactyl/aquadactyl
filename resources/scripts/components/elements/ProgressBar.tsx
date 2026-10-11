@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { useAppStore } from "@/state";
 import { randomInt } from "@/helpers";
 import Fade from "@/components/elements/Fade";
@@ -10,7 +10,7 @@ const BarFill = React.forwardRef<
 >(({ className, style, ...props }, ref) => (
   <div
     ref={ref}
-    className={classNames(
+    className={clsx(
       "h-full bg-cyan-400 shadow-[0_0_6px_rgb(85_192_183/25%)] transition-all duration-250 ease-in-out",
       className,
     )}

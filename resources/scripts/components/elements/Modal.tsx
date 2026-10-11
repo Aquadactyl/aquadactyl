@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Spinner from "@/components/elements/Spinner";
-import classNames from "classnames";
+import clsx from "clsx";
 import Fade from "@/components/elements/Fade";
 import { createPortal } from "react-dom";
 
@@ -24,7 +24,7 @@ export const ModalMask: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => (
   <div
-    className={classNames(
+    className={clsx(
       "fixed inset-0 z-50 flex w-full overflow-auto bg-black/70",
       className,
     )}
@@ -36,7 +36,7 @@ const ModalContainer: React.FC<
   React.HTMLAttributes<HTMLDivElement> & { alignTop?: boolean }
 > = ({ alignTop, className, children, ...props }) => (
   <div
-    className={classNames(
+    className={clsx(
       "relative m-auto mb-auto flex max-h-[calc(100vh-8rem)] w-full max-w-[95%] flex-col md:max-w-[75%] lg:max-w-[50%]",
       alignTop && "mt-[20%] md:mt-[10%]",
       className,

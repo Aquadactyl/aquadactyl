@@ -1,6 +1,6 @@
 import React, { memo } from "react";
-import classNames from "classnames";
-import isEqual from "react-fast-compare";
+import clsx from "clsx";
+import { dequal as isEqual } from "dequal";
 
 interface Props {
   icon?: React.ComponentType<{ className?: string }>;
@@ -16,7 +16,7 @@ const TitledGreyBox = ({
   className,
 }: Props) => (
   <div
-    className={classNames(
+    className={clsx(
       "rounded-lg border border-neutral-600 bg-neutral-700 shadow-xs",
       className,
     )}

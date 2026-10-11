@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 
 export type SpinnerSize = "small" | "base" | "large";
@@ -33,7 +33,7 @@ const SpinnerElement = ({
 }) => (
   <div
     role="status"
-    className={classNames(
+    className={clsx(
       "animate-spin rounded-full border-solid",
       sizeClasses[size],
       isBlue
@@ -47,7 +47,7 @@ const SpinnerElement = ({
 const Spinner: Spinner = ({ centered, className, size = "base", isBlue }) =>
   centered ? (
     <div
-      className={classNames(
+      className={clsx(
         "flex items-center justify-center",
         size === "large" ? "m-20" : "m-6",
         className,

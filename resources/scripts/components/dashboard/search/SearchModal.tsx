@@ -2,7 +2,7 @@ import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect, useRef, useState, useTransition } from "react";
 import Modal, { RequiredModalProps } from "@/components/elements/Modal";
 import { useForm, useWatch } from "react-hook-form";
-import debounce from "debounce";
+import { debounce } from "es-toolkit";
 import InputSpinner from "@/components/elements/InputSpinner";
 import getServers from "@/api/getServers";
 import { Server } from "@/api/server/getServer";

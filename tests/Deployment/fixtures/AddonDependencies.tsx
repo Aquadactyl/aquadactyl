@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { create } from "zustand";
 import Select from "react-select";
-import { debounce } from "lodash-es";
+import { debounce } from "es-toolkit";
 
 const schema = z.object({ label: z.string().min(1) });
 const useAddonStore = create<{ label: string }>(() => ({

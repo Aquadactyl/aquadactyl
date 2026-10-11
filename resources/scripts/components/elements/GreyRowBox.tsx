@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 
 export interface GreyRowBoxProps extends React.HTMLAttributes<HTMLElement> {
   $hoverable?: boolean;
@@ -13,7 +13,7 @@ const GreyRowBox = React.forwardRef<HTMLDivElement, GreyRowBoxProps>(
     return (
       <Component
         ref={ref}
-        className={classNames(
+        className={clsx(
           "flex items-center overflow-hidden rounded-lg border border-neutral-600 bg-neutral-700 p-4 text-neutral-200 no-underline transition-colors duration-150 [&_.icon]:flex [&_.icon]:w-16 [&_.icon]:items-center [&_.icon]:justify-center [&_.icon]:rounded-lg [&_.icon]:bg-neutral-900 [&_.icon]:p-3",
           $hoverable !== false &&
             "hover:border-neutral-500 hover:bg-neutral-600/50",

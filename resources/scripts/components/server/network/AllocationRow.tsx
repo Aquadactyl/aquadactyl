@@ -1,7 +1,7 @@
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { memo, useCallback, useState } from "react";
-import isEqual from "react-fast-compare";
-import classNames from "classnames";
+import { dequal as isEqual } from "dequal";
+import clsx from "clsx";
 import { Network } from "lucide-react";
 import InputSpinner from "@/components/elements/InputSpinner";
 import { Textarea } from "@/components/elements/Input";
@@ -9,7 +9,7 @@ import Can from "@/components/elements/Can";
 import { Button } from "@/components/elements/button/index";
 import GreyRowBox from "@/components/elements/GreyRowBox";
 import { Allocation } from "@/api/server/getServer";
-import debounce from "debounce";
+import { debounce } from "es-toolkit";
 import setServerAllocationNotes from "@/api/server/network/setServerAllocationNotes";
 import { useFlashKey } from "@/plugins/useFlash";
 import { ServerContext } from "@/state/server";
@@ -25,7 +25,7 @@ const Label: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({
   ...props
 }) => (
   <label
-    className={classNames(
+    className={clsx(
       "mt-1 block px-1 text-xs text-neutral-400 uppercase transition-colors duration-150 select-none",
       className,
     )}

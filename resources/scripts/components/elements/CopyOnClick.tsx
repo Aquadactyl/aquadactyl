@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Fade from "@/components/elements/Fade";
 import Portal from "@/components/elements/Portal";
-import classNames from "classnames";
+import clsx from "clsx";
 import usePrivacyMode from "@/plugins/usePrivacyMode";
 
 interface CopyOnClickProps {
@@ -70,7 +70,7 @@ const CopyOnClick = ({
   const child = !text
     ? onlyChild
     : React.cloneElement(onlyChild, {
-        className: classNames(childProps.className || "", "cursor-pointer"),
+        className: clsx(childProps.className || "", "cursor-pointer"),
         onClick: (e: React.MouseEvent<HTMLElement>) => {
           copyToClipboard(String(text)).then((success) => {
             if (success) {

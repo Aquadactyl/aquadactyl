@@ -10,7 +10,7 @@ import createServerAllocation from "@/api/server/network/createServerAllocation"
 import Can from "@/components/elements/Can";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import getServerAllocations from "@/api/server/network/getServerAllocations";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import { useDeepCompareEffect } from "@/plugins/useDeepCompareEffect";
 
 import BeforeContent from "@blueprint/components/Server/Network/BeforeContent";

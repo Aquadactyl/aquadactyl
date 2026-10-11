@@ -10,10 +10,10 @@ import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import { ServerContext } from "@/state/server";
 import { usePermissions } from "@/plugins/usePermissions";
 import useEventListener from "@/plugins/useEventListener";
-import debounce from "debounce";
+import { debounce } from "es-toolkit";
 import { usePersistedState } from "@/plugins/usePersistedState";
 import { SocketEvent, SocketRequest } from "@/components/server/events";
-import classNames from "classnames";
+import clsx from "clsx";
 import { ChevronsRight } from "lucide-react";
 
 import CommandRow from "@blueprint/components/Server/Terminal/CommandRow";
@@ -226,10 +226,10 @@ export default () => {
   }, [connected, instance]);
 
   return (
-    <div className={classNames("terminal", "relative")}>
+    <div className={clsx("terminal", "relative")}>
       <SpinnerOverlay visible={!connected} size={"large"} />
       <div
-        className={classNames("container", "overflows_container", {
+        className={clsx("container", "overflows_container", {
           "rounded-b-lg": !canSendCommands,
         })}
       >
@@ -238,9 +238,9 @@ export default () => {
         </div>
       </div>
       {canSendCommands && (
-        <div className={classNames("relative", "overflows_container")}>
+        <div className={clsx("relative", "overflows_container")}>
           <input
-            className={classNames("peer", "command_input")}
+            className={clsx("peer", "command_input")}
             type={"text"}
             placeholder={"Type a command..."}
             aria-label={"Console command input."}
@@ -250,7 +250,7 @@ export default () => {
             autoCapitalize={"none"}
           />
           <div
-            className={classNames(
+            className={clsx(
               "text-gray-100 peer-focus:animate-pulse peer-focus:text-gray-50",
               "command_icon",
             )}

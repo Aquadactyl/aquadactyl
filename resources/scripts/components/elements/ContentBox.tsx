@@ -1,7 +1,7 @@
 import React from "react";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
-import classNames from "classnames";
+import clsx from "clsx";
 
 type Props = Readonly<
   React.DetailedHTMLProps<
@@ -26,7 +26,7 @@ const ContentBox = ({
   ...props
 }: Props) => (
   <div {...props}>
-    <div className={classNames("content-box", borderColor && "border-t-4")}>
+    <div className={clsx("content-box", borderColor && "border-t-4")}>
       <SpinnerOverlay visible={showLoadingOverlay || false} />
       {title && <h2 className={"content-box-title"}>{title}</h2>}
       {description && (

@@ -2,7 +2,7 @@ import React, { memo, useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import Input from "@/components/elements/Input";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 
 interface Props {
   isEditable: boolean;

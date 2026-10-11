@@ -1,5 +1,5 @@
 import type { HTMLAttributes } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 
 const ContentContainer = ({
   className,
@@ -8,7 +8,7 @@ const ContentContainer = ({
 }: HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={classNames(
+      className={clsx(
         "mx-auto w-full max-w-[1136px] px-5 min-[641px]:px-6 min-[801px]:px-8",
         className,
       )}

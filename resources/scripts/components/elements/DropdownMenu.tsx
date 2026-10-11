@@ -1,5 +1,5 @@
 import React, { createRef } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import Fade from "@/components/elements/Fade";
 
 interface Props {
@@ -13,7 +13,7 @@ export const DropdownButtonRow: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement> & { danger?: boolean }
 > = ({ danger, className, ...props }) => (
   <button
-    className={classNames(
+    className={clsx(
       "flex w-full cursor-pointer items-center rounded p-2 text-neutral-200 transition-all duration-150 ease-linear",
       danger
         ? "hover:bg-red-900 hover:text-red-200"

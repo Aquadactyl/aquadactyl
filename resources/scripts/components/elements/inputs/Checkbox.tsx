@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 type Props = Omit<React.ComponentProps<"input">, "type">;
 
 export default forwardRef<HTMLInputElement, Props>(
@@ -7,7 +7,7 @@ export default forwardRef<HTMLInputElement, Props>(
     <input
       ref={ref}
       type={"checkbox"}
-      className={classNames("form-input checkbox_input", className)}
+      className={clsx("form-input checkbox_input", className)}
       {...props}
     />
   ),

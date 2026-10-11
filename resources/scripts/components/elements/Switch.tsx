@@ -1,5 +1,5 @@
 import React, { forwardRef, useId } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import Label from "@/components/elements/Label";
 import Input from "@/components/elements/Input";
 
@@ -39,7 +39,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
     return (
       <div className="flex items-center">
         <div
-          className={classNames(
+          className={clsx(
             "relative w-12 flex-none leading-normal select-none",
             // Checkbox SR-only Styling
             "[&>input[type='checkbox']]:sr-only",
@@ -75,10 +75,7 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
           <div className="ml-4 w-full">
             {label && (
               <Label
-                className={classNames(
-                  "cursor-pointer",
-                  !!description && "mb-0",
-                )}
+                className={clsx("cursor-pointer", !!description && "mb-0")}
                 htmlFor={switchId}
               >
                 {label}

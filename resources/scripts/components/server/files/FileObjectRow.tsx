@@ -6,7 +6,7 @@ import { FileObject } from "@/api/server/files/loadDirectory";
 import FileDropdownMenu from "@/components/server/files/FileDropdownMenu";
 import { ServerContext } from "@/state/server";
 import { NavLink } from "react-router";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import SelectFileCheckbox from "@/components/server/files/SelectFileCheckbox";
 import { usePermissions } from "@/plugins/usePermissions";
 import { join } from "pathe";

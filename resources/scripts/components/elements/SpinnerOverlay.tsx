@@ -1,7 +1,7 @@
 import React from "react";
 import Spinner, { SpinnerSize } from "@/components/elements/Spinner";
 import Fade from "@/components/elements/Fade";
-import classNames from "classnames";
+import clsx from "clsx";
 
 interface Props {
   visible: boolean;
@@ -20,7 +20,7 @@ const SpinnerOverlay: React.FC<Props> = ({
 }) => (
   <Fade timeout={150} in={visible} unmountOnExit>
     <div
-      className={classNames(
+      className={clsx(
         "top-0 left-0 z-40 flex h-full w-full flex-col items-center justify-center rounded",
         !fixed ? "absolute" : "fixed",
       )}

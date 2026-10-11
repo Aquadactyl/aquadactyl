@@ -6,7 +6,7 @@ import { bytesToString } from "@/lib/formatters";
 import Can from "@/components/elements/Can";
 import useWebsocketEvent from "@/plugins/useWebsocketEvent";
 import BackupContextMenu from "@/components/server/backups/BackupContextMenu";
-import classNames from "classnames";
+import clsx from "clsx";
 import GreyRowBox from "@/components/elements/GreyRowBox";
 import getServerBackups from "@/api/server/backups/getServerBackups";
 import { ServerBackup } from "@/api/server/types";
@@ -54,7 +54,7 @@ export default ({ backup, className }: Props) => {
 
   return (
     <GreyRowBox
-      className={classNames("flex-wrap items-center md:flex-nowrap", className)}
+      className={clsx("flex-wrap items-center md:flex-nowrap", className)}
     >
       <div className={"flex w-full items-center truncate md:flex-1"}>
         <div className={"mr-4"}>

@@ -1,6 +1,6 @@
 import React from "react";
 import { PaginationDataSet } from "@/api/http";
-import classNames from "classnames";
+import clsx from "clsx";
 import { Button } from "@/components/elements/button/index";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
@@ -39,12 +39,7 @@ const PaginationFooter = ({ pagination, className, onPageSelect }: Props) => {
   });
 
   return (
-    <div
-      className={classNames(
-        "my-2 flex items-center justify-between",
-        className,
-      )}
-    >
+    <div className={clsx("my-2 flex items-center justify-between", className)}>
       <p className={"text-sm text-neutral-500"}>
         Showing&nbsp;
         <span className={"font-semibold text-neutral-400"}>

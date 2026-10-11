@@ -12,7 +12,7 @@ import ReactSelect, {
   InputProps,
   SelectInstance,
 } from "react-select";
-import classNames from "classnames";
+import clsx from "clsx";
 
 export interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   hideDropdownArrow?: boolean;
@@ -192,7 +192,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     return (
       <div
-        className={classNames("panel-select", className)}
+        className={clsx("panel-select", className)}
         style={style}
         {...dataAttributes}
       >

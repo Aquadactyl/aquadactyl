@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { ServerContext } from "@/state/server";
 import Input from "@/components/elements/Input";
 
@@ -8,7 +8,7 @@ export const FileActionCheckbox: React.FC<
 > = ({ className, ...props }) => (
   <Input
     {...props}
-    className={classNames(
+    className={clsx(
       "border-neutral-500! bg-transparent! [&&:not(:checked)]:hover:border-neutral-300!",
       className,
     )}

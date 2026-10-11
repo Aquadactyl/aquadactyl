@@ -16,12 +16,12 @@ adding a dependency alone does not include it in the panel's browser bundle.
 | `axios`                                   | HTTP requests; prefer `@/api/http` for panel API calls |
 | `lucide-react`                            | SVG icons through named component imports              |
 | `react-select`                            | Searchable and multi-value selects                     |
-| `lodash-es`                               | Utility functions with ES module imports               |
+| `es-toolkit`                              | Utility functions with ES module imports               |
 | `date-fns`                                | Date formatting and arithmetic                         |
 | `motion`                                  | Animation (import from `motion/react`)                 |
 | `chart.js`, `react-chartjs-2`             | Charts                                                 |
 | `@headlessui/react`, `@floating-ui/react` | Accessible UI behaviour and positioning                |
-| `tailwindcss`, `classnames`               | Styling and conditional classes                        |
+| `tailwindcss`, `clsx`                     | Styling and conditional classes                        |
 | `react-hook-form`                         | Form management                                        |
 | `@hookform/resolvers`, `zod`              | Schema validation and resolvers                        |
 | `zustand`                                 | Lightweight addon state stores                         |

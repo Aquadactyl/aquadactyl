@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react";
 import { AlertTriangle, Check, Info, ShieldAlert } from "lucide-react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { DialogContext, DialogIconProps } from "./";
 
 const icons = {
@@ -17,7 +17,7 @@ export default ({ type, position, className }: DialogIconProps) => {
     const Icon = icons[type];
 
     setIcon(
-      <div className={classNames("dialog_icon", type, className)}>
+      <div className={clsx("dialog_icon", type, className)}>
         <Icon className={"h-6 w-6"} />
       </div>,
     );

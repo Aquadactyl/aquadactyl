@@ -10,7 +10,7 @@ import deleteApiKey from "@/api/account/deleteApiKey";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import { format } from "date-fns";
 import PageContentBlock from "@/components/elements/PageContentBlock";
-import classNames from "classnames";
+import clsx from "clsx";
 import GreyRowBox from "@/components/elements/GreyRowBox";
 import { Dialog } from "@/components/elements/dialog";
 import { useFlashKey } from "@/plugins/useFlash";
@@ -98,7 +98,7 @@ export default () => {
             keys.map((key, index) => (
               <GreyRowBox
                 key={key.identifier}
-                className={classNames(
+                className={clsx(
                   "flex items-center bg-neutral-600",
                   index > 0 && "mt-2",
                 )}

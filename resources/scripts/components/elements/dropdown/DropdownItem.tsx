@@ -1,7 +1,7 @@
 import React, { forwardRef } from "react";
 import { Menu } from "@headlessui/react";
 
-import classNames from "classnames";
+import clsx from "clsx";
 
 interface Props {
   children:
@@ -25,7 +25,7 @@ const DropdownItem = forwardRef<HTMLAnchorElement, Props>(
           <a
             ref={ref}
             href={"#"}
-            className={classNames(
+            className={clsx(
               "dropdown-menu_item",
               {
                 danger: danger,

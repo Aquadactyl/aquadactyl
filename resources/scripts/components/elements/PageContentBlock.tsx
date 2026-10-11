@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import ContentContainer from "@/components/elements/ContentContainer";
-import classNames from "classnames";
+import clsx from "clsx";
 import PanelBranding from "@/components/elements/PanelBranding";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import { useAppStore } from "@/state";
@@ -36,7 +36,7 @@ const PageContentBlock: React.FC<PageContentBlockProps> = ({
     <Fade timeout={150}>
       <div>
         <BeforeSection />
-        <ContentContainer className={classNames("my-8 sm:my-10", className)}>
+        <ContentContainer className={clsx("my-8 sm:my-10", className)}>
           {showFlashKey && (
             <FlashMessageRender byKey={showFlashKey} className={"mb-4"} />
           )}

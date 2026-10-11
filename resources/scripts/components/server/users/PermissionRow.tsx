@@ -1,6 +1,6 @@
 import Checkbox from "@/components/elements/Checkbox";
 import React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { useAppStore } from "@/state";
 import Label from "@/components/elements/Label";
 
@@ -9,7 +9,7 @@ const Container: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = ({
   ...props
 }) => (
   <label
-    className={classNames(
+    className={clsx(
       "flex items-center rounded border border-transparent normal-case transition-colors duration-75 not-first-of-type:mt-4 sm:not-first-of-type:mt-2 md:p-2",
       "[&:not(.disabled)]:cursor-pointer [&:not(.disabled)]:hover:border-neutral-500 [&:not(.disabled)]:hover:bg-neutral-800",
       "[&.disabled]:opacity-50 [&.disabled_input[type=checkbox]:not(:checked)]:border-0",

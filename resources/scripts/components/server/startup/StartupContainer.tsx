@@ -10,7 +10,7 @@ import { httpErrorToHuman } from "@/api/http";
 import { ServerContext } from "@/state/server";
 import { useDeepCompareEffect } from "@/plugins/useDeepCompareEffect";
 import Select from "@/components/elements/Select";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import Input from "@/components/elements/Input";
 import setSelectedDockerImage from "@/api/server/setSelectedDockerImage";
 import InputSpinner from "@/components/elements/InputSpinner";

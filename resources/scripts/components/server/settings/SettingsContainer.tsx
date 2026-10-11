@@ -10,7 +10,7 @@ import ReinstallServerBox from "@/components/server/settings/ReinstallServerBox"
 import Input from "@/components/elements/Input";
 import Label from "@/components/elements/Label";
 import ServerContentBlock from "@/components/elements/ServerContentBlock";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import CopyOnClick from "@/components/elements/CopyOnClick";
 import { ip } from "@/lib/formatters";
 import { Button } from "@/components/elements/button/index";

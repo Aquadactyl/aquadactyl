@@ -14,7 +14,7 @@ import RotatePasswordButton from "@/components/server/databases/RotatePasswordBu
 import Can from "@/components/elements/Can";
 import { ServerDatabase } from "@/api/server/databases/getServerDatabases";
 import useFlash from "@/plugins/useFlash";
-import classNames from "classnames";
+import clsx from "clsx";
 import Button from "@/components/elements/Button";
 import Label from "@/components/elements/Label";
 import Input from "@/components/elements/Input";
@@ -211,7 +211,7 @@ export default ({ database, className }: Props) => {
           </Button>
         </div>
       </Modal>
-      <GreyRowBox $hoverable={false} className={classNames("mb-2", className)}>
+      <GreyRowBox $hoverable={false} className={clsx("mb-2", className)}>
         <div className={"hidden md:block"}>
           <Database className={"h-4 w-4"} />
         </div>

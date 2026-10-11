@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import Spinner from "@/components/elements/Spinner";
 
 interface Props {
@@ -15,7 +15,7 @@ const getButtonClass = ({
   isSecondary,
   className,
 }: Omit<Props, "isLoading"> & { className?: string }): string => {
-  return classNames(
+  return clsx(
     "relative inline-block cursor-pointer rounded border text-sm font-medium transition-all duration-150 disabled:cursor-default disabled:opacity-[0.55]",
     size === "xsmall" && "px-2 py-1 text-xs",
     (!size || size === "small") && "px-4 py-2",

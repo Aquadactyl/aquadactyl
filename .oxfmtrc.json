@@ -4,7 +4,7 @@
   "endOfLine": "lf",
   "sortPackageJson": true,
   "sortTailwindcss": {
-    "functions": ["classNames"]
+    "functions": ["clsx"]
   },
   "ignorePatterns": [
     "public/**",

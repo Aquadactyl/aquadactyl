@@ -12,10 +12,10 @@ import Can from "@/components/elements/Can";
 import useFlash from "@/plugins/useFlash";
 import { ServerContext } from "@/state/server";
 import PageContentBlock from "@/components/elements/PageContentBlock";
-import classNames from "classnames";
+import clsx from "clsx";
 import { Button } from "@/components/elements/button/index";
 import ScheduleTaskRow from "@/components/server/schedules/ScheduleTaskRow";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import RunScheduleButton from "@/components/server/schedules/RunScheduleButton";
 import { useAppStore } from "@/state";
 import {
@@ -106,7 +106,7 @@ export default () => {
                 </p>
               </div>
               <span
-                className={classNames(
+                className={clsx(
                   "rounded-full px-3 py-1 text-xs",
                   schedule.isProcessing
                     ? "bg-primary-600 text-white"

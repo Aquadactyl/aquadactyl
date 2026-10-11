@@ -17,7 +17,7 @@ import {
   FloatingPortal,
 } from "@floating-ui/react";
 import { AnimatePresence, motion } from "motion/react";
-import classNames from "classnames";
+import clsx from "clsx";
 
 type Interaction = "hover" | "click" | "focus";
 
@@ -121,7 +121,7 @@ export default ({ children, ...props }: Props) => {
                       ay || 0,
                     )}px) rotate(45deg)`,
                   }}
-                  className={classNames("absolute h-3 w-3 bg-gray-900", side)}
+                  className={clsx("absolute h-3 w-3 bg-gray-900", side)}
                 />
               )}
             </motion.div>
