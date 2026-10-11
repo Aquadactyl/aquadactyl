@@ -1676,6 +1676,74 @@ tr:hover + tr.server-description {
     border-color: var(--aqua-control-border);
 }
 
+/* SweetAlert2 scaling (Bootstrap sets html { font-size: 10px }) & theme */
+.swal2-container {
+    --swal2-background: var(--aqua-surface);
+    --swal2-color: var(--aqua-text);
+    --swal2-border: 1px solid var(--aqua-border);
+    --swal2-border-radius: 8px;
+    --swal2-backdrop: rgba(0, 0, 0, 0.65);
+    --swal2-input-background: var(--aqua-chrome);
+    --swal2-input-border: 1px solid var(--aqua-control-border);
+    --swal2-footer-border-color: var(--aqua-border);
+    --swal2-confirm-button-background-color: var(--aqua-primary);
+    --swal2-confirm-button-color: var(--aqua-on-primary);
+    --swal2-cancel-button-background-color: var(--aqua-raised);
+    --swal2-cancel-button-color: var(--aqua-text);
+}
+
+.swal2-popup {
+    font-size: 1.6rem !important;
+    background: var(--aqua-surface) !important;
+    color: var(--aqua-text) !important;
+    border: 1px solid var(--aqua-border) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6), 0 10px 10px -5px rgba(0, 0, 0, 0.4) !important;
+}
+
+.swal2-title {
+    color: var(--aqua-heading) !important;
+    font-size: 1.875em !important;
+    font-weight: 600 !important;
+}
+
+.swal2-html-container {
+    color: var(--aqua-text) !important;
+    font-size: 1.125em !important;
+    line-height: 1.6 !important;
+}
+
+.swal2-actions {
+    margin: 1.5em auto 0 !important;
+}
+
+.swal2-styled {
+    font-size: 1em !important;
+    padding: 0.625em 1.25em !important;
+    border-radius: 4px !important;
+}
+
+.swal2-styled.swal2-cancel {
+    border: 1px solid var(--aqua-border) !important;
+}
+
+.swal2-input,
+.swal2-textarea,
+.swal2-select {
+    background: var(--aqua-chrome) !important;
+    color: var(--aqua-text) !important;
+    border: 1px solid var(--aqua-control-border) !important;
+    font-size: 1.125em !important;
+}
+
+.swal2-close {
+    color: var(--aqua-muted) !important;
+}
+
+.swal2-close:hover {
+    color: var(--aqua-heading) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
