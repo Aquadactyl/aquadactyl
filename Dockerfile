@@ -34,7 +34,6 @@ RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
         curl \
         dcron \
         git \
-        icu-dev \
         libjpeg-turbo-dev \
         libpng-dev \
         libwebp-dev \
@@ -48,19 +47,22 @@ RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
         nodejs \
         npm \
         oniguruma-dev \
+        php85-intl \
+        php85-pecl-redis \
         supervisor \
         tar \
         unzip \
         zip \
     && npm install --global pnpm@12.10.1 \
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apk del .build-deps \
-    && rm -rf /tmp/pear \
+    && cp /usr/lib/php85/modules/igbinary.so \
+          /usr/lib/php85/modules/msgpack.so \
+          /usr/lib/php85/modules/redis.so \
+          /usr/lib/php85/modules/intl.so \
+          $(php-config --extension-dir)/ \
+    && docker-php-ext-enable igbinary msgpack redis intl \
     && docker-php-ext-configure zip \
     && docker-php-ext-configure gd --with-jpeg --with-webp \
-    && docker-php-ext-install -j2 bcmath gd intl mbstring pdo_mysql posix zip \
+    && docker-php-ext-install -j$(nproc) bcmath gd pdo_mysql zip \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY composer.json composer.lock ./
