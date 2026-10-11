@@ -40,6 +40,7 @@
                     <tbody>
                         <tr>
                             <th></th>
+                            <th>ID</th>
                             <th>{{ __('admin/ui.name') }}</th>
                             <th>{{ __('admin/ui.location') }}</th>
                             <th>{{ __('admin/ui.memory') }}</th>
@@ -51,6 +52,7 @@
                         @foreach ($nodes as $node)
                             <tr>
                                 <td class="text-center text-muted left-icon" data-action="ping" data-secret="{{ $node->getDecryptedKey() }}" data-location="{{ $node->scheme }}://{{ $node->fqdn }}:{{ $node->daemonListen }}/api/system"><i class="fa fa-fw fa-refresh fa-spin"></i></td>
+                                <td><code>{{ $node->id }}</code></td>
                                 <td>{!! $node->maintenance_mode ? '<span class="label label-warning"><i class="fa fa-wrench"></i></span> ' : '' !!}<a href="{{ route('admin.nodes.view', $node->id) }}">{{ $node->name }}</a></td>
                                 <td>
                                     @if($node->country_code)
