@@ -21,6 +21,15 @@ class SettingsServiceProvider extends ServiceProvider
         'app:locale',
         'aquadactyl:branding:logo_path',
         'aquadactyl:branding:show_name',
+        'aquadactyl:appearance:primary_color',
+        'aquadactyl:appearance:login_layout',
+        'aquadactyl:appearance:login_logo_position',
+        'aquadactyl:appearance:login_background_path',
+        'aquadactyl:appearance:login_blur',
+        'aquadactyl:appearance:login_overlay',
+        'aquadactyl:appearance:client_background_path',
+        'aquadactyl:appearance:client_blur',
+        'aquadactyl:appearance:client_overlay',
         'aquadactyl:features:player_counts',
         'aquadactyl:features:custom_profile_pictures',
         'aquadactyl:features:privacy_mode',
@@ -42,10 +51,11 @@ class SettingsServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Keys specific to the mail driver that are only grabbed from the database
-     * when using the SMTP driver.
+     * Mail settings managed by the admin interface. Saved values take priority
+     * over initial environment defaults when database settings are enabled.
      */
     protected array $emailKeys = [
+        'mail:default',
         'mail:mailers:smtp:host',
         'mail:mailers:smtp:port',
         'mail:mailers:smtp:encryption',
@@ -53,6 +63,14 @@ class SettingsServiceProvider extends ServiceProvider
         'mail:mailers:smtp:password',
         'mail:from:address',
         'mail:from:name',
+        'services:mailgun:domain',
+        'services:mailgun:secret',
+        'services:mailgun:endpoint',
+        'services:postmark:token',
+        'mail:mailers:postmark:message_stream_id',
+        'services:ses:key',
+        'services:ses:secret',
+        'services:ses:region',
     ];
 
     /**
@@ -61,6 +79,10 @@ class SettingsServiceProvider extends ServiceProvider
      */
     protected static array $encrypted = [
         'mail:mailers:smtp:password',
+        'services:mailgun:secret',
+        'services:postmark:token',
+        'services:ses:key',
+        'services:ses:secret',
     ];
 
     /**
@@ -89,6 +111,15 @@ class SettingsServiceProvider extends ServiceProvider
         'pterodactyl:client_features:allocations:range_start' => ['PTERODACTYL_CLIENT_ALLOCATIONS_RANGE_START'],
         'pterodactyl:client_features:allocations:range_end' => ['PTERODACTYL_CLIENT_ALLOCATIONS_RANGE_END'],
         'mail:mailers:smtp:host' => ['MAIL_HOST'],
+        'mail:default' => ['MAIL_MAILER', 'MAIL_DRIVER'],
+        'services:mailgun:domain' => ['MAILGUN_DOMAIN'],
+        'services:mailgun:secret' => ['MAILGUN_SECRET'],
+        'services:mailgun:endpoint' => ['MAILGUN_ENDPOINT'],
+        'services:postmark:token' => ['POSTMARK_TOKEN'],
+        'mail:mailers:postmark:message_stream_id' => ['POSTMARK_MESSAGE_STREAM_ID'],
+        'services:ses:key' => ['AWS_ACCESS_KEY_ID'],
+        'services:ses:secret' => ['AWS_SECRET_ACCESS_KEY'],
+        'services:ses:region' => ['AWS_DEFAULT_REGION'],
         'mail:mailers:smtp:port' => ['MAIL_PORT'],
         'mail:mailers:smtp:encryption' => ['MAIL_ENCRYPTION'],
         'mail:mailers:smtp:username' => ['MAIL_USERNAME'],
@@ -112,11 +143,7 @@ class SettingsServiceProvider extends ServiceProvider
      */
     public function boot(ConfigRepository $config, Encrypter $encrypter, Log $log, SettingsRepositoryInterface $settings): void
     {
-        // Only set the email driver settings from the database if we
-        // are configured using SMTP as the driver.
-        if ($config->get('mail.default') === 'smtp') {
-            $this->keys = array_merge($this->keys, $this->emailKeys);
-        }
+        $keys = array_merge($this->keys, $this->emailKeys);
 
         try {
             $values = $settings->all()->mapWithKeys(function ($setting) {
@@ -128,9 +155,10 @@ class SettingsServiceProvider extends ServiceProvider
             return;
         }
 
-        foreach ($this->keys as $key) {
+        foreach ($keys as $key) {
             $fromEnv = false;
-            $envVars = $this->environmentKeys[$key] ?? [];
+            $savedMail = in_array($key, $this->emailKeys, true) && array_key_exists('settings::' . $key, $values);
+            $envVars = $savedMail ? [] : ($this->environmentKeys[$key] ?? []);
             foreach ($envVars as $envVar) {
                 if ($this->hasEnvironmentVariable($envVar)) {
                     if ($this->app->environment('testing') && in_array($envVar, ['APP_NAME', 'APP_LOCALE'], true)) {
@@ -148,11 +176,12 @@ class SettingsServiceProvider extends ServiceProvider
                     try {
                         $value = $encrypter->decrypt($value);
                     } catch (DecryptException $exception) {
+                        $value = '';
                     }
                 }
             }
 
-            if (is_string($value)) {
+            if (is_string($value) && !in_array($key, self::$encrypted, true)) {
                 switch (strtolower($value)) {
                     case 'true':
                     case '(true)':
@@ -174,6 +203,13 @@ class SettingsServiceProvider extends ServiceProvider
 
             $config->set(str_replace(':', '.', $key), $value);
         }
+
+        // Laravel's current SMTP transport reads scheme and TLS flags rather
+        // than the legacy encryption field exposed by the settings form.
+        $encryption = $config->get('mail.mailers.smtp.encryption');
+        $config->set('mail.mailers.smtp.scheme', $encryption === 'ssl' ? 'smtps' : 'smtp');
+        $config->set('mail.mailers.smtp.require_tls', $encryption === 'tls');
+        $config->set('mail.mailers.smtp.auto_tls', !empty($encryption));
     }
 
     public static function getEncryptedKeys(): array

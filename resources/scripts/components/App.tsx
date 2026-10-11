@@ -18,6 +18,7 @@ import { ServerContext } from "@/state/server";
 import "@/assets/index.css";
 import Spinner from "@/components/elements/Spinner";
 import PrivacyMode from "@/components/elements/PrivacyMode";
+import PanelBackground from "@/components/elements/PanelBackground";
 
 const DashboardRouter = lazy(() => import("@/routers/DashboardRouter"));
 const ServerRouter = lazy(() => import("@/routers/ServerRouter"));
@@ -69,8 +70,9 @@ const App = () => {
       <StoreProvider store={store}>
         <PrivacyMode />
         <ProgressBar />
-        <div className={"mx-auto w-auto"}>
+        <div className={"panel-app mx-auto w-auto"}>
           <HistoryRouter history={history} useTransitions>
+            <PanelBackground />
             <Routes>
               <Route
                 path={"/auth/*"}

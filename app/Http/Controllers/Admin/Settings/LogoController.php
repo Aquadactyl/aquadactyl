@@ -17,7 +17,7 @@ class LogoController extends Controller
     public function store(UpdateLogoRequest $request): RedirectResponse
     {
         $this->logos->upload($request->file('logo'));
-        $this->alert->success('The site logo has been updated.')->flash();
+        $this->alert->success(__('admin/ui.logo_saved'))->flash();
 
         return redirect()->route('admin.settings');
     }
@@ -25,7 +25,7 @@ class LogoController extends Controller
     public function destroy(): RedirectResponse
     {
         $this->logos->remove();
-        $this->alert->success('The default site branding has been restored.')->flash();
+        $this->alert->success(__('admin/ui.logo_restored'))->flash();
 
         return redirect()->route('admin.settings');
     }

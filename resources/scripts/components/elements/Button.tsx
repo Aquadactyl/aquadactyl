@@ -36,7 +36,7 @@ const getButtonClass = ({
       color === "red" &&
         "[&:not(:disabled):active]:border-red-700 [&:not(:disabled):active]:bg-red-600 [&:not(:disabled):hover]:border-red-600 [&:not(:disabled):hover]:bg-red-500 [&:not(:disabled):hover]:text-red-50",
       color === "primary" &&
-        "[&:not(:disabled):hover]:border-primary-600 [&:not(:disabled):hover]:bg-primary-500 [&:not(:disabled):hover]:text-primary-50",
+        "[&:not(:disabled):hover]:border-primary-600 [&:not(:disabled):hover]:bg-primary-500 [&:not(:disabled):hover]:text-[var(--color-primary-contrast)]",
       color === "green" &&
         "[&:not(:disabled):active]:border-green-700 [&:not(:disabled):active]:bg-green-600 [&:not(:disabled):hover]:border-green-600 [&:not(:disabled):hover]:bg-green-500 [&:not(:disabled):hover]:text-green-50",
     ],

@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title')
-    Manage User: {{ $user->username }}
+    {{ __('admin/ui.manage_user') }} {{ $user->username }}
 @endsection
 
 @section('content-header')
     <h1>{{ $user->name_first }} {{ $user->name_last}}<small>{{ $user->username }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.users') }}">Users</a></li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.users') }}">{{ __('admin/ui.users') }}</a></li>
         <li class="active">{{ $user->username }}</li>
     </ol>
 @endsection
@@ -19,41 +19,41 @@
         <div class="col-md-6">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Identity</h3>
+                    <h3 class="box-title">{{ __('admin/ui.identity') }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="form-group">
-                        <label class="control-label">Profile Picture</label>
+                        <label class="control-label">{{ __('admin/ui.profile_picture') }}</label>
                         <div>
-                            <img src="{{ $user->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower($user->email)) . '?s=160' }}" style="width:80px;height:80px;object-fit:cover;" class="img-circle" alt="{{ $user->username }}'s profile picture" />
+                            <img src="{{ $user->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower($user->email)) . '?s=160' }}" style="width:80px;height:80px;object-fit:cover;" class="img-circle" alt="{{ __('admin/ui.profile_picture_for', ['user' => $user->username]) }}" />
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="email" class="control-label">Email</label>
+                        <label for="email" class="control-label">{{ __('admin/ui.email') }}</label>
                         <div>
                             <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="registered" class="control-label">Username</label>
+                        <label for="registered" class="control-label">{{ __('admin/ui.username') }}</label>
                         <div>
                             <input type="text" name="username" value="{{ $user->username }}" class="form-control form-autocomplete-stop">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="registered" class="control-label">Client First Name</label>
+                        <label for="registered" class="control-label">{{ __('admin/ui.client_first_name') }}</label>
                         <div>
                             <input type="text" name="name_first" value="{{ $user->name_first }}" class="form-control form-autocomplete-stop">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="registered" class="control-label">Client Last Name</label>
+                        <label for="registered" class="control-label">{{ __('admin/ui.client_last_name') }}</label>
                         <div>
                             <input type="text" name="name_last" value="{{ $user->name_last }}" class="form-control form-autocomplete-stop">
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Default Language</label>
+                        <label class="control-label">{{ __('admin/ui.default_language') }}</label>
                         <div>
                             <select name="language" class="form-control">
                                 <option value="auto" @if($user->language === 'auto') selected @endif>{{ __('panel.language.automatic') }}</option>
@@ -61,7 +61,7 @@
                                     <option value="{{ $key }}" @if($user->language === $key) selected @endif>{{ $value }}</option>
                                 @endforeach
                             </select>
-                            <p class="text-muted"><small>The default language to use when rendering the Panel for this user.</small></p>
+                            <p class="text-muted"><small>{{ __('admin/ui.the_default_language_to_use_when_rendering_the_panel_for_this_user') }}</small></p>
                         </div>
                     </div>
                 </div>
@@ -75,15 +75,15 @@
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Password</h3>
+                    <h3 class="box-title">{{ __('admin/ui.password') }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="alert alert-success" style="display:none;margin-bottom:10px;" id="gen_pass"></div>
                     <div class="form-group no-margin-bottom">
-                        <label for="password" class="control-label">Password <span class="field-optional"></span></label>
+                        <label for="password" class="control-label">{{ __('admin/ui.password') }} <span class="field-optional" data-label="{{ __('admin/ui.optional') }}"></span></label>
                         <div>
                             <input type="password" id="password" name="password" class="form-control form-autocomplete-stop">
-                            <p class="text-muted small">Leave blank to keep this user's password the same. User will not receive any notification if password is changed.</p>
+                            <p class="text-muted small">{{ __('admin/ui.leave_blank_to_keep_this_user_s_password_the_same_user_will_not_receive_any_notificat') }}</p>
                         </div>
                     </div>
                 </div>
@@ -92,17 +92,17 @@
         <div class="col-md-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Permissions</h3>
+                    <h3 class="box-title">{{ __('admin/ui.permissions') }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="form-group">
-                        <label for="root_admin" class="control-label">Administrator</label>
+                        <label for="root_admin" class="control-label">{{ __('admin/ui.administrator') }}</label>
                         <div>
                             <select name="root_admin" class="form-control">
                                 <option value="0">@lang('strings.no')</option>
                                 <option value="1" {{ $user->root_admin ? 'selected="selected"' : '' }}>@lang('strings.yes')</option>
                             </select>
-                            <p class="text-muted"><small>Setting this to 'Yes' gives a user full administrative access.</small></p>
+                            <p class="text-muted"><small>{{ __('admin/ui.setting_this_to_yes_gives_a_user_full_administrative_access') }}</small></p>
                         </div>
                     </div>
                 </div>
@@ -110,12 +110,30 @@
         </div>
     </form>
     <div class="col-xs-12">
+        <div class="box">
+            <div class="box-header with-border"><h3 class="box-title">{{ __('admin/custom.profile_picture') }}</h3></div>
+            <div class="box-body">
+                @if($user->avatar)
+                    <img src="{{ '/storage/' . $user->avatar }}" alt="{{ __('admin/custom.profile_picture') }}" width="96" height="96" class="admin-avatar-preview">
+                    <p class="text-muted">{{ __('admin/custom.avatar_moderation_help') }}</p>
+                    <form action="{{ route('admin.users.avatar.delete', $user->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger btn-sm">{{ __('admin/custom.remove_profile_picture') }}</button>
+                    </form>
+                @else
+                    <p class="text-muted no-margin">{{ __('admin/custom.no_profile_picture') }}</p>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12">
         <div class="box box-danger">
             <div class="box-header with-border">
-                <h3 class="box-title">Delete User</h3>
+                <h3 class="box-title">{{ __('admin/ui.delete_user') }}</h3>
             </div>
             <div class="box-body">
-                <p class="no-margin">There must be no servers associated with this account in order for it to be deleted.</p>
+                <p class="no-margin">{{ __('admin/ui.there_must_be_no_servers_associated_with_this_account_in_order_for_it_to_be_deleted') }}</p>
             </div>
             <div class="box-footer">
                 <form action="{{ route('admin.users.view', $user->id) }}" method="POST">

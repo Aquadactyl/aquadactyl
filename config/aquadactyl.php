@@ -12,6 +12,17 @@ return [
         'server_quick_actions' => true,
         'registration' => false,
     ],
+    'appearance' => [
+        'primary_color' => '#237c7f',
+        'login_layout' => 'center',
+        'login_logo_position' => 'above',
+        'login_background_path' => null,
+        'login_blur' => 0,
+        'login_overlay' => 50,
+        'client_background_path' => null,
+        'client_blur' => 0,
+        'client_overlay' => 70,
+    ],
     'telemetry' => [
         'enabled' => env('AQUADACTYL_TELEMETRY_ENABLED', false),
         'endpoint' => env('AQUADACTYL_TELEMETRY_ENDPOINT', 'https://api.euphoriadevelopment.uk/telemetry/panel'),

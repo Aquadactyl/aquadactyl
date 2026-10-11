@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title')
-    List Nodes
+    {{ __('admin/ui.list_nodes') }}
 @endsection
 
 @section('scripts')
@@ -10,10 +10,10 @@
 @endsection
 
 @section('content-header')
-    <h1>Nodes<small>All nodes available on the system.</small></h1>
+    <h1>{{ __('admin/ui.nodes') }}<small>{{ __('admin/ui.all_nodes_available_on_the_system') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li class="active">Nodes</li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li class="active">{{ __('admin/ui.nodes') }}</li>
     </ol>
 @endsection
 
@@ -22,14 +22,14 @@
     <div class="col-xs-12">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Node List</h3>
+                <h3 class="box-title">{{ __('admin/ui.node_list') }}</h3>
                 <div class="box-tools search01">
                     <form action="{{ route('admin.nodes') }}" method="GET">
                         <div class="input-group input-group-sm">
-                            <input type="text" name="filter[name]" class="form-control pull-right" value="{{ request()->input('filter.name') }}" placeholder="Search Nodes">
+                            <input type="text" name="filter[name]" class="form-control pull-right" value="{{ request()->input('filter.name') }}" placeholder="{{ __('admin/ui.search_nodes') }}">
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default" aria-label="Search nodes"><i class="fa fa-search" aria-hidden="true"></i></button>
-                                <a href="{{ route('admin.nodes.new') }}" class="btn btn-sm btn-primary">Create New</a>
+                                <button type="submit" class="btn btn-default" aria-label="{{ __('admin/ui.search_nodes_667f0b') }}"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                <a href="{{ route('admin.nodes.new') }}" class="btn btn-sm btn-primary">{{ __('admin/ui.create_new') }}</a>
                             </div>
                         </div>
                     </form>
@@ -40,13 +40,13 @@
                     <tbody>
                         <tr>
                             <th></th>
-                            <th>Name</th>
-                            <th>Location</th>
-                            <th>Memory</th>
-                            <th>Disk</th>
-                            <th class="text-center">Servers</th>
+                            <th>{{ __('admin/ui.name') }}</th>
+                            <th>{{ __('admin/ui.location') }}</th>
+                            <th>{{ __('admin/ui.memory') }}</th>
+                            <th>{{ __('admin/ui.disk') }}</th>
+                            <th class="text-center">{{ __('admin/ui.servers') }}</th>
                             <th class="text-center">SSL</th>
-                            <th class="text-center">Public</th>
+                            <th class="text-center">{{ __('admin/ui.public') }}</th>
                         </tr>
                         @foreach ($nodes as $node)
                             <tr>
@@ -96,7 +96,7 @@
                 });
                 $(element).removeClass('text-muted').find('i').removeClass().addClass('fa fa-fw fa-heartbeat faa-pulse animated').css('color', '#50af51');
             }).fail(function (error) {
-                var errorText = 'Error connecting to node! Check browser console for details.';
+                var errorText = @json(__('admin/ui.node_connection_error'));
                 try {
                     errorText = error.responseJSON.errors[0].detail || errorText;
                 } catch (ex) {}

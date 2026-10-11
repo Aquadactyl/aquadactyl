@@ -46,7 +46,7 @@ class OAuthController extends Controller
             $input = $data['providers'][$id];
             $existing = $settings->provider($id);
             if ($input['enabled'] && (empty($input['client_id']) || ((!empty($input['clear_secret']) || $existing['client_secret'] === '') && empty($input['client_secret'])))) {
-                throw ValidationException::withMessages(['providers.' . $id . '.enabled' => 'Provide a client ID and secret before enabling this provider.']);
+                throw ValidationException::withMessages(['providers.' . $id . '.enabled' => __('admin/ui.oauth_credentials_required')]);
             }
             if ($id === 'oidc' && !empty($input['issuer'])) {
                 try {
@@ -55,11 +55,11 @@ class OAuthController extends Controller
                         throw new \RuntimeException();
                     }
                 } catch (\RuntimeException) {
-                    throw ValidationException::withMessages(['providers.oidc.issuer' => 'Enter an HTTPS issuer URL without credentials, a query, or a fragment.']);
+                    throw ValidationException::withMessages(['providers.oidc.issuer' => __('admin/ui.oidc_https_required')]);
                 }
             }
             if ($id === 'oidc' && $input['enabled'] && empty($input['issuer'])) {
-                throw ValidationException::withMessages(['providers.oidc.issuer' => 'An issuer URL is required.']);
+                throw ValidationException::withMessages(['providers.oidc.issuer' => __('admin/ui.oidc_issuer_required')]);
             }
         }
         DB::transaction(function () use ($data, $settings) {
@@ -80,7 +80,7 @@ class OAuthController extends Controller
                 }
             }
         });
-        $alerts->success('Sign-in settings have been updated.')->flash();
+        $alerts->success(__('admin/ui.oauth_saved'))->flash();
 
         return redirect()->route('admin.settings.oauth');
     }

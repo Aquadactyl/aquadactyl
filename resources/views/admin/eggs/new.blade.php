@@ -1,15 +1,15 @@
 @extends('layouts.admin')
 
 @section('title')
-    Nests &rarr; New Egg
+    {{ __('admin/ui.nests_new_egg') }}
 @endsection
 
 @section('content-header')
-    <h1>New Egg<small>Create a new Egg to assign to servers.</small></h1>
+    <h1>{{ __('admin/ui.new_egg') }}<small>{{ __('admin/ui.create_a_new_egg_to_assign_to_servers') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.nests') }}">Nests</a></li>
-        <li class="active">New Egg</li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.nests') }}">{{ __('admin/ui.nests') }}</a></li>
+        <li class="active">{{ __('admin/ui.new_egg') }}</li>
     </ol>
 @endsection
 
@@ -19,43 +19,41 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Configuration</h3>
+                    <h3 class="box-title">{{ __('admin/ui.configuration') }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="pNestId" class="form-label">Associated Nest</label>
+                                <label for="pNestId" class="form-label">{{ __('admin/ui.associated_nest') }}</label>
                                 <div>
                                     <select name="nest_id" id="pNestId">
                                         @foreach($nests as $nest)
                                             <option value="{{ $nest->id }}" {{ old('nest_id') != $nest->id ?: 'selected' }}>{{ $nest->name }} &lt;{{ $nest->author }}&gt;</option>
                                         @endforeach
                                     </select>
-                                    <p class="text-muted small">Think of a Nest as a category. You can put multiple Eggs in a nest, but consider putting only Eggs that are related to each other in each Nest.</p>
+                                    <p class="text-muted small">{{ __('admin/ui.think_of_a_nest_as_a_category_you_can_put_multiple_eggs_in_a_nest_but_consider_puttin') }}</p>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="pName" class="form-label">Name</label>
+                                <label for="pName" class="form-label">{{ __('admin/ui.name') }}</label>
                                 <input type="text" id="pName" name="name" value="{{ old('name') }}" class="form-control" />
-                                <p class="text-muted small">A simple, human-readable name to use as an identifier for this Egg. This is what users will see as their game server type.</p>
+                                <p class="text-muted small">{{ __('admin/ui.a_simple_human_readable_name_to_use_as_an_identifier_for_this_egg_this_is_what_users') }}</p>
                             </div>
                             <div class="form-group">
-                                <label for="pDescription" class="form-label">Description</label>
+                                <label for="pDescription" class="form-label">{{ __('admin/ui.description') }}</label>
                                 <textarea id="pDescription" name="description" class="form-control" rows="8">{{ old('description') }}</textarea>
-                                <p class="text-muted small">A description of this Egg.</p>
+                                <p class="text-muted small">{{ __('admin/ui.a_description_of_this_egg') }}</p>
                             </div>
                             <div class="form-group">
                                 <div class="checkbox checkbox-primary no-margin-bottom">
                                     <input id="pForceOutgoingIp" name="force_outgoing_ip" type="checkbox" value="1" {{ \Pterodactyl\Helpers\Utilities::checked('force_outgoing_ip', 0) }} />
-                                    <label for="pForceOutgoingIp" class="strong">Force Outgoing IP</label>
+                                    <label for="pForceOutgoingIp" class="strong">{{ __('admin/ui.force_outgoing_ip') }}</label>
                                     <p class="text-muted small">
-                                        Forces all outgoing network traffic to have its Source IP NATed to the IP of the server's primary allocation IP.
-                                        Required for certain games to work properly when the Node has multiple public IP addresses.
+                                        {{ __('admin/ui.forces_all_outgoing_network_traffic_to_have_its_source_ip_nated_to_the_ip_of_the_serv') }}
                                         <br>
                                         <strong>
-                                            Enabling this option will disable internal networking for any servers using this egg,
-                                            causing them to be unable to internally access other servers on the same node.
+                                            {{ __('admin/ui.enabling_this_option_will_disable_internal_networking_for_any_servers_using_this_egg') }}
                                         </strong>
                                     </p>
                                 </div>
@@ -63,21 +61,21 @@
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="pDockerImage" class="control-label">Docker Images</label>
+                                <label for="pDockerImage" class="control-label">{{ __('admin/ui.docker_images_ec15ab') }}</label>
                                 <textarea id="pDockerImages" name="docker_images" rows="4" placeholder="ghcr.io/pterodactyl/yolks" class="form-control">{{ old('docker_images') }}</textarea>
-                                <p class="text-muted small">The docker images available to servers using this egg. Enter one per line. Users will be able to select from this list of images if more than one value is provided.</p>
+                                <p class="text-muted small">{{ __('admin/ui.the_docker_images_available_to_servers_using_this_egg_enter_one_per_line_users_will_b') }}</p>
                             </div>
                             <div class="form-group">
-                                <label for="pStartup" class="control-label">Startup Command</label>
+                                <label for="pStartup" class="control-label">{{ __('admin/ui.startup_command_230bb9') }}</label>
                                 <textarea id="pStartup" name="startup" class="form-control" rows="10">{{ old('startup') }}</textarea>
-                                <p class="text-muted small">The default startup command that should be used for new servers created with this Egg. You can change this per-server as needed.</p>
+                                <p class="text-muted small">{{ __('admin/ui.the_default_startup_command_that_should_be_used_for_new_servers_created_with_this_egg') }}</p>
                             </div>
                             <div class="form-group">
-                                <label for="pConfigFeatures" class="control-label">Features</label>
+                                <label for="pConfigFeatures" class="control-label">{{ __('admin/ui.features') }}</label>
                                 <div>
                                     <select class="form-control" name="features[]" id="pConfigFeatures" multiple>
                                     </select>
-                                    <p class="text-muted small">Additional features belonging to the egg. Useful for configuring additional panel modifications.</p>
+                                    <p class="text-muted small">{{ __('admin/ui.additional_features_belonging_to_the_egg_useful_for_configuring_additional_panel_modi') }}</p>
                                 </div>
                             </div>
                         </div>
@@ -88,51 +86,51 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Process Management</h3>
+                    <h3 class="box-title">{{ __('admin/ui.process_management') }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="alert alert-warning">
-                                <p>All fields are required unless you select a separate option from the 'Copy Settings From' dropdown, in which case fields may be left blank to use the values from that option.</p>
+                                <p>{{ __('admin/ui.all_fields_are_required_unless_you_select_a_separate_option_from_the_copy_settings_fr') }}</p>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="pConfigFrom" class="form-label">Copy Settings From</label>
+                                <label for="pConfigFrom" class="form-label">{{ __('admin/ui.copy_settings_from') }}</label>
                                 <select name="config_from" id="pConfigFrom" class="form-control">
-                                    <option value="">None</option>
+                                    <option value="">{{ __('admin/ui.none') }}</option>
                                 </select>
-                                <p class="text-muted small">If you would like to default to settings from another Egg select it from the dropdown above.</p>
+                                <p class="text-muted small">{{ __('admin/ui.if_you_would_like_to_default_to_settings_from_another_egg_select_it_from_the_dropdown') }}</p>
                             </div>
                             <div class="form-group">
-                                <label for="pConfigStop" class="form-label">Stop Command</label>
+                                <label for="pConfigStop" class="form-label">{{ __('admin/ui.stop_command') }}</label>
                                 <input type="text" id="pConfigStop" name="config_stop" class="form-control" value="{{ old('config_stop') }}" />
-                                <p class="text-muted small">The command that should be sent to server processes to stop them gracefully. If you need to send a <code>SIGINT</code> you should enter <code>^C</code> here.</p>
+                                <p class="text-muted small">{!! __('admin/ui.the_command_that_should_be_sent_to_server_processes_to_stop_them_gracefully_if_you_ne') !!}</p>
                             </div>
                             <div class="form-group">
-                                <label for="pConfigLogs" class="form-label">Log Configuration</label>
+                                <label for="pConfigLogs" class="form-label">{{ __('admin/ui.log_configuration') }}</label>
                                 <textarea data-action="handle-tabs" id="pConfigLogs" name="config_logs" class="form-control" rows="6">{{ old('config_logs') }}</textarea>
-                                <p class="text-muted small">This should be a JSON representation of where log files are stored, and whether or not the daemon should be creating custom logs.</p>
+                                <p class="text-muted small">{{ __('admin/ui.this_should_be_a_json_representation_of_where_log_files_are_stored_and_whether_or_not') }}</p>
                             </div>
                         </div>
                         <div class="col-sm-6">
                             <div class="form-group">
-                                <label for="pConfigFiles" class="form-label">Configuration Files</label>
+                                <label for="pConfigFiles" class="form-label">{{ __('admin/ui.configuration_files') }}</label>
                                 <textarea data-action="handle-tabs" id="pConfigFiles" name="config_files" class="form-control" rows="6">{{ old('config_files') }}</textarea>
-                                <p class="text-muted small">This should be a JSON representation of configuration files to modify and what parts should be changed.</p>
+                                <p class="text-muted small">{{ __('admin/ui.this_should_be_a_json_representation_of_configuration_files_to_modify_and_what_parts') }}</p>
                             </div>
                             <div class="form-group">
-                                <label for="pConfigStartup" class="form-label">Start Configuration</label>
+                                <label for="pConfigStartup" class="form-label">{{ __('admin/ui.start_configuration') }}</label>
                                 <textarea data-action="handle-tabs" id="pConfigStartup" name="config_startup" class="form-control" rows="6">{{ old('config_startup') }}</textarea>
-                                <p class="text-muted small">This should be a JSON representation of what values the daemon should be looking for when booting a server to determine completion.</p>
+                                <p class="text-muted small">{{ __('admin/ui.this_should_be_a_json_representation_of_what_values_the_daemon_should_be_looking_for') }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="box-footer">
                     {!! csrf_field() !!}
-                    <button type="submit" class="btn btn-success btn-sm pull-right">Create</button>
+                    <button type="submit" class="btn btn-success btn-sm pull-right">{{ __('admin/ui.create') }}</button>
                 </div>
             </div>
         </div>

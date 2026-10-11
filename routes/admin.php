@@ -76,6 +76,10 @@ Route::group(['prefix' => 'settings'], function () {
     Route::post('/logo', [Admin\Settings\LogoController::class, 'store'])->name('admin.settings.logo');
     Route::delete('/logo', [Admin\Settings\LogoController::class, 'destroy']);
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
+    Route::get('/appearance', [Admin\Settings\AppearanceController::class, 'index'])->name('admin.settings.appearance');
+    Route::patch('/appearance', [Admin\Settings\AppearanceController::class, 'update']);
+    Route::post('/appearance/background/{area}', [Admin\Settings\AppearanceController::class, 'upload'])->whereIn('area', ['login', 'client'])->name('admin.settings.background');
+    Route::delete('/appearance/background/{area}', [Admin\Settings\AppearanceController::class, 'remove'])->whereIn('area', ['login', 'client']);
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
     Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
     Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
@@ -105,6 +109,7 @@ Route::group(['prefix' => 'users'], function () {
 
     Route::patch('/view/{user:id}', [Admin\UserController::class, 'update']);
     Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete');
+    Route::delete('/view/{user:id}/avatar', [Admin\UserController::class, 'removeAvatar'])->name('admin.users.avatar.delete');
 });
 
 /*

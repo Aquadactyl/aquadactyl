@@ -19,31 +19,31 @@
 // SOFTWARE.
 $(document).ready(function() {
     $('#pNestId').select2({
-        placeholder: 'Select a Nest',
+        placeholder: window.AquadactylAdmin.translate('select_a_nest', 'Select a Nest'),
     }).change();
 
     $('#pEggId').select2({
-        placeholder: 'Select a Nest Egg',
+        placeholder: window.AquadactylAdmin.translate('select_a_nest_egg', 'Select a Nest Egg'),
     });
 
     $('#pPackId').select2({
-        placeholder: 'Select a Service Pack',
+        placeholder: window.AquadactylAdmin.translate('select_service_pack', 'Select a Service Pack'),
     });
 
     $('#pNodeId').select2({
-        placeholder: 'Select a Node',
+        placeholder: window.AquadactylAdmin.translate('select_node', 'Select a Node'),
     }).change();
 
     $('#pAllocation').select2({
-        placeholder: 'Select a Default Allocation',
+        placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
     });
 
     $('#pAllocationAdditional').select2({
-        placeholder: 'Select Additional Allocations',
+        placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
     });
 
     $('#pDefaultContainer').select2({
-        placeholder: 'Select a Docker image',
+        placeholder: window.AquadactylAdmin.translate('select_docker_image', 'Select a Docker image'),
     });
 });
 
@@ -63,7 +63,7 @@ $('#pNodeId').on('change', function () {
         if (v.id == currentNode) {
             $('#pAllocation').html('').select2({
                 data: v.allocations,
-                placeholder: 'Select a Default Allocation',
+                placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
             });
 
             updateAdditionalAllocations();
@@ -104,7 +104,7 @@ $('#pEggId').on('change', function (event) {
     }
 
     $('#pPackId').html('').select2({
-        data: [{ id: 0, text: 'No Service Pack' }].concat(
+        data: [{ id: 0, text: window.AquadactylAdmin.translate('no_service_pack', 'No Service Pack') }].concat(
             $.map(_.get(objectChain, 'packs', []), function (item, i) {
                 return {
                     id: item.id,
@@ -205,7 +205,7 @@ function initUserIdSelect(data) {
             if (data.loading) return escapeHtml(data.text);
 
             return '<div class="user-block"> \
-                <img class="img-circle img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" alt="User Image"> \
+                <img class="img-circle img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" alt=""> \
                 <span class="username"> \
                     <a href="#">' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) +'</a> \
                 </span> \
@@ -215,7 +215,7 @@ function initUserIdSelect(data) {
         templateSelection: function (data) {
             return '<div> \
                 <span> \
-                    <img class="img-rounded img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" style="height:28px;margin-top:-4px;" alt="User Image"> \
+                    <img class="img-rounded img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" style="height:28px;margin-top:-4px;" alt=""> \
                 </span> \
                 <span style="padding-left:5px;"> \
                     ' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) + ' (<strong>' + escapeHtml(data.email) + '</strong>) \

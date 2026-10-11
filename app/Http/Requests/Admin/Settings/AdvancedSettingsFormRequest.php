@@ -63,16 +63,16 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
     public function attributes(): array
     {
         return [
-            'recaptcha:enabled' => 'Captcha Status',
-            'recaptcha:provider' => 'Captcha Provider',
-            'recaptcha:secret_key' => 'Captcha Secret Key',
-            'recaptcha:website_key' => 'Captcha Site Key',
-            'pterodactyl:guzzle:timeout' => 'HTTP Request Timeout',
-            'pterodactyl:guzzle:connect_timeout' => 'HTTP Connection Timeout',
-            'pterodactyl:client_features:allocations:enabled' => 'Auto Create Allocations Enabled',
-            'pterodactyl:client_features:allocations:range_start' => 'Starting Port',
-            'pterodactyl:client_features:allocations:range_end' => 'Ending Port',
-            'aquadactyl:telemetry:enabled' => 'Aquadactyl Telemetry',
+            'recaptcha:enabled' => __('admin/ui.captcha_status'),
+            'recaptcha:provider' => __('admin/ui.captcha_provider'),
+            'recaptcha:secret_key' => __('admin/ui.captcha_secret_key'),
+            'recaptcha:website_key' => __('admin/ui.captcha_site_key'),
+            'pterodactyl:guzzle:timeout' => __('admin/ui.http_request_timeout'),
+            'pterodactyl:guzzle:connect_timeout' => __('admin/ui.http_connection_timeout'),
+            'pterodactyl:client_features:allocations:enabled' => __('admin/ui.auto_allocations_enabled'),
+            'pterodactyl:client_features:allocations:range_start' => __('admin/ui.starting_port'),
+            'pterodactyl:client_features:allocations:range_end' => __('admin/ui.ending_port'),
+            'aquadactyl:telemetry:enabled' => __('admin/ui.aquadactyl_telemetry'),
         ];
     }
 

@@ -28,15 +28,15 @@ class BaseSettingsFormRequest extends AdminFormRequest
     public function attributes(): array
     {
         return [
-            'app:name' => 'Site Name',
-            'aquadactyl:branding:show_name' => 'Show Site Name Beside Logo',
-            'aquadactyl:features:player_counts' => 'Player Counts',
-            'aquadactyl:features:custom_profile_pictures' => 'Custom Profile Pictures',
-            'aquadactyl:features:privacy_mode' => 'Sensitive Data Blur',
-            'aquadactyl:features:server_quick_actions' => 'Server Quick Actions',
-            'aquadactyl:features:registration' => 'Self Account Creation',
-            'pterodactyl:auth:2fa_required' => 'Require 2-Factor Authentication',
-            'app:locale' => 'Default Language',
+            'app:name' => __('admin/ui.site_name'),
+            'aquadactyl:branding:show_name' => __('admin/ui.show_site_name_beside_logo'),
+            'aquadactyl:features:player_counts' => __('admin/ui.feature_player_counts'),
+            'aquadactyl:features:custom_profile_pictures' => __('admin/ui.feature_custom_profile_pictures'),
+            'aquadactyl:features:privacy_mode' => __('admin/ui.feature_privacy_mode'),
+            'aquadactyl:features:server_quick_actions' => __('admin/ui.feature_server_quick_actions'),
+            'aquadactyl:features:registration' => __('admin/ui.feature_registration'),
+            'pterodactyl:auth:2fa_required' => __('admin/ui.require_2_factor_authentication'),
+            'app:locale' => __('admin/ui.default_language'),
         ];
     }
 }

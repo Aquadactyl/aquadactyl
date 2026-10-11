@@ -8,7 +8,7 @@
             $(this).select2({
                 width: '100%',
                 minimumResultsForSearch: this.options.length > 7 ? 0 : Infinity,
-                placeholder: this.multiple ? 'Select options' : undefined,
+                placeholder: this.multiple ? window.AquadactylAdmin.translate('select_options', 'Select options') : undefined,
                 dropdownParent: modal.length ? modal : $(document.body),
             });
         });

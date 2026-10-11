@@ -1,0 +1,80 @@
+.panel-app {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+.panel-background {
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.authentication-page[data-layout="split-left"],
+.authentication-page[data-layout="split-right"] {
+  padding-inline: clamp(20px, 6vw, 100px);
+}
+.authentication-page[data-layout^="split"] .authentication-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  max-width: 1600px;
+  align-items: center;
+}
+.authentication-form-panel {
+  width: 100%;
+  max-width: 440px;
+  justify-self: center;
+  min-width: 0;
+}
+.authentication-page[data-layout="split-left"] .authentication-form-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+.authentication-page[data-layout="split-right"] .authentication-form-panel {
+  grid-column: 2;
+  grid-row: 1;
+}
+.authentication-side-brand {
+  grid-row: 1;
+  min-width: 0;
+}
+.authentication-page[data-layout="split-left"] .authentication-side-brand {
+  grid-column: 2;
+}
+.authentication-page[data-layout="split-right"] .authentication-side-brand {
+  grid-column: 1;
+}
+.authentication-side-brand .authentication-brand img {
+  width: min(85%, 340px);
+}
+.authentication-card .authentication-brand {
+  margin-bottom: 24px;
+}
+.panel-app .bg-primary-500,
+.panel-app .bg-primary-600,
+.panel-app .btn-primary:not(.btn-danger):not(.btn-text):not(.btn-secondary),
+.panel-app
+  .btn-primary.btn-secondary:not(.btn-danger):not(.btn-text):not(
+    :disabled
+  ):hover,
+.panel-app .panel-link-primary,
+.panel-app .panel-link-primary:hover,
+.panel-app .schedule-setup-toggle[aria-pressed="true"] {
+  color: var(--color-primary-contrast, #fff);
+}
+@media (max-width: 800px) {
+  .authentication-page[data-layout^="split"] .authentication-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-width: 440px;
+  }
+  .authentication-side-brand {
+    width: 100%;
+  }
+  .authentication-side-brand .authentication-brand img {
+    width: 224px;
+  }
+}

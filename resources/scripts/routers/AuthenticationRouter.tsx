@@ -6,13 +6,18 @@ import ForgotPasswordContainer from "@/components/auth/ForgotPasswordContainer";
 import ResetPasswordContainer from "@/components/auth/ResetPasswordContainer";
 import LoginCheckpointContainer from "@/components/auth/LoginCheckpointContainer";
 import { NotFound } from "@/components/elements/ScreenBlock";
+import { useAppStore } from "@/state";
 
 export default () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const appearance = useAppStore((state) => state.settings.data?.appearance);
 
   return (
-    <div className={"authentication-page"}>
+    <div
+      className={"authentication-page"}
+      data-layout={appearance?.loginLayout ?? "center"}
+    >
       <Routes location={location}>
         <Route path={"login"} element={<LoginContainer />} />
         <Route path={"register"} element={<RegisterContainer />} />

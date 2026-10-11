@@ -17,8 +17,9 @@ hostname does not make a passkey available on another. Changing the hostname
 requires users to sign in with another method and enrol new passkeys.
 
 Open **Admin → Settings → OAuth**. Passkeys are enabled by default when the panel
-address is suitable. Disabling them blocks enrolment and sign-in but keeps registered
-keys so they can still be removed and can work after re-enabling the feature.
+address is suitable. Disabling them blocks enrolment and sign-in and hides the
+passkeys section in Account settings. Registered keys are retained and become
+available again after re-enabling the feature.
 
 Create an OAuth application with each provider you want to enable. Enter its client
 ID and secret, and register the exact callback URL displayed in the OAuth tab:
@@ -54,6 +55,16 @@ settings use `APP_ENVIRONMENT_ONLY=true`.
 
 Sign in using your existing password and open **Account settings → Passkeys and
 connected accounts**. Confirm your current password before changing sign-in methods.
+
+Account settings only shows methods enabled by the administrator. The connected
+accounts section appears when at least one OAuth provider is enabled and has its
+required credentials configured, including an issuer for OpenID Connect. Disabled
+providers and their existing connections are hidden; saved connections are retained
+for re-enabling later. If only passkeys or OAuth is available, the card uses that
+method's title. If neither is available, the card is hidden.
+
+The profile picture and privacy sections are also hidden when their features are
+disabled in **Admin → Settings → General**. Existing account preferences are kept.
 
 - Give a passkey a recognizable name, select **Add passkey**, and follow your device's
   prompt. A fingerprint, face recognition, device PIN, or security key may be used.

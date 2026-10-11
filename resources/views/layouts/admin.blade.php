@@ -24,6 +24,7 @@
             {!! Theme::css('vendor/sweetalert/sweetalert.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/animate/animate.min.css?t={cache-version}') !!}
             {!! Theme::css('css/index.css?v=' . filemtime(public_path('themes/pterodactyl/css/index.css'))) !!}
+            {!! Theme::css('css/appearance.css?v=' . filemtime(public_path('themes/pterodactyl/css/appearance.css'))) !!}
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
 
@@ -34,6 +35,7 @@
         @show
 
         @yield("blueprint.import")
+        @include('partials.appearance')
     </head>
     <body class="hold-transition skin-blue fixed sidebar-mini">
         @yield('blueprint.cache')
@@ -60,7 +62,7 @@
                 </a>
                 <nav class="navbar navbar-static-top">
                     <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
-                        <span class="sr-only">Toggle navigation</span>
+                        <span class="sr-only">{{ __('admin/ui.toggle_navigation') }}</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -69,16 +71,16 @@
                         <ul class="nav navbar-nav">
                             <li class="user-menu">
                                 <a href="{{ route('account') }}">
-                                    <img src="{{ Auth::user()->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower(Auth::user()->email)) . '?s=160' }}" class="user-image" style="object-fit:cover;" alt="Your profile picture">
+                                    <img src="{{ Auth::user()->avatar_url ?? 'https://www.gravatar.com/avatar/' . md5(strtolower(Auth::user()->email)) . '?s=160' }}" class="user-image" style="object-fit:cover;" alt="{{ __('admin/ui.your_profile_picture') }}">
                                     <span class="hidden-xs">{{ Auth::user()->name_first }} {{ Auth::user()->name_last }}</span>
                                 </a>
                             </li>
                             @yield("blueprint.navigation")
                             <li>
-                                <a href="{{ route('index') }}" aria-label="Back to servers" data-toggle="tooltip" data-placement="bottom" title="Back to servers"><i class="fa fa-server" aria-hidden="true"></i></a>
+                                <a href="{{ route('index') }}" aria-label="{{ __('admin/ui.back_to_servers') }}" data-toggle="tooltip" data-placement="bottom" title="{{ __('admin/ui.back_to_servers') }}"><i class="fa fa-server" aria-hidden="true"></i></a>
                             </li>
                             <li>
-                                <a href="{{ route('auth.logout') }}" id="logoutButton" aria-label="Sign out" data-toggle="tooltip" data-placement="bottom" title="Sign out"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+                                <a href="{{ route('auth.logout') }}" id="logoutButton" aria-label="{{ __('admin/ui.sign_out') }}" data-toggle="tooltip" data-placement="bottom" title="{{ __('admin/ui.sign_out') }}"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
                             </li>
                         </ul>
                     </div>
@@ -87,63 +89,63 @@
             <aside class="main-sidebar">
                 <section class="sidebar">
                     <ul class="sidebar-menu">
-                        <li class="header">BASIC ADMINISTRATION</li>
+                        <li class="header">{{ __('admin/ui.basic_administration') }}</li>
                         <li class="{{ Route::currentRouteName() !== 'admin.index' ?: 'active' }}">
                             <a href="{{ route('admin.index') }}">
-                                <i class="fa fa-home"></i> <span>Overview</span>
+                                <i class="fa fa-home"></i> <span>{{ __('admin/ui.overview') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.settings') ?: 'active' }}">
                             <a href="{{ route('admin.settings')}}">
-                                <i class="fa fa-wrench"></i> <span>Settings</span>
+                                <i class="fa fa-wrench"></i> <span>{{ __('admin/ui.settings') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.api') ?: 'active' }}">
                             <a href="{{ route('admin.api.index')}}">
-                                <i class="fa fa-gamepad"></i> <span>Application API</span>
+                                <i class="fa fa-gamepad"></i> <span>{{ __('admin/ui.application_api') }}</span>
                             </a>
                         </li>
-                        <li class="header">MANAGEMENT</li>
+                        <li class="header">{{ __('admin/ui.management') }}</li>
                         @yield("blueprint.sidenav")
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">
-                                <i class="fa fa-database"></i> <span>Databases</span>
+                                <i class="fa fa-database"></i> <span>{{ __('admin/ui.databases') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.locations') ?: 'active' }}">
                             <a href="{{ route('admin.locations') }}">
-                                <i class="fa fa-globe"></i> <span>Locations</span>
+                                <i class="fa fa-globe"></i> <span>{{ __('admin/ui.locations') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nodes') ?: 'active' }}">
                             <a href="{{ route('admin.nodes') }}">
-                                <i class="fa fa-sitemap"></i> <span>Nodes</span>
+                                <i class="fa fa-sitemap"></i> <span>{{ __('admin/ui.nodes') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.servers') ?: 'active' }}">
                             <a href="{{ route('admin.servers') }}">
-                                <i class="fa fa-server"></i> <span>Servers</span>
+                                <i class="fa fa-server"></i> <span>{{ __('admin/ui.servers') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.users') ?: 'active' }}">
                             <a href="{{ route('admin.users') }}">
-                                <i class="fa fa-users"></i> <span>Users</span>
+                                <i class="fa fa-users"></i> <span>{{ __('admin/ui.users') }}</span>
                             </a>
                         </li>
-                        <li class="header">SERVICE MANAGEMENT</li>
+                        <li class="header">{{ __('admin/ui.service_management') }}</li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.mounts') ?: 'active' }}">
                             <a href="{{ route('admin.mounts') }}">
-                                <i class="fa fa-magic"></i> <span>Mounts</span>
+                                <i class="fa fa-magic"></i> <span>{{ __('admin/ui.mounts') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.nests') ?: 'active' }}">
                             <a href="{{ route('admin.nests') }}">
-                                <i class="fa fa-th-large"></i> <span>Nests</span>
+                                <i class="fa fa-th-large"></i> <span>{{ __('admin/ui.nests') }}</span>
                             </a>
                         </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.egg-library') ?: 'active' }}">
                             <a href="{{ route('admin.egg-library.index') }}">
-                                <i class="fa fa-download"></i> <span>Egg Library</span>
+                                <i class="fa fa-download"></i> <span>{{ __('admin/ui.egg_library') }}</span>
                             </a>
                         </li>
                     </ul>
@@ -159,7 +161,7 @@
                         <div class="col-xs-12">
                             @if (count($errors) > 0)
                                 <div class="alert alert-danger">
-                                    There was an error validating the data provided.<br><br>
+                                    {{ __('admin/ui.there_was_an_error_validating_the_data_provided') }}<br><br>
                                     <ul>
                                         @foreach ($errors->all() as $error)
                                             <li>{{ $error }}</li>
@@ -183,9 +185,9 @@
                 <div class="admin-footer-copyright">
                     <a href="https://aquadactyl.uk">Aquadactyl</a> &middot;
                     @if(starts_with(Route::currentRouteName(), 'admin.extensions'))
-                        Copyright &copy; 2023 - {{ date('Y') }} <a href="https://blueprint.zip/">Blueprint Framework</a>, Emma (<a href="https://prpl.wtf/">prpl.wtf</a>) and contributors.
+                        {{ __('admin/ui.copyright_2023') }} {{ date('Y') }} <a href="https://blueprint.zip/">Blueprint Framework</a>{{ __('admin/ui.emma') }}<a href="https://prpl.wtf/">prpl.wtf</a>{{ __('admin/ui.and_contributors') }}
                     @else
-                        Copyright &copy; 2015 - {{ date('Y') }} <a href="https://pterodactyl.io/">Pterodactyl Software</a>
+                        {{ __('admin/ui.copyright_2015') }} {{ date('Y') }} <a href="https://pterodactyl.io/">Pterodactyl Software</a>
                     @endif
                 </div>
                 <div class="admin-footer-meta small text-gray">
@@ -205,6 +207,7 @@
             {!! Theme::js('vendor/adminlte/app.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/bootstrap-notify/bootstrap-notify.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/select2/select2.full.min.js?t={cache-version}') !!}
+            @include('partials.admin.translations')
             {!! Theme::js('js/admin/functions.js?t={cache-version}') !!}
             {!! Theme::js('js/admin/selects.js?v=' . filemtime(public_path('themes/pterodactyl/js/admin/selects.js'))) !!}
             <script src="/js/autocomplete.js" type="application/javascript"></script>
@@ -216,12 +219,12 @@
 
                         var that = this;
                         swal({
-                            title: 'Do you want to log out?',
+                            title: @json(__('admin/ui.do_you_want_to_log_out')),
                             type: 'warning',
                             showCancelButton: true,
                             confirmButtonColor: '#d9534f',
                             cancelButtonColor: '#d33',
-                            confirmButtonText: 'Log out'
+                            confirmButtonText: @json(__('admin/ui.log_out'))
                         }, function () {
                              $.ajax({
                                 type: 'POST',

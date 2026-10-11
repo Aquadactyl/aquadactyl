@@ -50,12 +50,23 @@ copied into a running container are lost when that container is replaced.
 Core React translations use the `panel` namespace and the catalog in
 `resources/lang/en/panel.php`. The initial catalog covers account settings and
 sign-in screens, navigation, dashboard controls and server statuses, and the
-main server page headings and descriptions. Some detailed server forms, legacy
-admin views, and addon-specific text still have their own English strings; adding
+main server page headings and descriptions. Some detailed server forms
+and addon-specific text still have their own English strings; adding
 a pack does not automatically translate text that has no translation key.
 The bundled French and German packs include every key in the English catalogs,
 including validation errors, authentication notices, activity messages, and
 existing backend/admin translation strings.
+
+The administration area uses Laravel translations in
+`resources/lang/en/admin/ui.php` and `admin/custom.php`, with matching French and
+German catalogs. The latter contains appearance, mail service and avatar moderation
+controls.
+It follows the same account preference and browser selection as the client area.
+Navigation, settings, management forms, help text, validation labels, confirmation
+dialogs, and dropdown messages are translated on the server. Names and descriptions
+entered by users or supplied by eggs and addons retain their original text.
+Copy and translate both `admin/ui.php` and `admin/custom.php` when creating a language pack that covers
+administration; missing entries fall back to English.
 
 Missing keys fall back to English. Core components also provide inline English
 defaults so a failed translation request leaves readable controls. Existing

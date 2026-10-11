@@ -66,46 +66,32 @@ export default () => {
       >
         <LanguageSettingsForm />
       </ContentBox>
-      <ContentBox
-        style={{ marginBottom: 24 }}
-        title={t("account.profile_picture", "Profile picture")}
-        description={t(
-          "account.personalize_your_account_with_a_picture",
-          "Personalize your account with a picture.",
-        )}
-        showFlashes={"account:avatar"}
-      >
-        {features?.customProfilePictures !== false ? (
+      {features?.customProfilePictures === true && (
+        <ContentBox
+          style={{ marginBottom: 24 }}
+          title={t("account.profile_picture", "Profile picture")}
+          description={t(
+            "account.personalize_your_account_with_a_picture",
+            "Personalize your account with a picture.",
+          )}
+          showFlashes={"account:avatar"}
+        >
           <ProfilePictureForm />
-        ) : (
-          <p className={"text-sm text-neutral-400"}>
-            {t(
-              "account.custom_profile_pictures_have_been_disabled_by_your_administrator",
-              "Custom profile pictures have been disabled by your administrator.",
-            )}
-          </p>
-        )}
-      </ContentBox>
-      <ContentBox
-        style={{ marginBottom: 24 }}
-        title={t("account.privacy", "Privacy")}
-        description={t(
-          "account.control_what_appears_while_sharing_your_screen",
-          "Control what appears while sharing your screen.",
-        )}
-        showFlashes={"account:privacy"}
-      >
-        {features?.privacyMode !== false ? (
+        </ContentBox>
+      )}
+      {features?.privacyMode === true && (
+        <ContentBox
+          style={{ marginBottom: 24 }}
+          title={t("account.privacy", "Privacy")}
+          description={t(
+            "account.control_what_appears_while_sharing_your_screen",
+            "Control what appears while sharing your screen.",
+          )}
+          showFlashes={"account:privacy"}
+        >
           <PrivacySettingsForm />
-        ) : (
-          <p className={"text-sm text-neutral-400"}>
-            {t(
-              "account.sensitive_data_blur_has_been_disabled_by_your_administrator",
-              "Sensitive data blur has been disabled by your administrator.",
-            )}
-          </p>
-        )}
-      </ContentBox>
+        </ContentBox>
+      )}
       <div className={"account-grid"}>
         <ContentBox
           title={t("account.password", "Password")}

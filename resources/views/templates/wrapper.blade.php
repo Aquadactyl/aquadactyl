@@ -43,6 +43,7 @@
         @yield('assets')
 
         @include('layouts.scripts')
+        @include('partials.appearance')
     </head>
     <body class="{{ $css['body'] ?? 'bg-neutral-50' }}">
         @section('content')

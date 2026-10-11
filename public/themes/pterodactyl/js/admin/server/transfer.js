@@ -2,17 +2,17 @@ $(document).ready(function () {
     const $modal = $('#transferServerModal');
 
     $('#pNodeId').select2({
-        placeholder: 'Select a Node',
+        placeholder: window.AquadactylAdmin.translate('select_node', 'Select a Node'),
         dropdownParent: $modal,
     }).change();
 
     $('#pAllocation').select2({
-        placeholder: 'Select a Default Allocation',
+        placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
         dropdownParent: $modal,
     });
 
     $('#pAllocationAdditional').select2({
-        placeholder: 'Select Additional Allocations',
+        placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
         dropdownParent: $modal,
     });
 });
@@ -25,7 +25,7 @@ $('#pNodeId').on('change', function () {
         if (v.id == currentNode) {
             $('#pAllocation').html('').select2({
                 data: v.allocations,
-                placeholder: 'Select a Default Allocation',
+                placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
                 dropdownParent: $modal,
             });
 
@@ -57,7 +57,7 @@ function updateAdditionalAllocations() {
 
             $('#pAllocationAdditional').html('').select2({
                 data: allocations,
-                placeholder: 'Select Additional Allocations',
+                placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
                 dropdownParent: $modal,
             });
         }

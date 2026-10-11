@@ -6,9 +6,10 @@
         <div class="col-xs-12">
             <div class="nav-tabs-custom nav-tabs-floating">
                 <ul class="nav nav-tabs">
-                    <li @if($activeTab === 'basic')class="active"@endif><a href="{{ route('admin.settings') }}">General</a></li>
-                    <li @if($activeTab === 'mail')class="active"@endif><a href="{{ route('admin.settings.mail') }}">Mail</a></li>
-                    <li @if($activeTab === 'advanced')class="active"@endif><a href="{{ route('admin.settings.advanced') }}">Advanced</a></li>
+                    <li @if($activeTab === 'basic')class="active"@endif><a href="{{ route('admin.settings') }}">{{ __('admin/ui.general') }}</a></li>
+                    <li @if($activeTab === 'mail')class="active"@endif><a href="{{ route('admin.settings.mail') }}">{{ __('admin/ui.mail') }}</a></li>
+                    <li @if($activeTab === 'appearance')class="active"@endif><a href="{{ route('admin.settings.appearance') }}">{{ __('admin/custom.appearance') }}</a></li>
+                    <li @if($activeTab === 'advanced')class="active"@endif><a href="{{ route('admin.settings.advanced') }}">{{ __('admin/ui.advanced_9f088d') }}</a></li>
                     <li @if($activeTab === 'oauth')class="active"@endif><a href="{{ route('admin.settings.oauth') }}">OAuth</a></li>
                 </ul>
             </div>

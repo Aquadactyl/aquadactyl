@@ -1,17 +1,17 @@
 @extends('layouts.admin')
 
 @section('title')
-    Egg &rarr; {{ $egg->name }} &rarr; Variables
+    {{ __('admin/ui.egg') }} {{ $egg->name }} {{ __('admin/ui.variables_1b0ab9') }}
 @endsection
 
 @section('content-header')
-    <h1>{{ $egg->name }}<small>Managing variables for this Egg.</small></h1>
+    <h1>{{ $egg->name }}<small>{{ __('admin/ui.managing_variables_for_this_egg') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.nests') }}">Nests</a></li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.nests') }}">{{ __('admin/ui.nests') }}</a></li>
         <li><a href="{{ route('admin.nests.view', $egg->nest->id) }}">{{ $egg->nest->name }}</a></li>
         <li><a href="{{ route('admin.nests.egg.view', $egg->id) }}">{{ $egg->name }}</a></li>
-        <li class="active">Variables</li>
+        <li class="active">{{ __('admin/ui.variables') }}</li>
     </ol>
 @endsection
 
@@ -20,9 +20,9 @@
     <div class="col-xs-12">
         <div class="nav-tabs-custom nav-tabs-floating">
             <ul class="nav nav-tabs">
-                <li><a href="{{ route('admin.nests.egg.view', $egg->id) }}">Configuration</a></li>
-                <li class="active"><a href="{{ route('admin.nests.egg.variables', $egg->id) }}">Variables</a></li>
-                <li><a href="{{ route('admin.nests.egg.scripts', $egg->id) }}">Install Script</a></li>
+                <li><a href="{{ route('admin.nests.egg.view', $egg->id) }}">{{ __('admin/ui.configuration') }}</a></li>
+                <li class="active"><a href="{{ route('admin.nests.egg.variables', $egg->id) }}">{{ __('admin/ui.variables') }}</a></li>
+                <li><a href="{{ route('admin.nests.egg.scripts', $egg->id) }}">{{ __('admin/ui.install_script_6d37c8') }}</a></li>
             </ul>
         </div>
     </div>
@@ -31,7 +31,7 @@
     <div class="col-xs-12">
         <div class="box no-border">
             <div class="box-body">
-                <a href="#" class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#newVariableModal">Create New Variable</a>
+                <a href="#" class="btn btn-sm btn-success pull-right" data-toggle="modal" data-target="#newVariableModal">{{ __('admin/ui.create_new_variable') }}</a>
             </div>
         </div>
     </div>
@@ -46,42 +46,42 @@
                 <form action="{{ route('admin.nests.egg.variables.edit', ['egg' => $egg->id, 'variable' => $variable->id]) }}" method="POST">
                     <div class="box-body">
                         <div class="form-group">
-                            <label class="form-label">Name</label>
+                            <label class="form-label">{{ __('admin/ui.name') }}</label>
                             <input type="text" name="name" value="{{ $variable->name }}" class="form-control" />
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Description</label>
+                            <label class="form-label">{{ __('admin/ui.description') }}</label>
                             <textarea name="description" class="form-control" rows="3">{{ $variable->description }}</textarea>
                         </div>
                         <div class="row">
                             <div class="form-group col-md-6">
-                                <label class="form-label">Environment Variable</label>
+                                <label class="form-label">{{ __('admin/ui.environment_variable') }}</label>
                                 <input type="text" name="env_variable" value="{{ $variable->env_variable }}" class="form-control" />
                             </div>
                             <div class="form-group col-md-6">
-                                <label class="form-label">Default Value</label>
+                                <label class="form-label">{{ __('admin/ui.default_value') }}</label>
                                 <input type="text" name="default_value" value="{{ $variable->default_value }}" class="form-control" />
                             </div>
                             <div class="col-xs-12">
-                                <p class="text-muted small">This variable can be accessed in the startup command by using <code>{{ $variable->env_variable }}</code>.</p>
+                                <p class="text-muted small">{{ __('admin/ui.this_variable_can_be_accessed_in_the_startup_command_by_using') }} <code>{{ $variable->env_variable }}</code>.</p>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Permissions</label>
+                            <label class="form-label">{{ __('admin/ui.permissions') }}</label>
                             <select name="options[]" class="pOptions form-control" multiple>
-                                <option value="user_viewable" {{ (! $variable->user_viewable) ?: 'selected' }}>Users Can View</option>
-                                <option value="user_editable" {{ (! $variable->user_editable) ?: 'selected' }}>Users Can Edit</option>
+                                <option value="user_viewable" {{ (! $variable->user_viewable) ?: 'selected' }}>{{ __('admin/ui.users_can_view') }}</option>
+                                <option value="user_editable" {{ (! $variable->user_editable) ?: 'selected' }}>{{ __('admin/ui.users_can_edit') }}</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Input Rules</label>
+                            <label class="form-label">{{ __('admin/ui.input_rules') }}</label>
                             <input type="text" name="rules" class="form-control" value="{{ $variable->rules }}" />
-                            <p class="text-muted small">These rules are defined using standard <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">Laravel Framework validation rules</a>.</p>
+                            <p class="text-muted small">{{ __('admin/ui.these_rules_are_defined_using_standard') }} <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">{{ __('admin/ui.laravel_framework_validation_rules') }}</a>.</p>
                         </div>
                     </div>
                     <div class="box-footer">
                         {!! csrf_field() !!}
-                        <button class="btn btn-sm btn-primary pull-right" name="_method" value="PATCH" type="submit">Save</button>
+                        <button class="btn btn-sm btn-primary pull-right" name="_method" value="PATCH" type="submit">{{ __('admin/ui.save') }}</button>
                         <button class="btn btn-sm btn-danger pull-left muted muted-hover" data-action="delete" name="_method" value="DELETE" type="submit"><i class="fa fa-trash-o"></i></button>
                     </div>
                 </form>
@@ -93,49 +93,49 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Create New Egg Variable</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin/ui.close') }}"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">{{ __('admin/ui.create_new_egg_variable') }}</h4>
             </div>
             <form action="{{ route('admin.nests.egg.variables', $egg->id) }}" method="POST">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="control-label">Name <span class="field-required"></span></label>
+                        <label class="control-label">{{ __('admin/ui.name') }} <span class="field-required" data-label="{{ __('admin/ui.required') }}"></span></label>
                         <input type="text" name="name" class="form-control" value="{{ old('name') }}"/>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Description</label>
+                        <label class="control-label">{{ __('admin/ui.description') }}</label>
                         <textarea name="description" class="form-control" rows="3">{{ old('description') }}</textarea>
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
-                            <label class="control-label">Environment Variable <span class="field-required"></span></label>
+                            <label class="control-label">{{ __('admin/ui.environment_variable') }} <span class="field-required" data-label="{{ __('admin/ui.required') }}"></span></label>
                             <input type="text" name="env_variable" class="form-control" value="{{ old('env_variable') }}" />
                         </div>
                         <div class="form-group col-md-6">
-                            <label class="control-label">Default Value</label>
+                            <label class="control-label">{{ __('admin/ui.default_value') }}</label>
                             <input type="text" name="default_value" class="form-control" value="{{ old('default_value') }}" />
                         </div>
                         <div class="col-xs-12">
-                            <p class="text-muted small">This variable can be accessed in the startup command by entering <code>@{{environment variable value}}</code>.</p>
+                            <p class="text-muted small">{{ __('admin/ui.this_variable_can_be_accessed_in_the_startup_command_by_entering') }} <code>@{{environment variable value}}</code>.</p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Permissions</label>
+                        <label class="control-label">{{ __('admin/ui.permissions') }}</label>
                         <select name="options[]" class="pOptions form-control" multiple>
-                            <option value="user_viewable">Users Can View</option>
-                            <option value="user_editable">Users Can Edit</option>
+                            <option value="user_viewable">{{ __('admin/ui.users_can_view') }}</option>
+                            <option value="user_editable">{{ __('admin/ui.users_can_edit') }}</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Input Rules <span class="field-required"></span></label>
+                        <label class="control-label">{{ __('admin/ui.input_rules') }} <span class="field-required" data-label="{{ __('admin/ui.required') }}"></span></label>
                         <input type="text" name="rules" class="form-control" value="{{ old('rules', 'required|string|max:20') }}" placeholder="required|string|max:20" />
-                        <p class="text-muted small">These rules are defined using standard <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">Laravel Framework validation rules</a>.</p>
+                        <p class="text-muted small">{{ __('admin/ui.these_rules_are_defined_using_standard') }} <a href="https://laravel.com/docs/11.x/validation#available-validation-rules" target="_blank">{{ __('admin/ui.laravel_framework_validation_rules') }}</a>.</p>
                     </div>
                 </div>
                 <div class="modal-footer">
                     {!! csrf_field() !!}
-                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create Variable</button>
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">{{ __('admin/ui.close') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('admin/ui.create_variable') }}</button>
                 </div>
             </form>
         </div>

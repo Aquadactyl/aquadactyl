@@ -695,6 +695,11 @@ label.control-label > span.field-optional:before {
     color: #bbbbbb;
 }
 
+label.control-label > span.field-required[data-label]:before,
+label.control-label > span.field-optional[data-label]:before {
+    content: attr(data-label);
+}
+
 .pagination > li > a, .pagination > li > span {
     padding: 3px 10px !important;
 }

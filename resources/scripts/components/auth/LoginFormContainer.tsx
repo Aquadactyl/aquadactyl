@@ -23,60 +23,76 @@ export default forwardRef<HTMLFormElement, Props>(
       (state) => state.settings.data?.showNameWithLogo,
     );
     const pairedLogo = Boolean(logoUrl && showNameWithLogo);
+    const appearance = useAppStore((state) => state.settings.data?.appearance);
+    const logoPosition =
+      appearance?.loginLogoPosition === "opposite" &&
+      appearance.loginLayout === "center"
+        ? "above"
+        : (appearance?.loginLogoPosition ?? "above");
     const isAquadactyl = name.trim().toLowerCase() === "aquadactyl";
 
     useEffect(() => {
       document.title = title ? `${title} | ${name}` : name;
     }, [title, name]);
 
+    const brand = (
+      <div
+        className={
+          "authentication-brand" +
+          (pairedLogo ? " authentication-brand-with-name" : "")
+        }
+      >
+        {logoUrl ? (
+          <>
+            <img
+              className={"custom-site-logo"}
+              src={logoUrl}
+              alt={showNameWithLogo ? "" : name}
+            />
+            {showNameWithLogo && (
+              <span
+                className={"authentication-brand-text custom-site-name"}
+                title={name}
+              >
+                {name}
+              </span>
+            )}
+          </>
+        ) : isAquadactyl ? (
+          <img src={"/branding/aquadactyl-wordmark.png"} alt={name} />
+        ) : (
+          <span className={"authentication-brand-text"}>{name}</span>
+        )}
+      </div>
+    );
+
     return (
       <div className={"authentication-container"}>
-        <div
-          className={
-            "authentication-brand" +
-            (pairedLogo ? " authentication-brand-with-name" : "")
-          }
-        >
-          {logoUrl ? (
-            <>
-              <img
-                className={"custom-site-logo"}
-                src={logoUrl}
-                alt={showNameWithLogo ? "" : name}
-              />
-              {showNameWithLogo && (
-                <span
-                  className={"authentication-brand-text custom-site-name"}
-                  title={name}
-                >
-                  {name}
-                </span>
-              )}
-            </>
-          ) : isAquadactyl ? (
-            <img src={"/branding/aquadactyl-wordmark.png"} alt={name} />
-          ) : (
-            <span className={"authentication-brand-text"}>{name}</span>
-          )}
+        {logoPosition === "opposite" && (
+          <div className="authentication-side-brand">{brand}</div>
+        )}
+        <div className="authentication-form-panel">
+          {logoPosition === "above" && brand}
+          <div className={"authentication-card"}>
+            {logoPosition === "inside" && brand}
+            {title && (
+              <div className={"authentication-heading"}>
+                <h1>{title}</h1>
+                {description && <p>{description}</p>}
+              </div>
+            )}
+            <FlashMessageRender />
+            <BeforeContent />
+            <form {...props} ref={ref}>
+              <div className={"w-full"}>{children}</div>
+            </form>
+            <AfterContent />
+          </div>
+          <p className={"authentication-footer"}>
+            <PanelBranding />
+            <Attribution />
+          </p>
         </div>
-        <div className={"authentication-card"}>
-          {title && (
-            <div className={"authentication-heading"}>
-              <h1>{title}</h1>
-              {description && <p>{description}</p>}
-            </div>
-          )}
-          <FlashMessageRender />
-          <BeforeContent />
-          <form {...props} ref={ref}>
-            <div className={"w-full"}>{children}</div>
-          </form>
-          <AfterContent />
-        </div>
-        <p className={"authentication-footer"}>
-          <PanelBranding />
-          <Attribution />
-        </p>
       </div>
     );
   },

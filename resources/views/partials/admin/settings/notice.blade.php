@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="alert alert-danger">
-                    Your Panel is currently configured to read settings from the environment only. You will need to set <code>APP_ENVIRONMENT_ONLY=false</code> in your environment file in order to load settings dynamically.
+                    {{ __('admin/ui.your_panel_is_currently_configured_to_read_settings_from_the_environment_only_you_wil') }} <code>APP_ENVIRONMENT_ONLY=false</code> {{ __('admin/ui.in_your_environment_file_in_order_to_load_settings_dynamically') }}
                 </div>
             </div>
         </div>

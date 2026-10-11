@@ -7,6 +7,7 @@
  * the top level.
  */
 return [
+    'admin' => ['user' => ['avatar-removed' => 'Removed a user’s uploaded profile picture']],
     'auth' => [
         'fail' => 'Failed log in',
         'success' => 'Logged in',

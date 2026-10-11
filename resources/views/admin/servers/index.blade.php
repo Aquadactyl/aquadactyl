@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title')
-    List Servers
+    {{ __('admin/ui.list_servers') }}
 @endsection
 
 @section('content-header')
-    <h1>Servers<small>All servers available on the system.</small></h1>
+    <h1>{{ __('admin/ui.servers') }}<small>{{ __('admin/ui.all_servers_available_on_the_system') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li class="active">Servers</li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li class="active">{{ __('admin/ui.servers') }}</li>
     </ol>
 @endsection
 
@@ -17,14 +17,14 @@
     <div class="col-xs-12">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Server List</h3>
+                <h3 class="box-title">{{ __('admin/ui.server_list') }}</h3>
                 <div class="box-tools search01">
                     <form action="{{ route('admin.servers') }}" method="GET">
                         <div class="input-group input-group-sm">
-                            <input type="text" name="filter[*]" class="form-control pull-right" value="{{ request()->input()['filter']['*'] ?? '' }}" placeholder="Search Servers">
+                            <input type="text" name="filter[*]" class="form-control pull-right" value="{{ request()->input()['filter']['*'] ?? '' }}" placeholder="{{ __('admin/ui.search_servers') }}">
                             <div class="input-group-btn">
-                                <button type="submit" class="btn btn-default" aria-label="Search servers"><i class="fa fa-search" aria-hidden="true"></i></button>
-                                <a href="{{ route('admin.servers.new') }}" class="btn btn-sm btn-primary">Create New</a>
+                                <button type="submit" class="btn btn-default" aria-label="{{ __('admin/ui.search_servers_3d7d70') }}"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                <a href="{{ route('admin.servers.new') }}" class="btn btn-sm btn-primary">{{ __('admin/ui.create_new') }}</a>
                             </div>
                         </div>
                     </form>
@@ -34,11 +34,11 @@
                 <table class="table table-hover">
                     <tbody>
                         <tr>
-                            <th>Server Name</th>
-                            <th>UUID</th>
-                            <th>Owner</th>
-                            <th>Node</th>
-                            <th>Connection</th>
+                            <th>{{ __('admin/ui.server_name') }}</th>
+                            <th>{{ __('admin/ui.uuid') }}</th>
+                            <th>{{ __('admin/ui.owner') }}</th>
+                            <th>{{ __('admin/ui.node') }}</th>
+                            <th>{{ __('admin/ui.connection') }}</th>
                             <th></th>
                             <th></th>
                         </tr>
@@ -53,11 +53,11 @@
                                 </td>
                                 <td class="text-center">
                                     @if($server->isSuspended())
-                                        <span class="label bg-maroon">Suspended</span>
+                                        <span class="label bg-maroon">{{ __('admin/ui.suspended') }}</span>
                                     @elseif(! $server->isInstalled())
-                                        <span class="label label-warning">Installing</span>
+                                        <span class="label label-warning">{{ __('admin/ui.installing') }}</span>
                                     @else
-                                        <span class="label label-success">Active</span>
+                                        <span class="label label-success">{{ __('admin/ui.active') }}</span>
                                     @endif
                                 </td>
                                 <td class="text-center">

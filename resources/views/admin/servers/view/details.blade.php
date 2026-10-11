@@ -1,16 +1,16 @@
 @extends('layouts.admin')
 
 @section('title')
-    Server — {{ $server->name }}: Details
+    {{ __('admin/ui.server_acb823') }} {{ $server->name }}{{ __('admin/ui.details_b57b08') }}
 @endsection
 
 @section('content-header')
-    <h1>{{ $server->name }}<small>Edit details for this server including owner and container.</small></h1>
+    <h1>{{ $server->name }}<small>{{ __('admin/ui.edit_details_for_this_server_including_owner_and_container') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.servers') }}">Servers</a></li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.servers') }}">{{ __('admin/ui.servers') }}</a></li>
         <li><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></li>
-        <li class="active">Details</li>
+        <li class="active">{{ __('admin/ui.details') }}</li>
     </ol>
 @endsection
 
@@ -20,31 +20,31 @@
     <div class="col-xs-12">
         <div class="box box-primary">
             <div class="box-header with-border">
-                <h3 class="box-title">Base Information</h3>
+                <h3 class="box-title">{{ __('admin/ui.base_information') }}</h3>
             </div>
             <form action="{{ route('admin.servers.view.details', $server->id) }}" method="POST">
                 <div class="box-body">
                     <div class="form-group">
-                        <label for="name" class="control-label">Server Name <span class="field-required"></span></label>
+                        <label for="name" class="control-label">{{ __('admin/ui.server_name') }} <span class="field-required" data-label="{{ __('admin/ui.required') }}"></span></label>
                         <input type="text" name="name" value="{{ old('name', $server->name) }}" class="form-control" />
-                        <p class="text-muted small">Character limits: <code>a-zA-Z0-9_-</code> and <code>[Space]</code>.</p>
+                        <p class="text-muted small">{!! __('admin/ui.character_limits_a_za_z0_9_and_space') !!}</p>
                     </div>
                     <div class="form-group">
-                        <label for="external_id" class="control-label">External Identifier</label>
+                        <label for="external_id" class="control-label">{{ __('admin/ui.external_identifier') }}</label>
                         <input type="text" name="external_id" value="{{ old('external_id', $server->external_id) }}" class="form-control" />
-                        <p class="text-muted small">Leave empty to not assign an external identifier for this server. The external ID should be unique to this server and not be in use by any other servers.</p>
+                        <p class="text-muted small">{{ __('admin/ui.leave_empty_to_not_assign_an_external_identifier_for_this_server_the_external_id_shou') }}</p>
                     </div>
                     <div class="form-group">
-                        <label for="pUserId" class="control-label">Server Owner <span class="field-required"></span></label>
+                        <label for="pUserId" class="control-label">{{ __('admin/ui.server_owner') }} <span class="field-required" data-label="{{ __('admin/ui.required') }}"></span></label>
                         <select data-sensitive name="owner_id" class="form-control" id="pUserId">
                             <option value="{{ $server->owner_id }}" selected>{{ $server->user->email }}</option>
                         </select>
-                        <p class="text-muted small">You can change the owner of this server by changing this field to an email matching another use on this system. If you do this a new daemon security token will be generated automatically.</p>
+                        <p class="text-muted small">{{ __('admin/ui.you_can_change_the_owner_of_this_server_by_changing_this_field_to_an_email_matching_a') }}</p>
                     </div>
                     <div class="form-group">
-                        <label for="description" class="control-label">Server Description</label>
+                        <label for="description" class="control-label">{{ __('admin/ui.server_description') }}</label>
                         <textarea name="description" rows="3" class="form-control">{{ old('description', $server->description) }}</textarea>
-                        <p class="text-muted small">A brief description of this server.</p>
+                        <p class="text-muted small">{{ __('admin/ui.a_brief_description_of_this_server') }}</p>
                     </div>
                 </div>
                 <div class="box-footer">
@@ -58,35 +58,35 @@
 
     <div class="col-xs-12">
         <div class="box box-primary">
-            <div class="box-header with-border"><h3 class="box-title">Game Player Counts</h3></div>
+            <div class="box-header with-border"><h3 class="box-title">{{ __('admin/ui.game_player_counts') }}</h3></div>
             <form action="{{ route('admin.servers.view.game-query', $server->id) }}" method="POST">
                 <div class="box-body">
                     <div class="form-group">
-                        <label for="pGameQuery" class="control-label">Game Type</label>
+                        <label for="pGameQuery" class="control-label">{{ __('admin/ui.game_type') }}</label>
                         <select id="pGameQuery" name="game_query_type" class="form-control">
-                            <option value="auto" {{ old('game_query_type', $server->game_query_type) === 'auto' ? 'selected' : '' }}>Detect from egg</option>
-                            <option value="none" {{ old('game_query_type', $server->game_query_type) === 'none' ? 'selected' : '' }}>Disabled / not a game</option>
+                            <option value="auto" {{ old('game_query_type', $server->game_query_type) === 'auto' ? 'selected' : '' }}>{{ __('admin/ui.detect_from_egg') }}</option>
+                            <option value="none" {{ old('game_query_type', $server->game_query_type) === 'none' ? 'selected' : '' }}>{{ __('admin/ui.disabled_not_a_game') }}</option>
                             @foreach(config('game-query.games') as $type => $name)
                                 <option value="{{ $type }}" {{ old('game_query_type', $server->game_query_type) === $type ? 'selected' : '' }}>{{ $name }}</option>
                             @endforeach
                         </select>
-                        <p class="text-muted small">Player counts are queried while the game is running. Select a game when the egg cannot be detected automatically.</p>
+                        <p class="text-muted small">{{ __('admin/ui.player_counts_are_queried_while_the_game_is_running_select_a_game_when_the_egg_cannot') }}</p>
                     </div>
                     <div class="form-group">
-                        <label for="pGameQueryPort" class="control-label">Query Address / Port</label>
+                        <label for="pGameQueryPort" class="control-label">{{ __('admin/ui.query_address_port') }}</label>
                         <select data-sensitive id="pGameQueryPort" name="game_query_allocation_id" class="form-control">
-                            <option value="">Automatic (primary allocation)</option>
+                            <option value="">{{ __('admin/ui.automatic_primary_allocation') }}</option>
                             @foreach($server->allocations as $allocation)
                                 <option value="{{ $allocation->id }}" {{ (int) old('game_query_allocation_id', $server->game_query_allocation_id) === $allocation->id ? 'selected' : '' }}>{{ $allocation->alias }}:{{ $allocation->port }}</option>
                             @endforeach
                         </select>
-                        <p class="text-muted small">Use a dedicated allocation if this game has a separate query port. The query port must be reachable from the panel.</p>
+                        <p class="text-muted small">{{ __('admin/ui.use_a_dedicated_allocation_if_this_game_has_a_separate_query_port_the_query_port_must') }}</p>
                     </div>
                 </div>
                 <div class="box-footer">
                     {!! csrf_field() !!}
                     {!! method_field('PATCH') !!}
-                    <button type="submit" class="btn btn-sm btn-primary">Save Query Settings</button>
+                    <button type="submit" class="btn btn-sm btn-primary">{{ __('admin/ui.save_query_settings') }}</button>
                 </div>
             </form>
         </div>

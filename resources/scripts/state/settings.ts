@@ -5,6 +5,13 @@ export interface SiteSettings {
   timezone?: string;
   logoUrl?: string | null;
   showNameWithLogo?: boolean;
+  appearance?: {
+    primaryColor: string;
+    loginLayout: "center" | "split-left" | "split-right";
+    loginLogoPosition: "above" | "inside" | "opposite";
+    loginBackground: { url: string | null; blur: number; overlay: number };
+    clientBackground: { url: string | null; blur: number; overlay: number };
+  };
   features?: {
     playerCounts: boolean;
     customProfilePictures: boolean;

@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
 use Illuminate\Contracts\Console\Kernel;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Services\Users\LanguageService;
 use Pterodactyl\Traits\Helpers\AvailableLanguages;
 use Pterodactyl\Services\Helpers\SoftwareVersionService;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
@@ -30,11 +31,12 @@ class IndexController extends Controller
     /**
      * Render the UI for basic Panel settings.
      */
-    public function index(): View
+    public function index(LanguageService $languages): View
     {
         return view('admin.settings.index', [
             'version' => $this->versionService,
             'languages' => $this->getAvailableLanguages(true),
+            'defaultLanguage' => $languages->fallback(),
         ]);
     }
 
@@ -51,7 +53,7 @@ class IndexController extends Controller
         }
 
         $this->kernel->call('queue:restart');
-        $this->alert->success('Site settings have been updated successfully. Reload open pages to apply these changes.')->flash();
+        $this->alert->success(__('admin/ui.site_settings_saved'))->flash();
 
         return redirect()->route('admin.settings');
     }

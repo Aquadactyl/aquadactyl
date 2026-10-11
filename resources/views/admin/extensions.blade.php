@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 
 @section('title')
-  Extensions
+  {{ __('admin/ui.extensions') }}
 @endsection
 
 @php
@@ -17,17 +17,17 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
         </div>
         <div>
           <span class="text-bold" style="color: #ff6ab9;">
-            Blueprint is out-of-date.
+            {{ __('admin/ui.blueprint_is_out_of_date') }}
           </span>
-          You're running Blueprint
+          {{ __('admin/ui.you_re_running_blueprint') }}
           <code style="border: unset; background-color: unset; color: #cad1d8;">
             {{ $PlaceholderService->version() }}
           </code>
-          which is outdated. Update to version
+          {{ __('admin/ui.which_is_outdated_update_to_version') }}
           <code style="border: unset; background-color: unset; color: #cad1d8;">
             {{ $latestBlueprintVersion }}
           </code>
-          to access the latest features and improvements.
+          {{ __('admin/ui.to_access_the_latest_features_and_improvements') }}
         </div>
       </div>
     @endif
@@ -39,9 +39,9 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
         </div>
         <div>
           <span class="text-bold" style="color: #f9a040;">
-          This instance is running a development-preview of Blueprint.
+          {{ __('admin/ui.this_instance_is_running_a_development_preview_of_blueprint') }}
           </span>
-          You may run into bugs, extension incompatibilities and more. If you run into any issues, please <a href="https://github.com/blueprintframework/framework/issues">let us know</a>.
+          {{ __('admin/ui.you_may_run_into_bugs_extension_incompatibilities_and_more_if_you_run_into_any_issues') }} <a href="https://github.com/blueprintframework/framework/issues">{{ __('admin/ui.let_us_know') }}</a>.
         </div>
       </div>
     @endif
@@ -53,9 +53,9 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
         </div>
         <div>
           <span class="text-bold" style="color: #f9a040;">
-          Could not fetch version info.
+          {{ __('admin/ui.could_not_fetch_version_info') }}
           </span>
-          Blueprint failed to fetch the latest release name from the API.
+          {{ __('admin/ui.blueprint_failed_to_fetch_the_latest_release_name_from_the_api') }}
         </div>
       </div>
     @endif
@@ -64,15 +64,15 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
       <div class="row">
         <div class="col-lg-8 col-md-9 col-sm-9 col-xs-12" style="padding-top: 3px; padding-bottom: 3px;">
           <p>
-            <span class="text-bold h4">Blueprint</span>
+            <span class="text-bold h4">{{ __('admin/ui.blueprint') }}</span>
           </p>
           <span>
-            Aquadactyl's favorite modding community. Develop, collaborate and install extensions with the extension platform that puts you first. Aquadactyl themes, plugin installers, player managers, admin tools and much more. There's a Blueprint extension for that.
+            {{ __('admin/ui.aquadactyl_s_favorite_modding_community_develop_collaborate_and_install_extensions_wi') }}
           </span>
         </div>
         <div class="col-lg-4 col-md-3 col-sm-3 col-xs-12" style="padding-top: 3px; padding-bottom: 3px;">
           <a href="https://blueprint.zip/" target="_blank" class="pull-right text-bold">
-            Learn more
+            {{ __('admin/ui.learn_more') }}
           </a>
         </div>
       </div>
@@ -130,7 +130,7 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
           <div class="extension-btn-overlay"></div>
           <img src="/assets/extensions/blueprint/logo.jpg" alt="logo" class="extension-btn-image2"/>
           <img src="/assets/extensions/blueprint/logo.jpg" alt="logo" class="extension-btn-image"/>
-          <p class="extension-btn-text">Blueprint</p>
+          <p class="extension-btn-text">{{ __('admin/ui.blueprint') }}</p>
           <p class="extension-btn-version" style="opacity: .6;">
             <span style="padding-right:5px">
               <i class="bi bi-gear-fill"></i>
@@ -196,10 +196,10 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
         <div class="modal-content" style="background-color:transparent">
           <form action="/admin/extensions/blueprint" method="POST" autocomplete="off">
             <div class="modal-header" style="border-color:transparent; border-radius:12px 12px 5px 5px; margin-bottom: 8px">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="color:#fff;box-shadow:none"><span aria-hidden="true"><i class="bi bi-x"></i></span></button>
+              <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin/ui.close') }}" style="color:#fff;box-shadow:none"><span aria-hidden="true"><i class="bi bi-x"></i></span></button>
               <h3 class="modal-title">
                 <img src="/assets/extensions/blueprint/logo.jpg" alt="logo" height="34" width="34" class="pull-left" style="border-radius:3px;margin-right:10px"/>
-                Configure <b>Blueprint</b>
+                {{ __('admin/ui.configure') }} <b>{{ __('admin/ui.blueprint') }}</b>
               </h3>
             </div>
 
@@ -207,8 +207,8 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
               <table class="table table-hover">
                 <thead>
                   <tr>
-                    <th style="width:50%">Flag</th>
-                    <th>Value</th>
+                    <th style="width:50%">{{ __('admin/ui.flag') }}</th>
+                    <th>{{ __('admin/ui.value') }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -260,10 +260,10 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
               <input type="hidden" name="_method" value="PATCH">
               <div class="row">
                 <div class="col-sm-10">
-                  <p class="text-muted small text-left">Flags enable certain features that may be experimental, unstable, or in development. Modifying these values can affect Blueprint's functionality, stability, and security.</p>
+                  <p class="text-muted small text-left">{{ __('admin/ui.flags_enable_certain_features_that_may_be_experimental_unstable_or_in_development_mod') }}</p>
                 </div>
                 <div class="col-sm-2">
-                  <button type="submit" class="btn btn-primary btn-sm" style="width:100%; margin-top:10px; margin-bottom:10px; border-radius:6px">Save</button>
+                  <button type="submit" class="btn btn-primary btn-sm" style="width:100%; margin-top:10px; margin-bottom:10px; border-radius:6px">{{ __('admin/ui.save') }}</button>
                 </div>
               </div>
             </div>
@@ -281,18 +281,17 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
         </span>
         <br style="margin-bottom: 12px;">
         <span style="font-size: 20px" class="text-bold">
-          Unfinished installation
+          {{ __('admin/ui.unfinished_installation') }}
         </span>
         <br style="margin-bottom: 12px;">
         <span>
-          Blueprint is currently only partially installed.<br>
-          Finish the
-          <a href="https://blueprint.zip/guides/admin/install">installation guide</a>,
-          then return to this page afterwards.
+          {{ __('admin/ui.blueprint_is_currently_only_partially_installed') }}<br>
+          {{ __('admin/ui.finish_the') }}
+          <a href="https://blueprint.zip/guides/admin/install">{{ __('admin/ui.installation_guide') }}</a>{{ __('admin/ui.then_return_to_this_page_afterwards') }}
         </span>
         <br style="margin-bottom: 12px;">
         <span>
-          You may be able to fix this issue by running <code>blueprint -upgrade</code>.
+          {{ __('admin/ui.you_may_be_able_to_fix_this_issue_by_running') }} <code>blueprint -upgrade</code>.
         </span>
       </div>
     </center>

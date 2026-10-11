@@ -65,6 +65,11 @@ class Handler extends ExceptionHandler
         'password_confirmation',
         'current_password',
         'providers', // Includes nested OAuth client secrets in the admin form.
+        'mail:mailers:smtp:password',
+        'services:mailgun:secret',
+        'services:postmark:token',
+        'services:ses:key',
+        'services:ses:secret',
     ];
 
     /**

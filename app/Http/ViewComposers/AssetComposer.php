@@ -33,6 +33,7 @@ class AssetComposer
             'timezone' => config('app.timezone') ?? 'UTC',
             'logoUrl' => config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : null,
             'showNameWithLogo' => (bool) config('aquadactyl.branding.show_name', false),
+            'appearance' => app(\Pterodactyl\Services\Settings\AppearanceService::class)->publicSettings(),
             'features' => [
                 'playerCounts' => (bool) config('aquadactyl.features.player_counts', true),
                 'customProfilePictures' => (bool) config('aquadactyl.features.custom_profile_pictures', true),
