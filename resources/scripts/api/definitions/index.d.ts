@@ -1,5 +1,6 @@
-import { MarkRequired } from "ts-essentials";
 import { FractalResponseData, FractalResponseList } from "../http";
+
+type MarkRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
 
 export type UUID = string;
 export type Identifier<P extends string = string> = `${P}_${string}`;

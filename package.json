@@ -53,7 +53,6 @@
     "boring-avatars": "^2.0.4",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
-    "deepmerge-ts": "^8.0.2",
     "dequal": "^2.0.3",
     "es-toolkit": "^1.52.0",
     "gamedig": "5.3.3",
@@ -87,7 +86,6 @@
     "oxfmt": "^0.72.0",
     "oxlint": "^1.87.0",
     "tailwindcss": "^4.3.3",
-    "ts-essentials": "^10.2.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.4",
     "vitest": "^5.0.3"
