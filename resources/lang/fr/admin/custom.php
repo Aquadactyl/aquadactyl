@@ -70,6 +70,7 @@ return [
     'log_cleared' => 'Le fichier journal a été supprimé.',
     'all_levels' => 'Tous les niveaux',
     'search_logs' => 'Rechercher dans les journaux...',
+    'copy' => 'Copier',
     'copy_stack' => 'Copier',
     'copied' => 'Copié !',
     'raw_view' => 'Vue brute',

@@ -70,6 +70,7 @@ return [
     'log_cleared' => 'The log file has been deleted.',
     'all_levels' => 'All Levels',
     'search_logs' => 'Search logs...',
+    'copy' => 'Copy',
     'copy_stack' => 'Copy',
     'copied' => 'Copied!',
     'raw_view' => 'Raw View',

@@ -70,6 +70,7 @@ return [
     'log_cleared' => 'Die Protokolldatei wurde gelöscht.',
     'all_levels' => 'Alle Stufen',
     'search_logs' => 'Protokolle durchsuchen...',
+    'copy' => 'Kopieren',
     'copy_stack' => 'Kopieren',
     'copied' => 'Kopiert!',
     'raw_view' => 'Rohansicht',

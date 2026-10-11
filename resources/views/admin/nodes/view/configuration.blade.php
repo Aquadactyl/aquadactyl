@@ -33,9 +33,14 @@
         <div class="box box-primary">
             <div class="box-header with-border">
                 <h3 class="box-title">{{ __('admin/ui.configuration_file') }}</h3>
+                <div class="box-tools">
+                    <button type="button" id="copyConfigBtn" class="btn btn-sm btn-default" title="{{ __('admin/custom.copy') }}">
+                        <i class="fa fa-copy"></i> <span id="copyConfigText">{{ __('admin/custom.copy') }}</span>
+                    </button>
+                </div>
             </div>
             <div class="box-body">
-                <pre data-sensitive tabindex="0" class="no-margin">{{ $node->getYamlConfiguration() }}</pre>
+                <pre id="configYaml" data-sensitive tabindex="0" class="no-margin">{{ $node->getYamlConfiguration() }}</pre>
             </div>
             <div class="box-footer">
                 <p class="no-margin">{!! __('admin/ui.this_file_should_be_placed_in_your_daemon_s_root_directory_usually_etc_pterodactyl_in') !!}</p>
@@ -63,6 +68,34 @@
 @section('footer-scripts')
     @parent
     <script>
+    $('#copyConfigBtn').on('click', function () {
+        var text = $('#configYaml').text();
+        var $btn = $(this);
+        var $icon = $btn.find('i');
+        var $text = $('#copyConfigText');
+        var originalText = $text.text();
+
+        function showCopied() {
+            $text.text(@json(__('admin/custom.copied')));
+            $icon.removeClass('fa-copy').addClass('fa-check text-success');
+            setTimeout(function () {
+                $text.text(originalText);
+                $icon.removeClass('fa-check text-success').addClass('fa-copy');
+            }, 2000);
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(showCopied);
+        } else {
+            var $temp = $('<textarea>');
+            $('body').append($temp);
+            $temp.val(text).select();
+            document.execCommand('copy');
+            $temp.remove();
+            showCopied();
+        }
+    });
+
     $('#configTokenBtn').on('click', function (event) {
         $.ajax({
             method: 'POST',

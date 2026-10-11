@@ -164,3 +164,15 @@ test('admin can view nodes list and sees node id column', function () {
     $response->assertSee('<th>ID</th>', false);
     $response->assertSee('<code>' . $node->id . '</code>', false);
 });
+
+test('admin can view node configuration page and sees copy configuration button', function () {
+    $admin = User::factory()->admin()->create();
+    $location = Location::factory()->create();
+    $node = Node::factory()->for($location)->create();
+
+    $response = $this->actingAs($admin)->get(route('admin.nodes.view.configuration', $node->id));
+
+    $response->assertOk();
+    $response->assertSee('id="copyConfigBtn"', false);
+    $response->assertSee('id="configYaml"', false);
+});
