@@ -306,8 +306,7 @@
             swal({
                 type: 'warning',
                 title: '',
-                text: @json(__('admin/ui.are_you_sure_you_want_to_delete_the_following_allocations')) + formattedItems + '?',
-                html: true,
+                html: @json(__('admin/ui.are_you_sure_you_want_to_delete_the_following_allocations')) + formattedItems + '?',
                 showCancelButton: true,
                 showConfirmButton: true,
                 closeOnConfirm: false,
@@ -340,8 +339,7 @@
                     swal({
                         type: 'error',
                         title: @json(__('admin/ui.whoops')),
-                        html: true,
-                        text: @json(__('admin/ui.an_error_occurred_while_attempting_to_delete_these_allocations_please_try_again')),
+                        html: @json(__('admin/ui.an_error_occurred_while_attempting_to_delete_these_allocations_please_try_again')),
                     });
                 });
             });
