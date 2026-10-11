@@ -90,6 +90,8 @@ return [
         'your_new_password_should_be_at_least_8_characters_in' => 'Ihr neues Passwort muss mindestens 8 Zeichen lang sein und ausschließlich auf dieser Website verwendet werden.',
         'confirm_new_password' => 'Neues Passwort bestätigen',
         'update_password' => 'Passwort ändern',
+        'hide_password' => 'Passwort verbergen',
+        'show_password' => 'Passwort anzeigen',
     ],
     'privacy' => [
         'blur_sensitive_information' => 'Sensible Informationen unkenntlich machen',

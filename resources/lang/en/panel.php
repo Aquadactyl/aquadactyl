@@ -90,6 +90,8 @@ return [
         'your_new_password_should_be_at_least_8_characters_in' => 'Your new password should be at least 8 characters in length and unique to this website.',
         'confirm_new_password' => 'Confirm New Password',
         'update_password' => 'Update Password',
+        'hide_password' => 'Hide password',
+        'show_password' => 'Show password',
     ],
     'privacy' => [
         'blur_sensitive_information' => 'Blur sensitive information',

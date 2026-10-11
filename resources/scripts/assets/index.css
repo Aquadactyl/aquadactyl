@@ -949,9 +949,19 @@
   border-radius: 5px;
   cursor: pointer;
 }
-.password-reveal:hover {
+.password-reveal:not(:disabled):hover {
   background: #272e35;
   color: #e9ecef;
+}
+.password-reveal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.input-help {
+  @apply mt-1 text-xs text-neutral-400;
+}
+.input-help.error {
+  @apply text-red-200;
 }
 .login-recovery {
   display: block;

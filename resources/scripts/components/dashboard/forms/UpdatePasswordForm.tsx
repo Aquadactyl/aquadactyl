@@ -69,6 +69,7 @@ export default () => {
         <FormField
           id={"current_password"}
           type={"password"}
+          autoComplete={"current-password"}
           label={t("password.current_password", "Current Password")}
           disabled={isSubmitting}
           error={errors.current}
@@ -78,6 +79,7 @@ export default () => {
           <FormField
             id={"new_password"}
             type={"password"}
+            autoComplete={"new-password"}
             label={t("password.new_password", "New Password")}
             description={t(
               "password.your_new_password_should_be_at_least_8_characters_in",
@@ -92,6 +94,7 @@ export default () => {
           <FormField
             id={"confirm_new_password"}
             type={"password"}
+            autoComplete={"new-password"}
             label={t("password.confirm_new_password", "Confirm New Password")}
             disabled={isSubmitting}
             error={errors.confirmPassword}

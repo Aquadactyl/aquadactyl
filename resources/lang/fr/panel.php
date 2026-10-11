@@ -90,6 +90,8 @@ return [
         'your_new_password_should_be_at_least_8_characters_in' => 'Votre nouveau mot de passe doit contenir au moins 8 caractères et être propre à ce site.',
         'confirm_new_password' => 'Confirmer le nouveau mot de passe',
         'update_password' => 'Modifier le mot de passe',
+        'hide_password' => 'Masquer le mot de passe',
+        'show_password' => 'Afficher le mot de passe',
     ],
     'privacy' => [
         'blur_sensitive_information' => 'Flouter les informations sensibles',

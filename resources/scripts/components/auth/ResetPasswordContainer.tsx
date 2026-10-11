@@ -84,8 +84,10 @@ export default () => {
       </div>
       <div className={"mt-6"}>
         <FormField
+          id={"new_password"}
           label={t("reset_password.new_password", "New Password")}
           type={"password"}
+          autoComplete={"new-password"}
           description={t(
             "reset_password.passwords_must_be_at_least_8_characters_in_length",
             "Passwords must be at least 8 characters in length.",
@@ -97,11 +99,13 @@ export default () => {
       </div>
       <div className={"mt-6"}>
         <FormField
+          id={"confirm_new_password"}
           label={t(
             "reset_password.confirm_new_password",
             "Confirm New Password",
           )}
           type={"password"}
+          autoComplete={"new-password"}
           disabled={isSubmitting}
           error={errors.passwordConfirmation}
           {...register("passwordConfirmation")}

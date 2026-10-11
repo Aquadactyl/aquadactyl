@@ -71,6 +71,7 @@ const RegenerateRecoveryTokensDialog = ({ onTokens }: Props) => {
         autoComplete={"current-password"}
         variant={Input.Text.Variants.Loose}
         value={password}
+        disabled={submitting}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setPassword(e.currentTarget.value)
         }

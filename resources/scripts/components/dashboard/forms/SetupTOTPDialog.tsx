@@ -123,6 +123,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
         type={"password"}
         autoComplete={"current-password"}
         value={password}
+        disabled={submitting}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setPassword(e.currentTarget.value)
         }

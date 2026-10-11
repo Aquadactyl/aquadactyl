@@ -73,6 +73,7 @@ export default () => {
           <FormField
             id={"confirm_password"}
             type={"password"}
+            autoComplete={"current-password"}
             label={t("email.confirm_password", "Confirm Password")}
             disabled={isSubmitting}
             error={errors.password}
