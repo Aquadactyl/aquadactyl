@@ -130,7 +130,7 @@ return [
     'recovery' => [
         'two_step_authentication_enabled' => 'Two-Step Authentication Enabled',
         'store_the_codes_below_somewhere_safe_if_you_lose_access' => 'Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in.',
-        'nbsp' => '&nbsp;',
+        'nbsp' => ' ',
         'these_codes_will_not_be_shown_again' => 'These codes will not be shown again.',
         'done' => 'Done',
     ],
@@ -180,7 +180,7 @@ return [
         'key_will_be_invalidated' => 'key will be invalidated.',
         'loading' => 'Loading...',
         'no_api_keys_exist_for_this_account' => 'No API keys exist for this account.',
-        'last_used_nbsp' => 'Last used:&nbsp;',
+        'last_used_nbsp' => 'Last used: ',
         'never' => 'Never',
     ],
     'ssh' => [
@@ -189,7 +189,7 @@ return [
         'loading' => 'Loading...',
         'no_ssh_keys_exist_for_this_account' => 'No SSH Keys exist for this account.',
         'sha256' => 'SHA256:',
-        'added_on_nbsp' => 'Added on:&nbsp;',
+        'added_on_nbsp' => 'Added on: ',
     ],
     'account_activity' => [
         'account_activity' => 'Account activity',

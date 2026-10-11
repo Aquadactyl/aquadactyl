@@ -43,13 +43,9 @@ export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
           {grouped.map((value) => (
             <span key={value.join("_")} className={"block"}>
               {value[0]}
-              <span className={"mx-2 selection:bg-gray-800"}>
-                {t("recovery.nbsp", "&nbsp;")}
-              </span>
+              <span className={"mx-2 selection:bg-gray-800"}>&nbsp;</span>
               {value[1]}
-              <span className={"selection:bg-gray-800"}>
-                {t("recovery.nbsp", "&nbsp;")}
-              </span>
+              <span className={"selection:bg-gray-800"}>&nbsp;</span>
             </span>
           ))}
         </pre>

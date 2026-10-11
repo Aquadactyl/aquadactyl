@@ -75,7 +75,7 @@ export default () => {
                     </SensitiveValue>
                   </p>
                   <p className={"mt-1 text-xs text-neutral-300 uppercase"}>
-                    {t("ssh.added_on_nbsp", "Added on:&nbsp;")}
+                    {t("ssh.added_on_nbsp", "Added on:\u00A0")}
                     {format(key.createdAt, "MMM do, yyyy HH:mm")}
                   </p>
                 </div>

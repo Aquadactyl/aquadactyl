@@ -107,7 +107,7 @@ export default () => {
                 <div className={"ml-4 flex-1 overflow-hidden"}>
                   <p className={"text-sm wrap-break-word"}>{key.description}</p>
                   <p className={"text-2xs text-neutral-300 uppercase"}>
-                    {t("api_credentials.last_used_nbsp", "Last used:&nbsp;")}
+                    {t("api_credentials.last_used_nbsp", "Last used:\u00A0")}
                     {key.lastUsedAt
                       ? format(key.lastUsedAt, "MMM do, yyyy HH:mm")
                       : t("api_credentials.never", "Never")}
