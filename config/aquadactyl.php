@@ -12,4 +12,9 @@ return [
         'server_quick_actions' => true,
         'registration' => false,
     ],
+    'telemetry' => [
+        'enabled' => env('AQUADACTYL_TELEMETRY_ENABLED', false),
+        'endpoint' => env('AQUADACTYL_TELEMETRY_ENDPOINT', 'https://api.euphoriadevelopment.uk/telemetry/panel'),
+        'token' => env('AQUADACTYL_TELEMETRY_TOKEN'),
+    ],
 ];

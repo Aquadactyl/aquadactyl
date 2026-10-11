@@ -183,6 +183,25 @@ The local guides retain deployment details, developer references and validation 
 | [Branding and licensing](docs/BRANDING.md)                                                  | Rebranding permissions, attribution and compatibility identifiers                 |
 | [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration                                                 |
 
+## Optional telemetry
+
+Aquadactyl telemetry is **disabled by default**. An administrator can enable it
+under **Admin → Settings → Advanced Settings → Aquadactyl Telemetry** after
+configuring the backend endpoint and bearer token:
+
+```dotenv
+AQUADACTYL_TELEMETRY_ENDPOINT=https://api.euphoriadevelopment.uk/telemetry/panel
+AQUADACTYL_TELEMETRY_TOKEN=replace-with-your-shared-backend-token
+```
+
+When enabled, the panel sends one daily aggregate report containing an anonymous
+installation UUID, panel/PHP versions, driver names, Docker availability, and
+counts of users, servers, and nodes. It does not send names, email addresses,
+IP addresses, domains, server names, credentials, tokens, or request contents.
+The backend retains the latest report for 90 days. The setting can be disabled
+at any time; no telemetry request is made while it is disabled or while the
+endpoint/token is unset.
+
 ## Credits and license
 
 Aquadactyl builds on [Pterodactyl Panel](https://github.com/pterodactyl/panel)

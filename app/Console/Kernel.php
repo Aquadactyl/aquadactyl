@@ -11,6 +11,7 @@ use Pterodactyl\Repositories\Eloquent\SettingsRepository;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Pterodactyl\Services\Telemetry\RegisterBlueprintTelemetry;
 use Pterodactyl\Services\Telemetry\TelemetryCollectionService;
+use Pterodactyl\Services\Telemetry\AquadactylTelemetryCollectionService;
 use Pterodactyl\Console\Commands\Schedule\ProcessRunnableCommand;
 // Import Blueprint schedules, telemetry and library
 use Pterodactyl\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
@@ -51,6 +52,12 @@ class Kernel extends ConsoleKernel
         // Pterodactyl telemetry
         if (config('pterodactyl.telemetry.enabled')) {
             $this->registerTelemetry($schedule);
+        }
+
+        if (config('aquadactyl.telemetry.enabled')) {
+            $schedule->call(app()->make(AquadactylTelemetryCollectionService::class))
+                ->description('Collect Aquadactyl Telemetry')
+                ->daily();
         }
 
         // ============================
