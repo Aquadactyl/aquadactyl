@@ -9,6 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Pterodactyl\Facades\Activity;
 use Pterodactyl\Services\Users\TwoFactorSetupService;
 use Pterodactyl\Services\Users\ToggleTwoFactorService;
+use Pterodactyl\Services\Users\TwoFactorRecoveryTokenService;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -20,6 +21,7 @@ class TwoFactorController extends ClientApiController
     public function __construct(
         private ToggleTwoFactorService $toggleTwoFactorService,
         private TwoFactorSetupService $setupService,
+        private TwoFactorRecoveryTokenService $recoveryTokenService,
         private ValidationFactory $validation,
     ) {
         parent::__construct();
@@ -97,5 +99,38 @@ class TwoFactorController extends ClientApiController
         Activity::event('user:two-factor.delete')->log();
 
         return new JsonResponse([], Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * Regenerates recovery tokens for an account if two-factor is enabled and the password provided is valid.
+     *
+     * @throws \Throwable
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function regenerateTokens(Request $request): JsonResponse
+    {
+        if (!$request->user()->use_totp) {
+            throw new BadRequestHttpException('Two-factor authentication is not enabled on this account.');
+        }
+
+        $validator = $this->validation->make($request->all(), [
+            'password' => ['required', 'string'],
+        ]);
+
+        $data = $validator->validate();
+        if (!password_verify($data['password'], $request->user()->password)) {
+            throw new BadRequestHttpException('The password provided was not valid.');
+        }
+
+        $tokens = $this->recoveryTokenService->handle($request->user());
+
+        Activity::event('user:two-factor.regenerate-tokens')->log();
+
+        return new JsonResponse([
+            'object' => 'recovery_tokens',
+            'attributes' => [
+                'tokens' => $tokens,
+            ],
+        ]);
     }
 }

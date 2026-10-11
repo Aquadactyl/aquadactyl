@@ -7,9 +7,17 @@ import { Alert } from "@/components/elements/alert";
 
 interface RecoveryTokenDialogProps extends DialogProps {
   tokens: string[];
+  title?: string;
+  description?: string;
 }
 
-export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
+export default ({
+  tokens,
+  open,
+  onClose,
+  title,
+  description,
+}: RecoveryTokenDialogProps) => {
   const { t } = usePanelTranslation();
   const grouped = [] as [string, string][];
   tokens.forEach((token, index) => {
@@ -18,18 +26,38 @@ export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
     }
   });
 
+  const downloadTokens = () => {
+    const blob = new Blob([tokens.join("\n") + "\n"], {
+      type: "text/plain;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "recovery-codes.txt";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
-      title={t(
-        "recovery.two_step_authentication_enabled",
-        "Two-Step Authentication Enabled",
-      )}
-      description={t(
-        "recovery.store_the_codes_below_somewhere_safe_if_you_lose_access",
-        "Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in.",
-      )}
+      title={
+        title ||
+        t(
+          "recovery.two_step_authentication_enabled",
+          "Two-Step Authentication Enabled",
+        )
+      }
+      description={
+        description ||
+        t(
+          "recovery.store_the_codes_below_somewhere_safe_if_you_lose_access",
+          "Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in.",
+        )
+      }
       hideCloseIcon
       preventExternalClose
     >
@@ -60,6 +88,9 @@ export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
         <Button.Text onClick={onClose}>
           {t("recovery.done", "Done")}
         </Button.Text>
+        <Button onClick={downloadTokens}>
+          {t("recovery.download", "Download as .txt")}
+        </Button>
       </Dialog.Footer>
     </Dialog>
   );

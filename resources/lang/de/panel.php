@@ -109,6 +109,7 @@ return [
     'two_factor' => [
         'disable_two_step' => 'Zwei-Faktor-Authentifizierung deaktivieren',
         'enable_two_step' => 'Zwei-Faktor-Authentifizierung aktivieren',
+        'regenerate_recovery_codes' => 'Wiederherstellungscodes neu erstellen',
         'two_step_verification_is_currently_enabled_on_your_account' => 'Die Zwei-Faktor-Authentifizierung ist für Ihr Konto aktiviert.',
         'you_do_not_currently_have_two_step_verification_enabled_on' => 'Die Zwei-Faktor-Authentifizierung ist für Ihr Konto noch nicht aktiviert. Klicken Sie unten auf die Schaltfläche, um sie einzurichten.',
     ],
@@ -129,10 +130,19 @@ return [
     ],
     'recovery' => [
         'two_step_authentication_enabled' => 'Zwei-Faktor-Authentifizierung aktiviert',
+        'backup_recovery_codes' => 'Wiederherstellungscodes',
         'store_the_codes_below_somewhere_safe_if_you_lose_access' => 'Bewahren Sie die folgenden Codes sicher auf. Wenn Sie den Zugriff auf Ihr Telefon verlieren, können Sie sich mit diesen Wiederherstellungscodes anmelden.',
         'nbsp' => ' ',
         'these_codes_will_not_be_shown_again' => 'Diese Codes werden nicht erneut angezeigt.',
         'done' => 'Fertig',
+        'download' => 'Herunterladen (.txt)',
+        'regenerate_backup_codes' => 'Wiederherstellungscodes neu erstellen',
+        'regenerate_description' => 'Geben Sie Ihr Kontopasswort ein, um neue Wiederherstellungscodes zu erzeugen.',
+        'regenerate_warning' => 'Durch das Neuerstellen werden alle zuvor erzeugten Wiederherstellungscodes ungültig.',
+        'password' => 'Passwort',
+        'cancel' => 'Abbrechen',
+        'regenerate' => 'Codes neu erstellen',
+        'you_must_enter_your_account_password_to_continue' => 'Geben Sie Ihr Kontopasswort ein, um fortzufahren.',
     ],
     'sign_in_methods' => [
         'passkeys_and_connected_accounts' => 'Passkeys und verknüpfte Konten',

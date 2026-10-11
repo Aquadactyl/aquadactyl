@@ -43,6 +43,7 @@ return [
         'two-factor' => [
             'create' => 'Enabled two-factor auth',
             'delete' => 'Disabled two-factor auth',
+            'regenerate-tokens' => 'Regenerated two-factor recovery tokens',
         ],
     ],
     'server' => [

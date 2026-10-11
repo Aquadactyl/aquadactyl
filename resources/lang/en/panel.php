@@ -109,6 +109,7 @@ return [
     'two_factor' => [
         'disable_two_step' => 'Disable Two-Step',
         'enable_two_step' => 'Enable Two-Step',
+        'regenerate_recovery_codes' => 'Regenerate Backup Codes',
         'two_step_verification_is_currently_enabled_on_your_account' => 'Two-step verification is currently enabled on your account.',
         'you_do_not_currently_have_two_step_verification_enabled_on' => 'You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.',
     ],
@@ -129,10 +130,19 @@ return [
     ],
     'recovery' => [
         'two_step_authentication_enabled' => 'Two-Step Authentication Enabled',
+        'backup_recovery_codes' => 'Backup Recovery Codes',
         'store_the_codes_below_somewhere_safe_if_you_lose_access' => 'Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in.',
         'nbsp' => ' ',
         'these_codes_will_not_be_shown_again' => 'These codes will not be shown again.',
         'done' => 'Done',
+        'download' => 'Download as .txt',
+        'regenerate_backup_codes' => 'Regenerate Backup Codes',
+        'regenerate_description' => 'Enter your account password to generate a new set of backup codes.',
+        'regenerate_warning' => 'Regenerating backup codes will invalidate any previously generated backup codes.',
+        'password' => 'Password',
+        'cancel' => 'Cancel',
+        'regenerate' => 'Regenerate Codes',
+        'you_must_enter_your_account_password_to_continue' => 'You must enter your account password to continue.',
     ],
     'sign_in_methods' => [
         'passkeys_and_connected_accounts' => 'Passkeys and connected accounts',

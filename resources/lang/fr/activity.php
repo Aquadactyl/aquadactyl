@@ -43,6 +43,7 @@ return [
         'two-factor' => [
             'create' => 'Authentification à deux facteurs activée',
             'delete' => 'Authentification à deux facteurs désactivée',
+            'regenerate-tokens' => 'Codes de secours deux facteurs régénérés',
         ],
     ],
     'server' => [

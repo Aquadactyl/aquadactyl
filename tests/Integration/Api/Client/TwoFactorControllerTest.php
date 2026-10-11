@@ -165,3 +165,60 @@ test('disabling two factor requires valid password', function () {
 
     expect($user->refresh()->use_totp)->toBeTrue();
 });
+
+test('regenerating recovery tokens returns error when two factor is not enabled', function () {
+    $user = User::factory()->create(['use_totp' => false]);
+
+    $this->actingAs($user)
+        ->postJson('/api/client/account/two-factor/regenerate-tokens', [
+            'password' => 'password',
+        ])
+        ->assertStatus(Response::HTTP_BAD_REQUEST)
+        ->assertJsonPath('errors.0.detail', 'Two-factor authentication is not enabled on this account.');
+});
+
+test('regenerating recovery tokens requires valid password', function () {
+    $user = User::factory()->create(['use_totp' => true]);
+
+    $this->actingAs($user)
+        ->postJson('/api/client/account/two-factor/regenerate-tokens', [
+            'password' => 'foo',
+        ])
+        ->assertStatus(Response::HTTP_BAD_REQUEST)
+        ->assertJsonPath('errors.0.detail', 'The password provided was not valid.');
+});
+
+test('recovery tokens can be regenerated on account', function () {
+    /** @var User $user */
+    $user = User::factory()->create(['use_totp' => true]);
+
+    // Create an old recovery token that should be deleted
+    RecoveryToken::query()->insert([
+        'user_id' => $user->id,
+        'token' => password_hash('oldtoken12', PASSWORD_DEFAULT),
+        'created_at' => Carbon::now(),
+    ]);
+
+    $response = $this->actingAs($user)->postJson('/api/client/account/two-factor/regenerate-tokens', [
+        'password' => 'password',
+    ]);
+
+    $response->assertOk();
+    $response->assertJsonPath('object', 'recovery_tokens');
+
+    $tokens = RecoveryToken::query()->where('user_id', $user->id)->get();
+    expect($tokens)->toHaveCount(10);
+    expect($tokens[0]->created_at)->not->toBeNull();
+
+    $hashedTokens = $tokens->pluck('token')->toArray();
+
+    foreach ($response->json('attributes.tokens') as $raw) {
+        foreach ($hashedTokens as $hashed) {
+            if (password_verify($raw, $hashed)) {
+                continue 2;
+            }
+        }
+
+        throw new ExpectationFailedException(sprintf('Failed asserting that token [%s] exists as a hashed value in recovery_tokens table.', $raw));
+    }
+});

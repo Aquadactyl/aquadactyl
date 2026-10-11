@@ -109,6 +109,7 @@ return [
     'two_factor' => [
         'disable_two_step' => 'Désactiver l’authentification à deux facteurs',
         'enable_two_step' => 'Activer l’authentification à deux facteurs',
+        'regenerate_recovery_codes' => 'Régénérer les codes de secours',
         'two_step_verification_is_currently_enabled_on_your_account' => 'L’authentification à deux facteurs est activée sur votre compte.',
         'you_do_not_currently_have_two_step_verification_enabled_on' => 'L’authentification à deux facteurs n’est pas activée sur votre compte. Cliquez sur le bouton ci-dessous pour la configurer.',
     ],
@@ -129,10 +130,19 @@ return [
     ],
     'recovery' => [
         'two_step_authentication_enabled' => 'Authentification à deux facteurs activée',
+        'backup_recovery_codes' => 'Codes de secours',
         'store_the_codes_below_somewhere_safe_if_you_lose_access' => 'Conservez les codes ci-dessous en lieu sûr. Si vous perdez l’accès à votre téléphone, vous pourrez les utiliser pour vous connecter.',
         'nbsp' => ' ',
         'these_codes_will_not_be_shown_again' => 'Ces codes ne seront plus affichés.',
         'done' => 'Terminé',
+        'download' => 'Télécharger (.txt)',
+        'regenerate_backup_codes' => 'Régénérer les codes de secours',
+        'regenerate_description' => 'Saisissez le mot de passe de votre compte pour générer un nouvel ensemble de codes de secours.',
+        'regenerate_warning' => 'La régénération des codes de secours invalidera tous les codes générés précédemment.',
+        'password' => 'Mot de passe',
+        'cancel' => 'Annuler',
+        'regenerate' => 'Régénérer les codes',
+        'you_must_enter_your_account_password_to_continue' => 'Saisissez le mot de passe de votre compte pour continuer.',
     ],
     'sign_in_methods' => [
         'passkeys_and_connected_accounts' => 'Clés d’accès et comptes associés',

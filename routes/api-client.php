@@ -26,6 +26,7 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
         Route::get('/two-factor', [Client\TwoFactorController::class, 'index']);
         Route::post('/two-factor', [Client\TwoFactorController::class, 'store']);
         Route::post('/two-factor/disable', [Client\TwoFactorController::class, 'delete']);
+        Route::post('/two-factor/regenerate-tokens', [Client\TwoFactorController::class, 'regenerateTokens']);
     });
 
     Route::put('/email', [Client\AccountController::class, 'updateEmail'])
