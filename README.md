@@ -202,6 +202,24 @@ the schema and payload size, rate-limits submissions, and stores one snapshot pe
 anonymous installation UUID. The setting can be disabled at any time; no
 telemetry request is made while it is disabled or while the endpoint is unset.
 
+## Sharing debug logs
+
+When support asks for panel logs, run this from the panel directory:
+
+```bash
+php artisan p:debug
+```
+
+The command uploads only the tail of `storage/logs/laravel.log` to
+[debug.euphoriadevelopment.uk](https://debug.euphoriadevelopment.uk), removes
+common passwords, tokens, API keys, and bearer credentials, and prints a
+temporary share URL. Pastes expire after 24 hours by default. You can upload a
+different log file with `--file=/path/to/log` or choose an expiration with
+`--expires=3600`.
+
+Review the output before sharing the URL. Redaction is a safety measure, not a
+guarantee that a log contains no sensitive information.
+
 ## Credits and license
 
 Aquadactyl builds on [Pterodactyl Panel](https://github.com/pterodactyl/panel)
