@@ -2,7 +2,7 @@
 @yield('blueprint.lib')
 
 <!DOCTYPE html>
-<html class="{{ Auth::user()?->shouldBlurSensitiveData() ? 'privacy-mode' : '' }}">
+<html class="{{ Auth::user()?->shouldBlurSensitiveData() ? 'privacy-mode' : '' }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app(\Pterodactyl\Services\Users\LanguageService::class)->available()[app()->getLocale()]['direction'] ?? 'ltr' }}">
     <head>
         <title>{{ config('app.name', 'Aquadactyl') }}</title>
 
@@ -20,6 +20,13 @@
         @show
 
         @section('user-data')
+            <script>
+                window.PanelLocalization = {{ \Illuminate\Support\Js::from([
+                    'languages' => app(\Pterodactyl\Services\Users\LanguageService::class)->available(),
+                    'locale' => app()->getLocale(),
+                    'fallbackLocale' => config('app.fallback_locale', 'en'),
+                ]) }};
+            </script>
             @if(!is_null(Auth::user()))
                 <script>
                     window.PterodactylUser = {!! json_encode(Auth::user()->toVueObject()) !!};

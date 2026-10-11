@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import getServerDatabases from "@/api/server/databases/getServerDatabases";
 import { ServerContext } from "@/state/server";
@@ -16,6 +17,7 @@ import BeforeContent from "@blueprint/components/Server/Databases/BeforeContent"
 import AfterContent from "@blueprint/components/Server/Databases/AfterContent";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const databaseLimit = ServerContext.useStoreState(
     (state) => state.server.data!.featureLimits.databases,
@@ -49,7 +51,7 @@ export default () => {
   }, []);
 
   return (
-    <ServerContentBlock title={"Databases"}>
+    <ServerContentBlock title={t("databases.databases", "Databases")}>
       <FlashMessageRender byKey={"databases"} className={"mb-4"} />
       {!databases.length && loading ? (
         <Spinner size={"large"} centered />
@@ -68,8 +70,14 @@ export default () => {
             ) : (
               <p className={"text-center text-sm text-neutral-300"}>
                 {databaseLimit > 0
-                  ? "It looks like you have no databases."
-                  : "Databases cannot be created for this server."}
+                  ? t(
+                      "databases.it_looks_like_you_have_no_databases",
+                      "It looks like you have no databases.",
+                    )
+                  : t(
+                      "databases.databases_cannot_be_created_for_this_server",
+                      "Databases cannot be created for this server.",
+                    )}
               </p>
             )}
             <Can action={"database.create"}>
@@ -78,8 +86,11 @@ export default () => {
                   <p
                     className={"mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0"}
                   >
-                    {databases.length} of {databaseLimit} databases have been
-                    allocated to this server.
+                    {databases.length} {t("databases.of", "of")} {databaseLimit}{" "}
+                    {t(
+                      "databases.databases_have_been_allocated_to_this_server",
+                      "databases have been allocated to this server.",
+                    )}
                   </p>
                 )}
                 {databaseLimit > 0 && databaseLimit !== databases.length && (

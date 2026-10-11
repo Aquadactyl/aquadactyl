@@ -21,4 +21,13 @@ test('multiload validation rejects paths and unbounded groups', function (string
     'locale=en&namespace=activity%2B..%2Fconfig',
     'locale=..%2Fen&namespace=activity',
     'locale=en&namespace=' . implode('%2B', array_fill(0, 11, 'activity')),
+    'locale=en&namespace=activity%0A',
+    'locale=en%0A&namespace=activity',
 ]);
+
+test('regional language packs and safe addon namespaces can be requested', function () {
+    $this->getJson('/locales/locale.json?locale=pt-BR%2Bzh-Hant%2Ben&namespace=panel%2Bmy_addon')
+        ->assertOk()
+        ->assertJsonStructure(['pt-BR' => ['panel', 'my_addon'], 'zh-Hant' => ['panel', 'my_addon'], 'en' => ['panel', 'my_addon']])
+        ->assertJsonPath('en.panel.language.current', 'Currently using {{language}}.');
+});

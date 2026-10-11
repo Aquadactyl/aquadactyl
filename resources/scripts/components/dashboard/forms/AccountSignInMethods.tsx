@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import ContentBox from "@/components/elements/ContentBox";
 import FormField from "@/components/elements/FormField";
@@ -15,6 +16,7 @@ import {
 } from "@/api/account/security";
 
 export default function AccountSignInMethods() {
+  const { t } = usePanelTranslation();
   const [data, setData] = useState<AccountSecurity | null>(null);
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -55,22 +57,37 @@ export default function AccountSignInMethods() {
   return (
     <ContentBox
       className="mt-6"
-      title="Passkeys and connected accounts"
-      description="Add convenient ways to sign in. Your password and two-step verification remain available."
+      title={t(
+        "sign_in_methods.passkeys_and_connected_accounts",
+        "Passkeys and connected accounts",
+      )}
+      description={t(
+        "sign_in_methods.add_convenient_ways_to_sign_in_your_password_and_two",
+        "Add convenient ways to sign in. Your password and two-step verification remain available.",
+      )}
     >
       {error && (
-        <MessageBox type="error" title="Sign-in settings">
+        <MessageBox
+          type="error"
+          title={t("sign_in_methods.sign_in_settings", "Sign-in settings")}
+        >
           {error}
         </MessageBox>
       )}
       {notice && (
-        <MessageBox type="success" title="Sign-in settings">
+        <MessageBox
+          type="success"
+          title={t("sign_in_methods.sign_in_settings", "Sign-in settings")}
+        >
           {notice}
         </MessageBox>
       )}
       {!data ? (
         <p className="mt-3 text-sm text-neutral-400" role="status">
-          Loading sign-in methods…
+          {t(
+            "sign_in_methods.loading_sign_in_methods",
+            "Loading sign-in methods…",
+          )}
         </p>
       ) : (
         <>
@@ -78,12 +95,18 @@ export default function AccountSignInMethods() {
             <FormField
               name="security_current_password"
               type="password"
-              label="Confirm your current password"
+              label={t(
+                "sign_in_methods.confirm_your_current_password",
+                "Confirm your current password",
+              )}
               autoComplete="current-password"
               value={password}
               disabled={busy}
               onChange={(event) => setPassword(event.target.value)}
-              description="Required when adding or removing a sign-in method."
+              description={t(
+                "sign_in_methods.required_when_adding_or_removing_a_sign_in_method",
+                "Required when adding or removing a sign-in method.",
+              )}
             />
           </div>
           <section
@@ -94,15 +117,20 @@ export default function AccountSignInMethods() {
               id="passkeys-heading"
               className="font-semibold text-neutral-100"
             >
-              Passkeys
+              {t("sign_in_methods.passkeys", "Passkeys")}
             </h3>
             <p className="mt-2 text-sm text-neutral-400">
-              Use your device’s fingerprint, face recognition, PIN, or a
-              security key.
+              {t(
+                "sign_in_methods.use_your_device_s_fingerprint_face_recognition_pin_or_a",
+                "Use your device’s fingerprint, face recognition, PIN, or a security key.",
+              )}
             </p>
             {data.passkeys.length === 0 && (
               <p className="mt-3 text-sm text-neutral-400">
-                You haven’t registered any passkeys yet.
+                {t(
+                  "sign_in_methods.you_haven_t_registered_any_passkeys_yet",
+                  "You haven’t registered any passkeys yet.",
+                )}
               </p>
             )}
             <ul className="mt-3 space-y-3">
@@ -118,7 +146,10 @@ export default function AccountSignInMethods() {
                     <p className="mt-1 text-xs text-neutral-400">
                       {key.last_used_at
                         ? `Last used ${new Date(key.last_used_at).toLocaleDateString()}`
-                        : "Not used to sign in yet"}
+                        : t(
+                            "sign_in_methods.not_used_to_sign_in_yet",
+                            "Not used to sign in yet",
+                          )}
                     </p>
                   </div>
                   <Button
@@ -134,7 +165,7 @@ export default function AccountSignInMethods() {
                       )
                     }
                   >
-                    Remove
+                    {t("sign_in_methods.remove", "Remove")}
                   </Button>
                 </li>
               ))}
@@ -153,11 +184,14 @@ export default function AccountSignInMethods() {
                 <div className="min-w-0 flex-1">
                   <FormField
                     name="passkey_name"
-                    label="Passkey name"
+                    label={t("sign_in_methods.passkey_name", "Passkey name")}
                     value={name}
                     maxLength={100}
                     required
-                    placeholder="My phone or security key"
+                    placeholder={t(
+                      "sign_in_methods.my_phone_or_security_key",
+                      "My phone or security key",
+                    )}
                     disabled={busy}
                     onChange={(event) => setName(event.target.value)}
                   />
@@ -167,14 +201,20 @@ export default function AccountSignInMethods() {
                   disabled={busy || !name.trim()}
                   isLoading={busy}
                 >
-                  Add passkey
+                  {t("sign_in_methods.add_passkey", "Add passkey")}
                 </Button>
               </form>
             ) : (
               <p className="mt-4 text-sm text-neutral-400">
                 {data.passkeys_enabled
-                  ? "Use a browser and device that support passkeys over HTTPS."
-                  : "Passkey enrolment is unavailable. It requires HTTPS (or localhost) and administrator approval."}
+                  ? t(
+                      "sign_in_methods.use_a_browser_and_device_that_support_passkeys_over_https",
+                      "Use a browser and device that support passkeys over HTTPS.",
+                    )
+                  : t(
+                      "sign_in_methods.passkey_enrolment_is_unavailable_it_requires_https_or_localhost_and",
+                      "Passkey enrolment is unavailable. It requires HTTPS (or localhost) and administrator approval.",
+                    )}
               </p>
             )}
           </section>
@@ -183,11 +223,13 @@ export default function AccountSignInMethods() {
             aria-labelledby="oauth-heading"
           >
             <h3 id="oauth-heading" className="font-semibold text-neutral-100">
-              Connected accounts
+              {t("sign_in_methods.connected_accounts", "Connected accounts")}
             </h3>
             <p className="mt-2 text-sm text-neutral-400">
-              Link an account here before choosing its provider on the login
-              page.
+              {t(
+                "sign_in_methods.link_an_account_here_before_choosing_its_provider_on_the",
+                "Link an account here before choosing its provider on the login page.",
+              )}
             </p>
             <ul className="mt-3 space-y-3">
               {data.identities.map((identity) => (
@@ -226,7 +268,7 @@ export default function AccountSignInMethods() {
                       )
                     }
                   >
-                    Unlink
+                    {t("sign_in_methods.unlink", "Unlink")}
                   </Button>
                 </li>
               ))}
@@ -252,13 +294,16 @@ export default function AccountSignInMethods() {
                       )
                     }
                   >
-                    Link {provider.label}
+                    {t("sign_in_methods.link", "Link")} {provider.label}
                   </Button>
                 ))}
             </div>
             {data.providers.length === 0 && (
               <p className="mt-3 text-sm text-neutral-400">
-                Your administrator hasn’t enabled an OAuth provider.
+                {t(
+                  "sign_in_methods.your_administrator_hasn_t_enabled_an_oauth_provider",
+                  "Your administrator hasn’t enabled an OAuth provider.",
+                )}
               </p>
             )}
           </section>

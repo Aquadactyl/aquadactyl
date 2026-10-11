@@ -2,7 +2,7 @@
 @yield('blueprint.lib')
 
 <!DOCTYPE html>
-<html class="{{ Auth::user()?->shouldBlurSensitiveData() ? 'privacy-mode' : '' }}">
+<html class="{{ Auth::user()?->shouldBlurSensitiveData() ? 'privacy-mode' : '' }}" lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app(\Pterodactyl\Services\Users\LanguageService::class)->available()[app()->getLocale()]['direction'] ?? 'ltr' }}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">

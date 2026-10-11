@@ -59,6 +59,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->scoped(\Pterodactyl\Services\Users\LanguageService::class);
+
         // Merge Blueprint extension fs config with existing filesystem config.
         $this->app->register(ExtensionfsConfigProvider::class);
 

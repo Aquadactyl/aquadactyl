@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React from "react";
 import { useAppStore } from "@/state";
 import { useForm } from "react-hook-form";
@@ -19,6 +20,7 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 
 export default () => {
+  const { t } = usePanelTranslation();
   const user = useAppStore((state) => state.user.data);
   const updateEmail = useAppStore((state) => state.user.updateUserEmail);
   const { clearFlashes, addFlash } = useFlash();
@@ -62,7 +64,7 @@ export default () => {
         <FormField
           id={"current_email"}
           type={"email"}
-          label={"Email"}
+          label={t("email.email", "Email")}
           disabled={isSubmitting}
           error={errors.email}
           {...register("email")}
@@ -71,14 +73,16 @@ export default () => {
           <FormField
             id={"confirm_password"}
             type={"password"}
-            label={"Confirm Password"}
+            label={t("email.confirm_password", "Confirm Password")}
             disabled={isSubmitting}
             error={errors.password}
             {...register("password")}
           />
         </div>
         <div className={"mt-6"}>
-          <Button disabled={isSubmitting || !isValid}>Update Email</Button>
+          <Button disabled={isSubmitting || !isValid}>
+            {t("email.update_email", "Update Email")}
+          </Button>
         </div>
       </form>
     </>

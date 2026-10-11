@@ -50,8 +50,9 @@
                         <label class="control-label">Default Language</label>
                         <div>
                             <select name="language" class="form-control">
+                                <option value="auto" selected>{{ __('panel.language.automatic') }}</option>
                                 @foreach($languages as $key => $value)
-                                    <option value="{{ $key }}" @if(config('app.locale') === $key) selected @endif>{{ $value }}</option>
+                                    <option value="{{ $key }}">{{ $value }}</option>
                                 @endforeach
                             </select>
                             <p class="text-muted"><small>The default language to use when rendering the Panel for this user.</small></p>

@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import login from "@/api/auth/login";
@@ -29,6 +30,7 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 
 const LoginContainer = () => {
+  const { t } = usePanelTranslation();
   const navigate = useNavigate();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
@@ -130,20 +132,23 @@ const LoginContainer = () => {
 
   return (
     <LoginFormContainer
-      title={"Welcome back"}
-      description={"Sign in to manage your servers."}
+      title={t("login.welcome_back", "Welcome back")}
+      description={t(
+        "login.sign_in_to_manage_your_servers",
+        "Sign in to manage your servers.",
+      )}
       onSubmit={handleSubmit(onSubmit)}
     >
       {methodError && (
         <div className="mb-5">
-          <MessageBox type="error" title="Sign in">
+          <MessageBox type="error" title={t("login.sign_in", "Sign in")}>
             {methodError}
           </MessageBox>
         </div>
       )}
       <FormField
         type={"text"}
-        label={"Username or email"}
+        label={t("login.username_or_email", "Username or email")}
         autoComplete={"username"}
         autoCapitalize={"none"}
         spellCheck={false}
@@ -154,7 +159,7 @@ const LoginContainer = () => {
       <div className={"password-field mt-5"}>
         <FormField
           type={showPassword ? "text" : "password"}
-          label={"Password"}
+          label={t("login.password", "Password")}
           autoComplete={"current-password"}
           disabled={isSubmitting || passkeyBusy}
           error={errors.password}
@@ -163,7 +168,11 @@ const LoginContainer = () => {
         <button
           type={"button"}
           className={"password-reveal"}
-          aria-label={showPassword ? "Hide password" : "Show password"}
+          aria-label={
+            showPassword
+              ? t("login.hide_password", "Hide password")
+              : t("login.show_password", "Show password")
+          }
           aria-pressed={showPassword}
           disabled={isSubmitting || passkeyBusy}
           onClick={() => setShowPassword((value) => !value)}
@@ -182,7 +191,7 @@ const LoginContainer = () => {
           isLoading={isSubmitting}
           disabled={isSubmitting || passkeyBusy}
         >
-          Sign in
+          {t("login.sign_in", "Sign in")}
         </Button>
       </div>
       {(methods?.passkeys_enabled || !!methods?.providers.length) && (
@@ -196,7 +205,7 @@ const LoginContainer = () => {
               isLoading={passkeyBusy}
               onClick={() => void onPasskey()}
             >
-              Sign in with a passkey
+              {t("login.sign_in_with_a_passkey", "Sign in with a passkey")}
             </Button>
           )}
           {methods?.providers.map((provider) => (
@@ -205,12 +214,15 @@ const LoginContainer = () => {
               href={`/auth/oauth/${provider.id}`}
               className="block rounded border border-neutral-600 px-4 py-3 text-center text-sm text-neutral-200 hover:border-neutral-400 hover:bg-neutral-700"
             >
-              Continue with {provider.label}
+              {t("login.continue_with", "Continue with")} {provider.label}
             </a>
           ))}
           {!!methods?.providers.length && (
             <p className="text-center text-xs text-neutral-400">
-              Link your provider in Account settings before using it to sign in.
+              {t(
+                "login.link_your_provider_in_account_settings_before_using_it_to",
+                "Link your provider in Account settings before using it to sign in.",
+              )}
             </p>
           )}
         </div>
@@ -235,11 +247,11 @@ const LoginContainer = () => {
         }`}
       >
         <Link to={"/auth/password"} className={"login-recovery !mt-0"}>
-          Forgot password?
+          {t("login.forgot_password", "Forgot password?")}
         </Link>
         {registrationEnabled && (
           <Link to={"/auth/register"} className={"login-recovery !mt-0"}>
-            Create an account
+            {t("login.create_an_account", "Create an account")}
           </Link>
         )}
       </div>

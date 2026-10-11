@@ -31,7 +31,7 @@ class RegisterController extends AbstractLoginController
         $data = $request->normalize();
         $data['root_admin'] = false;
         if (empty($data['language'])) {
-            $data['language'] = config('app.locale', 'en');
+            $data['language'] = 'auto';
         }
 
         $user = $this->creationService->handle($data);

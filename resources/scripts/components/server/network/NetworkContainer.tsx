@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import Spinner from "@/components/elements/Spinner";
 import { useFlashKey } from "@/plugins/useFlash";
@@ -16,6 +17,7 @@ import BeforeContent from "@blueprint/components/Server/Network/BeforeContent";
 import AfterContent from "@blueprint/components/Server/Network/AfterContent";
 
 const NetworkContainer = () => {
+  const { t } = usePanelTranslation();
   const [loading, setLoading] = useState(false);
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const allocationLimit = ServerContext.useStoreState(
@@ -63,7 +65,10 @@ const NetworkContainer = () => {
   };
 
   return (
-    <ServerContentBlock showFlashKey={"server:network"} title={"Network"}>
+    <ServerContentBlock
+      showFlashKey={"server:network"}
+      title={t("network.network", "Network")}
+    >
       {!data ? (
         <Spinner size={"large"} centered />
       ) : (
@@ -80,8 +85,15 @@ const NetworkContainer = () => {
               <SpinnerOverlay visible={loading} />
               <div className={"mt-6 items-center justify-end sm:flex"}>
                 <p className={"mb-4 text-sm text-neutral-300 sm:mr-6 sm:mb-0"}>
-                  You are currently using {data.length} of {allocationLimit}{" "}
-                  allowed allocations for this server.
+                  {t(
+                    "network.you_are_currently_using",
+                    "You are currently using",
+                  )}{" "}
+                  {data.length} {t("network.of", "of")} {allocationLimit}{" "}
+                  {t(
+                    "network.allowed_allocations_for_this_server",
+                    "allowed allocations for this server.",
+                  )}
                 </p>
                 {allocationLimit > data.length && (
                   <Button
@@ -89,7 +101,7 @@ const NetworkContainer = () => {
                     color={"primary"}
                     onClick={onCreateAllocation}
                   >
-                    Create Allocation
+                    {t("network.create_allocation", "Create Allocation")}
                   </Button>
                 )}
               </div>

@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect } from "react";
 import { useActivityLogs } from "@/api/server/activity";
 import ServerContentBlock from "@/components/elements/ServerContentBlock";
@@ -8,6 +9,7 @@ import useActivityLogFilters from "@/components/elements/activity/useActivityLog
 import { ServerContext } from "@/state/server";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const controls = useActivityLogFilters();
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const { clearAndAddHttpError } = useFlashKey("server:activity");
@@ -24,14 +26,15 @@ export default () => {
   }, [error]);
 
   return (
-    <ServerContentBlock title={"Activity"}>
+    <ServerContentBlock title={t("server_activity.activity", "Activity")}>
       <FlashMessageRender byKey={"server:activity"} />
       <ActivityLogList
         key={uuid}
-        title={"Server activity"}
-        description={
-          "Keep track of changes, file access, and other actions on this server."
-        }
+        title={t("server_activity.server_activity", "Server activity")}
+        description={t(
+          "server_activity.keep_track_of_changes_file_access_and_other_actions_on",
+          "Keep track of changes, file access, and other actions on this server.",
+        )}
         scope={"Your server"}
         data={data}
         isValidating={isValidating}

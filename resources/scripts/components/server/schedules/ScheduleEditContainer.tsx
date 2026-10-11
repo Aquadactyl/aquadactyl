@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import getServerSchedule from "@/api/server/schedules/getServerSchedule";
@@ -27,6 +28,7 @@ import BeforeEdit from "@blueprint/components/Server/Schedules/Edit/BeforeEdit";
 import AfterEdit from "@blueprint/components/Server/Schedules/Edit/AfterEdit";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const navigate = useNavigate();
   const { id: scheduleId } = useParams<{ id: string }>();
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
@@ -74,7 +76,7 @@ export default () => {
   }, [scheduleId]);
 
   return (
-    <PageContentBlock title={"Schedules"}>
+    <PageContentBlock title={t("schedule_edit.schedules", "Schedules")}>
       <FlashMessageRender byKey={"schedules"} className={"mb-4"} />
       {!schedule || isLoading ? (
         <Spinner size={"large"} centered />
@@ -87,7 +89,7 @@ export default () => {
             }
             to={"/server/" + id + "/schedules"}
           >
-            &larr; All schedules
+            {t("schedule_edit.larr_all_schedules", "&larr; All schedules")}
           </Link>
           <div className={"rounded bg-neutral-900 p-4 shadow-sm sm:p-6"}>
             <div className={"flex flex-wrap items-start justify-between gap-4"}>
@@ -99,7 +101,8 @@ export default () => {
                   {describeCron(schedule.cron)}
                 </p>
                 <p className={"mt-1 text-sm text-neutral-400"}>
-                  Panel timezone: {timezone}
+                  {t("schedule_edit.panel_timezone", "Panel timezone:")}{" "}
+                  {timezone}
                 </p>
               </div>
               <span
@@ -113,55 +116,77 @@ export default () => {
                 )}
               >
                 {schedule.isProcessing
-                  ? "Running"
+                  ? t("schedule_edit.running", "Running")
                   : schedule.isActive
-                    ? "Enabled"
-                    : "Paused"}
+                    ? t("schedule_edit.enabled", "Enabled")
+                    : t("schedule_edit.paused", "Paused")}
               </span>
             </div>
             <div className={"mt-5 grid gap-3 text-sm sm:grid-cols-2"}>
               <div className={"rounded bg-neutral-800 p-3"}>
-                <p className={"text-neutral-400"}>Last run</p>
+                <p className={"text-neutral-400"}>
+                  {t("schedule_edit.last_run", "Last run")}
+                </p>
                 <p className={"mt-1"}>
                   {schedule.lastRunAt
                     ? formatScheduleDate(schedule.lastRunAt, timezone)
-                    : "Never"}
+                    : t("schedule_edit.never", "Never")}
                 </p>
               </div>
               <div className={"rounded bg-neutral-800 p-3"}>
-                <p className={"text-neutral-400"}>Next run</p>
+                <p className={"text-neutral-400"}>
+                  {t("schedule_edit.next_run", "Next run")}
+                </p>
                 <p className={"mt-1"}>
                   {!schedule.isActive
-                    ? "Paused"
+                    ? t("schedule_edit.paused", "Paused")
                     : schedule.nextRunAt
                       ? formatScheduleDate(schedule.nextRunAt, timezone)
-                      : "Not scheduled"}
+                      : t("schedule_edit.not_scheduled", "Not scheduled")}
                 </p>
               </div>
             </div>
             <p className={"mt-4 text-sm text-neutral-300"}>
               {schedule.isActive
-                ? "Automatic runs are enabled."
-                : "Automatic runs are paused."}{" "}
+                ? t(
+                    "schedule_edit.automatic_runs_are_enabled",
+                    "Automatic runs are enabled.",
+                  )
+                : t(
+                    "schedule_edit.automatic_runs_are_paused",
+                    "Automatic runs are paused.",
+                  )}{" "}
               {schedule.onlyWhenOnline
-                ? "Runs are skipped when the server is offline."
-                : "Runs can start while the server is offline."}
+                ? t(
+                    "schedule_edit.runs_are_skipped_when_the_server_is_offline",
+                    "Runs are skipped when the server is offline.",
+                  )
+                : t(
+                    "schedule_edit.runs_can_start_while_the_server_is_offline",
+                    "Runs can start while the server is offline.",
+                  )}
             </p>
             <details className={"mt-4 text-sm text-neutral-400"}>
               <summary className={"cursor-pointer"}>
-                View cron expression
+                {t(
+                  "schedule_edit.view_cron_expression",
+                  "View cron expression",
+                )}
               </summary>
               <code className={"mt-2 block break-all"}>
                 {cronExpression(schedule.cron)}
               </code>
               <p className={"mt-1 text-xs"}>
-                Minute · Hour · Day of month · Month · Day of week
+                {t(
+                  "schedule_edit.minute_hour_day_of_month_month_day_of_week",
+                  "Minute · Hour · Day of month · Month · Day of week",
+                )}
               </p>
             </details>
             <Can action={"schedule.update"}>
               <div className={"mt-5 flex flex-wrap gap-3"}>
                 <Button.Text onClick={() => setShowEditModal(true)}>
-                  Edit timing
+                  {t("schedule_edit.edit_timing", "Edit timing")}
                 </Button.Text>
                 {(schedule.tasks.length > 0 || schedule.isActive) && (
                   <Button.Text
@@ -169,10 +194,10 @@ export default () => {
                     onClick={toggleAutomaticRuns}
                   >
                     {savingStatus
-                      ? "Saving…"
+                      ? t("schedule_edit.saving", "Saving…")
                       : schedule.isActive
-                        ? "Pause schedule"
-                        : "Enable schedule"}
+                        ? t("schedule_edit.pause_schedule", "Pause schedule")
+                        : t("schedule_edit.enable_schedule", "Enable schedule")}
                   </Button.Text>
                 )}
                 {schedule.tasks.length > 0 && (
@@ -182,10 +207,14 @@ export default () => {
             </Can>
           </div>
           <div className={"mt-6"}>
-            <h3 className={"mb-2 text-lg"}>Steps</h3>
+            <h3 className={"mb-2 text-lg"}>
+              {t("schedule_edit.steps", "Steps")}
+            </h3>
             <p className={"mb-4 text-sm text-neutral-400"}>
-              Actions are sent in order. Add a wait between steps to give a
-              restart or backup time to finish.
+              {t(
+                "schedule_edit.actions_are_sent_in_order_add_a_wait_between_steps",
+                "Actions are sent in order. Add a wait between steps to give a restart or backup time to finish.",
+              )}
             </p>
             <div className={"rounded bg-neutral-700"}>
               {schedule.tasks.length > 0 ? (
@@ -201,15 +230,25 @@ export default () => {
                   ))
               ) : (
                 <div className={"p-6 text-center"}>
-                  <h4 className={"text-lg"}>Add the first step</h4>
+                  <h4 className={"text-lg"}>
+                    {t(
+                      "schedule_edit.add_the_first_step",
+                      "Add the first step",
+                    )}
+                  </h4>
                   <p className={"mt-2 mb-5 text-sm text-neutral-300"}>
-                    The timing is saved. Choose a restart, a backup, or a
-                    console command to give this schedule something to do.
+                    {t(
+                      "schedule_edit.the_timing_is_saved_choose_a_restart_a_backup_or",
+                      "The timing is saved. Choose a restart, a backup, or a console command to give this schedule something to do.",
+                    )}
                   </p>
                   <Can action={"schedule.update"}>
                     <NewTaskButton
                       schedule={schedule}
-                      label={"Add first step"}
+                      label={t(
+                        "schedule_edit.add_first_step",
+                        "Add first step",
+                      )}
                     />
                   </Can>
                 </div>
@@ -236,8 +275,10 @@ export default () => {
           </div>
           {schedule.tasks.length > 0 && (
             <p className={"mt-3 text-sm text-neutral-400 sm:text-right"}>
-              Run now works even when automatic runs are paused. It still
-              respects the offline setting.
+              {t(
+                "schedule_edit.run_now_works_even_when_automatic_runs_are_paused_it",
+                "Run now works even when automatic runs are paused. It still respects the offline setting.",
+              )}
             </p>
           )}
           <AfterEdit />

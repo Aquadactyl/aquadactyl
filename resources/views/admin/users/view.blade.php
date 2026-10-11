@@ -56,6 +56,7 @@
                         <label class="control-label">Default Language</label>
                         <div>
                             <select name="language" class="form-control">
+                                <option value="auto" @if($user->language === 'auto') selected @endif>{{ __('panel.language.automatic') }}</option>
                                 @foreach($languages as $key => $value)
                                     <option value="{{ $key }}" @if($user->language === $key) selected @endif>{{ $value }}</option>
                                 @endforeach

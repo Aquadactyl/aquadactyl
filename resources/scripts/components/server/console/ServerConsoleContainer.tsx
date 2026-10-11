@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { memo } from "react";
 import { ServerContext } from "@/state/server";
 import Can from "@/components/elements/Can";
@@ -17,6 +18,7 @@ import AfterContent from "@blueprint/components/Server/Terminal/AfterContent";
 export type PowerAction = "start" | "stop" | "restart" | "kill";
 
 const ServerConsoleContainer = () => {
+  const { t } = usePanelTranslation();
   const name = ServerContext.useStoreState((state) => state.server.data!.name);
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const description = ServerContext.useStoreState(
@@ -37,14 +39,23 @@ const ServerConsoleContainer = () => {
   );
 
   return (
-    <ServerContentBlock title={"Console"}>
+    <ServerContentBlock title={t("console.console", "Console")}>
       {(isNodeUnderMaintenance || isInstalling || isTransferring) && (
         <Alert type={"warning"} className={"mb-4"}>
           {isNodeUnderMaintenance
-            ? "The node of this server is currently under maintenance and all actions are unavailable."
+            ? t(
+                "console.the_node_of_this_server_is_currently_under_maintenance_and",
+                "The node of this server is currently under maintenance and all actions are unavailable.",
+              )
             : isInstalling
-              ? "This server is currently running its installation process and most actions are unavailable."
-              : "This server is currently being transferred to another node and all actions are unavailable."}
+              ? t(
+                  "console.this_server_is_currently_running_its_installation_process_and_most",
+                  "This server is currently running its installation process and most actions are unavailable.",
+                )
+              : t(
+                  "console.this_server_is_currently_being_transferred_to_another_node_and",
+                  "This server is currently being transferred to another node and all actions are unavailable.",
+                )}
         </Alert>
       )}
       <BeforeContent />
@@ -59,7 +70,7 @@ const ServerConsoleContainer = () => {
           </h1>
           <p
             className={"mb-1 font-mono text-xs break-all text-gray-400"}
-            title={"Server UUID"}
+            title={t("console.server_uuid", "Server UUID")}
           >
             {uuid}
           </p>

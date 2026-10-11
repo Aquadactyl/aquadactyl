@@ -36,6 +36,7 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
     Route::post('/avatar', [Client\AccountAvatarController::class, 'store'])->name('api:client.account.update-avatar');
     Route::delete('/avatar', [Client\AccountAvatarController::class, 'destroy'])->name('api:client.account.remove-avatar');
     Route::put('/privacy', [Client\AccountPrivacyController::class, 'update'])->name('api:client.account.update-privacy');
+    Route::put('/language', [Client\AccountLanguageController::class, 'update'])->name('api:client.account.update-language');
 
     Route::get('/activity', Client\ActivityLogController::class)->name('api:client.account.activity');
 

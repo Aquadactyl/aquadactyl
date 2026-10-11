@@ -49,6 +49,9 @@ docker compose up -d --no-build --no-deps --wait --wait-timeout 180 panel
 The image compiles fresh Vite assets into `public/build/` and includes the Node
 dependencies needed for Blueprint rebuilds and game queries. Local build output
 and the Vite development server marker are excluded from the Docker build context.
+Docker reuses frontend layers after backend-only edits and retains dependency
+downloads in BuildKit caches. See [performance notes](docs/PERFORMANCE.md) for
+measurements and caching details.
 
 Blueprint addon installation and removal each use one command. Put the package
 in `/app` and, from a root shell inside the panel container, run:
@@ -189,7 +192,7 @@ an extension and rebuilds those assets.
 
 See the [Blueprint guide](https://aquadactyl.uk/docs/blueprint) for installing
 extensions and [addon development](docs/ADDONS.md) for available libraries, imports
-and dependency conventions. Use the panel's React 16.14 runtime when building addons.
+and dependency conventions. Use the panel's React 19 runtime when building addons.
 
 ## Hot module reloading
 

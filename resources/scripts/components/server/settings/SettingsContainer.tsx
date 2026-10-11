@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React from "react";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import { ServerContext } from "@/state/server";
@@ -18,6 +19,7 @@ import BeforeContent from "@blueprint/components/Server/Settings/BeforeContent";
 import AfterContent from "@blueprint/components/Server/Settings/AfterContent";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const username = useAppStore((state) => state.user.data!.username);
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -28,15 +30,18 @@ export default () => {
   );
 
   return (
-    <ServerContentBlock title={"Settings"}>
+    <ServerContentBlock title={t("settings.settings", "Settings")}>
       <FlashMessageRender byKey={"settings"} className={"mb-4"} />
       <BeforeContent />
       <div className={"md:flex"}>
         <div className={"w-full md:mr-10 md:flex-1"}>
           <Can action={"file.sftp"}>
-            <TitledGreyBox title={"SFTP Details"} className={"mb-6 md:mb-10"}>
+            <TitledGreyBox
+              title={t("settings.sftp_details", "SFTP Details")}
+              className={"mb-6 md:mb-10"}
+            >
               <div>
-                <Label>Server Address</Label>
+                <Label>{t("settings.server_address", "Server Address")}</Label>
                 <CopyOnClick text={`sftp://${ip(sftp.ip)}:${sftp.port}`}>
                   <Input
                     data-sensitive
@@ -47,7 +52,7 @@ export default () => {
                 </CopyOnClick>
               </div>
               <div className={"mt-6"}>
-                <Label>Username</Label>
+                <Label>{t("settings.username", "Username")}</Label>
                 <CopyOnClick text={`${username}.${id}`}>
                   <Input
                     data-sensitive
@@ -61,8 +66,10 @@ export default () => {
                 <div className={"flex-1"}>
                   <div className={"border-l-4 border-cyan-500 p-3"}>
                     <p className={"text-xs text-neutral-200"}>
-                      Your SFTP password is the same as the password you use to
-                      access this panel.
+                      {t(
+                        "settings.your_sftp_password_is_the_same_as_the_password_you",
+                        "Your SFTP password is the same as the password you use to access this panel.",
+                      )}
                     </p>
                   </div>
                 </div>
@@ -71,7 +78,7 @@ export default () => {
                     href={`sftp://${username}.${id}@${ip(sftp.ip)}:${sftp.port}`}
                   >
                     <Button.Text variant={Button.Variants.Secondary}>
-                      Launch SFTP
+                      {t("settings.launch_sftp", "Launch SFTP")}
                     </Button.Text>
                   </a>
                 </div>
@@ -79,18 +86,18 @@ export default () => {
             </TitledGreyBox>
           </Can>
           <TitledGreyBox
-            title={"Debug Information"}
+            title={t("settings.debug_information", "Debug Information")}
             className={"mb-6 md:mb-10"}
           >
             <div className={"flex items-center justify-between text-sm"}>
-              <p>Node</p>
+              <p>{t("settings.node", "Node")}</p>
               <code className={"rounded bg-neutral-900 px-2 py-1 font-mono"}>
                 {node}
               </code>
             </div>
             <CopyOnClick text={uuid}>
               <div className={"mt-2 flex items-center justify-between text-sm"}>
-                <p>Server ID</p>
+                <p>{t("settings.server_id", "Server ID")}</p>
                 <code className={"rounded bg-neutral-900 px-2 py-1 font-mono"}>
                   {uuid}
                 </code>

@@ -1,4 +1,5 @@
 import React from "react";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import { useTanStackQuery } from "@/lib/queryClient";
 import http from "@/api/http";
 import { NavLink, Route, Routes, useLocation, useParams } from "react-router";
@@ -52,6 +53,7 @@ const useExtensionEggs = () => {
 };
 
 export const NavigationLinks = () => {
+  const { t } = usePanelTranslation();
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
   const serverEgg = ServerContext.useStoreState(
     (state) => state.server.data?.BlueprintFramework.eggId,
@@ -74,12 +76,12 @@ export const NavigationLinks = () => {
           route.permission ? (
             <Can key={route.path} action={route.permission} matchAny>
               <NavLink to={to(route.path)} end={route.exact}>
-                {route.name}
+                {t(`navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`, route.name ?? "")}
               </NavLink>
             </Can>
           ) : (
             <NavLink key={route.path} to={to(route.path)} end={route.exact}>
-              {route.name}
+              {t(`navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`, route.name ?? "")}
             </NavLink>
           ),
         )}

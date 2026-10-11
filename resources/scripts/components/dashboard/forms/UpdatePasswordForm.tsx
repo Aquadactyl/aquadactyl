@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React from "react";
 import { useAppStore } from "@/state";
 import { useForm } from "react-hook-form";
@@ -24,6 +25,7 @@ const schema = z
 type Values = z.infer<typeof schema>;
 
 export default () => {
+  const { t } = usePanelTranslation();
   const user = useAppStore((state) => state.user.data);
   const { clearFlashes, addFlash } = useFlash();
 
@@ -67,7 +69,7 @@ export default () => {
         <FormField
           id={"current_password"}
           type={"password"}
-          label={"Current Password"}
+          label={t("password.current_password", "Current Password")}
           disabled={isSubmitting}
           error={errors.current}
           {...register("current")}
@@ -76,10 +78,11 @@ export default () => {
           <FormField
             id={"new_password"}
             type={"password"}
-            label={"New Password"}
-            description={
-              "Your new password should be at least 8 characters in length and unique to this website."
-            }
+            label={t("password.new_password", "New Password")}
+            description={t(
+              "password.your_new_password_should_be_at_least_8_characters_in",
+              "Your new password should be at least 8 characters in length and unique to this website.",
+            )}
             disabled={isSubmitting}
             error={errors.password}
             {...register("password")}
@@ -89,14 +92,16 @@ export default () => {
           <FormField
             id={"confirm_new_password"}
             type={"password"}
-            label={"Confirm New Password"}
+            label={t("password.confirm_new_password", "Confirm New Password")}
             disabled={isSubmitting}
             error={errors.confirmPassword}
             {...register("confirmPassword")}
           />
         </div>
         <div className={"mt-6"}>
-          <Button disabled={isSubmitting || !isValid}>Update Password</Button>
+          <Button disabled={isSubmitting || !isValid}>
+            {t("password.update_password", "Update Password")}
+          </Button>
         </div>
       </form>
     </>

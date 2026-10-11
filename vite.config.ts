@@ -45,23 +45,6 @@ export default defineConfig({
     emptyOutDir: true,
     cssMinify: "lightningcss",
     chunkSizeWarningLimit: 1200,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes("node_modules")) {
-            if (id.includes("@codemirror")) {
-              return "codemirror";
-            }
-            if (id.includes("@xterm")) {
-              return "xterm";
-            }
-            if (id.includes("chart.js") || id.includes("react-chartjs-2")) {
-              return "charts";
-            }
-          }
-        },
-      },
-    },
   },
   resolve: {
     alias: {

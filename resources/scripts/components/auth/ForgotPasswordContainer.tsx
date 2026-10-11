@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import requestPasswordResetEmail from "@/api/auth/requestPasswordResetEmail";
@@ -22,6 +23,7 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 
 export default () => {
+  const { t } = usePanelTranslation();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
 
@@ -92,15 +94,19 @@ export default () => {
 
   return (
     <LoginFormContainer
-      title={"Request Password Reset"}
+      title={t(
+        "forgot_password.request_password_reset",
+        "Request Password Reset",
+      )}
       className={"flex w-full"}
       onSubmit={handleSubmit(handleSubmission)}
     >
       <FormField
-        label={"Email"}
-        description={
-          "Enter your account email address to receive instructions on resetting your password."
-        }
+        label={t("forgot_password.email", "Email")}
+        description={t(
+          "forgot_password.enter_your_account_email_address_to_receive_instructions_on_resetting",
+          "Enter your account email address to receive instructions on resetting your password.",
+        )}
         type={"email"}
         disabled={isSubmitting}
         error={errors.email}
@@ -113,7 +119,7 @@ export default () => {
           disabled={isSubmitting}
           isLoading={isSubmitting}
         >
-          Send Email
+          {t("forgot_password.send_email", "Send Email")}
         </Button>
       </div>
       {recaptchaEnabled && (
@@ -137,7 +143,7 @@ export default () => {
             "text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200"
           }
         >
-          Return to Login
+          {t("forgot_password.return_to_login", "Return to Login")}
         </Link>
       </div>
     </LoginFormContainer>

@@ -159,7 +159,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $attributes = [
         'external_id' => null,
         'root_admin' => false,
-        'language' => 'en',
+        'language' => 'auto',
         'use_totp' => false,
         'totp_secret' => null,
         'blur_sensitive_data' => false,
@@ -192,7 +192,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = parent::getRules();
 
-        $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
+        $rules['language'][] = new In(['auto', ...array_keys((new self())->getAvailableLanguages())]);
         $rules['username'][] = new Username();
 
         return $rules;
