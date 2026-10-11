@@ -1,166 +1,175 @@
-import {
-  Chart as ChartJS,
-  ChartData,
-  ChartDataset,
-  ChartOptions,
-  Filler,
-  LinearScale,
-  LineElement,
-  PointElement,
-} from "chart.js";
-import { DeepPartial } from "ts-essentials";
-import { useState } from "react";
-import { deepmerge, deepmergeCustom } from "deepmerge-ts";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import uPlot from "uplot";
+import "uplot/dist/uPlot.min.css";
 import { theme } from "@/lib/theme";
 import { hexToRgba } from "@/lib/helpers";
+import clsx from "clsx";
 
-ChartJS.register(LineElement, PointElement, Filler, LinearScale);
-
-const options: ChartOptions<"line"> = {
-  responsive: true,
-  animation: false,
-  plugins: {
-    legend: { display: false },
-    title: { display: false },
-    tooltip: { enabled: false },
-  },
-  layout: {
-    padding: 0,
-  },
-  scales: {
-    x: {
-      min: 0,
-      max: 19,
-      type: "linear",
-      grid: {
-        display: false,
-      },
-      border: {
-        display: false,
-      },
-      ticks: {
-        display: false,
-      },
-    },
-    y: {
-      min: 0,
-      type: "linear",
-      grid: {
-        display: true,
-        color: theme("colors.gray.700"),
-      },
-      border: {
-        display: false,
-      },
-      ticks: {
-        display: true,
-        count: 3,
-        color: theme("colors.gray.200"),
-        font: {
-          family: theme("fontFamily.sans"),
-          size: 11,
-          weight: 400,
-        },
-      },
-    },
-  },
-  elements: {
-    point: {
-      radius: 0,
-    },
-    line: {
-      tension: 0.15,
-    },
-  },
-};
-
-function getOptions(
-  opts?: DeepPartial<ChartOptions<"line">> | undefined,
-): ChartOptions<"line"> {
-  return deepmerge(options, opts || {});
+export interface UPlotChartProps {
+  options: uPlot.Options;
+  data: uPlot.AlignedData | number[][];
+  className?: string;
 }
 
-type ChartDatasetCallback = (
-  value: ChartDataset<"line">,
-  index: number,
-) => ChartDataset<"line">;
+export function UPlotChart({ options, data, className }: UPlotChartProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const chartRef = useRef<uPlot | null>(null);
+  const height = (options.height as number) || 160;
 
-function getEmptyData(
-  label: string,
-  sets = 1,
-  callback?: ChartDatasetCallback | undefined,
-): ChartData<"line"> {
-  const next = callback || ((value) => value);
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const width = containerRef.current.clientWidth || 300;
+    const chart = new uPlot(
+      { ...options, width, height },
+      data as uPlot.AlignedData,
+      containerRef.current,
+    );
+    chartRef.current = chart;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const w = entry.contentRect.width;
+        if (w > 0 && chartRef.current) {
+          chartRef.current.setSize({
+            width: Math.floor(w),
+            height,
+          });
+        }
+      }
+    });
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+      chart.destroy();
+      chartRef.current = null;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (chartRef.current) {
+      chartRef.current.setData(data as uPlot.AlignedData);
+    }
+  }, [data]);
+
+  return (
+    <div
+      ref={containerRef}
+      className={clsx("w-full overflow-hidden", className)}
+      style={{ height, minHeight: height }}
+    />
+  );
+}
+
+export interface UseChartSeriesOption {
+  label?: string;
+  stroke?: string;
+  fill?: string;
+}
+
+export interface UseChartOptions {
+  sets?: number;
+  suggestedMax?: number;
+  formatTick?: (value: number) => string;
+  series?: UseChartSeriesOption[];
+}
+
+const X_SERIES = Array.from({ length: 20 }, (_, i) => i);
+
+export function useChart(label: string, opts?: UseChartOptions) {
+  const sets = opts?.sets || 1;
+  const suggestedMax = opts?.suggestedMax;
+  const formatTick = opts?.formatTick;
+  const seriesProp = opts?.series;
+
+  const [data, setData] = useState<number[][]>(() => [
+    X_SERIES,
+    ...Array.from({ length: sets }, () => Array(20).fill(0)),
+  ]);
+
+  const series = useMemo(() => {
+    if (seriesProp && seriesProp.length > 0) return seriesProp;
+    return [
+      {
+        label,
+        stroke: theme("colors.cyan.400"),
+        fill: hexToRgba(theme("colors.cyan.700"), 0.5),
+      },
+    ];
+  }, [label, seriesProp]);
+
+  const options = useMemo<uPlot.Options>(() => {
+    return {
+      width: 300,
+      height: 160,
+      legend: { show: false },
+      cursor: { show: false },
+      padding: [10, 10, 10, 0],
+      scales: {
+        x: { time: false },
+        y: {
+          range: (u, min, max) => [
+            0,
+            Math.max(suggestedMax || 0, max > 0 ? max : 1),
+          ],
+        },
+      },
+      axes: [
+        { show: false },
+        {
+          show: true,
+          stroke: theme("colors.gray.200"),
+          grid: {
+            stroke: theme("colors.gray.700"),
+            width: 1,
+          },
+          ticks: { show: false },
+          size: 55,
+          font: `11px ${theme("fontFamily.sans")}`,
+          values: (u, splits) =>
+            splits.map((val) => (formatTick ? formatTick(val) : String(val))),
+        },
+      ],
+      series: [
+        {},
+        ...series.map((s) => ({
+          label: s.label || label,
+          stroke: s.stroke || theme("colors.cyan.400"),
+          fill: s.fill || hexToRgba(theme("colors.cyan.700"), 0.5),
+          width: 1.5,
+          points: { show: false },
+        })),
+      ],
+    };
+  }, [label, suggestedMax, formatTick, series]);
+
+  const push = React.useCallback((items: number | null | (number | null)[]) => {
+    const list = Array.isArray(items) ? items : [items];
+    setData((prev) => {
+      const nextSeries = prev.slice(1).map((arr, idx) => {
+        const val = list[idx] ?? 0;
+        const num = typeof val === "number" ? Number(val.toFixed(2)) : 0;
+        return [...arr.slice(1), num];
+      });
+      return [prev[0], ...nextSeries];
+    });
+  }, []);
+
+  const clear = React.useCallback(() => {
+    setData([
+      X_SERIES,
+      ...Array.from({ length: sets }, () => Array(20).fill(0)),
+    ]);
+  }, [sets]);
 
   return {
-    labels: Array(20)
-      .fill(0)
-      .map((_, index) => index),
-    datasets: Array(sets)
-      .fill(0)
-      .map((_, index) =>
-        next(
-          {
-            fill: true,
-            label,
-            data: Array(20).fill(-5),
-            borderColor: theme("colors.cyan.400"),
-            backgroundColor: hexToRgba(theme("colors.cyan.700"), 0.5),
-          },
-          index,
-        ),
-      ),
+    props: { data, options },
+    push,
+    clear,
   };
 }
 
-const merge = deepmergeCustom({ mergeArrays: false });
-
-interface UseChartOptions {
-  sets: number;
-  options?: DeepPartial<ChartOptions<"line">> | number | undefined;
-  callback?: ChartDatasetCallback | undefined;
-}
-
-function useChart(label: string, opts?: UseChartOptions) {
-  const options = getOptions(
-    typeof opts?.options === "number"
-      ? { scales: { y: { min: 0, suggestedMax: opts.options } } }
-      : opts?.options,
-  );
-  const [data, setData] = useState(
-    getEmptyData(label, opts?.sets || 1, opts?.callback),
-  );
-
-  const push = (items: number | null | (number | null)[]) =>
-    setData((state) =>
-      merge(state, {
-        datasets: (Array.isArray(items) ? items : [items]).map(
-          (item, index) => ({
-            ...state.datasets[index],
-            data: state.datasets[index].data
-              .slice(1)
-              .concat(
-                typeof item === "number" ? Number(item.toFixed(2)) : item,
-              ),
-          }),
-        ),
-      }),
-    );
-
-  const clear = () =>
-    setData((state) =>
-      merge(state, {
-        datasets: state.datasets.map((value) => ({
-          ...value,
-          data: Array(20).fill(-5),
-        })),
-      }),
-    );
-
-  return { props: { data, options }, push, clear };
-}
-
-function useChartTickLabel(
+export function useChartTickLabel(
   label: string,
   max: number,
   tickLabel: string,
@@ -168,19 +177,8 @@ function useChartTickLabel(
 ) {
   return useChart(label, {
     sets: 1,
-    options: {
-      scales: {
-        y: {
-          suggestedMax: max,
-          ticks: {
-            callback(value) {
-              return `${roundTo ? Number(value).toFixed(roundTo) : value}${tickLabel}`;
-            },
-          },
-        },
-      },
-    },
+    suggestedMax: max,
+    formatTick: (value) =>
+      `${roundTo !== undefined ? Number(value).toFixed(roundTo) : Math.round(value)}${tickLabel}`,
   });
 }
-
-export { useChart, useChartTickLabel, getOptions, getEmptyData };

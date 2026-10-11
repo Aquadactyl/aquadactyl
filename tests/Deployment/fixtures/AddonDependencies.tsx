@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { create } from "zustand";
-import Select from "react-select";
+import Select from "../../../resources/scripts/components/elements/Select.tsx";
 import { debounce } from "es-toolkit";
 
 const schema = z.object({ label: z.string().min(1) });
@@ -25,7 +25,9 @@ export default function AddonDependencies() {
       <Settings size={16} />
       {label}
       <input {...register("label")} aria-label="Addon label" />
-      <Select options={[{ value: label, label }]} onChange={onChange} />
+      <Select onChange={onChange}>
+        <option value={label}>{label}</option>
+      </Select>
     </span>
   );
 }
