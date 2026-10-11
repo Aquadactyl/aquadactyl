@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect } from "react";
 import ContentBox from "@/components/elements/ContentBox";
@@ -17,6 +18,7 @@ import BeforeContent from "@blueprint/components/Account/SSH/BeforeContent";
 import AfterContent from "@blueprint/components/Account/SSH/AfterContent";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const { clearAndAddHttpError } = useFlashKey("account");
   const { data, isValidating, error } = useSSHKeys({
     revalidateOnMount: true,
@@ -28,24 +30,29 @@ export default () => {
   }, [error]);
 
   return (
-    <PageContentBlock title={"SSH Keys"}>
+    <PageContentBlock title={t("ssh.ssh_keys", "SSH Keys")}>
       <FlashMessageRender byKey={"account"} />
       <BeforeContent />
       <div className={"my-10 flex-nowrap md:flex"}>
         <ContentBox
-          title={"Add SSH Key"}
+          title={t("ssh.add_ssh_key", "Add SSH Key")}
           className={"w-full flex-none md:w-1/2"}
         >
           <CreateSSHKeyForm />
         </ContentBox>
         <ContentBox
-          title={"SSH Keys"}
+          title={t("ssh.ssh_keys", "SSH Keys")}
           className={"mt-8 flex-1 overflow-hidden md:mt-0 md:ml-8"}
         >
           <SpinnerOverlay visible={!data && isValidating} />
           {!data || !data.length ? (
             <p className={"text-center text-sm"}>
-              {!data ? "Loading..." : "No SSH Keys exist for this account."}
+              {!data
+                ? t("ssh.loading", "Loading...")
+                : t(
+                    "ssh.no_ssh_keys_exist_for_this_account",
+                    "No SSH Keys exist for this account.",
+                  )}
             </p>
           ) : (
             data.map((key, index) => (
@@ -62,10 +69,13 @@ export default () => {
                     {key.name}
                   </p>
                   <p className={"mt-1 truncate font-mono text-xs"}>
-                    <SensitiveValue>SHA256:{key.fingerprint}</SensitiveValue>
+                    <SensitiveValue>
+                      {t("ssh.sha256", "SHA256:")}
+                      {key.fingerprint}
+                    </SensitiveValue>
                   </p>
                   <p className={"mt-1 text-xs text-neutral-300 uppercase"}>
-                    Added on:&nbsp;
+                    {t("ssh.added_on_nbsp", "Added on:&nbsp;")}
                     {format(key.createdAt, "MMM do, yyyy HH:mm")}
                   </p>
                 </div>

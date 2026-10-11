@@ -4,8 +4,8 @@ namespace Pterodactyl\Http\Controllers\Auth;
 
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Exceptions\DisplayException;
-use Pterodactyl\Services\Users\UserCreationService;
 use Pterodactyl\Http\Requests\Auth\RegisterRequest;
+use Pterodactyl\Services\Users\UserCreationService;
 
 class RegisterController extends AbstractLoginController
 {
@@ -31,7 +31,7 @@ class RegisterController extends AbstractLoginController
         $data = $request->normalize();
         $data['root_admin'] = false;
         if (empty($data['language'])) {
-            $data['language'] = config('app.locale', 'en');
+            $data['language'] = 'auto';
         }
 
         $user = $this->creationService->handle($data);
@@ -39,4 +39,3 @@ class RegisterController extends AbstractLoginController
         return $this->sendLoginResponse($user, $request);
     }
 }
-

@@ -1,12 +1,21 @@
+# syntax=docker/dockerfile:1
+
 # Stage 0:
 # Build frontend assets and retain the dependency tree used by Blueprint for
 # extension installs and rebuilds at runtime.
 FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend
 WORKDIR /app
-RUN npm install --global pnpm@12.10.1
+RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
+    npm install --global pnpm@12.10.1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile
-COPY . ./
+RUN --mount=type=cache,id=aquadactyl-pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile --store-dir /pnpm/store
+# Backend and documentation edits do not invalidate the frontend build.
+COPY vite.config.ts tsconfig.json ./
+COPY resources ./resources
+COPY public ./public
+# Blueprint links addon components, styles and views into resources/.
+COPY .blueprint/extensions ./.blueprint/extensions
 RUN pnpm run build
 
 # Stage 1:
@@ -15,7 +24,8 @@ FROM --platform=$TARGETOS/$TARGETARCH php:8.5-fpm-alpine
 WORKDIR /app
 ENV TERM=xterm
 
-RUN apk add --no-cache --update \
+RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
+    apk add --no-cache --update \
         bash \
         ca-certificates \
         certbot \
@@ -29,6 +39,8 @@ RUN apk add --no-cache --update \
         libwebp-dev \
         libxml2-dev \
         libzip-dev \
+        musl-locales \
+        musl-locales-lang \
         mysql-client \
         ncurses \
         nginx \
@@ -46,7 +58,9 @@ RUN apk add --no-cache --update \
     && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-interaction --no-scripts --no-autoloader
+RUN --mount=type=cache,id=aquadactyl-composer,target=/tmp/composer-cache \
+    COMPOSER_CACHE_DIR=/tmp/composer-cache \
+    composer install --no-dev --no-interaction --no-scripts --no-autoloader --prefer-dist --no-progress
 
 COPY --chown=nginx:nginx . ./
 COPY --from=frontend --chown=nginx:nginx /app/public/assets ./public/assets
@@ -56,8 +70,9 @@ COPY --from=frontend --chown=nginx:nginx /app/node_modules ./node_modules
 RUN cp .env.example .env \
     && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
     && chmod 777 -R bootstrap storage \
-    && CACHE_STORE=array CACHE_DRIVER=array SESSION_DRIVER=array QUEUE_CONNECTION=sync \
-       composer install --no-dev --no-interaction --optimize-autoloader \
+    && export CACHE_STORE=array CACHE_DRIVER=array SESSION_DRIVER=array QUEUE_CONNECTION=sync \
+    && composer dump-autoload --no-dev --no-interaction --optimize \
+    && composer run-script --no-dev --no-interaction post-install-cmd \
     && rm -rf .env bootstrap/cache/*.php \
     && chown nginx:nginx /app \
     && chown -R nginx:nginx vendor bootstrap/cache storage
@@ -74,6 +89,7 @@ RUN rm /usr/local/etc/php-fpm.conf \
 COPY .github/docker/default.conf /etc/nginx/http.d/default.conf
 COPY .github/docker/www.conf /usr/local/etc/php-fpm.conf
 COPY .github/docker/supervisord.conf /etc/supervisord.conf
+COPY deploy/php/99-panel.ini /usr/local/etc/php/conf.d/99-panel.ini
 
 EXPOSE 80 443
 ENTRYPOINT ["/bin/ash", ".github/docker/entrypoint.sh"]

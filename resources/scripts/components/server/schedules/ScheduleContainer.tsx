@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import getServerSchedules from "@/api/server/schedules/getServerSchedules";
 import { ServerContext } from "@/state/server";
@@ -17,6 +18,7 @@ import BeforeContent from "@blueprint/components/Server/Schedules/List/BeforeCon
 import AfterContent from "@blueprint/components/Server/Schedules/List/AfterContent";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -47,7 +49,7 @@ export default () => {
   }, []);
 
   return (
-    <ServerContentBlock title={"Schedules"}>
+    <ServerContentBlock title={t("schedules.schedules", "Schedules")}>
       <FlashMessageRender byKey={"schedules"} className={"mb-4"} />
       {!schedules.length && loading ? (
         <Spinner size={"large"} centered />
@@ -55,13 +57,17 @@ export default () => {
         <>
           <BeforeContent />
           <p className={"mb-6 text-sm text-neutral-300"}>
-            Automate restarts, backups, and console commands. Choose when to
-            run, then add the steps to follow.
+            {t(
+              "schedules.automate_restarts_backups_and_console_commands_choose_when_to_run",
+              "Automate restarts, backups, and console commands. Choose when to run, then add the steps to follow.",
+            )}
           </p>
           {schedules.length === 0 ? (
             <p className={"text-center text-sm text-neutral-300"}>
-              No schedules yet. Create one to automate a daily restart or a
-              regular backup.
+              {t(
+                "schedules.no_schedules_yet_create_one_to_automate_a_daily_restart",
+                "No schedules yet. Create one to automate a daily restart or a regular backup.",
+              )}
             </p>
           ) : (
             schedules.map((schedule) => (
@@ -89,7 +95,7 @@ export default () => {
                 }
               />
               <Button type={"button"} onClick={() => setVisible(true)}>
-                Create schedule
+                {t("schedules.create_schedule", "Create schedule")}
               </Button>
             </div>
           </Can>

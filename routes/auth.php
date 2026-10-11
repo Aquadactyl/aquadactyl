@@ -19,11 +19,18 @@ Route::get('/register', [Auth\LoginController::class, 'index'])->name('auth.regi
 Route::get('/password', [Auth\LoginController::class, 'index'])->name('auth.forgot-password');
 Route::get('/password/reset/{token}', [Auth\LoginController::class, 'index'])->name('auth.reset');
 
+Route::get('/methods', [Auth\SignInMethodController::class, 'index']);
+Route::get('/oauth/{provider}', [Auth\OAuthController::class, 'redirect'])->middleware('throttle:authentication');
+Route::get('/oauth/{provider}/callback', [Auth\OAuthController::class, 'callback'])
+    ->withoutMiddleware('guest')->middleware('throttle:authentication');
+
 // Apply a throttle to authentication action endpoints, in addition to the
 // recaptcha endpoints to slow down manual attack spammers even more. 🤷‍
 //
 // @see \Pterodactyl\Providers\RouteServiceProvider
 Route::middleware(['throttle:authentication'])->group(function () {
+    Route::post('/passkeys/options', [Auth\SignInMethodController::class, 'options']);
+    Route::post('/passkeys/login', [Auth\SignInMethodController::class, 'authenticate']);
     // Login endpoints.
     Route::post('/login', [Auth\LoginController::class, 'login'])->middleware('recaptcha');
     Route::post('/login/checkpoint', Auth\LoginCheckpointController::class)->name('auth.login-checkpoint');

@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useContext, useEffect, useState } from "react";
 import asDialog from "@/hoc/asDialog";
 import { Dialog, DialogWrapperContext } from "@/components/elements/dialog";
@@ -11,6 +12,7 @@ import FlashMessageRender from "@/components/FlashMessageRender";
 import Label from "@/components/elements/Label";
 
 const DisableTOTPDialog = () => {
+  const { t } = usePanelTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [password, setPassword] = useState("");
   const { clearAndAddHttpError } = useFlashKey("account:two-step");
@@ -41,7 +43,9 @@ const DisableTOTPDialog = () => {
   return (
     <form id={"disable-totp-form"} className={"mt-6"} onSubmit={submit}>
       <FlashMessageRender byKey={"account:two-step"} className={"-mt-2 mb-6"} />
-      <Label htmlFor={"totp-password"}>Password</Label>
+      <Label htmlFor={"totp-password"}>
+        {t("two_factor_disable.password", "Password")}
+      </Label>
       <Input.Text
         id={"totp-password"}
         type={"password"}
@@ -53,18 +57,23 @@ const DisableTOTPDialog = () => {
         }
       />
       <Dialog.Footer>
-        <Button.Text onClick={close}>Cancel</Button.Text>
+        <Button.Text onClick={close}>
+          {t("two_factor_disable.cancel", "Cancel")}
+        </Button.Text>
         <Tooltip
           delay={100}
           disabled={password.length > 0}
-          content={"You must enter your account password to continue."}
+          content={t(
+            "two_factor_disable.you_must_enter_your_account_password_to_continue",
+            "You must enter your account password to continue.",
+          )}
         >
           <Button.Danger
             type={"submit"}
             form={"disable-totp-form"}
             disabled={submitting || !password.length}
           >
-            Disable
+            {t("two_factor_disable.disable", "Disable")}
           </Button.Danger>
         </Tooltip>
       </Dialog.Footer>

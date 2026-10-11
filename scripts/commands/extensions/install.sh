@@ -1144,9 +1144,8 @@ InstallExtension() {
     echo -e -n "@import url(./imported/$identifier.css);" >> "resources/scripts/blueprint/css/extensions.css"
 
     cp ".blueprint/tmp/$dashboard_css" ".blueprint/extensions/$identifier/dashboard.css"
-    if [[ $DUPLICATE != "y" ]]; then
-      ln -s -r -T ".blueprint/extensions/$identifier/dashboard.css" "$FOLDER/resources/scripts/blueprint/css/imported/$identifier.css"
-    fi
+    # Updates can introduce a dashboard stylesheet for the first time.
+    ln -s -r -f -T ".blueprint/extensions/$identifier/dashboard.css" "$FOLDER/resources/scripts/blueprint/css/imported/$identifier.css"
   fi
 
   ((PROGRESS_NOW++))

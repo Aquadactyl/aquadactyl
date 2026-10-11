@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import registerApi from "@/api/auth/register";
@@ -45,6 +46,7 @@ const schema = z
 type Values = z.infer<typeof schema>;
 
 const RegisterContainer = () => {
+  const { t } = usePanelTranslation();
   const navigate = useNavigate();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
@@ -123,13 +125,16 @@ const RegisterContainer = () => {
 
   return (
     <LoginFormContainer
-      title={"Create an account"}
-      description={"Sign up to start managing your servers."}
+      title={t("register.create_an_account", "Create an account")}
+      description={t(
+        "register.sign_up_to_start_managing_your_servers",
+        "Sign up to start managing your servers.",
+      )}
       onSubmit={handleSubmit(onSubmit)}
     >
       <FormField
         type={"text"}
-        label={"Username"}
+        label={t("register.username", "Username")}
         autoComplete={"username"}
         autoCapitalize={"none"}
         spellCheck={false}
@@ -140,7 +145,7 @@ const RegisterContainer = () => {
       <div className={"mt-5"}>
         <FormField
           type={"email"}
-          label={"Email address"}
+          label={t("register.email_address", "Email address")}
           autoComplete={"email"}
           autoCapitalize={"none"}
           spellCheck={false}
@@ -152,7 +157,7 @@ const RegisterContainer = () => {
       <div className={"mt-5 grid grid-cols-2 gap-4"}>
         <FormField
           type={"text"}
-          label={"First name"}
+          label={t("register.first_name", "First name")}
           autoComplete={"given-name"}
           disabled={isSubmitting}
           error={errors.name_first}
@@ -160,7 +165,7 @@ const RegisterContainer = () => {
         />
         <FormField
           type={"text"}
-          label={"Last name"}
+          label={t("register.last_name", "Last name")}
           autoComplete={"family-name"}
           disabled={isSubmitting}
           error={errors.name_last}
@@ -170,7 +175,7 @@ const RegisterContainer = () => {
       <div className={"password-field mt-5"}>
         <FormField
           type={showPassword ? "text" : "password"}
-          label={"Password"}
+          label={t("register.password", "Password")}
           autoComplete={"new-password"}
           disabled={isSubmitting}
           error={errors.password}
@@ -179,7 +184,11 @@ const RegisterContainer = () => {
         <button
           type={"button"}
           className={"password-reveal"}
-          aria-label={showPassword ? "Hide password" : "Show password"}
+          aria-label={
+            showPassword
+              ? t("register.hide_password", "Hide password")
+              : t("register.show_password", "Show password")
+          }
           aria-pressed={showPassword}
           disabled={isSubmitting}
           onClick={() => setShowPassword((value) => !value)}
@@ -194,7 +203,7 @@ const RegisterContainer = () => {
       <div className={"password-field mt-5"}>
         <FormField
           type={showConfirmPassword ? "text" : "password"}
-          label={"Confirm password"}
+          label={t("register.confirm_password", "Confirm password")}
           autoComplete={"new-password"}
           disabled={isSubmitting}
           error={errors.password_confirmation}
@@ -203,7 +212,11 @@ const RegisterContainer = () => {
         <button
           type={"button"}
           className={"password-reveal"}
-          aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+          aria-label={
+            showConfirmPassword
+              ? t("register.hide_password", "Hide password")
+              : t("register.show_password", "Show password")
+          }
           aria-pressed={showConfirmPassword}
           disabled={isSubmitting}
           onClick={() => setShowConfirmPassword((value) => !value)}
@@ -222,7 +235,7 @@ const RegisterContainer = () => {
           isLoading={isSubmitting}
           disabled={isSubmitting}
         >
-          Create account
+          {t("register.create_account", "Create account")}
         </Button>
       </div>
       {recaptchaEnabled && (
@@ -241,7 +254,10 @@ const RegisterContainer = () => {
       )}
       <div className={"mt-5 text-center"}>
         <Link to={"/auth/login"} className={"login-recovery mt-0!"}>
-          Already have an account? Sign in
+          {t(
+            "register.already_have_an_account_sign_in",
+            "Already have an account? Sign in",
+          )}
         </Link>
       </div>
     </LoginFormContainer>

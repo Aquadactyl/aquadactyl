@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import { ServerContext } from "@/state/server";
 import { useAppStore } from "@/state";
@@ -15,6 +16,7 @@ import BeforeContent from "@blueprint/components/Server/Users/BeforeContent";
 import AfterContent from "@blueprint/components/Server/Users/AfterContent";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const [loading, setLoading] = useState(true);
 
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
@@ -54,12 +56,15 @@ export default () => {
   }
 
   return (
-    <ServerContentBlock title={"Users"}>
+    <ServerContentBlock title={t("users.users", "Users")}>
       <FlashMessageRender byKey={"users"} className={"mb-4"} />
       <BeforeContent />
       {!subusers.length ? (
         <p className={"text-center text-sm text-neutral-300"}>
-          It looks like you don&apos;t have any subusers.
+          {t(
+            "users.it_looks_like_you_don_apos_t_have_any_subusers",
+            "It looks like you don&apos;t have any subusers.",
+          )}
         </p>
       ) : (
         subusers.map((subuser) => (

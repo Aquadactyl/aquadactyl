@@ -1,8 +1,8 @@
 <?php
 
 use Pterodactyl\Models\User;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Event;
 use Pterodactyl\Events\Auth\DirectLogin;
 
 beforeEach(function () {

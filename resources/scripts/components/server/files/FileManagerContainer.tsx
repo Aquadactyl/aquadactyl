@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, {
   useEffect,
   useMemo,
@@ -40,6 +41,7 @@ const sortFiles = (files: FileObject[]): FileObject[] => {
 };
 
 export default () => {
+  const { t } = usePanelTranslation();
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
   const { hash } = useLocation();
   const { data: files, error, mutate } = useFileManagerQuery();
@@ -89,7 +91,10 @@ export default () => {
   }
 
   return (
-    <ServerContentBlock title={"File Manager"} showFlashKey={"files"}>
+    <ServerContentBlock
+      title={t("files.file_manager", "File Manager")}
+      showFlashKey={"files"}
+    >
       <ErrorBoundary>
         <BeforeContent />
         <div className={"mb-4 flex flex-wrap-reverse md:flex-nowrap"}>
@@ -113,7 +118,7 @@ export default () => {
               <NewDirectoryButton />
               <UploadButton />
               <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
-                <Button>New File</Button>
+                <Button>{t("files.new_file", "New File")}</Button>
               </NavLink>
             </div>
           </Can>
@@ -125,7 +130,10 @@ export default () => {
         <>
           {!files.length ? (
             <p className={"text-center text-sm text-neutral-400"}>
-              This directory seems to be empty.
+              {t(
+                "files.this_directory_seems_to_be_empty",
+                "This directory seems to be empty.",
+              )}
             </p>
           ) : (
             <Fade timeout={150}>
@@ -133,8 +141,10 @@ export default () => {
                 {files.length > 250 && (
                   <div className={"mb-px rounded bg-yellow-400 p-3"}>
                     <p className={"text-center text-sm text-yellow-900"}>
-                      This directory is too large to display in the browser,
-                      limiting the output to the first 250 files.
+                      {t(
+                        "files.this_directory_is_too_large_to_display_in_the_browser",
+                        "This directory is too large to display in the browser, limiting the output to the first 250 files.",
+                      )}
                     </p>
                   </div>
                 )}

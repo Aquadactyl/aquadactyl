@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React from "react";
 import { Dialog, DialogProps } from "@/components/elements/dialog";
 import { Button } from "@/components/elements/button/index";
@@ -9,6 +10,7 @@ interface RecoveryTokenDialogProps extends DialogProps {
 }
 
 export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
+  const { t } = usePanelTranslation();
   const grouped = [] as [string, string][];
   tokens.forEach((token, index) => {
     if (index % 2 === 0) {
@@ -20,10 +22,14 @@ export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
     <Dialog
       open={open}
       onClose={onClose}
-      title={"Two-Step Authentication Enabled"}
-      description={
-        "Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in."
-      }
+      title={t(
+        "recovery.two_step_authentication_enabled",
+        "Two-Step Authentication Enabled",
+      )}
+      description={t(
+        "recovery.store_the_codes_below_somewhere_safe_if_you_lose_access",
+        "Store the codes below somewhere safe. If you lose access to your phone you can use these backup codes to sign in.",
+      )}
       hideCloseIcon
       preventExternalClose
     >
@@ -37,18 +43,27 @@ export default ({ tokens, open, onClose }: RecoveryTokenDialogProps) => {
           {grouped.map((value) => (
             <span key={value.join("_")} className={"block"}>
               {value[0]}
-              <span className={"mx-2 selection:bg-gray-800"}>&nbsp;</span>
+              <span className={"mx-2 selection:bg-gray-800"}>
+                {t("recovery.nbsp", "&nbsp;")}
+              </span>
               {value[1]}
-              <span className={"selection:bg-gray-800"}>&nbsp;</span>
+              <span className={"selection:bg-gray-800"}>
+                {t("recovery.nbsp", "&nbsp;")}
+              </span>
             </span>
           ))}
         </pre>
       </CopyOnClick>
       <Alert type={"danger"} className={"mt-3"}>
-        These codes will not be shown again.
+        {t(
+          "recovery.these_codes_will_not_be_shown_again",
+          "These codes will not be shown again.",
+        )}
       </Alert>
       <Dialog.Footer>
-        <Button.Text onClick={onClose}>Done</Button.Text>
+        <Button.Text onClick={onClose}>
+          {t("recovery.done", "Done")}
+        </Button.Text>
       </Dialog.Footer>
     </Dialog>
   );

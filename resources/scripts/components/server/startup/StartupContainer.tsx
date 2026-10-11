@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useCallback, useEffect, useState } from "react";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import VariableBox from "@/components/server/startup/VariableBox";
@@ -19,6 +20,7 @@ import BeforeContent from "@blueprint/components/Server/Startup/BeforeContent";
 import AfterContent from "@blueprint/components/Server/Startup/AfterContent";
 
 const StartupContainer = () => {
+  const { t } = usePanelTranslation();
   const [loading, setLoading] = useState(false);
   const { clearFlashes, clearAndAddHttpError } = useFlash();
 
@@ -85,19 +87,22 @@ const StartupContainer = () => {
       <Spinner centered size={Spinner.Size.LARGE} />
     ) : (
       <ServerError
-        title={"Oops!"}
+        title={t("startup.oops", "Oops!")}
         message={httpErrorToHuman(error)}
         onRetry={() => mutate()}
       />
     )
   ) : (
     <ServerContentBlock
-      title={"Startup Settings"}
+      title={t("startup.startup_settings", "Startup Settings")}
       showFlashKey={"startup:image"}
     >
       <BeforeContent />
       <div className={"md:flex"}>
-        <TitledGreyBox title={"Startup Command"} className={"flex-1"}>
+        <TitledGreyBox
+          title={t("startup.startup_command", "Startup Command")}
+          className={"flex-1"}
+        >
           <div className={"px-1 py-2"}>
             <p className={"rounded bg-neutral-900 px-4 py-2 font-mono"}>
               {data.invocation}
@@ -105,7 +110,7 @@ const StartupContainer = () => {
           </div>
         </TitledGreyBox>
         <TitledGreyBox
-          title={"Docker Image"}
+          title={t("startup.docker_image", "Docker Image")}
           className={"mt-8 flex-1 md:mt-0 md:ml-10 lg:w-1/3 lg:flex-none"}
         >
           {Object.keys(data.dockerImages).length > 1 && !isCustomImage ? (
@@ -127,8 +132,10 @@ const StartupContainer = () => {
                 </Select>
               </InputSpinner>
               <p className={"mt-2 text-xs text-neutral-300"}>
-                This is an advanced feature allowing you to select a Docker
-                image to use when running this server instance.
+                {t(
+                  "startup.this_is_an_advanced_feature_allowing_you_to_select_a",
+                  "This is an advanced feature allowing you to select a Docker image to use when running this server instance.",
+                )}
               </p>
             </>
           ) : (
@@ -136,15 +143,21 @@ const StartupContainer = () => {
               <Input disabled readOnly value={variables.dockerImage} />
               {isCustomImage && (
                 <p className={"mt-2 text-xs text-neutral-300"}>
-                  This {"server's"} Docker image has been manually set by an
-                  administrator and cannot be changed through this UI.
+                  {t("startup.this", "This")}{" "}
+                  {t("startup.server_s", "server's")}{" "}
+                  {t(
+                    "startup.docker_image_has_been_manually_set_by_an_administrator_and",
+                    "Docker image has been manually set by an administrator and cannot be changed through this UI.",
+                  )}
                 </p>
               )}
             </>
           )}
         </TitledGreyBox>
       </div>
-      <h3 className={"mt-8 mb-2 text-2xl"}>Variables</h3>
+      <h3 className={"mt-8 mb-2 text-2xl"}>
+        {t("startup.variables", "Variables")}
+      </h3>
       <div className={"grid gap-8 md:grid-cols-2"}>
         {data.variables.map((variable) => (
           <VariableBox key={variable.envVariable} variable={variable} />

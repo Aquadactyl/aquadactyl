@@ -49,6 +49,9 @@ docker compose up -d --no-build --no-deps --wait --wait-timeout 180 panel
 The image compiles fresh Vite assets into `public/build/` and includes the Node
 dependencies needed for Blueprint rebuilds and game queries. Local build output
 and the Vite development server marker are excluded from the Docker build context.
+Docker reuses frontend layers after backend-only edits and retains dependency
+downloads in BuildKit caches. See [performance notes](docs/PERFORMANCE.md) for
+measurements and caching details.
 
 Blueprint addon installation and removal each use one command. Put the package
 in `/app` and, from a root shell inside the panel container, run:
@@ -69,6 +72,11 @@ Profile pictures are stored in `storage/app/public/avatars` inside the persisten
 storage volume. The `public/storage` link exposes them to the web server. Linux
 installations need `php artisan storage:link` and GD with PNG, JPEG and WebP support;
 retain these files alongside the database when backing up or moving the panel.
+
+Passkeys and connected Discord, GitHub, Google, and OpenID Connect accounts are
+managed in Account settings. Administrators configure providers and passkeys under
+**Settings → OAuth**. See the [account security guide](docs/ACCOUNT-SECURITY.md) for
+callback URLs, HTTPS requirements, and deployment steps.
 
 To choose a different port or initial credentials, set `AQUADACTYL_PORT`,
 `AQUADACTYL_ADMIN_EMAIL`, `AQUADACTYL_ADMIN_USERNAME` and/or
@@ -184,7 +192,7 @@ an extension and rebuilds those assets.
 
 See the [Blueprint guide](https://aquadactyl.uk/docs/blueprint) for installing
 extensions and [addon development](docs/ADDONS.md) for available libraries, imports
-and dependency conventions. Use the panel's React 16.14 runtime when building addons.
+and dependency conventions. Use the panel's React 19 runtime when building addons.
 
 ## Hot module reloading
 

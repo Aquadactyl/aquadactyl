@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import login from "@/api/auth/login";
@@ -11,6 +12,15 @@ import Button from "@/components/elements/Button";
 import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
 import useFlash from "@/plugins/useFlash";
 import { Eye, EyeOff } from "lucide-react";
+import {
+  getSignInMethods,
+  loginWithPasskey,
+  passkeysSupported,
+  securityError,
+  SignInMethods,
+} from "@/api/account/security";
+import MessageBox from "@/components/MessageBox";
+import { httpErrorToHuman } from "@/api/http";
 
 const schema = z.object({
   username: z.string().min(1, "A username or email must be provided."),
@@ -20,10 +30,14 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 
 const LoginContainer = () => {
+  const { t } = usePanelTranslation();
   const navigate = useNavigate();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [methods, setMethods] = useState<SignInMethods | null>(null);
+  const [passkeyBusy, setPasskeyBusy] = useState(false);
+  const [methodError, setMethodError] = useState("");
 
   const { clearFlashes, clearAndAddHttpError } = useFlash();
   const registrationEnabled = useAppStore(
@@ -50,9 +64,39 @@ const LoginContainer = () => {
 
   useEffect(() => {
     clearFlashes();
+    void getSignInMethods()
+      .then((data) => {
+        setMethods(data);
+        if (data.error) setMethodError(data.error);
+        if (data.confirmation_token)
+          navigate("/auth/login/checkpoint", {
+            replace: true,
+            state: { token: data.confirmation_token },
+          });
+      })
+      .catch(() => setMethods(null));
   }, []);
 
+  const onPasskey = async () => {
+    setPasskeyBusy(true);
+    setMethodError("");
+    try {
+      const response = await loginWithPasskey();
+      if (response.complete) window.location.assign(response.intended || "/");
+      else
+        navigate("/auth/login/checkpoint", {
+          replace: true,
+          state: { token: response.confirmationToken },
+        });
+    } catch (error) {
+      setMethodError(httpErrorToHuman(securityError(error)));
+    } finally {
+      setPasskeyBusy(false);
+    }
+  };
+
   const onSubmit = async (values: Values) => {
+    if (passkeyBusy) return;
     clearFlashes();
 
     // If there is no token in the state yet, request the token and then abort this submit request
@@ -88,35 +132,49 @@ const LoginContainer = () => {
 
   return (
     <LoginFormContainer
-      title={"Welcome back"}
-      description={"Sign in to manage your servers."}
+      title={t("login.welcome_back", "Welcome back")}
+      description={t(
+        "login.sign_in_to_manage_your_servers",
+        "Sign in to manage your servers.",
+      )}
       onSubmit={handleSubmit(onSubmit)}
     >
+      {methodError && (
+        <div className="mb-5">
+          <MessageBox type="error" title={t("login.sign_in", "Sign in")}>
+            {methodError}
+          </MessageBox>
+        </div>
+      )}
       <FormField
         type={"text"}
-        label={"Username or email"}
+        label={t("login.username_or_email", "Username or email")}
         autoComplete={"username"}
         autoCapitalize={"none"}
         spellCheck={false}
-        disabled={isSubmitting}
+        disabled={isSubmitting || passkeyBusy}
         error={errors.username}
         {...register("username")}
       />
       <div className={"password-field mt-5"}>
         <FormField
           type={showPassword ? "text" : "password"}
-          label={"Password"}
+          label={t("login.password", "Password")}
           autoComplete={"current-password"}
-          disabled={isSubmitting}
+          disabled={isSubmitting || passkeyBusy}
           error={errors.password}
           {...register("password")}
         />
         <button
           type={"button"}
           className={"password-reveal"}
-          aria-label={showPassword ? "Hide password" : "Show password"}
+          aria-label={
+            showPassword
+              ? t("login.hide_password", "Hide password")
+              : t("login.show_password", "Show password")
+          }
           aria-pressed={showPassword}
-          disabled={isSubmitting}
+          disabled={isSubmitting || passkeyBusy}
           onClick={() => setShowPassword((value) => !value)}
         >
           {showPassword ? (
@@ -131,11 +189,44 @@ const LoginContainer = () => {
           type={"submit"}
           size={"xlarge"}
           isLoading={isSubmitting}
-          disabled={isSubmitting}
+          disabled={isSubmitting || passkeyBusy}
         >
-          Sign in
+          {t("login.sign_in", "Sign in")}
         </Button>
       </div>
+      {(methods?.passkeys_enabled || !!methods?.providers.length) && (
+        <div className="mt-5 space-y-3 border-t border-neutral-600 pt-5">
+          {methods?.passkeys_enabled && passkeysSupported() && (
+            <Button
+              type="button"
+              size="xlarge"
+              isSecondary
+              disabled={passkeyBusy || isSubmitting}
+              isLoading={passkeyBusy}
+              onClick={() => void onPasskey()}
+            >
+              {t("login.sign_in_with_a_passkey", "Sign in with a passkey")}
+            </Button>
+          )}
+          {methods?.providers.map((provider) => (
+            <a
+              key={provider.id}
+              href={`/auth/oauth/${provider.id}`}
+              className="block rounded border border-neutral-600 px-4 py-3 text-center text-sm text-neutral-200 hover:border-neutral-400 hover:bg-neutral-700"
+            >
+              {t("login.continue_with", "Continue with")} {provider.label}
+            </a>
+          ))}
+          {!!methods?.providers.length && (
+            <p className="text-center text-xs text-neutral-400">
+              {t(
+                "login.link_your_provider_in_account_settings_before_using_it_to",
+                "Link your provider in Account settings before using it to sign in.",
+              )}
+            </p>
+          )}
+        </div>
+      )}
       {recaptchaEnabled && (
         <Captcha
           ref={ref}
@@ -156,11 +247,11 @@ const LoginContainer = () => {
         }`}
       >
         <Link to={"/auth/password"} className={"login-recovery !mt-0"}>
-          Forgot password?
+          {t("login.forgot_password", "Forgot password?")}
         </Link>
         {registrationEnabled && (
           <Link to={"/auth/register"} className={"login-recovery !mt-0"}>
-            Create an account
+            {t("login.create_an_account", "Create an account")}
           </Link>
         )}
       </div>

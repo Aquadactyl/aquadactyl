@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/state";
 import { Button } from "@/components/elements/button/index";
@@ -7,6 +8,7 @@ import DisableTOTPDialog from "@/components/dashboard/forms/DisableTOTPDialog";
 import { useFlashKey } from "@/plugins/useFlash";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const [tokens, setTokens] = useState<string[]>([]);
   const [visible, setVisible] = useState<"enable" | "disable" | null>(null);
   const isEnabled = useAppStore((state) => state.user.data!.useTotp);
@@ -41,16 +43,24 @@ export default () => {
       />
       <p className={"text-sm"}>
         {isEnabled
-          ? "Two-step verification is currently enabled on your account."
-          : "You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it."}
+          ? t(
+              "two_factor.two_step_verification_is_currently_enabled_on_your_account",
+              "Two-step verification is currently enabled on your account.",
+            )
+          : t(
+              "two_factor.you_do_not_currently_have_two_step_verification_enabled_on",
+              "You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.",
+            )}
       </p>
       <div className={"mt-6"}>
         {isEnabled ? (
           <Button.Danger onClick={() => setVisible("disable")}>
-            Disable Two-Step
+            {t("two_factor.disable_two_step", "Disable Two-Step")}
           </Button.Danger>
         ) : (
-          <Button onClick={() => setVisible("enable")}>Enable Two-Step</Button>
+          <Button onClick={() => setVisible("enable")}>
+            {t("two_factor.enable_two_step", "Enable Two-Step")}
+          </Button>
         )}
       </div>
     </div>

@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect, useRef } from "react";
 import { useTanStackQuery } from "@/lib/queryClient";
@@ -37,6 +38,7 @@ export default ({
   server: Server;
   className?: string;
 }) => {
+  const { t } = usePanelTranslation();
   const features = useAppStore((state) => state.settings.data?.features);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,

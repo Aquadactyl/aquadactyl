@@ -77,6 +77,8 @@ Route::group(['prefix' => 'settings'], function () {
     Route::delete('/logo', [Admin\Settings\LogoController::class, 'destroy']);
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
+    Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
+    Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
 
     Route::post('/mail/test', [Admin\Settings\MailController::class, 'test'])->name('admin.settings.mail.test');
 

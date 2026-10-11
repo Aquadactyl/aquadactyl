@@ -4,13 +4,14 @@ namespace Pterodactyl\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Application;
+use Pterodactyl\Services\Users\LanguageService;
 
 class LanguageMiddleware
 {
     /**
      * LanguageMiddleware constructor.
      */
-    public function __construct(private Application $app)
+    public function __construct(private Application $app, private LanguageService $languages)
     {
     }
 
@@ -19,7 +20,7 @@ class LanguageMiddleware
      */
     public function handle(Request $request, \Closure $next): mixed
     {
-        $this->app->setLocale($request->user()->language ?? config('app.locale', 'en'));
+        $this->app->setLocale($this->languages->resolve($request->user()?->language, $request->getLanguages()));
 
         return $next($request);
     }

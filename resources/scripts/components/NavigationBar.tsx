@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router";
 import { ArrowUpRight, LogOut, Server, Settings } from "lucide-react";
@@ -13,6 +14,7 @@ import AdditionalItems from "@blueprint/components/Navigation/NavigationBar/Addi
 import AfterNavigation from "@blueprint/components/Navigation/NavigationBar/AfterNavigation";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const name = useAppStore((state) => state.settings.data!.name);
   const logoUrl = useAppStore((state) => state.settings.data?.logoUrl);
   const showNameWithLogo = useAppStore(
@@ -68,24 +70,27 @@ export default () => {
             )}
           </Link>
         </div>
-        <nav className={"navigation-items"} aria-label={"Main navigation"}>
+        <nav
+          className={"navigation-items"}
+          aria-label={t("navigation.main_navigation", "Main navigation")}
+        >
           <NavLink
             to={"/"}
             end
             id={"NavigationDashboard"}
-            aria-label={"Servers"}
+            aria-label={t("navigation.servers", "Servers")}
           >
             <Server size={17} aria-hidden />
-            <span>Servers</span>
+            <span>{t("navigation.servers", "Servers")}</span>
           </NavLink>
           {user.rootAdmin && (
             <a
               href={"/admin"}
               id={"NavigationAdmin"}
-              aria-label={"Administration"}
+              aria-label={t("navigation.administration", "Administration")}
             >
               <Settings size={17} aria-hidden />
-              <span>Admin</span>
+              <span>{t("navigation.admin", "Admin")}</span>
               <ArrowUpRight
                 size={12}
                 className={"navigation-external"}
@@ -96,23 +101,26 @@ export default () => {
           <AdditionalItems />
           <SearchContainer />
           <NavLink
-            to={"/account"}
+            to={"/account/"}
             id={"NavigationAccount"}
-            aria-label={"Account settings"}
+            aria-label={t("navigation.account_settings", "Account settings")}
           >
             <span className={"navigation-avatar"}>
               <Avatar.User size={23} />
             </span>
-            <span>Account</span>
+            <span>{t("navigation.account", "Account")}</span>
             <span className={"navigation-username"}>{user.username}</span>
           </NavLink>
-          <Tooltip placement={"bottom"} content={"Sign out"}>
+          <Tooltip
+            placement={"bottom"}
+            content={t("navigation.sign_out", "Sign out")}
+          >
             <button
               type={"button"}
               onClick={onTriggerLogout}
               disabled={isLoggingOut}
               id={"NavigationLogout"}
-              aria-label={"Sign out"}
+              aria-label={t("navigation.sign_out", "Sign out")}
               className={"navigation-logout"}
             >
               <LogOut size={17} aria-hidden />

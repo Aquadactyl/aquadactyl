@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import Avatar from "@/components/Avatar";
 import { Button } from "@/components/elements/button/index";
@@ -9,6 +10,7 @@ import {
 } from "@/api/account/updateAccountAvatar";
 
 const ProfilePictureForm = () => {
+  const { t } = usePanelTranslation();
   const avatarUrl = useAppStore((state) => state.user.data?.avatarUrl);
   const updateUserData = useAppStore((state) => state.user.updateUserData);
   const input = useRef<HTMLInputElement>(null);
@@ -107,7 +109,10 @@ const ProfilePictureForm = () => {
         {preview && preview.startsWith("blob:") ? (
           <img
             src={encodeURI(preview)}
-            alt={"Profile picture preview"}
+            alt={t(
+              "profile.profile_picture_preview",
+              "Profile picture preview",
+            )}
             className={"h-24 w-24 rounded-full object-cover"}
           />
         ) : (
@@ -119,7 +124,7 @@ const ProfilePictureForm = () => {
           htmlFor={"profile_picture"}
           className={"mb-2 block text-sm font-medium"}
         >
-          Choose a profile picture
+          {t("profile.choose_a_profile_picture", "Choose a profile picture")}
         </label>
         <input
           ref={input}
@@ -135,19 +140,23 @@ const ProfilePictureForm = () => {
           id={"profile_picture_help"}
           className={"mt-2 text-xs text-neutral-400"}
         >
-          PNG, JPEG or WebP up to 2 MB and 4096 × 4096 pixels. Pictures are
-          cropped to a square.
+          {t(
+            "profile.png_jpeg_or_webp_up_to_2_mb_and_4096",
+            "PNG, JPEG or WebP up to 2 MB and 4096 × 4096 pixels. Pictures are cropped to a square.",
+          )}
         </p>
         <div className={"mt-4 flex flex-wrap gap-3"}>
           <Button type={"button"} disabled={!file || busy} onClick={save}>
-            {busy ? "Saving…" : "Upload Picture"}
+            {busy
+              ? t("profile.saving", "Saving…")
+              : t("profile.upload_picture", "Upload Picture")}
           </Button>
           <Button.Text
             type={"button"}
             disabled={!avatarUrl || busy}
             onClick={remove}
           >
-            Remove Picture
+            {t("profile.remove_picture", "Remove Picture")}
           </Button.Text>
         </div>
       </div>

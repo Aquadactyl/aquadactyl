@@ -1,4 +1,5 @@
 import React from "react";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import { NavLink, Route, Routes, useLocation } from "react-router";
 import { NotFound } from "@/components/elements/ScreenBlock";
 import TransitionRouter from "@/TransitionRouter";
@@ -11,6 +12,7 @@ import blueprintRoutes from "./routes";
 import { UiBadge } from "@blueprint/ui";
 
 export const NavigationLinks = () => {
+  const { t } = usePanelTranslation();
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
   return (
     <>
@@ -23,7 +25,7 @@ export const NavigationLinks = () => {
             to={`/account/${path}`.replace("//", "/")}
             end={exact}
           >
-            {name}
+            {t(`navigation.${name?.toLowerCase().replaceAll(" ", "_")}`, name ?? "")}
           </NavLink>
         ))}
 
