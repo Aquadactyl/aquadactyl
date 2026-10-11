@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import FormField from "@/components/elements/FormField";
+import FormFieldWrapper from "@/components/elements/FormFieldWrapper";
+import Input from "@/components/elements/Input";
 import Button from "@/components/elements/Button";
 import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
 import useFlash from "@/plugins/useFlash";
@@ -172,62 +174,84 @@ const RegisterContainer = () => {
           {...register("name_last")}
         />
       </div>
-      <div className={"password-field mt-5"}>
-        <FormField
-          type={showPassword ? "text" : "password"}
-          label={t("register.password", "Password")}
-          autoComplete={"new-password"}
-          disabled={isSubmitting}
-          error={errors.password}
-          {...register("password")}
-        />
-        <button
-          type={"button"}
-          className={"password-reveal"}
-          aria-label={
-            showPassword
-              ? t("register.hide_password", "Hide password")
-              : t("register.show_password", "Show password")
-          }
-          aria-pressed={showPassword}
-          disabled={isSubmitting}
-          onClick={() => setShowPassword((value) => !value)}
-        >
-          {showPassword ? (
-            <EyeOff size={18} aria-hidden />
-          ) : (
-            <Eye size={18} aria-hidden />
-          )}
-        </button>
-      </div>
-      <div className={"password-field mt-5"}>
-        <FormField
-          type={showConfirmPassword ? "text" : "password"}
-          label={t("register.confirm_password", "Confirm password")}
-          autoComplete={"new-password"}
-          disabled={isSubmitting}
-          error={errors.password_confirmation}
-          {...register("password_confirmation")}
-        />
-        <button
-          type={"button"}
-          className={"password-reveal"}
-          aria-label={
-            showConfirmPassword
-              ? t("register.hide_password", "Hide password")
-              : t("register.show_password", "Show password")
-          }
-          aria-pressed={showConfirmPassword}
-          disabled={isSubmitting}
-          onClick={() => setShowConfirmPassword((value) => !value)}
-        >
-          {showConfirmPassword ? (
-            <EyeOff size={18} aria-hidden />
-          ) : (
-            <Eye size={18} aria-hidden />
-          )}
-        </button>
-      </div>
+      <FormFieldWrapper
+        id={"password"}
+        label={t("register.password", "Password")}
+        error={errors.password}
+        className={"mt-5"}
+      >
+        <div className={"password-field"}>
+          <Input
+            id={"password"}
+            type={showPassword ? "text" : "password"}
+            autoComplete={"new-password"}
+            disabled={isSubmitting}
+            hasError={!!errors.password}
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-help" : undefined}
+            {...register("password")}
+          />
+          <button
+            type={"button"}
+            className={"password-reveal"}
+            aria-label={
+              showPassword
+                ? t("register.hide_password", "Hide password")
+                : t("register.show_password", "Show password")
+            }
+            aria-pressed={showPassword}
+            disabled={isSubmitting}
+            onClick={() => setShowPassword((value) => !value)}
+          >
+            {showPassword ? (
+              <EyeOff size={18} aria-hidden />
+            ) : (
+              <Eye size={18} aria-hidden />
+            )}
+          </button>
+        </div>
+      </FormFieldWrapper>
+      <FormFieldWrapper
+        id={"password_confirmation"}
+        label={t("register.confirm_password", "Confirm password")}
+        error={errors.password_confirmation}
+        className={"mt-5"}
+      >
+        <div className={"password-field"}>
+          <Input
+            id={"password_confirmation"}
+            type={showConfirmPassword ? "text" : "password"}
+            autoComplete={"new-password"}
+            disabled={isSubmitting}
+            hasError={!!errors.password_confirmation}
+            aria-invalid={!!errors.password_confirmation}
+            aria-describedby={
+              errors.password_confirmation
+                ? "password_confirmation-help"
+                : undefined
+            }
+            {...register("password_confirmation")}
+          />
+          <button
+            type={"button"}
+            className={"password-reveal"}
+            aria-label={
+              showConfirmPassword
+                ? t("register.hide_password", "Hide password")
+                : t("register.show_password", "Show password")
+            }
+            aria-pressed={showConfirmPassword}
+            disabled={isSubmitting}
+            onClick={() => setShowConfirmPassword((value) => !value)}
+          >
+            {showConfirmPassword ? (
+              <EyeOff size={18} aria-hidden />
+            ) : (
+              <Eye size={18} aria-hidden />
+            )}
+          </button>
+        </div>
+      </FormFieldWrapper>
       <div className={"mt-6"}>
         <Button
           type={"submit"}

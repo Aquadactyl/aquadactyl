@@ -8,6 +8,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import FormField from "@/components/elements/FormField";
+import FormFieldWrapper from "@/components/elements/FormFieldWrapper";
+import Input from "@/components/elements/Input";
 import Button from "@/components/elements/Button";
 import Captcha, { CaptchaRef } from "@/components/elements/Captcha";
 import useFlash from "@/plugins/useFlash";
@@ -156,34 +158,43 @@ const LoginContainer = () => {
         error={errors.username}
         {...register("username")}
       />
-      <div className={"password-field mt-5"}>
-        <FormField
-          type={showPassword ? "text" : "password"}
-          label={t("login.password", "Password")}
-          autoComplete={"current-password"}
-          disabled={isSubmitting || passkeyBusy}
-          error={errors.password}
-          {...register("password")}
-        />
-        <button
-          type={"button"}
-          className={"password-reveal"}
-          aria-label={
-            showPassword
-              ? t("login.hide_password", "Hide password")
-              : t("login.show_password", "Show password")
-          }
-          aria-pressed={showPassword}
-          disabled={isSubmitting || passkeyBusy}
-          onClick={() => setShowPassword((value) => !value)}
-        >
-          {showPassword ? (
-            <EyeOff size={18} aria-hidden />
-          ) : (
-            <Eye size={18} aria-hidden />
-          )}
-        </button>
-      </div>
+      <FormFieldWrapper
+        id={"password"}
+        label={t("login.password", "Password")}
+        error={errors.password}
+        className={"mt-5"}
+      >
+        <div className={"password-field"}>
+          <Input
+            id={"password"}
+            type={showPassword ? "text" : "password"}
+            autoComplete={"current-password"}
+            disabled={isSubmitting || passkeyBusy}
+            hasError={!!errors.password}
+            aria-invalid={!!errors.password}
+            aria-describedby={errors.password ? "password-help" : undefined}
+            {...register("password")}
+          />
+          <button
+            type={"button"}
+            className={"password-reveal"}
+            aria-label={
+              showPassword
+                ? t("login.hide_password", "Hide password")
+                : t("login.show_password", "Show password")
+            }
+            aria-pressed={showPassword}
+            disabled={isSubmitting || passkeyBusy}
+            onClick={() => setShowPassword((value) => !value)}
+          >
+            {showPassword ? (
+              <EyeOff size={18} aria-hidden />
+            ) : (
+              <Eye size={18} aria-hidden />
+            )}
+          </button>
+        </div>
+      </FormFieldWrapper>
       <div className={"mt-6"}>
         <Button
           type={"submit"}
@@ -248,11 +259,11 @@ const LoginContainer = () => {
           registrationEnabled ? "justify-between" : "justify-center"
         }`}
       >
-        <Link to={"/auth/password"} className={"login-recovery !mt-0"}>
+        <Link to={"/auth/password"} className={"login-recovery mt-0!"}>
           {t("login.forgot_password", "Forgot password?")}
         </Link>
         {registrationEnabled && (
-          <Link to={"/auth/register"} className={"login-recovery !mt-0"}>
+          <Link to={"/auth/register"} className={"login-recovery mt-0!"}>
             {t("login.create_an_account", "Create an account")}
           </Link>
         )}

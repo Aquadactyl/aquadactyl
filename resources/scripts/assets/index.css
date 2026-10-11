@@ -934,15 +934,20 @@
 }
 .password-reveal {
   position: absolute;
-  top: 30px;
-  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 4px;
   width: 38px;
   height: 38px;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
   color: #9ca5af;
   border-radius: 5px;
+  cursor: pointer;
 }
 .password-reveal:hover {
   background: #272e35;
@@ -1566,7 +1571,7 @@
   @apply px-3 py-2 md:p-3 lg:p-4;
 
   & > .status_bar {
-    @apply absolute top-0 left-0 h-full w-1 rounded-l sm:hidden;
+    @apply absolute top-0 left-0 h-full w-1 rounded-l-lg sm:hidden;
   }
 
   & > .icon {
@@ -1588,7 +1593,7 @@
   }
 
   & > .container {
-    @apply min-h-[16rem] flex-1 rounded-t border border-b-0 border-gray-600 bg-black p-2 font-mono text-sm;
+    @apply min-h-64 flex-1 rounded-t-lg border border-b-0 border-gray-600 bg-black p-2 font-mono text-sm;
 
     & #terminal {
       @apply h-full;
@@ -1608,7 +1613,7 @@
   }
 
   & .command_input {
-    @apply relative w-full rounded-b bg-gray-900 px-2 py-3 pr-4 pl-10 font-mono text-sm text-gray-100;
+    @apply relative w-full rounded-b-lg bg-gray-900 px-2 py-3 pr-4 pl-10 font-mono text-sm text-gray-100;
     @apply outline-none focus:ring-0 focus-visible:outline-none;
     @apply border border-gray-600 transition-colors duration-100;
     @apply focus:border-cyan-500 active:border-cyan-500;
