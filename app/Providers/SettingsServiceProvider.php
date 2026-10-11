@@ -26,6 +26,7 @@ class SettingsServiceProvider extends ServiceProvider
         'aquadactyl:features:privacy_mode',
         'aquadactyl:features:server_quick_actions',
         'aquadactyl:features:registration',
+        'aquadactyl:telemetry:enabled',
         'recaptcha:enabled',
         'recaptcha:provider',
         'recaptcha:secret_key',

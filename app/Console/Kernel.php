@@ -2,16 +2,14 @@
 
 namespace Pterodactyl\Console;
 
-use Ramsey\Uuid\Uuid;
 use Pterodactyl\Models\ActivityLog;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Console\PruneCommand;
 use Pterodactyl\BlueprintFramework\GetExtensionSchedules;
-use Pterodactyl\Repositories\Eloquent\SettingsRepository;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Pterodactyl\Services\Telemetry\RegisterBlueprintTelemetry;
-use Pterodactyl\Services\Telemetry\TelemetryCollectionService;
 use Pterodactyl\Console\Commands\Schedule\ProcessRunnableCommand;
+use Pterodactyl\Services\Telemetry\AquadactylTelemetryCollectionService;
 // Import Blueprint schedules, telemetry and library
 use Pterodactyl\Console\Commands\Maintenance\PruneOrphanedBackupsCommand;
 use Pterodactyl\Console\Commands\Maintenance\CleanServiceBackupFilesCommand;
@@ -48,9 +46,10 @@ class Kernel extends ConsoleKernel
             $schedule->command(PruneCommand::class, ['--model' => [ActivityLog::class]])->daily();
         }
 
-        // Pterodactyl telemetry
-        if (config('pterodactyl.telemetry.enabled')) {
-            $this->registerTelemetry($schedule);
+        if (filter_var(config('aquadactyl.telemetry.enabled', false), FILTER_VALIDATE_BOOLEAN)) {
+            $schedule->call(app()->make(AquadactylTelemetryCollectionService::class))
+                ->description('Collect Aquadactyl Telemetry')
+                ->daily();
         }
 
         // ============================
@@ -64,7 +63,7 @@ class Kernel extends ConsoleKernel
 
         // Blueprint telemetry
         $blueprint = app()->make(BlueprintExtensionLibrary::class);
-        if ($blueprint->dbGet('blueprint', 'flags:telemetry_enabled', 0)) {
+        if (filter_var($blueprint->dbGet('blueprint', 'flags:telemetry_enabled', false), FILTER_VALIDATE_BOOLEAN)) {
             $registerBlueprintTelemetry = app()->make(RegisterBlueprintTelemetry::class);
             $registerBlueprintTelemetry->register($schedule);
         }
@@ -77,30 +76,5 @@ class Kernel extends ConsoleKernel
 
         // Blueprint extension schedules
         GetExtensionSchedules::schedules($schedule);
-    }
-
-    /**
-     * I wonder what this does.
-     *
-     * @throws \Pterodactyl\Exceptions\Model\DataValidationException
-     * @throws \Illuminate\Contracts\Container\BindingResolutionException
-     */
-    private function registerTelemetry(Schedule $schedule): void
-    {
-        $settingsRepository = app()->make(SettingsRepository::class);
-
-        $uuid = $settingsRepository->get('app:telemetry:uuid');
-        if (is_null($uuid)) {
-            $uuid = Uuid::uuid4()->toString();
-            $settingsRepository->set('app:telemetry:uuid', $uuid);
-        }
-
-        // Calculate a fixed time to run the data push at, this will be the same time every day.
-        $time = hexdec(str_replace('-', '', substr($uuid, 27))) % 1440;
-        $hour = floor($time / 60);
-        $minute = $time % 60;
-
-        // Run the telemetry collector.
-        $schedule->call(app()->make(TelemetryCollectionService::class))->description('Collect Telemetry')->dailyAt("$hour:$minute");
     }
 }

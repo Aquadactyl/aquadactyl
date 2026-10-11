@@ -76,12 +76,18 @@ export const NavigationLinks = () => {
           route.permission ? (
             <Can key={route.path} action={route.permission} matchAny>
               <NavLink to={to(route.path)} end={route.exact}>
-                {t(`navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`, route.name ?? "")}
+                {t(
+                  `navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`,
+                  route.name ?? "",
+                )}
               </NavLink>
             </Can>
           ) : (
             <NavLink key={route.path} to={to(route.path)} end={route.exact}>
-              {t(`navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`, route.name ?? "")}
+              {t(
+                `navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`,
+                route.name ?? "",
+              )}
             </NavLink>
           ),
         )}

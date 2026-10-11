@@ -23,10 +23,24 @@ afterEach(function () use ($setEnv) {
     $settingsRepo->forget('settings::recaptcha:enabled');
     $settingsRepo->forget('settings::aquadactyl:features:registration');
     $settingsRepo->forget('settings::pterodactyl:guzzle:timeout');
+    $settingsRepo->forget('settings::aquadactyl:telemetry:enabled');
 
     $setEnv('RECAPTCHA_ENABLED', null);
     $setEnv('AQUADACTYL_FEATURE_REGISTRATION', null);
     $setEnv('GUZZLE_TIMEOUT', null);
+    $setEnv('AQUADACTYL_TELEMETRY_ENABLED', null);
+});
+
+test('a saved telemetry consent overrides the initial environment default in UI mode', function () use ($setEnv, $bootProvider) {
+    $settings = app(SettingsRepositoryInterface::class);
+    $setEnv('AQUADACTYL_TELEMETRY_ENABLED', 'false');
+    config()->set('aquadactyl.telemetry.enabled', false);
+    $settings->set('settings::aquadactyl:telemetry:enabled', 'true');
+    $bootProvider();
+    expect(config('aquadactyl.telemetry.enabled'))->toBeTrue();
+    $settings->set('settings::aquadactyl:telemetry:enabled', 'false');
+    $bootProvider();
+    expect(config('aquadactyl.telemetry.enabled'))->toBeFalse();
 });
 
 test('environment variables override database settings for recaptcha', function () use ($setEnv, $bootProvider) {

@@ -214,7 +214,9 @@ const LoginContainer = () => {
               href={`/auth/oauth/${provider.id}`}
               className="block rounded border border-neutral-600 px-4 py-3 text-center text-sm text-neutral-200 hover:border-neutral-400 hover:bg-neutral-700"
             >
-              {t("login.continue_with", "Continue with")} {provider.label}
+              {t("login.continue_with_provider", "Continue with {{provider}}", {
+                provider: provider.label,
+              })}
             </a>
           ))}
           {!!methods?.providers.length && (

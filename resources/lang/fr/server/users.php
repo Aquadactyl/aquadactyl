@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Autorise l’accès au WebSocket de ce serveur.',
+        'control_console' => 'Autorise l’envoi de données à la console du serveur.',
+        'control_start' => 'Autorise le démarrage du serveur.',
+        'control_stop' => 'Autorise l’arrêt du serveur.',
+        'control_restart' => 'Autorise le redémarrage du serveur.',
+        'control_kill' => 'Autorise l’arrêt forcé du serveur.',
+        'user_create' => 'Autorise la création de comptes utilisateurs pour le serveur.',
+        'user_read' => 'Autorise la consultation des utilisateurs associés à ce serveur.',
+        'user_update' => 'Autorise la modification des autres utilisateurs associés à ce serveur.',
+        'user_delete' => 'Autorise la suppression des autres utilisateurs associés à ce serveur.',
+        'file_create' => 'Autorise la création de fichiers et de dossiers.',
+        'file_read' => 'Autorise la consultation des fichiers et dossiers du serveur ainsi que de leur contenu.',
+        'file_update' => 'Autorise la modification des fichiers et dossiers du serveur.',
+        'file_delete' => 'Autorise la suppression de fichiers et de dossiers.',
+        'file_archive' => 'Autorise la création d’archives et la décompression d’archives existantes.',
+        'file_sftp' => 'Autorise les actions sur les fichiers ci-dessus à l’aide d’un client SFTP.',
+        'allocation_read' => 'Autorise l’accès aux pages de gestion des allocations du serveur.',
+        'allocation_update' => 'Autorise la modification des allocations du serveur.',
+        'database_create' => 'Autorise la création d’une base de données pour le serveur.',
+        'database_read' => 'Autorise la consultation des bases de données du serveur.',
+        'database_update' => 'Autorise la modification d’une base de données. La permission « Voir le mot de passe » est également nécessaire pour modifier son mot de passe.',
+        'database_delete' => 'Autorise la suppression d’une base de données.',
+        'database_view_password' => 'Autorise la consultation du mot de passe d’une base de données.',
+        'schedule_create' => 'Autorise la création d’une planification pour le serveur.',
+        'schedule_read' => 'Autorise la consultation des planifications du serveur.',
+        'schedule_update' => 'Autorise la modification d’une planification existante du serveur.',
+        'schedule_delete' => 'Autorise la suppression d’une planification du serveur.',
+    ],
+];

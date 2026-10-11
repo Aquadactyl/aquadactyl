@@ -54,7 +54,7 @@ class BlueprintSeeder extends Seeder
                 'hidden' => false,
             ],
             'telemetry_enabled' => [
-                'default' => true,
+                'default' => false,
                 'type' => 'boolean',
                 'hidden' => false,
             ],

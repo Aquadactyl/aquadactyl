@@ -20,6 +20,23 @@
             <form action="" method="POST">
                 <div class="box">
                     <div class="box-header with-border">
+                        <h3 class="box-title">Aquadactyl Telemetry</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="control-label">Status</label>
+                            <select class="form-control" name="aquadactyl:telemetry:enabled">
+                                <option value="false">Disabled</option>
+                                <option value="true" @if(filter_var(old('aquadactyl:telemetry:enabled', config('aquadactyl.telemetry.enabled', false)), FILTER_VALIDATE_BOOLEAN)) selected @endif>Enabled</option>
+                            </select>
+                            <p class="text-muted small">
+                                Optional and disabled by default. When enabled, Aquadactyl sends one daily request containing only an anonymous instance ID, panel/runtime versions, driver names, and aggregate counts. No user names, email addresses, IP addresses, server names, domains, tokens, or request contents are sent.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="box-header with-border">
                         <h3 class="box-title">Captcha</h3>
                     </div>
                     <div class="box-body">

@@ -25,6 +25,7 @@
                     'languages' => app(\Pterodactyl\Services\Users\LanguageService::class)->available(),
                     'locale' => app()->getLocale(),
                     'fallbackLocale' => config('app.fallback_locale', 'en'),
+                    'revision' => app(\Pterodactyl\Services\Users\LanguageService::class)->revision(),
                 ]) }};
             </script>
             @if(!is_null(Auth::user()))

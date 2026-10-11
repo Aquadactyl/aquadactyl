@@ -1,0 +1,33 @@
+<?php
+
+return [
+    'permissions' => [
+        'websocket_*' => 'Erlaubt den Zugriff auf den WebSocket dieses Servers.',
+        'control_console' => 'Erlaubt dem Benutzer, Daten an die Serverkonsole zu senden.',
+        'control_start' => 'Erlaubt dem Benutzer, den Server zu starten.',
+        'control_stop' => 'Erlaubt dem Benutzer, den Server zu stoppen.',
+        'control_restart' => 'Erlaubt dem Benutzer, den Server neu zu starten.',
+        'control_kill' => 'Erlaubt dem Benutzer, den Server zwangsweise zu beenden.',
+        'user_create' => 'Erlaubt dem Benutzer, neue Benutzerkonten für den Server zu erstellen.',
+        'user_read' => 'Erlaubt dem Benutzer, die diesem Server zugeordneten Benutzer anzusehen.',
+        'user_update' => 'Erlaubt dem Benutzer, andere diesem Server zugeordnete Benutzer zu bearbeiten.',
+        'user_delete' => 'Erlaubt dem Benutzer, andere diesem Server zugeordnete Benutzer zu löschen.',
+        'file_create' => 'Erlaubt dem Benutzer, Dateien und Ordner zu erstellen.',
+        'file_read' => 'Erlaubt dem Benutzer, Dateien und Ordner dieses Servers sowie deren Inhalte anzusehen.',
+        'file_update' => 'Erlaubt dem Benutzer, Dateien und Ordner des Servers zu bearbeiten.',
+        'file_delete' => 'Erlaubt dem Benutzer, Dateien und Ordner zu löschen.',
+        'file_archive' => 'Erlaubt dem Benutzer, Dateiarchive zu erstellen und vorhandene Archive zu entpacken.',
+        'file_sftp' => 'Erlaubt dem Benutzer, die oben genannten Dateiaktionen mit einem SFTP-Client auszuführen.',
+        'allocation_read' => 'Erlaubt den Zugriff auf die Verwaltung der Serverzuweisungen.',
+        'allocation_update' => 'Erlaubt dem Benutzer, die Zuweisungen des Servers zu bearbeiten.',
+        'database_create' => 'Erlaubt dem Benutzer, eine neue Datenbank für den Server zu erstellen.',
+        'database_read' => 'Erlaubt dem Benutzer, die Datenbanken des Servers anzusehen.',
+        'database_update' => 'Erlaubt dem Benutzer, eine Datenbank zu bearbeiten. Zum Ändern ihres Passworts ist zusätzlich die Berechtigung „Passwort anzeigen“ erforderlich.',
+        'database_delete' => 'Erlaubt dem Benutzer, eine Datenbank zu löschen.',
+        'database_view_password' => 'Erlaubt dem Benutzer, das Passwort einer Datenbank anzusehen.',
+        'schedule_create' => 'Erlaubt dem Benutzer, einen neuen Zeitplan für den Server zu erstellen.',
+        'schedule_read' => 'Erlaubt dem Benutzer, die Zeitpläne eines Servers anzusehen.',
+        'schedule_update' => 'Erlaubt dem Benutzer, einen vorhandenen Serverzeitplan zu bearbeiten.',
+        'schedule_delete' => 'Erlaubt dem Benutzer, einen Zeitplan des Servers zu löschen.',
+    ],
+];

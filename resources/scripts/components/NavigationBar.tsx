@@ -44,7 +44,7 @@ export default () => {
         >
           <Link
             to={"/"}
-            aria-label={name + " home"}
+            aria-label={t("navigation.home", "{{name}} home", { name })}
             className={pairedLogo ? "brand-with-name" : undefined}
           >
             {logoUrl ? (

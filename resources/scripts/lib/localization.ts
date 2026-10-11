@@ -8,6 +8,7 @@ export interface PanelLocalization {
   languages: Record<string, LanguagePack>;
   locale: string;
   fallbackLocale: string;
+  revision?: string;
 }
 
 declare global {

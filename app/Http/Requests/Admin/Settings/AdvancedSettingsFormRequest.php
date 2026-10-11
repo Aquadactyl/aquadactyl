@@ -56,6 +56,7 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
                 'between:1024,65535',
                 'gt:pterodactyl:client_features:allocations:range_start',
             ],
+            'aquadactyl:telemetry:enabled' => 'sometimes|in:true,false',
         ];
     }
 
@@ -71,6 +72,7 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
             'pterodactyl:client_features:allocations:enabled' => 'Auto Create Allocations Enabled',
             'pterodactyl:client_features:allocations:range_start' => 'Starting Port',
             'pterodactyl:client_features:allocations:range_end' => 'Ending Port',
+            'aquadactyl:telemetry:enabled' => 'Aquadactyl Telemetry',
         ];
     }
 
@@ -87,7 +89,7 @@ class AdvancedSettingsFormRequest extends AdminFormRequest
             if (!in_array($currentProvider, ['recaptcha', 'hcaptcha', 'turnstile'], true)) {
                 $currentProvider = 'recaptcha';
             }
-            $data['recaptcha:provider'] = ($data['recaptcha:provider'] === 'disabled')
+            $data['recaptcha:provider'] = (($data['recaptcha:provider'] ?? null) === 'disabled')
                 ? $currentProvider
                 : ($data['recaptcha:provider'] ?? $currentProvider);
         }

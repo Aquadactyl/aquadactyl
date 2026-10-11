@@ -11,6 +11,7 @@ beforeEach(function () {
     $files = m::mock(Filesystem::class);
     $files->shouldReceive('directories')->andReturn([resource_path('lang/en'), resource_path('lang/fr-CA')]);
     $files->shouldReceive('exists')->andReturnFalse();
+    $files->shouldReceive('allFiles')->andReturn([]);
     $this->app->instance(LanguageService::class, new LanguageService($files, new ISO639()));
 });
 
@@ -56,7 +57,7 @@ test('invalid or uninstalled preferences are rejected', function (mixed $value) 
     'path traversal' => '../en',
     'empty' => '',
     'null' => null,
-    'array' => ['de'],
+    'array' => [['en']],
     'uninstalled' => 'fr',
     'script' => '<script>',
 ]);

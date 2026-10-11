@@ -25,7 +25,10 @@ export const NavigationLinks = () => {
             to={`/account/${path}`.replace("//", "/")}
             end={exact}
           >
-            {t(`navigation.${name?.toLowerCase().replaceAll(" ", "_")}`, name ?? "")}
+            {t(
+              `navigation.${name?.toLowerCase().replaceAll(" ", "_")}`,
+              name ?? "",
+            )}
           </NavLink>
         ))}
 

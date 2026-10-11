@@ -183,6 +183,80 @@ The local guides retain deployment details, developer references and validation 
 | [Branding and licensing](docs/BRANDING.md)                                                  | Rebranding permissions, attribution and compatibility identifiers                 |
 | [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration                                                 |
 
+## Optional telemetry
+
+Aquadactyl and Blueprint telemetry are **disabled by default** on new
+installations. Upstream Pterodactyl telemetry has been removed. An administrator
+can enable Aquadactyl telemetry
+under **Admin → Settings → Advanced Settings → Aquadactyl Telemetry**. Public
+panel installations do not need to create or configure a telemetry token:
+
+Enable UI-based configuration with `APP_ENVIRONMENT_ONLY=false` to manage the
+opt-in in Admin settings. With UI settings enabled, the saved toggle overrides
+the environment's initial default. For environment-only configuration, use
+`AQUADACTYL_TELEMETRY_ENABLED=true` to opt in explicitly.
+
+```dotenv
+AQUADACTYL_TELEMETRY_ENDPOINT=https://api.euphoriadevelopment.uk/telemetry/panel
+```
+
+When enabled, the panel sends one daily aggregate report containing an anonymous
+installation UUID, panel/PHP versions, driver names, Docker availability, and
+counts of users, servers, and nodes. It does not send names, email addresses,
+IP addresses, domains, server names, credentials, tokens, or request contents.
+These statements describe the report payload; the receiving service can still
+observe the connection's source IP. The setting can be disabled at any time; no
+telemetry request is made while it is disabled or while the endpoint is unset.
+
+The collectors also check consent when they run. Existing explicit opt-ins for
+Aquadactyl and Blueprint are preserved during updates. Blueprint telemetry is
+controlled by its `telemetry_enabled` flag.
+
+## Panel languages
+
+Users can select a language for their own account under **Account → Language**,
+or choose automatic selection based on their browser language preferences.
+English, French, and German are bundled; additional packs are discovered automatically. See
+[language-pack setup and translation coverage](docs/TRANSLATIONS.md).
+
+## Sharing debug logs
+
+Normal logging defaults to `LOG_LEVEL=warning`, daily files and seven days of
+retention. To collect debug-level messages temporarily, set `LOG_LEVEL=debug`,
+run `php artisan config:clear`, and restart queue workers with
+`php artisan queue:restart`. Keep `APP_DEBUG=false` on public deployments; changing
+log verbosity does not require exposing debug pages. Restore `LOG_LEVEL=warning`
+and repeat those commands after troubleshooting.
+
+When support asks for panel logs, first preview the redacted log locally:
+
+```bash
+php artisan p:debug --dry-run
+```
+
+To upload it explicitly, run this from the panel directory:
+
+```bash
+php artisan p:debug
+```
+
+The command reads the configured single log or latest dated daily log and uploads
+only its bounded tail (256 KiB by default) to
+[debug.euphoriadevelopment.uk](https://debug.euphoriadevelopment.uk), removes
+common passwords, tokens, API keys, cookies and authorization credentials, and prints a
+temporary share URL. Pastes expire after 24 hours by default. You can upload a
+different log file with `--file=/path/to/log` or choose an expiration with
+`--expires=3600`.
+
+Supported expiration values are `3600`, `86400`, `172800`, `604800`, and
+`2592000` seconds. `--expires=0` creates a paste without automatic expiration.
+The command uses the service's public `/paste` API and the duration values used by
+its [browser client](https://debug.euphoriadevelopment.uk/js/main.js); other
+expiration values are rejected before any content is sent.
+
+Preview the contents before uploading and sharing the URL. Redaction is a safety measure, not a
+guarantee that a log contains no sensitive information.
+
 ## Credits and license
 
 Aquadactyl builds on [Pterodactyl Panel](https://github.com/pterodactyl/panel)

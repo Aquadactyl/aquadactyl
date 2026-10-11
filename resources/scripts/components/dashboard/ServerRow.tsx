@@ -71,7 +71,7 @@ export default ({
   );
   const address = allocation
     ? (allocation.alias || ip(allocation.ip)) + ":" + allocation.port
-    : "No address assigned";
+    : t("server_list.no_address_assigned", "No address assigned");
   const state = isSuspended
     ? "suspended"
     : server.isNodeUnderMaintenance
@@ -84,18 +84,18 @@ export default ({
             ? "unavailable"
             : stats?.status || "loading";
   const statusLabels: Record<string, string> = {
-    suspended: "Suspended",
-    maintenance: "Maintenance",
-    transferring: "Transferring",
-    installing: "Installing",
-    install_failed: "Install failed",
-    restoring_backup: "Restoring",
-    unavailable: "Unavailable",
-    running: "Running",
-    offline: "Offline",
-    starting: "Starting",
-    stopping: "Stopping",
-    loading: "Connecting",
+    suspended: t("server_list.suspended", "Suspended"),
+    maintenance: t("server_list.maintenance", "Maintenance"),
+    transferring: t("server_list.transferring", "Transferring"),
+    installing: t("server_list.installing", "Installing"),
+    install_failed: t("server_list.install_failed", "Install failed"),
+    restoring_backup: t("server_list.restoring", "Restoring"),
+    unavailable: t("server_list.unavailable", "Unavailable"),
+    running: t("server_list.running", "Running"),
+    offline: t("server_list.offline", "Offline"),
+    starting: t("server_list.starting", "Starting"),
+    stopping: t("server_list.stopping", "Stopping"),
+    loading: t("server_list.connecting", "Connecting"),
   };
   const showStats =
     stats &&
@@ -106,33 +106,35 @@ export default ({
     !server.isTransferring;
   const resources = [
     {
-      label: "CPU",
+      label: t("server_list.cpu", "CPU"),
       icon: Cpu,
       value: showStats ? stats.cpuUsagePercent.toFixed(1) + "%" : "—",
-      limit: server.limits.cpu ? server.limits.cpu + "%" : "Unlimited",
+      limit: server.limits.cpu
+        ? server.limits.cpu + "%"
+        : t("server_list.unlimited", "Unlimited"),
       alarm:
         !!showStats &&
         server.limits.cpu > 0 &&
         stats.cpuUsagePercent >= server.limits.cpu * 0.9,
     },
     {
-      label: "Memory",
+      label: t("server_list.memory", "Memory"),
       icon: MemoryStick,
       value: showStats ? bytesToString(stats.memoryUsageInBytes) : "—",
       limit: server.limits.memory
         ? bytesToString(mbToBytes(server.limits.memory))
-        : "Unlimited",
+        : t("server_list.unlimited", "Unlimited"),
       alarm:
         !!showStats &&
         isAlarmState(stats.memoryUsageInBytes, server.limits.memory),
     },
     {
-      label: "Disk",
+      label: t("server_list.disk", "Disk"),
       icon: HardDrive,
       value: showStats ? bytesToString(stats.diskUsageInBytes) : "—",
       limit: server.limits.disk
         ? bytesToString(mbToBytes(server.limits.disk))
-        : "Unlimited",
+        : t("server_list.unlimited", "Unlimited"),
       alarm:
         !!showStats && isAlarmState(stats.diskUsageInBytes, server.limits.disk),
     },
@@ -141,7 +143,9 @@ export default ({
   return (
     <article
       className={"server-row" + (className ? " " + className : "")}
-      aria-label={"Server " + server.name}
+      aria-label={t("server_list.server_name", "Server {{name}}", {
+        name: server.name,
+      })}
     >
       <div className={"server-identity"}>
         <div className={"server-row-icon"}>
@@ -153,7 +157,9 @@ export default ({
             <Link
               className={"server-card-link"}
               to={"/server/" + server.id}
-              aria-label={"Open " + server.name}
+              aria-label={t("server_list.open_server", "Open {{name}}", {
+                name: server.name,
+              })}
             >
               {server.name}
             </Link>
@@ -169,7 +175,9 @@ export default ({
           <Link
             to={"/server/" + server.id}
             className={"server-address"}
-            aria-label={"Open " + server.name}
+            aria-label={t("server_list.open_server", "Open {{name}}", {
+              name: server.name,
+            })}
           >
             <Network size={12} aria-hidden />
             <SensitiveValue>{address}</SensitiveValue>
@@ -177,7 +185,9 @@ export default ({
           <Link
             to={"/server/" + server.id}
             className={"server-metadata"}
-            aria-label={"Open server on " + server.node}
+            aria-label={t("server_list.open_node", "Open server on {{node}}", {
+              node: server.node,
+            })}
           >
             <span className={"server-node"}>
               <MapPin size={12} aria-hidden />
@@ -204,14 +214,16 @@ export default ({
             </span>
             <span className={"server-resource-value"}>{value}</span>
             <span className={"server-resource-limit"}>
-              {limit === "Unlimited" ? limit : "of " + limit}
+              {limit === t("server_list.unlimited", "Unlimited")
+                ? limit
+                : "of " + limit}
             </span>
           </div>
         ))}
         {showStats && <ResourceLimits />}
       </div>
       <span className={"server-state"} data-state={state}>
-        {statusLabels[state] || "Unavailable"}
+        {statusLabels[state] || t("server_list.unavailable", "Unavailable")}
       </span>
       <span className={"server-row-arrow"} aria-hidden>
         <ArrowRight size={16} aria-hidden />

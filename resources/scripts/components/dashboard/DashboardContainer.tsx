@@ -255,9 +255,11 @@ export default () => {
                   </h2>
                   <p>
                     {query
-                      ? "We couldn’t find a server matching “" +
-                        query +
-                        "”. Try a different name or address."
+                      ? t(
+                          "dashboard.no_search_matches",
+                          "We couldn’t find a server matching “{{query}}”. Try a different name or address.",
+                          { query },
+                        )
                       : showOnlyAdmin
                         ? t(
                             "dashboard.servers_belonging_to_other_users_will_appear_here",

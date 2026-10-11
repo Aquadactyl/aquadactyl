@@ -3,7 +3,9 @@
 namespace Pterodactyl\Services\Users;
 
 use Matriphe\ISO639\ISO639;
+use Illuminate\Http\Request;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\HttpFoundation\AcceptHeader;
 
 class LanguageService
 {
@@ -75,6 +77,29 @@ class LanguageService
         }
 
         return array_key_first($languages) ?? 'en';
+    }
+
+    public function revision(): string
+    {
+        $files = [];
+        foreach ($this->files->allFiles(resource_path('lang')) as $file) {
+            $files[] = $file->getRelativePathname() . ':' . $file->getMTime() . ':' . $file->getSize();
+        }
+        sort($files);
+
+        return substr(hash('sha256', implode('|', $files)), 0, 16);
+    }
+
+    public function forRequest(Request $request, ?string $preference): string
+    {
+        $preferred = [];
+        foreach (AcceptHeader::fromString($request->header('Accept-Language', ''))->all() as $item) {
+            if ($item->getQuality() > 0) {
+                $preferred[] = $item->getValue();
+            }
+        }
+
+        return $this->resolve($preference, $preferred);
     }
 
     /**
