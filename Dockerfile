@@ -29,6 +29,8 @@ RUN apk add --no-cache --update \
         libwebp-dev \
         libxml2-dev \
         libzip-dev \
+        musl-locales \
+        musl-locales-lang \
         mysql-client \
         ncurses \
         nginx \
