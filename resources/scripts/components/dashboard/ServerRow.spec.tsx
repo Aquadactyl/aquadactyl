@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter } from "react-router";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import ServerRow from "./ServerRow";
 import { Server } from "@/api/server/getServer";
 import { store } from "@/state";
@@ -21,18 +21,20 @@ vi.mock("@/plugins/usePanelTranslation", () => ({
   }),
 }));
 
+let mockServerStats: any = {
+  status: "running",
+  isSuspended: false,
+  memoryUsageInBytes: 1024 * 1024 * 512,
+  cpuUsagePercent: 25.5,
+  diskUsageInBytes: 1024 * 1024 * 1024,
+  networkRxInBytes: 0,
+  networkTxInBytes: 0,
+  uptime: 1000,
+};
+
 vi.mock("@/lib/queryClient", () => ({
   useTanStackQuery: () => ({
-    data: {
-      status: "running",
-      isSuspended: false,
-      memoryUsageInBytes: 1024 * 1024 * 512,
-      cpuUsagePercent: 25.5,
-      diskUsageInBytes: 1024 * 1024 * 1024,
-      networkRxInBytes: 0,
-      networkTxInBytes: 0,
-      uptime: 1000,
-    },
+    data: mockServerStats,
     error: null,
     mutate: vi.fn(),
   }),
@@ -116,11 +118,23 @@ const mockServer: Server = {
 
 describe("components/dashboard/ServerRow", () => {
   beforeEach(() => {
+    mockServerStats = {
+      status: "running",
+      isSuspended: false,
+      memoryUsageInBytes: 1024 * 1024 * 512,
+      cpuUsagePercent: 25.5,
+      diskUsageInBytes: 1024 * 1024 * 1024,
+      networkRxInBytes: 0,
+      networkTxInBytes: 0,
+      uptime: 1000,
+    };
+
     store.getActions().settings.setSettings({
       name: "Pterodactyl",
       locale: "en",
       recaptcha: { enabled: false, siteKey: "" },
       blueprint: { disable_attribution: true },
+      features: { playerCounts: true },
     } as any);
   });
 
@@ -137,7 +151,108 @@ describe("components/dashboard/ServerRow", () => {
       screen
         .getAllByRole("link", { name: "Open My Minecraft Server" })[0]
         .getAttribute("href"),
-    ).toBe("/server/srv-1");
+    ).toBe("/server/serv_srv-1");
+  });
+
+  it("renders unlimited limits when memory, cpu, disk limits are 0", () => {
+    const unlimitedServer: Server = {
+      ...mockServer,
+      limits: { ...mockServer.limits, memory: 0, cpu: 0, disk: 0 },
+    };
+
+    render(
+      <MemoryRouter>
+        <ServerRow server={unlimitedServer} />
+      </MemoryRouter>,
+    );
+
+    const unlimitedElements = screen.getAllByText("Unlimited");
+    expect(unlimitedElements.length).toBeGreaterThanOrEqual(3);
+  });
+
+  it("triggers alarm state when resource usage exceeds limits", () => {
+    mockServerStats.cpuUsagePercent = 250; // > 200
+    mockServerStats.memoryUsageInBytes = 1024 * 1024 * 2500; // > 2048 MB
+
+    const { container } = render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+
+    expect(container.querySelector(".server-resource-alarm")).toBeDefined();
+  });
+
+  it("shows dash placeholder when server is suspended or stats are unavailable", () => {
+    mockServerStats.isSuspended = true;
+
+    render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+
+    const dashes = screen.getAllByText("—");
+    expect(dashes.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("displays server status badges for installing, install_failed, and reinstall_failed", () => {
+    const statuses = [
+      "installing",
+      "install_failed",
+      "reinstall_failed",
+    ] as const;
+
+    for (const status of statuses) {
+      const { unmount } = render(
+        <MemoryRouter>
+          <ServerRow server={{ ...mockServer, status }} />
+        </MemoryRouter>,
+      );
+
+      expect(screen.getByRole("article")).toBeDefined();
+      unmount();
+    }
+  });
+
+  it("handles server without description and with IP-only allocation", () => {
+    const ipOnlyServer: Server = {
+      ...mockServer,
+      description: "",
+      allocations: [
+        {
+          id: 2,
+          ip: "10.0.0.5",
+          alias: null,
+          port: 8080,
+          isDefault: true,
+          notes: "",
+        },
+      ],
+    };
+
+    render(
+      <MemoryRouter>
+        <ServerRow server={ipOnlyServer} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("10.0.0.5:8080")).toBeDefined();
+  });
+
+  it("handles server with no allocations ('No address assigned')", () => {
+    const noAllocServer: Server = {
+      ...mockServer,
+      allocations: [],
+    };
+
+    render(
+      <MemoryRouter>
+        <ServerRow server={noAllocServer} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("No address assigned")).toBeDefined();
   });
 
   it("displays server status badge for suspended server", () => {

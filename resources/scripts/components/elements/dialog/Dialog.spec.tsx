@@ -1,6 +1,7 @@
 import React from "react";
 import { render, fireEvent, cleanup } from "@testing-library/react";
 import { Dialog } from "./index";
+import { describe, expect, it, vi, afterEach } from "vitest";
 
 describe("Dialog component family", () => {
   afterEach(cleanup);
@@ -24,10 +25,37 @@ describe("Dialog component family", () => {
     expect(getByText("Dialog Body Content")).toBeDefined();
   });
 
-  it("renders with Dialog.Icon and Dialog.Footer", () => {
-    const { getByText, container } = render(
+  it("calls onClose when close icon button is clicked", () => {
+    const onClose = vi.fn();
+
+    render(
+      <Dialog open={true} title="Closable Dialog" onClose={onClose}>
+        <p>Content</p>
+      </Dialog>,
+    );
+
+    const closeBtn = document.body
+      .querySelector(".dialog_close_icon")
+      ?.closest("button");
+    expect(closeBtn).not.toBeNull();
+    fireEvent.click(closeBtn!);
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("hides close icon when hideCloseIcon is true", () => {
+    render(
+      <Dialog open={true} title="No Close Icon" hideCloseIcon onClose={vi.fn()}>
+        <p>Content</p>
+      </Dialog>,
+    );
+
+    expect(document.body.querySelector(".dialog_close_icon")).toBeNull();
+  });
+
+  it("renders with Dialog.Icon positioned in container and Dialog.Footer", () => {
+    const { getByText } = render(
       <Dialog open={true} title="Action Needed" onClose={vi.fn()}>
-        <Dialog.Icon type="danger" position="title" />
+        <Dialog.Icon type="danger" position="container" />
         <p>Important Notice</p>
         <Dialog.Footer>
           <button>Dismiss</button>
@@ -39,8 +67,22 @@ describe("Dialog component family", () => {
     expect(getByText("Important Notice")).toBeDefined();
     expect(getByText("Dismiss")).toBeDefined();
 
-    const iconDiv = container.querySelector(".dialog_icon.danger");
-    expect(iconDiv).toBeDefined();
+    const iconDiv = document.body.querySelector(".dialog_icon.danger");
+    expect(iconDiv).not.toBeNull();
+  });
+
+  it("handles mouse down and up on dialog container backdrop", () => {
+    render(
+      <Dialog open={true} onClose={vi.fn()}>
+        <p>Backdrop Click Test</p>
+      </Dialog>,
+    );
+
+    const dialogContainer = document.body.querySelector(".dialog_container");
+    expect(dialogContainer).not.toBeNull();
+
+    fireEvent.mouseDown(dialogContainer!);
+    fireEvent.mouseUp(dialogContainer!);
   });
 
   it("renders Dialog.Confirm with Cancel and Confirm buttons", () => {

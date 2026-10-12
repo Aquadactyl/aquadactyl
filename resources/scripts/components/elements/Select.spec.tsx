@@ -1,6 +1,8 @@
 import React, { act } from "react";
 import { createRoot, Root } from "react-dom/client";
+import { fireEvent } from "@testing-library/react";
 import Select, { SelectProps } from "./Select";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
 describe("Select interactions inside a label", () => {
   let container: HTMLDivElement;
@@ -139,5 +141,126 @@ describe("Select interactions inside a label", () => {
       container.querySelector('[role="combobox"]'),
     );
     expect(targets).toEqual([container.querySelector("select")]);
+  });
+
+  it("supports optgroup and Fragment children", () => {
+    act(() => {
+      root.render(
+        <Select defaultValue={"opt1"}>
+          <optgroup label="Group A">
+            <option value="opt1">Option 1</option>
+          </optgroup>
+          <optgroup label="Group B" disabled>
+            <option value="opt2">Option 2</option>
+          </optgroup>
+          <React.Fragment>
+            <option value="opt3">Option 3</option>
+          </React.Fragment>
+        </Select>,
+      );
+    });
+
+    click(container.querySelector(".panel-select__dropdown-indicator")!);
+
+    expect(document.body.textContent).toContain("Group A");
+    expect(document.body.textContent).toContain("Group B");
+    expect(document.body.textContent).toContain("Option 3");
+  });
+
+  it("hides dropdown arrow when hideDropdownArrow is true", () => {
+    act(() => {
+      root.render(
+        <Select hideDropdownArrow defaultValue="1">
+          <option value="1">One</option>
+        </Select>,
+      );
+    });
+
+    expect(
+      container.querySelector(".panel-select__dropdown-indicator svg"),
+    ).toBeNull();
+  });
+
+  it("handles multiple selection mode", () => {
+    act(() => {
+      root.render(
+        <Select multiple defaultValue={["1", "2"]}>
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </Select>,
+      );
+    });
+
+    const select = container.querySelector("select")!;
+    expect(select.multiple).toBe(true);
+    const selected = Array.from(select.selectedOptions).map((o) => o.value);
+    expect(selected).toEqual(["1", "2"]);
+  });
+
+  it("handles onBlur, onKeyDown, and onInvalid events", () => {
+    const onBlur = vi.fn();
+    const onKeyDown = vi.fn();
+    const onInvalid = vi.fn();
+
+    act(() => {
+      root.render(
+        <Select
+          onBlur={onBlur}
+          onKeyDown={onKeyDown}
+          onInvalid={onInvalid}
+          defaultValue="1"
+        >
+          <option value="1">One</option>
+        </Select>,
+      );
+    });
+
+    const input =
+      container.querySelector<HTMLInputElement>('[role="combobox"]')!;
+    fireEvent.blur(input);
+    fireEvent.keyDown(input, { key: "Tab" });
+
+    expect(onBlur).toHaveBeenCalled();
+    expect(onKeyDown).toHaveBeenCalled();
+
+    const select = container.querySelector("select")!;
+    fireEvent.invalid(select);
+    expect(onInvalid).toHaveBeenCalled();
+  });
+
+  it("handles controlled value", () => {
+    act(() => {
+      root.render(
+        <Select value="2">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+        </Select>,
+      );
+    });
+
+    const select = container.querySelector("select")!;
+    expect(select.value).toBe("2");
+  });
+
+  it("resets uncontrolled value on form reset", async () => {
+    act(() => {
+      root.render(
+        <form id="test-form">
+          <Select name="test" defaultValue="default-val">
+            <option value="default-val">Default</option>
+            <option value="changed-val">Changed</option>
+          </Select>
+        </form>,
+      );
+    });
+
+    const form = container.querySelector("form")!;
+    act(() => {
+      form.dispatchEvent(new Event("reset"));
+    });
+
+    const select = container.querySelector("select")!;
+    expect(select.value).toBe("default-val");
   });
 });
