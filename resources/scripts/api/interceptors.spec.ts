@@ -39,7 +39,7 @@ describe("api/interceptors", () => {
       },
     } as AxiosError;
 
-    expect(() => errorHandler!(twoFactorError)).toThrow();
+    expect(() => errorHandler!(twoFactorError)).toThrow(twoFactorError as any);
     expect(mockHistory.replace).toHaveBeenCalledWith("/account", {
       twoFactorRedirect: true,
     });
@@ -68,7 +68,7 @@ describe("api/interceptors", () => {
       },
     } as AxiosError;
 
-    expect(() => errorHandler!(notFoundError)).toThrow();
+    expect(() => errorHandler!(notFoundError)).toThrow(notFoundError as any);
     expect(mockHistory.replace).not.toHaveBeenCalled();
   });
 });
