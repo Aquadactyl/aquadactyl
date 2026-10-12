@@ -38,7 +38,7 @@ export default () => {
 
   const parsed = new URLSearchParams(location.search);
   if (email.length === 0 && parsed.get("email")) {
-    setEmail(parsed.get("email") || "");
+    setEmail(parsed.get("email")!);
   }
 
   const {

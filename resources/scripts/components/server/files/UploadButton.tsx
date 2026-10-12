@@ -32,7 +32,7 @@ function isFileOrDirectory(event: DragEvent): boolean {
   );
 }
 
-async function runWithConcurrency<T>(
+export async function runWithConcurrency<T>(
   tasks: (() => Promise<T>)[],
   limit = 5,
 ): Promise<T[]> {
@@ -147,10 +147,8 @@ export default ({ className }: WithClassname) => {
   useEventListener("keydown", () => setVisible(false));
 
   useEffect(() => {
-    if (folderUploadInput.current) {
-      folderUploadInput.current.setAttribute("webkitdirectory", "");
-      folderUploadInput.current.setAttribute("directory", "");
-    }
+    folderUploadInput.current?.setAttribute("webkitdirectory", "");
+    folderUploadInput.current?.setAttribute("directory", "");
     return () => timeouts.current.forEach(clearTimeout);
   }, []);
 
@@ -276,10 +274,8 @@ export default ({ className }: WithClassname) => {
 
       try {
         await Promise.all(entryPromises);
-        if (uploadItems.length > 0 || emptyDirs.length > 0) {
-          submitUploads(uploadItems, emptyDirs);
-          return;
-        }
+        submitUploads(uploadItems, emptyDirs);
+        return;
       } catch (err) {
         clearAndAddHttpError(
           err instanceof Error ? err : new Error(String(err)),
@@ -288,8 +284,9 @@ export default ({ className }: WithClassname) => {
       }
     }
 
-    if (e.dataTransfer?.files?.length) {
-      const list = Array.from(e.dataTransfer.files).map((file) => ({
+    const files = e.dataTransfer?.files;
+    if (files && files.length > 0) {
+      const list = Array.from(files).map((file) => ({
         file,
         relativePath: file.webkitRelativePath || file.name,
       }));

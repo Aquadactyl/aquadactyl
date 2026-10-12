@@ -77,7 +77,7 @@ const RegenerateRecoveryTokensDialog = ({ onTokens }: Props) => {
         }
       />
       <Dialog.Footer>
-        <Button.Text onClick={close}>
+        <Button.Text type={"button"} onClick={close}>
           {t("recovery.cancel", "Cancel")}
         </Button.Text>
         <Tooltip

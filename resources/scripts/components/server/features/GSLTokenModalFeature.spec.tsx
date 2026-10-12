@@ -100,6 +100,12 @@ describe("GSLTokenModalFeature", () => {
 
     expect(screen.queryByText("Invalid GSL token!")).toBeNull();
 
+    // Emit non-matching console line (does not open modal)
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, "Server is starting up normally");
+    });
+    expect(screen.queryByText("Invalid GSL token!")).toBeNull();
+
     // Emit console line
     act(() => {
       socket.emit(
@@ -146,6 +152,91 @@ describe("GSLTokenModalFeature", () => {
         SocketRequest.SET_STATE,
         "restart",
       );
+    });
+  });
+
+  it("handles update failure and sets http error flash", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(updateStartupVariable).mockRejectedValueOnce(
+      new Error("Update failed"),
+    );
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket}>
+        <GSLTokenModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, "Error (account not found)");
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Invalid GSL token!")).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Update GSL Token" }));
+
+    await waitFor(() => {
+      expect(mockClearAndAddHttpError).toHaveBeenCalled();
+    });
+    consoleSpy.mockRestore();
+  });
+
+  it("dismisses modal via close-icon", async () => {
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket}>
+        <GSLTokenModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, "Error (account not found)");
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Invalid GSL token!")).toBeDefined();
+    });
+
+    const closeIcon = document.querySelector(".close-icon")!;
+    fireEvent.click(closeIcon);
+    await waitFor(() => {
+      expect(screen.queryByText("Invalid GSL token!")).toBeNull();
+    });
+  });
+
+  it("updates variable without socket restart when instance is null", async () => {
+    vi.mocked(updateStartupVariable).mockResolvedValueOnce(undefined as any);
+    const socket = createMockSocket();
+
+    const { rerender } = render(
+      <Wrapper socketMock={socket}>
+        <GSLTokenModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, "Error (account not found)");
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Invalid GSL token!")).toBeDefined();
+    });
+
+    // Remove socket instance
+    rerender(
+      <Wrapper socketMock={null}>
+        <GSLTokenModalFeature />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Update GSL Token" }));
+
+    await waitFor(() => {
+      expect(updateStartupVariable).toHaveBeenCalled();
     });
   });
 });

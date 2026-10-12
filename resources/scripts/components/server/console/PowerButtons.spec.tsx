@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React, { useEffect } from "react";
 import { describe, expect, it, vi } from "vitest";
 import PowerButtons from "@/components/server/console/PowerButtons";
@@ -141,5 +141,56 @@ describe("PowerButtons", () => {
 
     fireEvent.click(confirmBtn);
     expect(socket.send).toHaveBeenCalledWith("set state", "kill");
+  });
+
+  it("closes confirmation dialog when Cancel button is clicked", async () => {
+    render(
+      <Wrapper status={"stopping"}>
+        <PowerButtons />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Kill" }));
+    expect(screen.getByRole("button", { name: "Continue" })).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() => {
+      expect(screen.queryByRole("button", { name: "Continue" })).toBeNull();
+    });
+  });
+
+  it("sends stop command when server is running and Stop is clicked", () => {
+    const socket = createMockSocket();
+    render(
+      <Wrapper status={"running"} socketMock={socket}>
+        <PowerButtons className={"custom-power"} />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Stop" }));
+    expect(socket.send).toHaveBeenCalledWith("set state", "stop");
+  });
+
+  it("does not send command when socket instance is not present", () => {
+    render(
+      <Wrapper status={"offline"} socketMock={null}>
+        <PowerButtons />
+      </Wrapper>,
+    );
+
+    const startBtn = screen.getByRole("button", { name: "Start" });
+    fireEvent.click(startBtn);
+    expect(startBtn).toBeDefined();
+  });
+
+  it("disables Restart button when status is null or undefined", () => {
+    render(
+      <Wrapper status={null as any}>
+        <PowerButtons />
+      </Wrapper>,
+    );
+
+    const restartBtn = screen.getByRole("button", { name: "Restart" });
+    expect(restartBtn.hasAttribute("disabled")).toBe(true);
   });
 });

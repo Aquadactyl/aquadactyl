@@ -70,4 +70,30 @@ describe("PrivacySettingsForm component", () => {
     const flashes = store.getState().flashes.items;
     expect(flashes.some((f) => f.key === "account:privacy")).toBe(true);
   });
+
+  it("displays Saving... state while request is pending and handles string error", async () => {
+    let rejectPromise: (err: any) => void;
+    (updateAccountPrivacy as any).mockImplementationOnce(
+      () =>
+        new Promise((_, rej) => {
+          rejectPromise = rej;
+        }),
+    );
+
+    const { getByRole, getByText } = render(<PrivacySettingsForm />);
+    const switchBtn = getByRole("switch");
+
+    act(() => {
+      fireEvent.click(switchBtn);
+    });
+
+    expect(getByText("Saving...")).toBeDefined();
+
+    await act(async () => {
+      rejectPromise!("Network Failure String");
+    });
+
+    const flashes = store.getState().flashes.items;
+    expect(flashes.some((f) => f.key === "account:privacy")).toBe(true);
+  });
 });

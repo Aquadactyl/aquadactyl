@@ -69,6 +69,31 @@ describe("api/getServers and getSystemPermissions", () => {
       expect(result.items[0].name).toBe("Server One");
       expect(result.pagination.total).toBe(1);
     });
+
+    it("handles missing data.data array and falls back to empty array", async () => {
+      vi.mocked(http.get).mockResolvedValueOnce({
+        data: {
+          meta: {
+            pagination: {
+              total: 0,
+              count: 0,
+              per_page: 10,
+              current_page: 1,
+              total_pages: 0,
+            },
+          },
+        },
+      } as any);
+
+      const result = await getServers({});
+      expect(result.items).toEqual([]);
+      expect(result.pagination.total).toBe(0);
+    });
+
+    it("rejects when http.get fails", async () => {
+      vi.mocked(http.get).mockRejectedValueOnce(new Error("Network Error"));
+      await expect(getServers({})).rejects.toThrow("Network Error");
+    });
   });
 
   describe("getSystemPermissions", () => {

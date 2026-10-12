@@ -1,1 +1,4 @@
-export { default as Dropdown } from "./Dropdown";
+import Dropdown from "./Dropdown";
+
+const DropdownComponent = Dropdown;
+export { DropdownComponent as Dropdown };

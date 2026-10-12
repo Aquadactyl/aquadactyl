@@ -9,12 +9,13 @@ vi.mock("@/api/server/reinstallServer");
 
 vi.mock("@/components/elements/dialog", () => ({
   Dialog: {
-    Confirm: ({ open, title, confirm, onConfirmed, children }: any) =>
+    Confirm: ({ open, title, confirm, onConfirmed, onClose, children }: any) =>
       open ? (
         <div>
           <h2>{title}</h2>
           <p>{children}</p>
           <button onClick={onConfirmed}>{confirm}</button>
+          <button onClick={onClose}>Cancel</button>
         </div>
       ) : null,
   },
@@ -136,5 +137,19 @@ describe("ReinstallServerBox", () => {
         message: "Reinstall failed",
       });
     });
+  });
+
+  it("closes confirmation dialog when cancelled", () => {
+    render(
+      <Wrapper skipScripts={false}>
+        <ReinstallServerBox />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Reinstall Server" }));
+    expect(screen.getByText("Confirm server reinstallation")).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByText("Confirm server reinstallation")).toBeNull();
   });
 });

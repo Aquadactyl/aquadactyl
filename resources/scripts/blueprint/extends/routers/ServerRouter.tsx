@@ -15,14 +15,11 @@ import routes from "@/routers/routes";
 import blueprintRoutes from "./routes";
 import { UiBadge } from "@blueprint/ui";
 
-const blueprintExtensions = [
-  ...new Set(blueprintRoutes.server.map((route) => route.identifier)),
-];
-
-/**
- * Get the route egg IDs for each extension with server routes.
- */
 const useExtensionEggs = () => {
+  const blueprintExtensions = [
+    ...new Set(blueprintRoutes.server.map((route) => route.identifier)),
+  ];
+
   const { data } = useTanStackQuery<{ [x: string]: string[] }>(
     blueprintExtensions.length
       ? ["blueprint:extension-eggs", blueprintExtensions.join(",")]
@@ -71,22 +68,24 @@ export const NavigationLinks = () => {
     <>
       {/* Aquadactyl routes */}
       {routes.server
-        .filter((route) => !!route.name)
+        .filter(
+          (route): route is typeof route & { name: string } => !!route.name,
+        )
         .map((route) =>
           route.permission ? (
             <Can key={route.path} action={route.permission} matchAny>
               <NavLink to={to(route.path)} end={route.exact}>
                 {t(
-                  `navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`,
-                  route.name ?? "",
+                  `navigation.${route.name.toLowerCase().replaceAll(" ", "_")}`,
+                  route.name,
                 )}
               </NavLink>
             </Can>
           ) : (
             <NavLink key={route.path} to={to(route.path)} end={route.exact}>
               {t(
-                `navigation.${route.name?.toLowerCase().replaceAll(" ", "_")}`,
-                route.name ?? "",
+                `navigation.${route.name.toLowerCase().replaceAll(" ", "_")}`,
+                route.name,
               )}
             </NavLink>
           ),

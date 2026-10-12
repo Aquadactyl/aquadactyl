@@ -83,4 +83,28 @@ describe("ScheduleRow", () => {
 
     expect(screen.getByText("Running")).toBeDefined();
   });
+
+  it("renders multiple steps, lastRunAt, and nextRunAt dates", () => {
+    const runDate = new Date("2026-05-10T12:00:00Z");
+    render(
+      <ScheduleRow
+        schedule={{
+          ...baseSchedule,
+          tasks: [...baseSchedule.tasks, { ...baseSchedule.tasks[0], id: 2 }],
+          lastRunAt: runDate,
+          nextRunAt: runDate,
+        }}
+      />,
+    );
+
+    expect(screen.getByText(/2 steps · Last run:/)).toBeDefined();
+    expect(screen.getByText(/Next run:/)).toBeDefined();
+  });
+
+  it("falls back to UTC when timezone is not provided", () => {
+    store.getActions().settings.setSettings(undefined as any);
+    render(<ScheduleRow schedule={baseSchedule} />);
+
+    expect(screen.getByText(/UTC/)).toBeDefined();
+  });
 });

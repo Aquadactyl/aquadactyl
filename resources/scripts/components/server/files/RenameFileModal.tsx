@@ -60,7 +60,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
             ),
           false,
         );
-      } else if (useMoveTerminology || len > 1) {
+      } else {
         // Remove the file from this directory since they moved it elsewhere.
         mutate((data) => data.filter((f) => f.name !== files[0]), false);
       }

@@ -149,4 +149,38 @@ describe("LoginCheckpointContainer", () => {
       expect(mockClearAndAddHttpError).toHaveBeenCalledWith({ error });
     });
   });
+
+  it("handles incomplete login response and empty intended fallback", async () => {
+    const assignSpy = vi.fn();
+    delete (window as any).location;
+    window.location = { assign: assignSpy } as any;
+
+    vi.mocked(loginCheckpoint).mockResolvedValueOnce({
+      complete: false,
+    } as any);
+
+    renderWithRouter({ token: "valid-token-xyz" });
+
+    fireEvent.change(screen.getByLabelText("Authentication Code"), {
+      target: { value: "123456" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+
+    await waitFor(() => {
+      expect(loginCheckpoint).toHaveBeenCalled();
+    });
+    expect(assignSpy).not.toHaveBeenCalled();
+
+    // Now test response.complete true with intended omitted -> "/"
+    vi.mocked(loginCheckpoint).mockResolvedValueOnce({
+      complete: true,
+      intended: "",
+    } as any);
+
+    fireEvent.click(screen.getByRole("button", { name: "Continue" }));
+
+    await waitFor(() => {
+      expect(assignSpy).toHaveBeenCalledWith("/");
+    });
+  });
 });

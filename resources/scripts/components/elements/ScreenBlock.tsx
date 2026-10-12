@@ -56,7 +56,7 @@ const ScreenBlock = ({
         {(typeof onBack === "function" || typeof onRetry === "function") && (
           <div className={"absolute top-0 left-0 mt-4 ml-4"}>
             <ActionButton
-              onClick={() => (onRetry ? onRetry() : onBack ? onBack() : null)}
+              onClick={onRetry || onBack}
               className={onRetry ? "hover:animate-spin" : undefined}
             >
               {onRetry ? (

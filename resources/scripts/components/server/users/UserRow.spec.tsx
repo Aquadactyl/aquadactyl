@@ -7,8 +7,19 @@ import { store } from "@/state";
 import { Subuser } from "@/state/server/subusers";
 
 vi.mock("@/components/server/users/EditSubuserModal", () => ({
-  default: ({ visible }: { visible: boolean }) =>
-    visible ? <div data-testid={"edit-subuser-modal"}>Edit Modal</div> : null,
+  default: ({
+    visible,
+    onModalDismissed,
+  }: {
+    visible: boolean;
+    onModalDismissed: () => void;
+  }) =>
+    visible ? (
+      <div data-testid={"edit-subuser-modal"}>
+        <span>Edit Modal</span>
+        <button onClick={onModalDismissed}>Dismiss Modal</button>
+      </div>
+    ) : null,
 }));
 
 vi.mock("@/components/server/users/RemoveSubuserButton", () => ({
@@ -126,5 +137,34 @@ describe("UserRow", () => {
 
     expect(screen.queryByRole("button", { name: "Edit subuser" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Delete subuser" })).toBeNull();
+  });
+
+  it("handles dismissing the edit modal", () => {
+    render(
+      <Wrapper>
+        <UserRow subuser={mockSubuser} />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit subuser" }));
+    expect(screen.getByTestId("edit-subuser-modal")).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss Modal" }));
+    expect(screen.queryByTestId("edit-subuser-modal")).toBeNull();
+  });
+
+  it("renders unlock icon when twoFactorEnabled is false", () => {
+    render(
+      <Wrapper>
+        <UserRow
+          subuser={{
+            ...mockSubuser,
+            twoFactorEnabled: false,
+          }}
+        />
+      </Wrapper>,
+    );
+
+    expect(screen.getByText("2FA Enabled")).toBeDefined();
   });
 });

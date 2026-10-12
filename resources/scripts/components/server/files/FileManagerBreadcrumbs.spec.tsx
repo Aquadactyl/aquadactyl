@@ -152,4 +152,17 @@ describe("FileManagerBreadcrumbs", () => {
 
     expect(screen.getByText("server.properties")).toBeDefined();
   });
+
+  it("handles empty hash when in file editor mode", () => {
+    render(
+      <Wrapper
+        directory={"/config"}
+        initialEntries={["/server/12345/files/edit"]}
+      >
+        <FileManagerBreadcrumbs withinFileEditor isNewFile={false} />
+      </Wrapper>,
+    );
+
+    expect(screen.getByText("home")).toBeDefined();
+  });
 });

@@ -81,4 +81,97 @@ describe("components/dashboard/forms/ProfilePictureForm", () => {
       expect(store.getState().user.data?.avatarUrl).toBeNull();
     });
   });
+
+  it("handles empty file selection, invalid type and oversized files", () => {
+    render(<ProfilePictureForm />);
+    const fileInput = screen.getByLabelText("Choose a profile picture");
+
+    // Empty selection
+    fireEvent.change(fileInput, { target: { files: [] } });
+
+    // Invalid file type
+    const textFile = new File(["not an image"], "notes.txt", {
+      type: "text/plain",
+    });
+    fireEvent.change(fileInput, { target: { files: [textFile] } });
+    expect(
+      store.getState().flashes.items.some((f) => f.key === "account:avatar"),
+    ).toBe(true);
+
+    // Oversized file
+    const bigFile = new File([new ArrayBuffer(3 * 1024 * 1024)], "huge.png", {
+      type: "image/png",
+    });
+    fireEvent.change(fileInput, { target: { files: [bigFile] } });
+    expect(
+      store.getState().flashes.items.some((f) => f.key === "account:avatar"),
+    ).toBe(true);
+  });
+
+  it("handles upload failure and remove failure", async () => {
+    vi.mocked(uploadAccountAvatar).mockRejectedValueOnce(
+      new Error("Upload failed"),
+    );
+    vi.mocked(removeAccountAvatar).mockRejectedValueOnce(
+      new Error("Remove failed"),
+    );
+
+    render(<ProfilePictureForm />);
+    const fileInput = screen.getByLabelText("Choose a profile picture");
+    const file = new File(["dummy"], "avatar.png", { type: "image/png" });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    fireEvent.click(screen.getByRole("button", { name: "Upload Picture" }));
+
+    await waitFor(() => {
+      expect(uploadAccountAvatar).toHaveBeenCalled();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Remove Picture" }));
+    await waitFor(() => {
+      expect(removeAccountAvatar).toHaveBeenCalled();
+    });
+  });
+
+  it("handles non-blob URL creation and revokes URL on unmount", () => {
+    vi.mocked(globalThis.URL.createObjectURL).mockReturnValueOnce(
+      "http://example.com/not-a-blob",
+    );
+
+    const { unmount } = render(<ProfilePictureForm />);
+    const fileInput = screen.getByLabelText("Choose a profile picture");
+    const file = new File(["dummy"], "avatar.png", { type: "image/png" });
+
+    fireEvent.change(fileInput, { target: { files: [file] } });
+    unmount();
+    expect(globalThis.URL.revokeObjectURL).toHaveBeenCalledWith(
+      "http://example.com/not-a-blob",
+    );
+  });
+
+  it("handles busy state during upload and remove", async () => {
+    let resolveUpload: any;
+    vi.mocked(uploadAccountAvatar).mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveUpload = resolve;
+        }),
+    );
+
+    render(<ProfilePictureForm />);
+    const fileInput = screen.getByLabelText("Choose a profile picture");
+    const file = new File(["dummy"], "avatar.png", { type: "image/png" });
+    fireEvent.change(fileInput, { target: { files: [file] } });
+
+    const uploadBtn = screen.getByRole("button", { name: "Upload Picture" });
+    fireEvent.click(uploadBtn);
+
+    // Now busy is true
+    expect(screen.getByText("Saving…")).toBeDefined();
+
+    // Upload in flight displays Saving...
+    expect(screen.getByText("Saving…")).toBeDefined();
+
+    resolveUpload("https://example.com/avatar.png");
+  });
 });

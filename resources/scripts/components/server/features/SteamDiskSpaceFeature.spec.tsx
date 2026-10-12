@@ -112,6 +112,25 @@ describe("SteamDiskSpaceFeature component", () => {
     expect(
       getByText(/Please get in touch with the administrator\(s\)/),
     ).toBeDefined();
+
+    // Close button click for non-admin
+    await act(async () => {
+      fireEvent.click(getByText("Close"));
+    });
+
+    // Test onDismissed via close-icon
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "Update job failed with error: 0x202 after update job",
+      );
+    });
+    const closeIcon = document.querySelector(".close-icon");
+    if (closeIcon) {
+      await act(async () => {
+        fireEvent.click(closeIcon);
+      });
+    }
   });
 
   it("ignores errors when server is already running", async () => {
@@ -121,6 +140,19 @@ describe("SteamDiskSpaceFeature component", () => {
       mockSocket.emit(
         SocketEvent.CONSOLE_OUTPUT,
         "steamcmd needs 250mb of free disk space to update",
+      );
+    });
+
+    expect(queryByText("Out of available disk space...")).toBeNull();
+  });
+
+  it("ignores non-matching console output", async () => {
+    const { queryByText } = await renderFeature(true, false);
+
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "Normal Steam log line without disk error",
       );
     });
 

@@ -33,6 +33,22 @@ export const ModalMask: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   />
 );
 
+export const handleModalOpenChange = (
+  open: boolean,
+  eventDetails: { reason?: string } | undefined,
+  isDismissable: boolean,
+  closeOnEscape: boolean,
+  closeOnBackground: boolean,
+  onDismissed: () => void,
+) => {
+  if (!open) {
+    if (!isDismissable) return;
+    if (eventDetails?.reason === "escape-key" && !closeOnEscape) return;
+    if (eventDetails?.reason === "outside-press" && !closeOnBackground) return;
+    onDismissed();
+  }
+};
+
 const Modal: React.FC<ModalProps> = ({
   visible,
   dismissable,
@@ -51,13 +67,14 @@ const Modal: React.FC<ModalProps> = ({
     <Dialog.Root
       open={visible}
       onOpenChange={(open, eventDetails) => {
-        if (!open) {
-          if (!isDismissable) return;
-          if (eventDetails?.reason === "escape-key" && !closeOnEscape) return;
-          if (eventDetails?.reason === "outside-press" && !closeOnBackground)
-            return;
-          onDismissed();
-        }
+        handleModalOpenChange(
+          open,
+          eventDetails,
+          isDismissable,
+          closeOnEscape,
+          closeOnBackground,
+          onDismissed,
+        );
       }}
     >
       <Dialog.Portal>

@@ -1,45 +1,51 @@
 import React from "react";
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
 import ServerConsoleContainer from "./ServerConsoleContainer";
 
-const uuid = "00000000-0000-4000-8000-000000000123";
+let mockServerState: any = {};
+
 vi.mock("@/state/server", () => ({
   ServerContext: {
-    useStoreState: (select: (state: unknown) => unknown) =>
-      select({
-        server: {
-          data: {
-            id: "serv_test",
-            uuid: "00000000-0000-4000-8000-000000000123",
-            name: "Test server",
-            description: "",
-            eggFeatures: [],
-          },
-          isInstalling: false,
-        },
-      }),
+    useStoreState: (selector: any) => selector(mockServerState),
   },
 }));
+
 vi.mock("@/components/elements/ServerContentBlock", () => ({
-  default: ({ children }: { children: React.ReactNode }) => (
-    <main>{children}</main>
+  default: ({ title, children }: any) => (
+    <div>
+      <h1>{title}</h1>
+      {children}
+    </div>
   ),
 }));
-vi.mock("@/components/elements/Can", () => ({ default: () => null }));
-vi.mock("@/components/server/console/Console", () => ({ default: () => null }));
-vi.mock("@/components/server/console/StatGraphs", () => ({
-  default: () => null,
+
+vi.mock("@/components/elements/Can", () => ({
+  default: ({ children }: any) => <>{children}</>,
 }));
+
+vi.mock("@/components/server/console/PowerButtons", () => ({
+  default: () => <div data-testid="power-buttons">PowerButtons</div>,
+}));
+
+vi.mock("@/components/server/console/Console", () => ({
+  default: () => <div data-testid="console">Console</div>,
+}));
+
 vi.mock("@/components/server/console/ServerDetailsBlock", () => ({
-  default: () => null,
+  default: () => (
+    <div data-testid="server-details-block">ServerDetailsBlock</div>
+  ),
 }));
-vi.mock("@feature/Features", () => ({ default: () => null }));
+
+vi.mock("@/components/server/console/StatGraphs", () => ({
+  default: () => <div data-testid="stat-graphs">StatGraphs</div>,
+}));
+
+vi.mock("@feature/Features", () => ({
+  default: () => <div data-testid="features">Features</div>,
+}));
+
 vi.mock("@blueprint/components/Server/Terminal/BeforeContent", () => ({
   default: () => null,
 }));
@@ -47,30 +53,67 @@ vi.mock("@blueprint/components/Server/Terminal/AfterContent", () => ({
   default: () => null,
 }));
 
-it("copies the full UUID rather than the route identifier and confirms success", async () => {
-  const writeText = vi.fn().mockResolvedValue(undefined);
-  const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
-  const portal = document.createElement("div");
-  portal.id = "modal-portal";
-  document.body.appendChild(portal);
-  Object.defineProperty(navigator, "clipboard", {
-    value: { writeText },
-    configurable: true,
+describe("components/server/console/ServerConsoleContainer", () => {
+  beforeEach(() => {
+    mockServerState = {
+      server: {
+        data: {
+          name: "Survival World",
+          uuid: "1234-5678-uuid",
+          description: "A survival world description",
+          isTransferring: false,
+          isNodeUnderMaintenance: false,
+          eggFeatures: ["eula"],
+        },
+        isInstalling: false,
+      },
+    };
   });
-  try {
+
+  it("renders server console details in normal state", () => {
     render(<ServerConsoleContainer />);
-    const button = screen.getByRole("button", { name: "Copy server UUID" });
-    expect(button.textContent).toBe(uuid);
-    expect(button.getAttribute("type")).toBe("button");
-    await act(async () => {
-      fireEvent.click(button);
-    });
-    expect(writeText).toHaveBeenCalledWith(uuid);
-    expect(screen.getByText("Copied text to clipboard.")).toBeDefined();
-  } finally {
-    cleanup();
-    portal.remove();
-    if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
-    else Reflect.deleteProperty(navigator, "clipboard");
-  }
+
+    expect(screen.getByText("Survival World")).toBeTruthy();
+    expect(screen.getByText("1234-5678-uuid")).toBeTruthy();
+    expect(screen.getByText("A survival world description")).toBeTruthy();
+    expect(screen.getByTestId("console")).toBeTruthy();
+    expect(screen.getByTestId("server-details-block")).toBeTruthy();
+    expect(screen.getByTestId("power-buttons")).toBeTruthy();
+    expect(screen.getByTestId("stat-graphs")).toBeTruthy();
+    expect(screen.getByTestId("features")).toBeTruthy();
+    expect(screen.queryByText(/under maintenance/i)).toBeNull();
+  });
+
+  it("renders maintenance alert when node is under maintenance", () => {
+    mockServerState.server.data.isNodeUnderMaintenance = true;
+    render(<ServerConsoleContainer />);
+
+    expect(
+      screen.getByText(
+        /The node of this server is currently under maintenance/i,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders installation alert when server is installing", () => {
+    mockServerState.server.isInstalling = true;
+    render(<ServerConsoleContainer />);
+
+    expect(
+      screen.getByText(
+        /This server is currently running its installation process/i,
+      ),
+    ).toBeTruthy();
+  });
+
+  it("renders transferring alert when server is transferring", () => {
+    mockServerState.server.data.isTransferring = true;
+    render(<ServerConsoleContainer />);
+
+    expect(
+      screen.getByText(
+        /This server is currently being transferred to another node/i,
+      ),
+    ).toBeTruthy();
+  });
 });

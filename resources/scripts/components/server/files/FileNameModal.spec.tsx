@@ -96,4 +96,21 @@ describe("FileNameModal", () => {
     });
     expect(onFileNamed).not.toHaveBeenCalled();
   });
+
+  it("calls reset and onDismissed when modal is dismissed", () => {
+    const onDismissed = vi.fn();
+    render(
+      <Wrapper>
+        <FileNameModal
+          visible
+          onDismissed={onDismissed}
+          onFileNamed={vi.fn()}
+        />
+      </Wrapper>,
+    );
+
+    const closeBtn = document.querySelector(".close-icon")!;
+    fireEvent.click(closeBtn);
+    expect(onDismissed).toHaveBeenCalled();
+  });
 });

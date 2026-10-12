@@ -19,7 +19,9 @@ export const NavigationLinks = () => {
     <>
       {/* Aquadactyl routes */}
       {routes.account
-        .filter((route) => !!route.name)
+        .filter(
+          (route): route is typeof route & { name: string } => !!route.name,
+        )
         .map(({ path, name, exact = false }) => (
           <NavLink
             key={path}
@@ -30,10 +32,7 @@ export const NavigationLinks = () => {
             }
             end={exact}
           >
-            {t(
-              `navigation.${name?.toLowerCase().replaceAll(" ", "_")}`,
-              name ?? "",
-            )}
+            {t(`navigation.${name.toLowerCase().replaceAll(" ", "_")}`, name)}
           </NavLink>
         ))}
 

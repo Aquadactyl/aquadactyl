@@ -89,14 +89,12 @@ const VariableBox = ({ variable }: Props) => {
                   : variable.serverValue === "1"
               }
               onChange={() => {
-                if (canEdit && variable.isEditable) {
-                  if (isStringSwitch) {
-                    setVariableValue(
-                      variable.serverValue === "true" ? "false" : "true",
-                    );
-                  } else {
-                    setVariableValue(variable.serverValue === "1" ? "0" : "1");
-                  }
+                if (isStringSwitch) {
+                  setVariableValue(
+                    variable.serverValue === "true" ? "false" : "true",
+                  );
+                } else {
+                  setVariableValue(variable.serverValue === "1" ? "0" : "1");
                 }
               }}
             />

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React, { useEffect } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
 import ScheduleTaskRow from "./ScheduleTaskRow";
 import { ServerContext } from "@/state/server";
 import { Schedule, Task } from "@/api/server/schedules/getServerSchedules";
@@ -22,14 +22,29 @@ vi.mock("@/components/server/schedules/TaskDetailsModal", () => ({
 }));
 
 vi.mock("@/components/elements/ConfirmationModal", () => ({
-  default: ({ visible, onConfirmed, onDismissed, title }: any) =>
+  default: ({
+    visible,
+    onConfirmed,
+    onDismissed,
+    onModalDismissed,
+    title,
+  }: any) =>
     visible ? (
       <div data-testid="confirmation-modal">
         <h1>{title}</h1>
         <button onClick={onConfirmed}>Confirm</button>
-        <button onClick={onDismissed}>Cancel</button>
+        <button onClick={onModalDismissed || onDismissed}>Cancel</button>
       </div>
     ) : null,
+}));
+
+const mockAddError = vi.fn();
+const mockClearFlashes = vi.fn();
+vi.mock("@/plugins/useFlash", () => ({
+  default: () => ({
+    addError: mockAddError,
+    clearFlashes: mockClearFlashes,
+  }),
 }));
 
 const mockSchedule: Schedule = {
@@ -105,7 +120,7 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
     vi.clearAllMocks();
   });
 
-  it("renders step details, command payload, and action buttons", async () => {
+  it("renders step details, command payload, and action buttons for step 1", async () => {
     render(
       <ServerContext.Provider>
         <Wrapper>
@@ -120,11 +135,79 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
 
     expect(await screen.findByText(/Send console command/)).toBeDefined();
     expect(screen.getByText("say Server restarting soon!")).toBeDefined();
+    expect(screen.getByText(/before starting/)).toBeDefined();
     expect(screen.getByLabelText("Edit scheduled task")).toBeDefined();
     expect(screen.getByLabelText("Delete scheduled task")).toBeDefined();
   });
 
-  it("opens edit modal when clicking edit button", async () => {
+  it("renders backup action with file ignoring note, step > 1 and continueOnFailure badge", async () => {
+    const backupTask: Task = {
+      ...mockTask,
+      id: 20,
+      action: "backup",
+      payload: "*.log\n*.tmp",
+      timeOffset: 120,
+      continueOnFailure: true,
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow
+            schedule={mockSchedule}
+            task={backupTask}
+            stepNumber={2}
+          />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(await screen.findByText("Ignoring files & folders:")).toBeDefined();
+    expect(screen.getByText(/.*\.log.*\.tmp/s)).toBeDefined();
+    expect(screen.getByText(/after the previous action is sent/)).toBeDefined();
+    expect(screen.getByText(/Keeps going on connection failure/)).toBeDefined();
+  });
+
+  it("renders power action without payload box", async () => {
+    const powerTask: Task = {
+      ...mockTask,
+      id: 30,
+      action: "power",
+      payload: "restart",
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow schedule={mockSchedule} task={powerTask} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(await screen.findByText(/Restart server/)).toBeDefined();
+    expect(screen.queryByText("restart")).toBeNull();
+  });
+
+  it("renders unknown power action fallback", async () => {
+    const customTask: Task = {
+      ...mockTask,
+      id: 40,
+      action: "power",
+      payload: "custom_power_action",
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow schedule={mockSchedule} task={customTask} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(await screen.findByText(/Send Power Action/)).toBeDefined();
+  });
+
+  it("opens edit modal and closes it", async () => {
     render(
       <ServerContext.Provider>
         <Wrapper>
@@ -137,11 +220,13 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
     fireEvent.click(editBtn);
 
     expect(screen.getByTestId("task-details-modal")).toBeDefined();
+    fireEvent.click(screen.getByText("Close"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("task-details-modal")).toBeNull();
+    });
   });
 
-  it("opens delete confirmation and executes deletion", async () => {
-    vi.mocked(deleteScheduleTask).mockResolvedValueOnce(undefined as any);
-
+  it("opens delete confirmation and cancels deletion", async () => {
     render(
       <ServerContext.Provider>
         <Wrapper>
@@ -154,6 +239,54 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
     fireEvent.click(deleteBtn);
 
     expect(screen.getByTestId("confirmation-modal")).toBeDefined();
+    fireEvent.click(screen.getByText("Cancel"));
+    await waitFor(() => {
+      expect(screen.queryByTestId("confirmation-modal")).toBeNull();
+    });
+  });
+
+  it("handles deletion failure", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(deleteScheduleTask).mockRejectedValueOnce(
+      new Error("Failed to delete task"),
+    );
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow schedule={mockSchedule} task={mockTask} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByLabelText("Delete scheduled task");
+    fireEvent.click(deleteBtn);
+
+    const confirmBtn = screen.getByRole("button", { name: "Confirm" });
+    fireEvent.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(mockAddError).toHaveBeenCalled();
+    });
+    consoleSpy.mockRestore();
+  });
+
+  it("handles successful deletion", async () => {
+    vi.mocked(deleteScheduleTask).mockResolvedValueOnce(undefined as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow
+            schedule={{ ...mockSchedule, tasks: [mockTask] }}
+            task={mockTask}
+          />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByLabelText("Delete scheduled task");
+    fireEvent.click(deleteBtn);
 
     const confirmBtn = screen.getByRole("button", { name: "Confirm" });
     fireEvent.click(confirmBtn);
@@ -161,5 +294,24 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
     await waitFor(() => {
       expect(deleteScheduleTask).toHaveBeenCalledWith("server-uuid-1", 1, 10);
     });
+  });
+
+  it("renders unknown action fallback", async () => {
+    const unknownTask: Task = {
+      ...mockTask,
+      id: 50,
+      action: "weird_action" as any,
+      payload: "something",
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow schedule={mockSchedule} task={unknownTask} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(await screen.findByText(/Send console command/)).toBeDefined();
   });
 });

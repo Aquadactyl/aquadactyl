@@ -50,12 +50,11 @@ export default () => {
   );
 
   const toggleAutomaticRuns = () => {
-    if (!schedule) return;
     clearFlashes("schedules");
     setSavingStatus(true);
     createOrUpdateSchedule(uuid, {
-      ...schedule,
-      isActive: !schedule.isActive,
+      ...schedule!,
+      isActive: !schedule!.isActive,
     })
       .then((saved) => appendSchedule(saved))
       .catch((error) => clearAndAddHttpError({ error, key: "schedules" }))

@@ -125,4 +125,90 @@ describe("HytaleOauthRequireFeature", () => {
     );
     openSpy.mockRestore();
   });
+
+  it("closes modal when clicking Cancel button and onDismissed", async () => {
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket}>
+        <HytaleOauthRequireFeature />
+      </Wrapper>,
+    );
+
+    const testUrl =
+      "https://oauth.accounts.hytale.com/oauth2/device/verify?user_code=XYZW-9999";
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, testUrl);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Authentication Required")).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+
+    // Test onDismissed via close-icon
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, testUrl);
+    });
+    const closeIcon = document.querySelector(".close-icon");
+    if (closeIcon) {
+      fireEvent.click(closeIcon);
+    }
+  });
+
+  it("ignores non-matching console lines", async () => {
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket}>
+        <HytaleOauthRequireFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(SocketEvent.CONSOLE_OUTPUT, "Normal server log line");
+    });
+
+    expect(screen.queryByText("Authentication Required")).toBeNull();
+  });
+
+  it("does not listen if status is running or not connected", async () => {
+    const socket = createMockSocket();
+
+    const Disconnected = () => {
+      const setServer = ServerContext.useStoreActions(
+        (a) => a.server.setServer,
+      );
+      const setConnectionState = ServerContext.useStoreActions(
+        (a) => a.socket.setConnectionState,
+      );
+      const setServerStatus = ServerContext.useStoreActions(
+        (a) => a.status.setServerStatus,
+      );
+
+      useEffect(() => {
+        setServer({ id: "1", uuid: "server-uuid" } as any);
+        setConnectionState(false);
+        setServerStatus("running");
+      }, [setServer, setConnectionState, setServerStatus]);
+
+      return <HytaleOauthRequireFeature />;
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Disconnected />
+      </ServerContext.Provider>,
+    );
+
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "https://oauth.accounts.hytale.com/oauth2/device/verify?user_code=XYZW-9999",
+      );
+    });
+
+    expect(screen.queryByText("Authentication Required")).toBeNull();
+  });
 });

@@ -122,4 +122,78 @@ describe("account language preferences", () => {
       false,
     );
   });
+
+  it("returns early without updating if selecting the currently active preference", async () => {
+    await choose("en");
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("handles non-Error thrown during language update", async () => {
+    mocks.update.mockRejectedValue("String error message");
+    await choose("fr");
+    expect(mocks.error).toHaveBeenCalledWith("String error message");
+  });
+
+  it("handles empty language preference and unknown locale in status message", async () => {
+    store.getActions().user.setUserData({
+      uuid: "test-user-2",
+      username: "user2",
+      email: "u2@test.com",
+      language: undefined as any,
+      rootAdmin: false,
+      useTotp: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const origLang = i18n.language;
+    (i18n as any).language = "";
+
+    const testContainer = document.createElement("div");
+    document.body.appendChild(testContainer);
+    const testRoot = createRoot(testContainer);
+
+    act(() => testRoot.render(<LanguageSettingsForm />));
+    expect(testContainer.textContent).toContain("English");
+
+    act(() => testRoot.unmount());
+    testContainer.remove();
+    (i18n as any).language = origLang;
+  });
+
+  it("falls back to raw locale name when locale is not in localization.languages", () => {
+    const origLang = i18n.language;
+    (i18n as any).language = "es";
+
+    const testContainer = document.createElement("div");
+    document.body.appendChild(testContainer);
+    const testRoot = createRoot(testContainer);
+
+    act(() => testRoot.render(<LanguageSettingsForm />));
+    expect(testContainer.textContent).toContain("Currently using es");
+
+    act(() => testRoot.unmount());
+    testContainer.remove();
+    (i18n as any).language = origLang;
+  });
+
+  it("displays only-english notice when only 1 language is available", () => {
+    const origLanguages = window.PanelLocalization!.languages;
+    window.PanelLocalization!.languages = {
+      en: { name: "English", nativeName: "English", direction: "ltr" },
+    };
+
+    const singleContainer = document.createElement("div");
+    document.body.appendChild(singleContainer);
+    const singleRoot = createRoot(singleContainer);
+
+    act(() => singleRoot.render(<LanguageSettingsForm />));
+    expect(singleContainer.textContent).toContain(
+      "English is currently the only installed language",
+    );
+
+    act(() => singleRoot.unmount());
+    singleContainer.remove();
+    window.PanelLocalization!.languages = origLanguages;
+  });
 });

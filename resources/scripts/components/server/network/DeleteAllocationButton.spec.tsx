@@ -9,12 +9,13 @@ vi.mock("@/api/server/network/deleteServerAllocation");
 
 vi.mock("@/components/elements/dialog", () => ({
   Dialog: {
-    Confirm: ({ open, title, confirm, onConfirmed, children }: any) =>
+    Confirm: ({ open, onClose, title, confirm, onConfirmed, children }: any) =>
       open ? (
         <div>
           <h2>{title}</h2>
           <p>{children}</p>
           <button onClick={onConfirmed}>{confirm}</button>
+          <button onClick={onClose}>Cancel</button>
         </div>
       ) : null,
   },
@@ -111,6 +112,24 @@ describe("DeleteAllocationButton", () => {
       );
       expect(mockMutate).toHaveBeenCalled();
     });
+
+    const mutateCb = mockMutate.mock.calls[0][0];
+    expect(mutateCb([{ id: 10 }, { id: 20 }])).toEqual([{ id: 10 }]);
+    expect(mutateCb(undefined)).toBeUndefined();
+  });
+
+  it("closes confirmation dialog on cancel", () => {
+    render(
+      <Wrapper>
+        <DeleteAllocationButton allocation={20} />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button"));
+    expect(screen.getByText("Remove Allocation")).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByText("Remove Allocation")).toBeNull();
   });
 
   it("handles deletion failure and reports error", async () => {

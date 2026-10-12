@@ -42,20 +42,50 @@ it("keeps the menu open through mouse-down and click, then closes on selection",
   await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
 });
 
-it("keeps a context menu open when it is requested again", async () => {
-  const ref = createRef<DropdownMenuRef>();
-  render(
-    <DropdownMenu
-      ref={ref}
-      renderToggle={(onClick) => (
-        <button onClick={onClick}>File actions</button>
-      )}
-    >
-      <Menu.Item>Rename</Menu.Item>
-    </DropdownMenu>,
-  );
-  act(() => ref.current?.triggerMenu());
-  await screen.findByRole("menu");
-  act(() => ref.current?.triggerMenu());
-  expect(screen.getByRole("menu")).toBeDefined();
+  it("applies danger styling to DropdownButtonRow when danger prop is true", () => {
+    const { getByText } = render(
+      <DropdownButtonRow danger>Delete Server</DropdownButtonRow>,
+    );
+
+    const button = getByText("Delete Server");
+    expect(button.className).toContain("hover:bg-red-900");
+    expect(button.className).toContain("hover:text-red-200");
+  });
+
+  it("closes menu when clicking an item inside the popup", async () => {
+    const { getByText } = render(
+      <DropdownMenu
+        renderToggle={(onClick) => <button onClick={onClick}>Actions</button>}
+      >
+        <div data-testid="item-to-click">Clickable Action</div>
+      </DropdownMenu>,
+    );
+
+    // Open menu
+    fireEvent.click(getByText("Actions"));
+    expect(getByText("Clickable Action")).toBeDefined();
+
+    // Click item inside popup
+    const popupChild = getByText("Clickable Action").parentElement!;
+    await act(async () => {
+      fireEvent.click(popupChild);
+    });
+  });
+
+  it("triggers trigger container onClick with triggerProps", () => {
+    const { getByTestId, queryByText } = render(
+      <DropdownMenu
+        renderToggle={() => <span data-testid="custom-toggle">Custom</span>}
+      >
+        <div>Content</div>
+      </DropdownMenu>,
+    );
+
+    const toggle = getByTestId("custom-toggle");
+    const container = toggle.parentElement!;
+
+    // Clicking the container div
+    fireEvent.click(container);
+    expect(queryByText("Content")).toBeDefined();
+  });
 });

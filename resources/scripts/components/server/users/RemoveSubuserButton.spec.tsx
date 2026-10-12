@@ -119,4 +119,20 @@ describe("RemoveSubuserButton", () => {
       });
     });
   });
+
+  it("dismisses confirmation modal on Cancel", async () => {
+    render(
+      <Wrapper>
+        <RemoveSubuserButton subuser={mockSubuser} />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete subuser" }));
+    expect(screen.getByText("Delete this subuser?")).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() => {
+      expect(screen.queryByText("Delete this subuser?")).toBeNull();
+    });
+  });
 });

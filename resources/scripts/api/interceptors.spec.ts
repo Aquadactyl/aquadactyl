@@ -70,5 +70,48 @@ describe("api/interceptors", () => {
 
     expect(() => errorHandler!(notFoundError)).toThrow(notFoundError as any);
     expect(mockHistory.replace).not.toHaveBeenCalled();
+
+    // Error without response
+    const networkError = {} as AxiosError;
+    expect(() => errorHandler!(networkError)).toThrow(networkError as any);
+
+    // Status 400 but different error code or missing data
+    const status400OtherError = {
+      response: {
+        status: 400,
+        data: { errors: [{ code: "OtherException" }] },
+      },
+    } as AxiosError;
+    expect(() => errorHandler!(status400OtherError)).toThrow(
+      status400OtherError as any,
+    );
+
+    const status400EmptyData = {
+      response: {
+        status: 400,
+        data: {},
+      },
+    } as AxiosError;
+    expect(() => errorHandler!(status400EmptyData)).toThrow(
+      status400EmptyData as any,
+    );
+
+    // TwoFactorAuthRequiredException when already on /account pathname
+    const origPathname = window.location.pathname;
+    try {
+      window.history.pushState({}, "", "/account/security");
+      const twoFactorOnAccount = {
+        response: {
+          status: 400,
+          data: { errors: [{ code: "TwoFactorAuthRequiredException" }] },
+        },
+      } as AxiosError;
+      expect(() => errorHandler!(twoFactorOnAccount)).toThrow(
+        twoFactorOnAccount as any,
+      );
+      expect(mockHistory.replace).not.toHaveBeenCalled();
+    } finally {
+      window.history.pushState({}, "", origPathname);
+    }
   });
 });

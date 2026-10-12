@@ -147,4 +147,179 @@ describe("components/server/network/NetworkContainer", () => {
       expect(createServerAllocation).toHaveBeenCalledWith("server-uuid-1");
     });
   });
+
+  it("handles createServerAllocation rejection", async () => {
+    vi.mocked(createServerAllocation).mockRejectedValueOnce(
+      new Error("Creation failed"),
+    );
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <NetworkContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const createBtn = await screen.findByRole("button", {
+      name: "Create Allocation",
+    });
+    fireEvent.click(createBtn);
+
+    await waitFor(() => {
+      expect(createServerAllocation).toHaveBeenCalledWith("server-uuid-1");
+    });
+  });
+
+  it("renders spinner when data is not loaded yet", () => {
+    vi.mocked(getServerAllocations).mockReturnValueOnce({
+      data: null,
+      error: null,
+      mutate: mockMutate,
+    } as any);
+
+    const { container } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <NetworkContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(container.querySelector(".spinner")).toBeDefined();
+  });
+
+  it("handles error from getServerAllocations", () => {
+    vi.mocked(getServerAllocations).mockReturnValueOnce({
+      data: mockAllocations,
+      error: new Error("Failed to load allocations"),
+      mutate: mockMutate,
+    } as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <NetworkContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(screen.getByText("127.0.0.1:25565")).toBeDefined();
+  });
+
+  it("does not render create button when allocation limit reached", () => {
+    const CustomWrapper = ({ children }: { children: React.ReactNode }) => {
+      const isReady = ServerContext.useStoreState(
+        (s) => !!s.server.data && s.server.permissions.length > 0,
+      );
+      const setServer = ServerContext.useStoreActions(
+        (a) => a.server.setServer,
+      );
+      const setPermissions = ServerContext.useStoreActions(
+        (a) => a.server.setPermissions,
+      );
+
+      useEffect(() => {
+        setServer({
+          id: "serv_1" as any,
+          uuid: "server-uuid-1",
+          name: "Test Server",
+          node: "Node 1",
+          isNodeUnderMaintenance: false,
+          status: null,
+          invocation: "start",
+          dockerImage: "java",
+          sftpDetails: { ip: "127.0.0.1", port: 2022 },
+          description: "",
+          limits: {
+            memory: 1024,
+            swap: 0,
+            disk: 1024,
+            io: 500,
+            cpu: 100,
+            threads: "",
+          },
+          featureLimits: { databases: 1, allocations: 1, backups: 2 },
+          isTransferring: false,
+          eggFeatures: [],
+          allocations: mockAllocations,
+          variables: [],
+        } as any);
+        setPermissions(["*"]);
+      }, []);
+
+      if (!isReady) return null;
+      return <>{children}</>;
+    };
+
+    render(
+      <ServerContext.Provider>
+        <CustomWrapper>
+          <NetworkContainer />
+        </CustomWrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "Create Allocation" }),
+    ).toBeNull();
+  });
+
+  it("does not render allocation section when allocationLimit is 0", () => {
+    const ZeroLimitWrapper = ({ children }: { children: React.ReactNode }) => {
+      const isReady = ServerContext.useStoreState(
+        (s) => !!s.server.data && s.server.permissions.length > 0,
+      );
+      const setServer = ServerContext.useStoreActions(
+        (a) => a.server.setServer,
+      );
+      const setPermissions = ServerContext.useStoreActions(
+        (a) => a.server.setPermissions,
+      );
+
+      useEffect(() => {
+        setServer({
+          id: "serv_1" as any,
+          uuid: "server-uuid-1",
+          name: "Test Server",
+          node: "Node 1",
+          isNodeUnderMaintenance: false,
+          status: null,
+          invocation: "start",
+          dockerImage: "java",
+          sftpDetails: { ip: "127.0.0.1", port: 2022 },
+          description: "",
+          limits: {
+            memory: 1024,
+            swap: 0,
+            disk: 1024,
+            io: 500,
+            cpu: 100,
+            threads: "",
+          },
+          featureLimits: { databases: 1, allocations: 0, backups: 2 },
+          isTransferring: false,
+          eggFeatures: [],
+          allocations: mockAllocations,
+          variables: [],
+        } as any);
+        setPermissions(["*"]);
+      }, []);
+
+      if (!isReady) return null;
+      return <>{children}</>;
+    };
+
+    render(
+      <ServerContext.Provider>
+        <ZeroLimitWrapper>
+          <NetworkContainer />
+        </ZeroLimitWrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(
+      screen.queryByText(/allowed allocations for this server/),
+    ).toBeNull();
+  });
 });

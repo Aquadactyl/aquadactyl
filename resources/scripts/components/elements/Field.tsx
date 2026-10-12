@@ -1,4 +1,5 @@
 import FormField from "@/components/elements/FormField";
 
-export default FormField;
+const Field = FormField;
+export default Field;
 export { FormField };

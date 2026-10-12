@@ -8,17 +8,24 @@ vi.mock("@/components/elements/tooltip/Tooltip", () => ({
   default: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock("@/hoc/asDialog", () => ({
-  default: () => (Component: any) => (props: any) =>
-    props.open ? <Component {...props} /> : null,
-}));
-
-vi.mock("@/components/elements/dialog", () => ({
-  Dialog: {
-    Footer: ({ children }: any) => <div>{children}</div>,
-  },
-  DialogWrapperContext: React.createContext({ close: vi.fn() }),
-}));
+vi.mock("@/components/elements/dialog", async (importOriginal) => {
+  const actual: any = await importOriginal();
+  return {
+    ...actual,
+    Dialog: Object.assign(
+      ({ open, onClose, children }: any) =>
+        open ? (
+          <div>
+            {children}
+            <button onClick={onClose}>Close Dialog Mock</button>
+          </div>
+        ) : null,
+      {
+        Footer: ({ children }: any) => <div>{children}</div>,
+      },
+    ),
+  };
+});
 
 const Wrapper = ({
   uploads = {},
@@ -112,5 +119,24 @@ describe("components/server/files/FileManagerStatus", () => {
     expect(screen.getByText("mod.jar")).toBeDefined();
     expect(screen.getByText("config.yml")).toBeDefined();
     expect(screen.getByText("Cancel Uploads")).toBeDefined();
+
+    // Cancel a single upload
+    const cancelSingleBtns = screen.getAllByRole("button");
+    fireEvent.click(cancelSingleBtns[1]);
+
+    // Click Close button
+    fireEvent.click(screen.getByText("Close"));
+
+    // Click toggleBtn to reopen
+    fireEvent.click(screen.getByRole("button"));
+
+    // Click dialog wrapper onClose
+    fireEvent.click(screen.getByText("Close Dialog Mock"));
+
+    // Click toggleBtn to reopen
+    fireEvent.click(screen.getByRole("button"));
+
+    // Click Cancel Uploads (which clears uploads and closes dialog)
+    fireEvent.click(screen.getByText("Cancel Uploads"));
   });
 });

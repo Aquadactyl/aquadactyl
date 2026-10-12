@@ -138,6 +138,44 @@ describe("api/auth", () => {
         "An error occurred while processing the registration request.",
       );
     });
+
+    it("handles undefined intended in registration response", async () => {
+      vi.mocked(http.get).mockResolvedValueOnce({} as any);
+      vi.mocked(http.post).mockResolvedValueOnce({
+        data: {
+          data: {
+            complete: true,
+            intended: "",
+          },
+        },
+      } as any);
+
+      const result = await register({
+        username: "user2",
+        email: "user2@test.com",
+        name_first: "U",
+        name_last: "2",
+        password: "pass",
+        password_confirmation: "pass",
+      });
+
+      expect(result.intended).toBeUndefined();
+    });
+
+    it("rejects when csrf cookie fetch fails", async () => {
+      vi.mocked(http.get).mockRejectedValueOnce(new Error("CSRF failed"));
+
+      await expect(
+        register({
+          username: "user3",
+          email: "user3@test.com",
+          name_first: "U",
+          name_last: "3",
+          password: "pass",
+          password_confirmation: "pass",
+        }),
+      ).rejects.toThrow("CSRF failed");
+    });
   });
 
   describe("loginCheckpoint", () => {
@@ -199,6 +237,22 @@ describe("api/auth", () => {
       });
       expect(result).toBe("We have emailed your password reset link!");
     });
+
+    it("falls back to empty string when status is not present", async () => {
+      vi.mocked(http.post).mockResolvedValueOnce({
+        data: {},
+      } as any);
+
+      const result = await requestPasswordResetEmail("user@test.com");
+      expect(result).toBe("");
+    });
+
+    it("rejects when reset email request fails", async () => {
+      vi.mocked(http.post).mockRejectedValueOnce(new Error("Rate limited"));
+      await expect(requestPasswordResetEmail("user@test.com")).rejects.toThrow(
+        "Rate limited",
+      );
+    });
   });
 
   describe("performPasswordReset", () => {
@@ -226,6 +280,17 @@ describe("api/auth", () => {
         redirectTo: "/auth/login",
         sendToLogin: true,
       });
+    });
+
+    it("rejects when reset fails", async () => {
+      vi.mocked(http.post).mockRejectedValueOnce(new Error("Invalid token"));
+      await expect(
+        performPasswordReset("user@test.com", {
+          token: "bad",
+          password: "pass",
+          passwordConfirmation: "pass",
+        }),
+      ).rejects.toThrow("Invalid token");
     });
   });
 });

@@ -1,9 +1,14 @@
 import React from "react";
 import { render, cleanup } from "@testing-library/react";
 import Alert from "./Alert";
+import { Alert as AlertFromIndex } from "./index";
 
 describe("Alert component", () => {
   afterEach(cleanup);
+
+  it("re-exports Alert from index.ts", () => {
+    expect(AlertFromIndex).toBe(Alert);
+  });
 
   it("renders warning alert with yellow styling", () => {
     const { getByText, container } = render(

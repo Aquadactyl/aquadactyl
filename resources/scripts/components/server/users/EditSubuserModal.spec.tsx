@@ -34,7 +34,17 @@ const mockSubuser: Subuser = {
   can: (perm: string) => perm === "control.start",
 };
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => {
+interface WrapperProps {
+  children: React.ReactNode;
+  rootAdmin?: boolean;
+  userPermissions?: string[];
+}
+
+const Wrapper = ({
+  children,
+  rootAdmin = true,
+  userPermissions = ["*"],
+}: WrapperProps) => {
   const isReady = ServerContext.useStoreState(
     (s) => !!s.server.data && s.server.permissions.length > 0,
   );
@@ -49,7 +59,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       username: "admin",
       email: "admin@test.com",
       language: "en",
-      rootAdmin: true,
+      rootAdmin,
       useTotp: false,
       gravatar: "",
       createdAt: new Date(),
@@ -62,6 +72,18 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
         keys: {
           start: "Start Server",
           stop: "Stop Server",
+        },
+      },
+      file: {
+        description: "File",
+        keys: {
+          create: "Create File",
+        },
+      },
+      websocket: {
+        description: "Websocket",
+        keys: {
+          connect: "Connect",
         },
       },
     } as any);
@@ -91,8 +113,8 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       allocations: [],
       variables: [],
     } as any);
-    setPermissions(["*"]);
-  }, []);
+    setPermissions(userPermissions);
+  }, [rootAdmin, userPermissions]);
 
   if (!isReady) return null;
   return <>{children}</>;
@@ -101,9 +123,17 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 describe("components/server/users/EditSubuserModal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    window.HTMLElement.prototype.scrollIntoView = vi.fn();
   });
 
-  it("renders Invite User form when no subuser is provided", async () => {
+  it("renders Invite User form when no subuser is provided and creates subuser", async () => {
+    const newSubuser = {
+      ...mockSubuser,
+      uuid: "subuser-uuid-2",
+      email: "invitee@example.com",
+    };
+    vi.mocked(createOrUpdateSubuser).mockResolvedValueOnce(newSubuser);
+
     render(
       <ServerContext.Provider>
         <Wrapper>
@@ -112,10 +142,26 @@ describe("components/server/users/EditSubuserModal", () => {
       </ServerContext.Provider>,
     );
 
-    expect(await screen.findByLabelText("User Email")).toBeDefined();
-    expect(
-      screen.getAllByRole("button", { name: "Invite User" })[0],
-    ).toBeDefined();
+    const emailInput = await screen.findByLabelText("User Email");
+    expect(emailInput).toBeDefined();
+
+    fireEvent.change(emailInput, {
+      target: { value: "invitee@example.com" },
+    });
+
+    const inviteBtn = screen.getAllByRole("button", { name: "Invite User" })[0];
+    fireEvent.click(inviteBtn);
+
+    await waitFor(() => {
+      expect(createOrUpdateSubuser).toHaveBeenCalledWith(
+        "server-uuid-1",
+        {
+          email: "invitee@example.com",
+          permissions: [],
+        },
+        undefined,
+      );
+    });
   });
 
   it("renders Save form when editing existing subuser", async () => {
@@ -131,6 +177,7 @@ describe("components/server/users/EditSubuserModal", () => {
       (await screen.findAllByRole("button", { name: "Save" }))[0],
     ).toBeDefined();
     expect(screen.getByText("subuser@example.com")).toBeDefined();
+    expect(screen.getByText("Modify permissions for")).toBeDefined();
   });
 
   it("submits update for existing subuser", async () => {
@@ -158,6 +205,82 @@ describe("components/server/users/EditSubuserModal", () => {
         },
         mockSubuser,
       );
+    });
+  });
+
+  it("handles submission errors and calls scrollIntoView", async () => {
+    const scrollMock = vi.fn();
+    window.HTMLElement.prototype.scrollIntoView = scrollMock;
+    vi.mocked(createOrUpdateSubuser).mockRejectedValueOnce(
+      new Error("Failed to save"),
+    );
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditSubuserModal visible={true} subuser={mockSubuser} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const submitBtn = (
+      await screen.findAllByRole("button", { name: "Save" })
+    )[0];
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(scrollMock).toHaveBeenCalled();
+    });
+  });
+
+  it("renders with limited permissions for non-root-admin user", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper rootAdmin={false} userPermissions={["control.start"]}>
+          <EditSubuserModal visible={true} subuser={mockSubuser} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(
+      await screen.findByText(
+        "Only permissions which your account is currently assigned may be selected when creating or modifying other users.",
+      ),
+    ).toBeDefined();
+    expect(screen.getByText("View permissions for")).toBeDefined();
+  });
+
+  it("handles submission error when unmounted and ref.current is null", async () => {
+    let rejectPromise: any;
+    vi.mocked(createOrUpdateSubuser).mockImplementationOnce(
+      () =>
+        new Promise((_, reject) => {
+          rejectPromise = reject;
+        }),
+    );
+
+    const { unmount } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditSubuserModal visible={true} subuser={mockSubuser} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const submitBtn = (
+      await screen.findAllByRole("button", { name: "Save" })
+    )[0];
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(createOrUpdateSubuser).toHaveBeenCalled();
+    });
+
+    unmount();
+    rejectPromise(new Error("Failed after unmount"));
+
+    await waitFor(() => {
+      expect(rejectPromise).toBeDefined();
     });
   });
 });

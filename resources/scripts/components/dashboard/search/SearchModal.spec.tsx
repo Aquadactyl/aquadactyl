@@ -128,5 +128,123 @@ describe("components/dashboard/search/SearchModal", () => {
       expect(screen.getByText("Alpha Survival")).toBeDefined();
       expect(screen.getByText("10.0.0.1:25565")).toBeDefined();
     });
+
+    // Form submit test
+    fireEvent.submit(input.closest("form")!);
+
+    // Click link to dismiss
+    fireEvent.click(screen.getByText("Alpha Survival"));
+    expect(onDismissed).toHaveBeenCalled();
+
+    // Typing less than 3 characters clears search results
+    fireEvent.change(input, { target: { value: "al" } });
+    await waitFor(() => {
+      expect(screen.queryByText("Alpha Survival")).toBeNull();
+    });
+  });
+
+  it("searches as non-admin user with undefined type and renders allocation alias", async () => {
+    store.getActions().user.setUserData({
+      uuid: "usr-2",
+      username: "regular",
+      email: "user@test.com",
+      language: "en",
+      rootAdmin: false,
+      useTotp: false,
+      gravatar: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    } as any);
+
+    vi.mocked(getServers).mockResolvedValueOnce({
+      items: [
+        {
+          id: "serv_beta" as any,
+          uuid: "beta-uuid",
+          name: "Beta Creative",
+          node: "Node 2",
+          isNodeUnderMaintenance: false,
+          status: null,
+          invocation: "",
+          dockerImage: "",
+          sftpDetails: { ip: "127.0.0.1", port: 2022 },
+          description: "",
+          limits: {
+            memory: 1024,
+            swap: 0,
+            disk: 1024,
+            io: 500,
+            cpu: 100,
+            threads: "",
+          },
+          featureLimits: { databases: 1, allocations: 1, backups: 1 },
+          isTransferring: false,
+          eggFeatures: [],
+          allocations: [
+            {
+              id: 2,
+              ip: "10.0.0.2",
+              alias: "play.example.com",
+              port: 25566,
+              notes: "",
+              isDefault: true,
+            },
+          ],
+          variables: [],
+        } as any,
+      ],
+      pagination: {
+        total: 1,
+        count: 1,
+        perPage: 10,
+        currentPage: 1,
+        totalPages: 1,
+      },
+    });
+
+    const { rerender } = render(
+      <MemoryRouter>
+        <SearchModal visible={true} onDismissed={onDismissed} />
+      </MemoryRouter>,
+    );
+
+    const input = screen.getByLabelText("Search term");
+    fireEvent.change(input, { target: { value: "beta" } });
+
+    await waitFor(() => {
+      expect(getServers).toHaveBeenCalledWith({
+        query: "beta",
+        type: undefined,
+      });
+      expect(screen.getByText("Beta Creative")).toBeDefined();
+      expect(screen.getByText("play.example.com:25566")).toBeDefined();
+    });
+
+    // Close modal triggers reset and cleans up results
+    rerender(
+      <MemoryRouter>
+        <SearchModal visible={false} onDismissed={onDismissed} />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByText("Beta Creative")).toBeNull();
+  });
+
+  it("handles search failure cleanly", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(getServers).mockRejectedValueOnce(new Error("Network failed"));
+
+    render(
+      <MemoryRouter>
+        <SearchModal visible={true} onDismissed={onDismissed} />
+      </MemoryRouter>,
+    );
+
+    const input = screen.getByLabelText("Search term");
+    fireEvent.change(input, { target: { value: "error-query" } });
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+    consoleSpy.mockRestore();
   });
 });

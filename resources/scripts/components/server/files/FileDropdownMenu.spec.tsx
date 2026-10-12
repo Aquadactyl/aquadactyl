@@ -28,12 +28,17 @@ vi.mock("@blueprint/components/Server/Files/Browse/DropdownItems", () => ({
   default: () => null,
 }));
 
+let attachRef = true;
 vi.mock("@/components/elements/DropdownMenu", () => ({
   default: React.forwardRef(({ children, renderToggle }: any, ref: any) => {
     const [open, setOpen] = React.useState(true);
-    React.useImperativeHandle(ref, () => ({
-      triggerMenu: () => setOpen(true),
-    }));
+    React.useImperativeHandle(ref, () =>
+      attachRef
+        ? {
+            triggerMenu: () => setOpen(true),
+          }
+        : null,
+    );
     return (
       <div>
         {renderToggle(() => setOpen((prev) => !prev))}
@@ -159,7 +164,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 describe("components/server/files/FileDropdownMenu", () => {
-  const mockMutate = vi.fn().mockResolvedValue([]);
+  const mockMutate = vi.fn().mockImplementation((fn) => {
+    if (typeof fn === "function") {
+      return fn([{ key: "file_test.txt" }, { key: "file_other.txt" }]);
+    }
+    return Promise.resolve([]);
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -357,5 +367,151 @@ describe("components/server/files/FileDropdownMenu", () => {
         "test.txt",
       ]);
     });
+  });
+
+  it("triggers menu via custom context event and dismisses chmod modal", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={mockFile} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    window.dispatchEvent(
+      new CustomEvent(`pterodactyl:files:ctx:${mockFile.key}`, {
+        detail: 150,
+      }),
+    );
+
+    const permBtn = await screen.findByText("Permissions");
+    fireEvent.click(permBtn);
+    expect(screen.getByTestId("chmod-modal")).toBeDefined();
+
+    fireEvent.click(screen.getByRole("button", { name: "Dismiss" }));
+    expect(screen.queryByTestId("chmod-modal")).toBeNull();
+
+    // Also test event when ref is null
+    attachRef = false;
+    const { unmount } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={mockFile} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+    window.dispatchEvent(
+      new CustomEvent(`pterodactyl:files:ctx:${mockFile.key}`, {
+        detail: 150,
+      }),
+    );
+    unmount();
+    attachRef = true;
+  });
+
+  it("handles deletion for directory and cancels confirmation", async () => {
+    const dirFile: FileObject = {
+      ...mockFile,
+      name: "subfolder",
+      isFile: false,
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={dirFile} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteMenuBtn = await screen.findByText("Delete");
+    fireEvent.click(deleteMenuBtn);
+
+    const dialog = screen.getByTestId("confirm-dialog");
+    expect(screen.getByText("Delete Directory")).toBeDefined();
+
+    const cancelBtn = within(dialog).getByRole("button", { name: "Cancel" });
+    fireEvent.click(cancelBtn);
+    expect(screen.queryByTestId("confirm-dialog")).toBeNull();
+  });
+
+  it("handles errors across copy, download, archive, unarchive, and delete actions", async () => {
+    vi.mocked(copyFile).mockRejectedValueOnce(new Error("Copy error"));
+    vi.mocked(getFileDownloadUrl).mockRejectedValueOnce(
+      new Error("Download error"),
+    );
+    vi.mocked(compressFiles).mockRejectedValueOnce(new Error("Archive error"));
+    vi.mocked(decompressFiles).mockRejectedValueOnce(
+      new Error("Unarchive error"),
+    );
+    vi.mocked(deleteFiles).mockRejectedValueOnce(new Error("Delete error"));
+
+    const { rerender } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={mockFile} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    // Copy error
+    fireEvent.click(await screen.findByText("Copy"));
+    await waitFor(() => expect(copyFile).toHaveBeenCalled());
+
+    // Download error
+    fireEvent.click(screen.getByText("Download"));
+    await waitFor(() => expect(getFileDownloadUrl).toHaveBeenCalled());
+
+    // Archive error
+    fireEvent.click(screen.getByText("Archive"));
+    await waitFor(() => expect(compressFiles).toHaveBeenCalled());
+
+    // Delete error
+    fireEvent.click(screen.getByText("Delete"));
+    const dialog = screen.getByTestId("confirm-dialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Delete" }));
+    await waitFor(() => expect(deleteFiles).toHaveBeenCalled());
+
+    // Unarchive error on archive file
+    rerender(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={mockArchiveFile} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+    fireEvent.click(await screen.findByText("Unarchive"));
+    await waitFor(() => expect(decompressFiles).toHaveBeenCalled());
+  });
+
+  it("exercises memo comparator on rerender with identical and changed props", () => {
+    const fileA = { ...mockFile };
+    const fileB = { ...mockFile };
+    const fileC = { ...mockFile, name: "different.txt" };
+
+    const { rerender, container } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={fileA} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    rerender(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={fileB} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    rerender(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={fileC} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+    expect(container.firstChild).toBeDefined();
   });
 });

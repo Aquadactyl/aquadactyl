@@ -74,10 +74,35 @@ describe("ScreenBlock components", () => {
     expect(getByText("Database connection refused")).toBeDefined();
   });
 
+  it("renders ServerError with custom title", () => {
+    const { getByText } = render(
+      <ServerError title="Custom Error Title" message="Something broke" />,
+    );
+
+    expect(getByText("Custom Error Title")).toBeDefined();
+  });
+
   it("renders NotFound preset component", () => {
     const { getByText } = render(<NotFound />);
 
     expect(getByText("404")).toBeDefined();
     expect(getByText("The requested resource was not found.")).toBeDefined();
+  });
+
+  it("renders NotFound with custom title, message and onBack", () => {
+    const onBack = vi.fn();
+    const { getByText, container } = render(
+      <NotFound
+        title="Custom 404"
+        message="Resource missing"
+        onBack={onBack}
+      />,
+    );
+
+    expect(getByText("Custom 404")).toBeDefined();
+    expect(getByText("Resource missing")).toBeDefined();
+    const button = container.querySelector("button")!;
+    fireEvent.click(button);
+    expect(onBack).toHaveBeenCalledTimes(1);
   });
 });

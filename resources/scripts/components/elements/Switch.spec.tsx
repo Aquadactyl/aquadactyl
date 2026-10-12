@@ -43,7 +43,15 @@ describe("Switch component", () => {
     const syntheticEvent = onChange.mock.calls[0][0];
     expect(syntheticEvent.target.name).toBe("two_factor");
     expect(syntheticEvent.target.checked).toBe(true);
+    expect(syntheticEvent.target.value).toBe("on");
     expect(syntheticEvent.target.type).toBe("checkbox");
+
+    // Click again to turn off
+    fireEvent.click(switchEl);
+    expect(onCheckedChange).toHaveBeenCalledWith(false, expect.anything());
+    const secondEvent = onChange.mock.calls[1][0];
+    expect(secondEvent.target.checked).toBe(false);
+    expect(secondEvent.target.value).toBe("");
   });
 
   it("respects checked and disabled props", () => {
@@ -84,5 +92,24 @@ describe("Switch component", () => {
 
     expect(getByTestId("custom-trigger")).toBeDefined();
     expect(queryByRole("switch")).toBeNull();
+  });
+
+  it("handles toggling without onChange or onCheckedChange handlers", () => {
+    const { getByRole } = render(
+      <Switch name="no_handler" defaultChecked={false} />,
+    );
+    const switchEl = getByRole("switch");
+    fireEvent.click(switchEl);
+    expect(switchEl.getAttribute("aria-checked")).toBe("true");
+  });
+
+  it("renders label without description and description without label", () => {
+    const { getByText, rerender } = render(
+      <Switch name="label_only" label="Only Label" />,
+    );
+    expect(getByText("Only Label")).toBeDefined();
+
+    rerender(<Switch name="desc_only" description="Only Description" />);
+    expect(getByText("Only Description")).toBeDefined();
   });
 });

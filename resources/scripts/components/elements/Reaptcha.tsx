@@ -226,7 +226,7 @@ export const Reaptcha = forwardRef<ReaptchaRef, ReaptchaProps>(
       } else {
         checkTimer = setInterval(() => {
           if (isAvailable()) {
-            if (checkTimer) clearInterval(checkTimer);
+            clearInterval(checkTimer!);
             renderWidget();
           }
         }, 100);

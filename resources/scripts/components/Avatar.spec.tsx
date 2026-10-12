@@ -61,4 +61,39 @@ describe("Avatar", () => {
       expect(markup).toContain('width="40"');
     },
   );
+
+  it("handles square avatar, image onError fallback, and src change", () => {
+    const { render, fireEvent } = require("@testing-library/react");
+    const { container, rerender } = render(
+      <Avatar name={"test-user"} src={"/bad-image.png"} square />,
+    );
+
+    const img = container.querySelector("img");
+    expect(img).not.toBeNull();
+    expect(img?.style.borderRadius).toBe("0px");
+
+    // Trigger onError
+    fireEvent.error(img!);
+
+    // Should now render BoringAvatar svg
+    expect(container.querySelector("svg")).not.toBeNull();
+    expect(container.querySelector("img")).toBeNull();
+
+    // Updating src resets failed state
+    rerender(<Avatar name={"test-user"} src={"/new-image.png"} square />);
+    expect(container.querySelector("img")).not.toBeNull();
+  });
+
+  it("renders UserAvatar with fallback when user is null or defaults are used", () => {
+    const { render } = require("@testing-library/react");
+    (store.getActions() as any).user.setUserData(null);
+
+    const { container } = render(
+      <StoreProvider store={store}>
+        <Avatar.User square />
+      </StoreProvider>,
+    );
+
+    expect(container.querySelector("svg")).not.toBeNull();
+  });
 });

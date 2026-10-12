@@ -39,9 +39,7 @@ export default () => {
     clearFlashes();
     deleteApiKey(identifier)
       .then(() =>
-        setKeys((s) => [
-          ...(s || []).filter((key) => key.identifier !== identifier),
-        ]),
+        setKeys((s) => s.filter((key) => key.identifier !== identifier)),
       )
       .catch((error) => clearAndAddHttpError(error))
       .then(() => {

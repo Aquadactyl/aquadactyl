@@ -25,9 +25,11 @@ const createMockSocket = () =>
 
 const Inner = ({
   socketMock,
+  status = "offline",
   children,
 }: {
   socketMock: any;
+  status?: string;
   children: React.ReactNode;
 }) => {
   const isReady = ServerContext.useStoreState((s) => !!s.server.data);
@@ -53,7 +55,7 @@ const Inner = ({
     setPermissions(["startup.docker-image"]);
     setConnectionState(true);
     setSocketInstance(socketMock);
-    setServerStatus("offline");
+    setServerStatus(status as any);
   }, [
     setServer,
     setPermissions,
@@ -61,6 +63,7 @@ const Inner = ({
     setSocketInstance,
     setServerStatus,
     socketMock,
+    status,
   ]);
 
   if (!isReady) return null;
@@ -70,14 +73,18 @@ const Inner = ({
 
 const Wrapper = ({
   socketMock,
+  status = "offline",
   children,
 }: {
   socketMock: any;
+  status?: string;
   children: React.ReactNode;
 }) => {
   return (
     <ServerContext.Provider>
-      <Inner socketMock={socketMock}>{children}</Inner>
+      <Inner socketMock={socketMock} status={status}>
+        {children}
+      </Inner>
     </ServerContext.Provider>
   );
 };
@@ -165,6 +172,151 @@ describe("JavaVersionModalFeature", () => {
         SocketRequest.SET_STATE,
         "restart",
       );
+    });
+  });
+
+  it("handles error when updating docker image fails", async () => {
+    vi.mocked(setSelectedDockerImage).mockRejectedValueOnce(
+      new Error("Failed to update docker image"),
+    );
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket}>
+        <JavaVersionModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "java.lang.unsupportedclassversionerror",
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Unsupported Java Version")).toBeDefined();
+    });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Update Docker Image" }),
+    );
+
+    await waitFor(() => {
+      expect(setSelectedDockerImage).toHaveBeenCalled();
+    });
+  });
+
+  it("can be cancelled or dismissed", async () => {
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket}>
+        <JavaVersionModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "unsupported major.minor version",
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Unsupported Java Version")).toBeDefined();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+
+    // Test onDismissed via close-icon
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "unsupported major.minor version",
+      );
+    });
+    const closeIcon = document.querySelector(".close-icon");
+    if (closeIcon) {
+      fireEvent.click(closeIcon);
+    }
+  });
+
+  it("does not trigger modal when server status is running or log does not match", async () => {
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket} status="running">
+        <JavaVersionModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "minecraft 1.18 requires running the server with java 17 or above",
+      );
+    });
+
+    expect(screen.queryByText("Unsupported Java Version")).toBeNull();
+  });
+
+  it("ignores non-matching console output when offline", async () => {
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket} status="offline">
+        <JavaVersionModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "Starting minecraft server version 1.18",
+      );
+    });
+
+    expect(screen.queryByText("Unsupported Java Version")).toBeNull();
+  });
+
+  it("renders with empty/missing data and does not restart if not offline", async () => {
+    vi.mocked(setSelectedDockerImage).mockResolvedValueOnce(undefined as any);
+    vi.mocked(getServerStartup).mockReturnValue({
+      data: undefined,
+      isValidating: true,
+      mutate: vi.fn().mockResolvedValue(null),
+    } as any);
+
+    const socket = createMockSocket();
+
+    render(
+      <Wrapper socketMock={socket} status="starting">
+        <JavaVersionModalFeature />
+      </Wrapper>,
+    );
+
+    act(() => {
+      socket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "has been compiled by a more recent version of the java runtime",
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText("Unsupported Java Version")).toBeDefined();
+    });
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Update Docker Image" }),
+    );
+
+    await waitFor(() => {
+      expect(setSelectedDockerImage).toHaveBeenCalledWith(
+        "server-java-uuid",
+        "",
+      );
+      expect(socket.send).not.toHaveBeenCalled();
     });
   });
 });

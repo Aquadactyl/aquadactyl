@@ -116,4 +116,22 @@ describe("DeleteScheduleButton", () => {
       });
     });
   });
+
+  it("closes dialog when clicking cancel", async () => {
+    render(
+      <Wrapper>
+        <DeleteScheduleButton scheduleId={10} onDeleted={vi.fn()} />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    expect(screen.getByText("Delete Schedule")).toBeDefined();
+
+    const cancelBtn = screen.getByRole("button", { name: "Cancel" });
+    fireEvent.click(cancelBtn);
+
+    await waitFor(() => {
+      expect(screen.queryByText("Delete Schedule")).toBeNull();
+    });
+  });
 });

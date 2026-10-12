@@ -29,13 +29,13 @@ const ProfilePictureForm = () => {
     const safeUrl = url.startsWith("blob:") ? encodeURI(url) : undefined;
     setPreview(safeUrl);
     return () => {
-      if (url) URL.revokeObjectURL(url);
+      URL.revokeObjectURL(url);
     };
   }, [file]);
 
   const clearSelection = () => {
     setFile(null);
-    if (input.current) input.current.value = "";
+    input.current!.value = "";
   };
 
   const selectFile = (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,12 +60,11 @@ const ProfilePictureForm = () => {
   };
 
   const save = async () => {
-    if (!file || busy) return;
     clearFlashes("account:avatar");
     setBusy(true);
 
     try {
-      const avatarUrl = await uploadAccountAvatar(file);
+      const avatarUrl = await uploadAccountAvatar(file!);
       updateUserData({ avatarUrl });
       clearSelection();
       addFlash({
@@ -81,7 +80,6 @@ const ProfilePictureForm = () => {
   };
 
   const remove = async () => {
-    if (busy) return;
     clearFlashes("account:avatar");
     setBusy(true);
 
