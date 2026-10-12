@@ -76,7 +76,11 @@ vi.mock("./ServerQuickActions", () => ({
 }));
 
 const mockServer: Server = {
-  id: "srv-1",
+  id: "serv_srv-1" as any,
+  identifier: "serv_srv-1" as any,
+  internalId: 1,
+  skipScripts: false,
+  BlueprintFramework: { eggId: 1 },
   uuid: "uuid-srv-1",
   name: "My Minecraft Server",
   node: "Node Alpha",

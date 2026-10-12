@@ -68,12 +68,12 @@ describe("components/dashboard/search/SearchModal", () => {
     vi.mocked(getServers).mockResolvedValueOnce({
       items: [
         {
-          id: "srv-alpha",
+          id: "serv_alpha" as any,
           uuid: "alpha-uuid",
           name: "Alpha Survival",
           node: "Node 1",
           isNodeUnderMaintenance: false,
-          status: "running",
+          status: null,
           invocation: "",
           dockerImage: "",
           sftpDetails: { ip: "127.0.0.1", port: 2022 },
