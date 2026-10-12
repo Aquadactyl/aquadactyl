@@ -1,39 +1,43 @@
 import React from "react";
 import { useFormContext } from "react-hook-form";
-import Input from "@/components/elements/Input";
+import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
+import { Check } from "lucide-react";
+import clsx from "clsx";
 
 interface Props {
   name: string;
   value: string;
+  id?: string;
   className?: string;
+  disabled?: boolean;
+  [key: string]: any;
 }
 
-type OmitFields =
-  | "ref"
-  | "name"
-  | "value"
-  | "type"
-  | "checked"
-  | "onClick"
-  | "onChange";
-
-type InputProps = Omit<React.ComponentPropsWithoutRef<"input">, OmitFields>;
-
-const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => {
-  const { watch, setValue } = useFormContext();
-  const currentValues: string[] = watch(name) || [];
+const Checkbox = ({
+  name,
+  value,
+  id,
+  className,
+  disabled,
+  ...props
+}: Props) => {
+  const formContext = useFormContext();
+  const currentValues: string[] = formContext
+    ? formContext.watch(name) || []
+    : [];
   const isChecked =
     Array.isArray(currentValues) && currentValues.includes(value);
 
-  const onChange = () => {
+  const onCheckedChange = (checked: boolean) => {
+    if (!formContext) return;
     const list = Array.isArray(currentValues) ? currentValues : [];
     const set = new Set(list);
-    if (set.has(value)) {
-      set.delete(value);
-    } else {
+    if (checked) {
       set.add(value);
+    } else {
+      set.delete(value);
     }
-    setValue(name, Array.from(set), {
+    formContext.setValue(name, Array.from(set), {
       shouldValidate: true,
       shouldDirty: true,
       shouldTouch: true,
@@ -41,13 +45,23 @@ const Checkbox = ({ name, value, className, ...props }: Props & InputProps) => {
   };
 
   return (
-    <Input
-      {...props}
-      className={className}
-      type={"checkbox"}
+    <BaseCheckbox.Root
+      id={id}
+      name={name}
+      value={value}
       checked={isChecked}
-      onChange={onChange}
-    />
+      disabled={disabled}
+      onCheckedChange={onCheckedChange}
+      className={clsx(
+        "inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-neutral-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78d4cc] data-checked:border-transparent data-checked:bg-cyan-500 data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        className,
+      )}
+      {...props}
+    >
+      <BaseCheckbox.Indicator className="flex items-center justify-center text-white">
+        <Check className="h-3.5 w-3.5 stroke-3" />
+      </BaseCheckbox.Indicator>
+    </BaseCheckbox.Root>
   );
 };
 

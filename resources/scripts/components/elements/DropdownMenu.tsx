@@ -1,6 +1,6 @@
-import React, { createRef } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
+import { Menu } from "@base-ui/react/menu";
 import clsx from "clsx";
-import Fade from "@/components/elements/Fade";
 
 interface Props {
   children: React.ReactNode;
@@ -8,6 +8,12 @@ interface Props {
     onClick: (e: React.MouseEvent<any, MouseEvent>) => void,
   ) => React.ReactNode;
 }
+
+export interface DropdownMenuRef {
+  triggerMenu: (posX?: number) => void;
+}
+
+export type DropdownMenu = DropdownMenuRef;
 
 export const DropdownButtonRow: React.FC<
   React.ButtonHTMLAttributes<HTMLButtonElement> & { danger?: boolean }
@@ -24,98 +30,60 @@ export const DropdownButtonRow: React.FC<
   />
 );
 
-interface State {
-  posX: number;
-  visible: boolean;
-}
+const DropdownMenu = forwardRef<any, Props>(
+  ({ children, renderToggle }, ref) => {
+    const [open, setOpen] = useState(false);
 
-class DropdownMenu extends React.PureComponent<Props, State> {
-  menu = createRef<HTMLDivElement>();
-
-  state: State = {
-    posX: 0,
-    visible: false,
-  };
-
-  componentWillUnmount() {
-    this.removeListeners();
-  }
-
-  componentDidUpdate(prevProps: Readonly<Props>, prevState: Readonly<State>) {
-    const menu = this.menu.current;
-
-    if (this.state.visible && !prevState.visible && menu) {
-      menu.style.left = `${Math.round(this.state.posX - menu.clientWidth)}px`;
-      requestAnimationFrame(() => {
-        if (this.state.visible) {
-          document.addEventListener("click", this.windowListener);
-          document.addEventListener("contextmenu", this.contextMenuListener);
-        }
-      });
-    }
-
-    if (!this.state.visible && prevState.visible) {
-      this.removeListeners();
-    }
-  }
-
-  removeListeners = () => {
-    document.removeEventListener("click", this.windowListener);
-    document.removeEventListener("contextmenu", this.contextMenuListener);
-  };
-
-  onClickHandler = (e: React.MouseEvent<any, MouseEvent>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    this.triggerMenu(e.clientX);
-  };
-
-  contextMenuListener = () => this.setState({ visible: false });
-
-  windowListener = (e: MouseEvent) => {
-    const menu = this.menu.current;
-
-    if (e.button === 2 || !this.state.visible || !menu) {
-      return;
-    }
-
-    if (e.target === menu || menu.contains(e.target as Node)) {
-      return;
-    }
-
-    if (e.target !== menu && !menu.contains(e.target as Node)) {
-      this.setState({ visible: false });
-    }
-  };
-
-  triggerMenu = (posX: number) =>
-    this.setState((s) => ({
-      posX: !s.visible ? posX : s.posX,
-      visible: !s.visible,
+    useImperativeHandle(ref, () => ({
+      triggerMenu: () => {
+        setOpen((prev) => !prev);
+      },
     }));
 
-  render() {
+    const onClickHandler = (e: React.MouseEvent<any, MouseEvent>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setOpen((prev) => !prev);
+    };
+
     return (
-      <div>
-        {this.props.renderToggle(this.onClickHandler)}
-        <Fade timeout={150} in={this.state.visible} unmountOnExit>
-          <div
-            ref={this.menu}
-            onClick={(e) => {
-              e.stopPropagation();
-              this.setState({ visible: false });
-            }}
-            style={{ width: "12rem" }}
-            className={
-              "absolute z-50 rounded-lg border border-neutral-600 bg-neutral-700 p-2 text-neutral-200 shadow-lg"
-            }
+      <Menu.Root open={open} onOpenChange={setOpen}>
+        <Menu.Trigger
+          render={(triggerProps) => (
+            <div
+              {...triggerProps}
+              onClick={(e) => {
+                triggerProps.onClick?.(e);
+                onClickHandler(e);
+              }}
+            >
+              {renderToggle(onClickHandler)}
+            </div>
+          )}
+        />
+        <Menu.Portal>
+          <Menu.Positioner
+            side="bottom"
+            align="end"
+            sideOffset={4}
+            className="z-50"
           >
-            {this.props.children}
-          </div>
-        </Fade>
-      </div>
+            <Menu.Popup
+              className={clsx(
+                "w-48 rounded-lg border border-neutral-600 bg-neutral-700 p-2 text-neutral-200 shadow-lg",
+                "transition duration-75 ease-out",
+                "data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0",
+              )}
+            >
+              <div onClick={() => setOpen(false)}>{children}</div>
+            </Menu.Popup>
+          </Menu.Positioner>
+        </Menu.Portal>
+      </Menu.Root>
     );
-  }
-}
+  },
+);
+
+DropdownMenu.displayName = "DropdownMenu";
 
 export default DropdownMenu;

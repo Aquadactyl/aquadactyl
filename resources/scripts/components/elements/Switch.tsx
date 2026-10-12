@@ -1,22 +1,26 @@
 import React, { forwardRef, useId } from "react";
+import { Switch as BaseSwitch } from "@base-ui/react/switch";
 import clsx from "clsx";
 import Label from "@/components/elements/Label";
-import Input from "@/components/elements/Input";
 
-export interface SwitchProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "children"
-> {
+export interface SwitchProps {
   id?: string;
-  name: string;
+  name?: string;
   label?: string;
   description?: string;
   defaultChecked?: boolean;
+  checked?: boolean;
   readOnly?: boolean;
+  disabled?: boolean;
+  className?: string;
+  onCheckedChange?: (checked: boolean, eventDetails: any) => void;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (event: React.FocusEvent<any>) => void;
   children?: React.ReactNode;
+  [key: string]: any;
 }
 
-const Switch = forwardRef<HTMLInputElement, SwitchProps>(
+const Switch = forwardRef<any, SwitchProps>(
   (
     {
       id,
@@ -28,6 +32,8 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
       readOnly,
       disabled,
       onChange,
+      onCheckedChange,
+      className,
       children,
       ...props
     },
@@ -36,40 +42,48 @@ const Switch = forwardRef<HTMLInputElement, SwitchProps>(
     const generatedId = useId();
     const switchId = id || generatedId;
 
+    const handleCheckedChange = (isChecked: boolean, eventDetails: any) => {
+      onCheckedChange?.(isChecked, eventDetails);
+      if (onChange) {
+        const syntheticEvent = {
+          target: {
+            name,
+            checked: isChecked,
+            type: "checkbox",
+            value: isChecked ? "on" : "",
+          },
+          currentTarget: {
+            name,
+            checked: isChecked,
+            type: "checkbox",
+            value: isChecked ? "on" : "",
+          },
+        } as unknown as React.ChangeEvent<HTMLInputElement>;
+        onChange(syntheticEvent);
+      }
+    };
+
     return (
       <div className="flex items-center">
-        <div
-          className={clsx(
-            "relative w-12 flex-none leading-normal select-none",
-            // Checkbox SR-only Styling
-            "[&>input[type='checkbox']]:sr-only",
-            // Focus-visible Ring auf dem Label
-            "[&>input[type='checkbox']:focus-visible+label]:outline-2 [&>input[type='checkbox']:focus-visible+label]:outline-offset-2 [&>input[type='checkbox']:focus-visible+label]:outline-[#78d4cc]",
-            // Checked Background & Border auf dem Label
-            "[&>input[type='checkbox']:checked+label]:border-[#1d5558] [&>input[type='checkbox']:checked+label]:bg-[#237c7f] [&>input[type='checkbox']:checked+label]:shadow-none",
-            // Checked Position des Schalter-Knopfs (before)
-            "[&>input[type='checkbox']:checked+label]:before:right-0.5",
-            // Basis-Styling des Labels
-            "[&>label]:mb-0 [&>label]:block [&>label]:h-6 [&>label]:cursor-pointer [&>label]:overflow-hidden [&>label]:rounded-full [&>label]:border [&>label]:border-[#78838f] [&>label]:bg-[#39424b] [&>label]:shadow-inner [&>label]:transition-all [&>label]:duration-75 [&>label]:ease-linear",
-            // Der Schalter-Knopf (Knob) via Pseudo-Element
-            "[&>label]:before:absolute [&>label]:before:top-0.5 [&>label]:before:right-[calc(50%+0.125rem)] [&>label]:before:block [&>label]:before:h-5 [&>label]:before:w-5 [&>label]:before:rounded-full [&>label]:before:border [&>label]:before:border-[#bbc2ca] [&>label]:before:bg-[#d7dce1] [&>label]:before:transition-all [&>label]:before:duration-75 [&>label]:before:ease-in [&>label]:before:content-['']",
-          )}
-        >
-          {children || (
-            <Input
-              id={switchId}
-              ref={ref}
-              name={name}
-              type="checkbox"
-              onChange={onChange}
-              defaultChecked={defaultChecked}
-              checked={checked}
-              disabled={disabled || readOnly}
-              {...props}
-            />
-          )}
-          <Label htmlFor={switchId} />
-        </div>
+        {children || (
+          <BaseSwitch.Root
+            id={switchId}
+            name={name}
+            inputRef={ref}
+            checked={checked}
+            defaultChecked={defaultChecked}
+            onCheckedChange={handleCheckedChange}
+            disabled={disabled}
+            readOnly={readOnly}
+            className={clsx(
+              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border border-[#78838f] bg-[#39424b] p-0.5 transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78d4cc] data-checked:border-[#1d5558] data-checked:bg-[#237c7f] data-disabled:cursor-not-allowed data-disabled:opacity-50",
+              className,
+            )}
+            {...props}
+          >
+            <BaseSwitch.Thumb className="pointer-events-none block h-5 w-5 rounded-full border border-[#bbc2ca] bg-[#d7dce1] transition-transform duration-150 ease-in-out data-checked:translate-x-5 data-checked:border-white data-checked:bg-white" />
+          </BaseSwitch.Root>
+        )}
 
         {(label || description) && (
           <div className="ml-4 w-full">

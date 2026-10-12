@@ -131,14 +131,6 @@ export default () => {
     mutate();
   }, [directory]);
 
-  const onSelectAllClick = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedFiles(
-      e.currentTarget.checked
-        ? (deferredFilteredFiles || []).map((file) => file.name)
-        : [],
-    );
-  };
-
   if (error) {
     return (
       <ServerError message={httpErrorToHuman(error)} onRetry={() => mutate()} />
@@ -210,7 +202,6 @@ export default () => {
             filesCount={filesCount}
             renderLeft={
               <FileActionCheckbox
-                type={"checkbox"}
                 className={"mx-4"}
                 checked={
                   selectedFilesLength > 0 &&
@@ -219,7 +210,20 @@ export default () => {
                       ? -1
                       : deferredFilteredFiles?.length)
                 }
-                onChange={onSelectAllClick}
+                indeterminate={
+                  selectedFilesLength > 0 &&
+                  selectedFilesLength !==
+                    (deferredFilteredFiles?.length === 0
+                      ? -1
+                      : deferredFilteredFiles?.length)
+                }
+                onCheckedChange={(checked) => {
+                  setSelectedFiles(
+                    checked
+                      ? (deferredFilteredFiles || []).map((file) => file.name)
+                      : [],
+                  );
+                }}
               />
             }
           />

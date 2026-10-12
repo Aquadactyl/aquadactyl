@@ -1,47 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+// Base extensions
 import { EditorState, Extension } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
-import { indentUnit, StreamLanguage } from "@codemirror/language";
+import { indentUnit } from "@codemirror/language";
 import { oneDark } from "@codemirror/theme-one-dark";
-
-// Language packages
-import { cpp } from "@codemirror/lang-cpp";
-import { css } from "@codemirror/lang-css";
-import { html } from "@codemirror/lang-html";
-import { java } from "@codemirror/lang-java";
-import { javascript } from "@codemirror/lang-javascript";
-import { json } from "@codemirror/lang-json";
-import { markdown } from "@codemirror/lang-markdown";
-import { php } from "@codemirror/lang-php";
-import { python } from "@codemirror/lang-python";
-import { rust } from "@codemirror/lang-rust";
-import { sql } from "@codemirror/lang-sql";
-import { vue } from "@codemirror/lang-vue";
-import { xml } from "@codemirror/lang-xml";
-import { yaml as yamlLang } from "@codemirror/lang-yaml";
-
-// Legacy modes
-import { csharp } from "@codemirror/legacy-modes/mode/clike";
-import { diff } from "@codemirror/legacy-modes/mode/diff";
-import { dockerFile } from "@codemirror/legacy-modes/mode/dockerfile";
-import { go } from "@codemirror/legacy-modes/mode/go";
-import { http } from "@codemirror/legacy-modes/mode/http";
-import { lua } from "@codemirror/legacy-modes/mode/lua";
-import { nginx } from "@codemirror/legacy-modes/mode/nginx";
-import { properties } from "@codemirror/legacy-modes/mode/properties";
-import { protobuf } from "@codemirror/legacy-modes/mode/protobuf";
-import { pug } from "@codemirror/legacy-modes/mode/pug";
-import { rpmSpec } from "@codemirror/legacy-modes/mode/rpm";
-import { ruby } from "@codemirror/legacy-modes/mode/ruby";
-import { sass } from "@codemirror/legacy-modes/mode/sass";
-import { shell } from "@codemirror/legacy-modes/mode/shell";
-import { swift } from "@codemirror/legacy-modes/mode/swift";
-import { toml } from "@codemirror/legacy-modes/mode/toml";
-import { brainfuck } from "@codemirror/legacy-modes/mode/brainfuck";
-import { erlang } from "@codemirror/legacy-modes/mode/erlang";
-import { julia } from "@codemirror/legacy-modes/mode/julia";
-import { perl } from "@codemirror/legacy-modes/mode/perl";
 
 import modes from "@/modes";
 
@@ -84,41 +47,74 @@ const findModeByFilename = (filename: string) => {
   return undefined;
 };
 
-const getLanguageExtension = (mode: string): Extension => {
+const getLanguageExtension = async (mode: string): Promise<Extension> => {
   const normalized = mode.toLowerCase();
 
   // JavaScript / TypeScript / JSON
-  if (normalized.includes("json")) return json();
+  if (normalized.includes("json")) {
+    const { json } = await import("@codemirror/lang-json");
+    return json();
+  }
   if (
     normalized.includes("javascript") ||
     normalized.includes("ecmascript") ||
     normalized === "js" ||
     normalized === "ts"
   ) {
+    const { javascript } = await import("@codemirror/lang-javascript");
     return javascript();
   }
 
   // HTML / XML / Vue
-  if (normalized.includes("vue")) return vue();
-  if (normalized.includes("html")) return html();
-  if (normalized.includes("xml")) return xml();
+  if (normalized.includes("vue")) {
+    const { vue } = await import("@codemirror/lang-vue");
+    return vue();
+  }
+  if (normalized.includes("html")) {
+    const { html } = await import("@codemirror/lang-html");
+    return html();
+  }
+  if (normalized.includes("xml")) {
+    const { xml } = await import("@codemirror/lang-xml");
+    return xml();
+  }
 
   // CSS / SASS
-  if (normalized.includes("sass")) return StreamLanguage.define(sass);
-  if (normalized.includes("css")) return css();
+  if (normalized.includes("sass")) {
+    const [{ StreamLanguage }, { sass }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/sass"),
+    ]);
+    return StreamLanguage.define(sass);
+  }
+  if (normalized.includes("css")) {
+    const { css } = await import("@codemirror/lang-css");
+    return css();
+  }
 
   // Markdown
-  if (normalized.includes("markdown") || normalized.includes("gfm"))
+  if (normalized.includes("markdown") || normalized.includes("gfm")) {
+    const { markdown } = await import("@codemirror/lang-markdown");
     return markdown();
+  }
 
   // Python
-  if (normalized.includes("python")) return python();
+  if (normalized.includes("python")) {
+    const { python } = await import("@codemirror/lang-python");
+    return python();
+  }
 
   // PHP
-  if (normalized.includes("php")) return php();
+  if (normalized.includes("php")) {
+    const { php } = await import("@codemirror/lang-php");
+    return php();
+  }
 
   // Rust
-  if (normalized.includes("rust")) return rust();
+  if (normalized.includes("rust")) {
+    const { rust } = await import("@codemirror/lang-rust");
+    return rust();
+  }
 
   // SQL / DBs
   if (
@@ -126,6 +122,7 @@ const getLanguageExtension = (mode: string): Extension => {
     normalized.includes("mariadb") ||
     normalized.includes("cassandra")
   ) {
+    const { sql } = await import("@codemirror/lang-sql");
     return sql();
   }
 
@@ -135,49 +132,164 @@ const getLanguageExtension = (mode: string): Extension => {
     normalized === "cs" ||
     normalized === "text/x-csharp"
   ) {
+    const [{ StreamLanguage }, { csharp }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/clike"),
+    ]);
     return StreamLanguage.define(csharp);
   }
-  if (normalized.includes("java") && !normalized.includes("javascript"))
+  if (normalized.includes("java") && !normalized.includes("javascript")) {
+    const { java } = await import("@codemirror/lang-java");
     return java();
+  }
   if (
     normalized.includes("csrc") ||
     normalized.includes("c++src") ||
     normalized.includes("clike")
-  )
+  ) {
+    const { cpp } = await import("@codemirror/lang-cpp");
     return cpp();
+  }
 
   // YAML
-  if (normalized.includes("yaml")) return yamlLang();
+  if (normalized.includes("yaml")) {
+    const { yaml: yamlLang } = await import("@codemirror/lang-yaml");
+    return yamlLang();
+  }
 
   // Shell / Docker / Nginx
-  if (normalized.includes("sh") || normalized.includes("shell"))
+  if (normalized.includes("sh") || normalized.includes("shell")) {
+    const [{ StreamLanguage }, { shell }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/shell"),
+    ]);
     return StreamLanguage.define(shell);
-  if (normalized.includes("dockerfile"))
+  }
+  if (normalized.includes("dockerfile")) {
+    const [{ StreamLanguage }, { dockerFile }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/dockerfile"),
+    ]);
     return StreamLanguage.define(dockerFile);
-  if (normalized.includes("nginx")) return StreamLanguage.define(nginx);
+  }
+  if (normalized.includes("nginx")) {
+    const [{ StreamLanguage }, { nginx }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/nginx"),
+    ]);
+    return StreamLanguage.define(nginx);
+  }
 
   // TOML
-  if (normalized.includes("toml")) return StreamLanguage.define(toml);
+  if (normalized.includes("toml")) {
+    const [{ StreamLanguage }, { toml }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/toml"),
+    ]);
+    return StreamLanguage.define(toml);
+  }
 
   // Diff
-  if (normalized.includes("diff") || normalized.includes("patch"))
+  if (normalized.includes("diff") || normalized.includes("patch")) {
+    const [{ StreamLanguage }, { diff }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/diff"),
+    ]);
     return StreamLanguage.define(diff);
+  }
 
   // Other legacy modes
-  if (normalized.includes("ruby")) return StreamLanguage.define(ruby);
-  if (normalized.includes("go")) return StreamLanguage.define(go);
-  if (normalized.includes("lua")) return StreamLanguage.define(lua);
-  if (normalized.includes("perl")) return StreamLanguage.define(perl);
-  if (normalized.includes("swift")) return StreamLanguage.define(swift);
-  if (normalized.includes("properties"))
+  if (normalized.includes("ruby")) {
+    const [{ StreamLanguage }, { ruby }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/ruby"),
+    ]);
+    return StreamLanguage.define(ruby);
+  }
+  if (normalized.includes("go")) {
+    const [{ StreamLanguage }, { go }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/go"),
+    ]);
+    return StreamLanguage.define(go);
+  }
+  if (normalized.includes("lua")) {
+    const [{ StreamLanguage }, { lua }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/lua"),
+    ]);
+    return StreamLanguage.define(lua);
+  }
+  if (normalized.includes("perl")) {
+    const [{ StreamLanguage }, { perl }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/perl"),
+    ]);
+    return StreamLanguage.define(perl);
+  }
+  if (normalized.includes("swift")) {
+    const [{ StreamLanguage }, { swift }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/swift"),
+    ]);
+    return StreamLanguage.define(swift);
+  }
+  if (normalized.includes("properties")) {
+    const [{ StreamLanguage }, { properties }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/properties"),
+    ]);
     return StreamLanguage.define(properties);
-  if (normalized.includes("protobuf")) return StreamLanguage.define(protobuf);
-  if (normalized.includes("pug")) return StreamLanguage.define(pug);
-  if (normalized.includes("rpm")) return StreamLanguage.define(rpmSpec);
-  if (normalized.includes("http")) return StreamLanguage.define(http);
-  if (normalized.includes("erlang")) return StreamLanguage.define(erlang);
-  if (normalized.includes("julia")) return StreamLanguage.define(julia);
-  if (normalized.includes("brainfuck")) return StreamLanguage.define(brainfuck);
+  }
+  if (normalized.includes("protobuf")) {
+    const [{ StreamLanguage }, { protobuf }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/protobuf"),
+    ]);
+    return StreamLanguage.define(protobuf);
+  }
+  if (normalized.includes("pug")) {
+    const [{ StreamLanguage }, { pug }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/pug"),
+    ]);
+    return StreamLanguage.define(pug);
+  }
+  if (normalized.includes("rpm")) {
+    const [{ StreamLanguage }, { rpmSpec }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/rpm"),
+    ]);
+    return StreamLanguage.define(rpmSpec);
+  }
+  if (normalized.includes("http")) {
+    const [{ StreamLanguage }, { http }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/http"),
+    ]);
+    return StreamLanguage.define(http);
+  }
+  if (normalized.includes("erlang")) {
+    const [{ StreamLanguage }, { erlang }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/erlang"),
+    ]);
+    return StreamLanguage.define(erlang);
+  }
+  if (normalized.includes("julia")) {
+    const [{ StreamLanguage }, { julia }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/julia"),
+    ]);
+    return StreamLanguage.define(julia);
+  }
+  if (normalized.includes("brainfuck")) {
+    const [{ StreamLanguage }, { brainfuck }] = await Promise.all([
+      import("@codemirror/language"),
+      import("@codemirror/legacy-modes/mode/brainfuck"),
+    ]);
+    return StreamLanguage.define(brainfuck);
+  }
 
   return [];
 };
@@ -263,6 +375,22 @@ export default ({
     });
   }, [fetchContent]);
 
+  const [langExtension, setLangExtension] = useState<Extension>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getLanguageExtension(mode)
+      .then((ext) => {
+        if (!cancelled) setLangExtension(ext);
+      })
+      .catch((err) => {
+        console.error("Failed to load CodeMirror language extension:", err);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [mode]);
+
   const extensions = useMemo(() => {
     const saveKeymap = keymap.of([
       {
@@ -274,17 +402,15 @@ export default ({
       },
     ]);
 
-    const lang = getLanguageExtension(mode);
-
     return [
       EditorView.lineWrapping,
       EditorState.tabSize.of(4),
       indentUnit.of("    "),
       customTheme,
       saveKeymap,
-      ...(Array.isArray(lang) ? lang : [lang]),
+      ...(Array.isArray(langExtension) ? langExtension : [langExtension]),
     ];
-  }, [mode]);
+  }, [langExtension]);
 
   const handleChange = (val: string) => {
     contentRef.current = val;

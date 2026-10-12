@@ -18,7 +18,8 @@ import Can from "@/components/elements/Can";
 import getServerBackups from "@/api/server/backups/getServerBackups";
 import { ServerBackup } from "@/api/server/types";
 import { ServerContext } from "@/state/server";
-import Input from "@/components/elements/Input";
+import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
+import { Check } from "lucide-react";
 import { restoreServerBackup } from "@/api/server/backups";
 import http, { httpErrorToHuman } from "@/api/http";
 import { Dialog } from "@/components/elements/dialog";
@@ -150,14 +151,18 @@ export default ({ backup }: Props) => {
             htmlFor={"restore_truncate"}
             className={"flex cursor-pointer items-center text-base"}
           >
-            <Input
-              type={"checkbox"}
-              className={"mr-2 h-5! w-5! text-red-500!"}
+            <BaseCheckbox.Root
               id={"restore_truncate"}
-              value={"true"}
               checked={truncate}
-              onChange={() => setTruncate((s) => !s)}
-            />
+              onCheckedChange={(checked) => setTruncate(checked)}
+              className={
+                "mr-3 inline-flex h-5 w-5 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-neutral-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 data-checked:border-transparent data-checked:bg-red-500"
+              }
+            >
+              <BaseCheckbox.Indicator className="flex items-center justify-center text-white">
+                <Check className="h-3.5 w-3.5 stroke-3" />
+              </BaseCheckbox.Indicator>
+            </BaseCheckbox.Root>
             Delete all files before restoring backup.
           </label>
         </p>

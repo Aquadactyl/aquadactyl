@@ -158,7 +158,7 @@ test('admin can view nodes list and sees node id column', function () {
     $location = Location::factory()->create();
     $node = Node::factory()->for($location)->create();
 
-    $response = $this->actingAs($admin)->get(route('admin.nodes'));
+    $response = $this->actingAs($admin)->get(route('admin.nodes', ['filter[name]' => $node->name]));
 
     $response->assertOk();
     $response->assertSee('<th>ID</th>', false);

@@ -22,7 +22,9 @@ import useFlash from "@/plugins/useFlash";
 import clsx from "clsx";
 import { FileObject } from "@/api/server/files/loadDirectory";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
-import DropdownMenu from "@/components/elements/DropdownMenu";
+import DropdownMenu, {
+  DropdownMenuRef,
+} from "@/components/elements/DropdownMenu";
 import useEventListener from "@/plugins/useEventListener";
 import compressFiles from "@/api/server/files/compressFiles";
 import decompressFiles from "@/api/server/files/decompressFiles";
@@ -63,7 +65,7 @@ const Row = ({
 );
 
 const FileDropdownMenu = ({ file }: { file: FileObject }) => {
-  const onClickRef = useRef<DropdownMenu>(null);
+  const onClickRef = useRef<DropdownMenuRef>(null);
   const [showSpinner, setShowSpinner] = useState(false);
   const [modal, setModal] = useState<ModalType | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);

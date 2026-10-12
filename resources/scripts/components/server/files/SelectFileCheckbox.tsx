@@ -1,19 +1,72 @@
 import React from "react";
 import clsx from "clsx";
+import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
+import { Check, Minus } from "lucide-react";
 import { ServerContext } from "@/state/server";
-import Input from "@/components/elements/Input";
 
-export const FileActionCheckbox: React.FC<
-  React.ComponentProps<typeof Input>
-> = ({ className, ...props }) => (
-  <Input
-    {...props}
-    className={clsx(
-      "border-neutral-500! bg-transparent! [&&:not(:checked)]:hover:border-neutral-300!",
-      className,
-    )}
-  />
-);
+export interface FileActionCheckboxProps {
+  id?: string;
+  name?: string;
+  value?: string;
+  checked?: boolean;
+  indeterminate?: boolean;
+  disabled?: boolean;
+  className?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onCheckedChange?: (checked: boolean) => void;
+  [key: string]: any;
+}
+
+export const FileActionCheckbox: React.FC<FileActionCheckboxProps> = ({
+  className,
+  checked = false,
+  indeterminate = false,
+  onChange,
+  onCheckedChange,
+  name,
+  value,
+  id,
+  disabled,
+  type: _type,
+  ...props
+}) => {
+  const handleCheckedChange = (nextChecked: boolean) => {
+    onCheckedChange?.(nextChecked);
+    if (onChange) {
+      const syntheticEvent = {
+        currentTarget: { checked: nextChecked, name, value },
+        target: { checked: nextChecked, name, value },
+      } as React.ChangeEvent<HTMLInputElement>;
+      onChange(syntheticEvent);
+    }
+  };
+
+  return (
+    <BaseCheckbox.Root
+      id={id}
+      name={name}
+      value={value}
+      checked={checked}
+      indeterminate={indeterminate}
+      disabled={disabled}
+      onCheckedChange={handleCheckedChange}
+      className={clsx(
+        "inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78d4cc] data-checked:border-transparent data-checked:bg-cyan-500 data-disabled:cursor-not-allowed data-disabled:opacity-50 data-indeterminate:border-transparent data-indeterminate:bg-cyan-500",
+        "data-unchecked:hover:border-neutral-300",
+        className,
+      )}
+      {...props}
+    >
+      <BaseCheckbox.Indicator className="flex items-center justify-center text-white">
+        {indeterminate ? (
+          <Minus className="h-3 w-3 stroke-3" />
+        ) : (
+          <Check className="h-3 w-3 stroke-3" />
+        )}
+      </BaseCheckbox.Indicator>
+    </BaseCheckbox.Root>
+  );
+};
 
 export default ({ name }: { name: string }) => {
   const isChecked = ServerContext.useStoreState(
@@ -34,9 +87,8 @@ export default ({ name }: { name: string }) => {
         name={"selectedFiles"}
         value={name}
         checked={isChecked}
-        type={"checkbox"}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-          if (e.currentTarget.checked) {
+        onCheckedChange={(checked) => {
+          if (checked) {
             appendSelectedFile(name);
           } else {
             removeSelectedFile(name);
