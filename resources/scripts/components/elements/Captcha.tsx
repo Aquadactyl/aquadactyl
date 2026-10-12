@@ -28,17 +28,11 @@ export const Captcha = forwardRef<CaptchaRef, CaptchaProps>(
       () => ({
         execute: async () => {
           if (provider === "hcaptcha") {
-            if (hcaptchaRef.current) {
-              await hcaptchaRef.current.execute({ async: true });
-            }
+            await hcaptchaRef.current?.execute({ async: true });
           } else if (provider === "turnstile") {
-            if (turnstileRef.current) {
-              turnstileRef.current.execute();
-            }
+            turnstileRef.current?.execute();
           } else {
-            if (recaptchaRef.current) {
-              await recaptchaRef.current.execute();
-            }
+            await recaptchaRef.current?.execute();
           }
         },
         reset: async () => {

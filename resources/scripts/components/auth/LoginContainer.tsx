@@ -33,6 +33,8 @@ const LoginContainer = () => {
   const navigate = useNavigate();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
+  const tokenRef = useRef("");
+  tokenRef.current = token;
   const [methods, setMethods] = useState<SignInMethods | null>(null);
   const [passkeyBusy, setPasskeyBusy] = useState(false);
   const [methodError, setMethodError] = useState("");
@@ -96,10 +98,11 @@ const LoginContainer = () => {
   const onSubmit = async (values: Values) => {
     if (passkeyBusy) return;
     clearFlashes();
+    const currentToken = tokenRef.current || token;
 
     // If there is no token in the state yet, request the token and then abort this submit request
     // since it will be re-submitted when the recaptcha data is returned by the component.
-    if (recaptchaEnabled && !token) {
+    if (recaptchaEnabled && !currentToken) {
       try {
         await ref.current!.execute();
       } catch (error) {
@@ -110,7 +113,7 @@ const LoginContainer = () => {
     }
 
     try {
-      const response = await login({ ...values, recaptchaData: token });
+      const response = await login({ ...values, recaptchaData: currentToken });
       if (response.complete) {
         window.location.assign(response.intended || "/");
         return;
@@ -122,6 +125,7 @@ const LoginContainer = () => {
       });
     } catch (error) {
       console.error(error);
+      tokenRef.current = "";
       setToken("");
       if (ref.current) ref.current.reset();
       clearAndAddHttpError({ error });
@@ -216,10 +220,12 @@ const LoginContainer = () => {
           provider={provider}
           sitekey={siteKey || "_invalid_key"}
           onVerify={(response) => {
+            tokenRef.current = response;
             setToken(response);
             void handleSubmit(onSubmit)();
           }}
           onExpire={() => {
+            tokenRef.current = "";
             setToken("");
           }}
         />

@@ -174,6 +174,42 @@ describe("blueprint/extends/routers/DashboardRouter", () => {
     expect(screen.getByText("Blueprint Custom Component")).toBeDefined();
   });
 
+  it("handles non-admin and adminOnly blueprint routes for non-admin user", () => {
+    mockRootAdmin = false;
+    mockBlueprintAccountRoutes = [
+      {
+        path: "/user-page",
+        name: "User Page",
+        adminOnly: false,
+        component: () => <div>Blueprint User Component</div>,
+      },
+      {
+        path: "/admin-only-page",
+        name: "Admin Only",
+        adminOnly: true,
+        component: () => <div>Blueprint Secret Component</div>,
+      },
+    ];
+
+    const { unmount } = render(
+      <MemoryRouter initialEntries={["/account/user-page"]}>
+        <NavigationRouter />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByText("Blueprint User Component")).toBeDefined();
+    unmount();
+
+    render(
+      <MemoryRouter initialEntries={["/account/admin-only-page"]}>
+        <NavigationRouter />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByText("Blueprint Secret Component")).toBeNull();
+    expect(screen.getByTestId("not-found")).toBeDefined();
+  });
+
   it("renders not found on unknown route", () => {
     render(
       <MemoryRouter initialEntries={["/non-existent-page"]}>

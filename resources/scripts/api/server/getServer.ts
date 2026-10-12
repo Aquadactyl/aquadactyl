@@ -77,11 +77,7 @@ export const rawDataToServerObject = ({
     ip: data.sftp_details.ip,
     port: data.sftp_details.port,
   },
-  description: data.description
-    ? data.description.length > 0
-      ? data.description
-      : null
-    : null,
+  description: data.description || null,
   limits: { ...data.limits },
   eggFeatures: data.egg_features || [],
   featureLimits: { ...data.feature_limits },

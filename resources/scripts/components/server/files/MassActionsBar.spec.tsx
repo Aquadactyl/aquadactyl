@@ -112,7 +112,12 @@ const Wrapper = ({
 };
 
 describe("components/server/files/MassActionsBar", () => {
-  const mockMutate = vi.fn().mockResolvedValue([]);
+  const mockMutate = vi.fn().mockImplementation((fn) => {
+    if (typeof fn === "function") {
+      return fn([{ name: "file1.txt" }, { name: "file3.txt" }]);
+    }
+    return Promise.resolve([]);
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -217,5 +222,86 @@ describe("components/server/files/MassActionsBar", () => {
         "file2.txt",
       ]);
     });
+  });
+
+  it("handles archive failure and sets flash error", async () => {
+    const error = new Error("Archive failed");
+    vi.mocked(compressFiles).mockRejectedValueOnce(error);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper selectedFiles={["file1.txt"]}>
+          <MassActionsBar />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const archiveBtn = await screen.findByRole("button", { name: "Archive" });
+    fireEvent.click(archiveBtn);
+
+    await waitFor(() => {
+      expect(compressFiles).toHaveBeenCalled();
+    });
+  });
+
+  it("handles delete failure, calls mutate and sets flash error", async () => {
+    const error = new Error("Delete failed");
+    vi.mocked(deleteFiles).mockRejectedValueOnce(error);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper selectedFiles={["file1.txt"]}>
+          <MassActionsBar />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByRole("button", { name: "Delete" });
+    fireEvent.click(deleteBtn);
+
+    const dialog = screen.getByTestId("confirm-dialog");
+    const confirmBtn = within(dialog).getByRole("button", { name: "Delete" });
+    fireEvent.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(deleteFiles).toHaveBeenCalled();
+      expect(mockMutate).toHaveBeenCalled();
+    });
+  });
+
+  it("cancels confirm delete dialog", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper selectedFiles={["file1.txt"]}>
+          <MassActionsBar />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByRole("button", { name: "Delete" });
+    fireEvent.click(deleteBtn);
+
+    const dialog = screen.getByTestId("confirm-dialog");
+    const cancelBtn = within(dialog).getByRole("button", { name: "Cancel" });
+    fireEvent.click(cancelBtn);
+
+    expect(screen.queryByTestId("confirm-dialog")).toBeNull();
+  });
+
+  it("renders more than 15 files with 'and X others'", async () => {
+    const files = Array.from({ length: 17 }, (_, i) => `file_${i}.txt`);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper selectedFiles={files}>
+          <MassActionsBar />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByRole("button", { name: "Delete" });
+    fireEvent.click(deleteBtn);
+
+    expect(screen.getByText("and 2 others")).toBeDefined();
   });
 });

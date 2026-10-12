@@ -86,4 +86,53 @@ describe("LoginFormContainer component", () => {
     const card = container.querySelector(".authentication-card")!;
     expect(card.querySelector(".authentication-brand")).toBeDefined();
   });
+
+  it("handles opposite logo position with split and center layouts, wordmark, and omitted title", () => {
+    // Opposite position with split layout
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      name: "Aquadactyl",
+      logoUrl: null,
+      appearance: {
+        ...store.getState().settings.data!.appearance!,
+        loginLayout: "split-left",
+        loginLogoPosition: "opposite",
+      },
+    });
+
+    const { container, rerender } = render(
+      <LoginFormContainer>
+        <div>Content</div>
+      </LoginFormContainer>,
+    );
+
+    expect(document.title).toBe("Aquadactyl");
+    expect(container.querySelector(".authentication-side-brand")).toBeDefined();
+    const wordmark = container.querySelector(
+      "img[src='/branding/aquadactyl-wordmark.png']",
+    );
+    expect(wordmark).toBeDefined();
+
+    // Opposite position with center layout falls back to above
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      logoUrl: "/logo.png",
+      showNameWithLogo: false,
+      appearance: {
+        ...store.getState().settings.data!.appearance!,
+        loginLayout: "center",
+        loginLogoPosition: "opposite",
+      },
+    });
+
+    rerender(
+      <LoginFormContainer title="Login Title">
+        <div>Content</div>
+      </LoginFormContainer>,
+    );
+
+    const logoWithoutName = container.querySelector("img.custom-site-logo")!;
+    expect(logoWithoutName.getAttribute("alt")).toBe("Aquadactyl");
+    expect(container.querySelector(".authentication-side-brand")).toBeNull();
+  });
 });

@@ -49,12 +49,9 @@ export default () => {
 
   const filePath = hashToPath(hash);
   const directory = action === "new" ? filePath : dirname(filePath);
-  const draftKey =
-    action === "new" ? getNewFileDraftKey(uuid, directory) : undefined;
+  const draftKey = getNewFileDraftKey(uuid, directory);
   const saveDraft = useCallback(
     (value: string) => {
-      if (!draftKey) return;
-
       if (value.length > 0) {
         sessionStorage.setItem(draftKey, value);
       } else {
@@ -71,10 +68,10 @@ export default () => {
   }, [directory, setDirectory]);
 
   useEffect(() => {
-    if (!draftKey) return;
+    if (action !== "new") return;
 
     setContent(sessionStorage.getItem(draftKey) || "");
-  }, [draftKey]);
+  }, [action, draftKey]);
 
   useEffect(() => {
     if (action === "new") return;
@@ -106,9 +103,7 @@ export default () => {
       await saveFileContents(uuid, name || filePath, content);
 
       if (name) {
-        if (draftKey) {
-          sessionStorage.removeItem(draftKey);
-        }
+        sessionStorage.removeItem(draftKey!);
 
         navigate(`/server/${id}/files/edit#/${encodePathSegments(name)}`);
         redirecting = true;

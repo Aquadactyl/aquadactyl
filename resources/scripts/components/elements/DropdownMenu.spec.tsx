@@ -58,4 +58,41 @@ describe("DropdownMenu component", () => {
     expect(button.className).toContain("hover:bg-red-900");
     expect(button.className).toContain("hover:text-red-200");
   });
+
+  it("closes menu when clicking an item inside the popup", async () => {
+    const { getByText } = render(
+      <DropdownMenu
+        renderToggle={(onClick) => <button onClick={onClick}>Actions</button>}
+      >
+        <div data-testid="item-to-click">Clickable Action</div>
+      </DropdownMenu>,
+    );
+
+    // Open menu
+    fireEvent.click(getByText("Actions"));
+    expect(getByText("Clickable Action")).toBeDefined();
+
+    // Click item inside popup
+    const popupChild = getByText("Clickable Action").parentElement!;
+    await act(async () => {
+      fireEvent.click(popupChild);
+    });
+  });
+
+  it("triggers trigger container onClick with triggerProps", () => {
+    const { getByTestId, queryByText } = render(
+      <DropdownMenu
+        renderToggle={() => <span data-testid="custom-toggle">Custom</span>}
+      >
+        <div>Content</div>
+      </DropdownMenu>,
+    );
+
+    const toggle = getByTestId("custom-toggle");
+    const container = toggle.parentElement!;
+
+    // Clicking the container div
+    fireEvent.click(container);
+    expect(queryByText("Content")).toBeDefined();
+  });
 });

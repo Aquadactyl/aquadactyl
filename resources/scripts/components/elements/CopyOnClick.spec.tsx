@@ -122,4 +122,59 @@ describe("CopyOnClick component", () => {
     expect(execCommandFn).toHaveBeenCalledWith("copy");
     expect(getByText('Copied "fallback-value" to clipboard.')).toBeDefined();
   });
+
+  it("handles empty or null text without attaching click listener", () => {
+    const { getByText } = render(
+      <CopyOnClick text={null}>
+        <button>Static Button</button>
+      </CopyOnClick>,
+    );
+
+    const button = getByText("Static Button");
+    expect(button.className).not.toContain("cursor-pointer");
+  });
+
+  it("shows generic message when showInNotification is false", async () => {
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextMock },
+      configurable: true,
+    });
+
+    const { getByText } = render(
+      <CopyOnClick text="test-token" showInNotification={false}>
+        <button>Copy</button>
+      </CopyOnClick>,
+    );
+
+    await act(async () => {
+      fireEvent.click(getByText("Copy"));
+    });
+
+    expect(getByText("Copied text to clipboard.")).toBeDefined();
+  });
+
+  it("handles execCommand throwing or failing when clipboard API is absent", async () => {
+    Object.defineProperty(navigator, "clipboard", {
+      value: undefined,
+      configurable: true,
+    });
+
+    const execSpy = vi.spyOn(document, "execCommand").mockImplementation(() => {
+      throw new Error("execCommand denied");
+    });
+
+    const { getByText, queryByText } = render(
+      <CopyOnClick text="failing-value">
+        <button>Copy Fail</button>
+      </CopyOnClick>,
+    );
+
+    await act(async () => {
+      fireEvent.click(getByText("Copy Fail"));
+    });
+
+    expect(queryByText(/Copied/)).toBeNull();
+    execSpy.mockRestore();
+  });
 });

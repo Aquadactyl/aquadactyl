@@ -100,6 +100,21 @@ describe("components/elements/activity/ActivityLogFilters", () => {
     expect(eventSelect.value).toBe("event:custom:unknown.event");
   });
 
+  it("renders custom/unknown category option when hash has category only", () => {
+    const { container } = render(
+      <ActivityLogFilters
+        events={mockEvents}
+        hash={{ event: "custom_unknown" }}
+        hasFilters={true}
+        onChange={vi.fn()}
+        onClear={vi.fn()}
+      />,
+    );
+
+    const eventSelect = container.querySelectorAll("select")[0];
+    expect(eventSelect.value).toBe("category:custom_unknown");
+  });
+
   it("handles period, source, and sort select changes", () => {
     const onChange = vi.fn();
 
@@ -127,8 +142,14 @@ describe("components/elements/activity/ActivityLogFilters", () => {
     fireEvent.change(sourceSelect, { target: { value: "sftp" } });
     expect(onChange).toHaveBeenCalledWith({ source: "sftp" });
 
+    fireEvent.change(sourceSelect, { target: { value: "" } });
+    expect(onChange).toHaveBeenCalledWith({ source: undefined });
+
     fireEvent.change(sortSelect, { target: { value: "oldest" } });
     expect(onChange).toHaveBeenCalledWith({ sort: "oldest" });
+
+    fireEvent.change(sortSelect, { target: { value: "" } });
+    expect(onChange).toHaveBeenCalledWith({ sort: undefined });
   });
 
   it("handles IP input submission on apply button click (valid and empty)", () => {

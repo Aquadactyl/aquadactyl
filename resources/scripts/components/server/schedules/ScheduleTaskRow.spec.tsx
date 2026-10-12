@@ -270,4 +270,48 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
     });
     consoleSpy.mockRestore();
   });
+
+  it("handles successful deletion", async () => {
+    vi.mocked(deleteScheduleTask).mockResolvedValueOnce(undefined as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow
+            schedule={{ ...mockSchedule, tasks: [mockTask] }}
+            task={mockTask}
+          />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByLabelText("Delete scheduled task");
+    fireEvent.click(deleteBtn);
+
+    const confirmBtn = screen.getByRole("button", { name: "Confirm" });
+    fireEvent.click(confirmBtn);
+
+    await waitFor(() => {
+      expect(deleteScheduleTask).toHaveBeenCalledWith("server-uuid-1", 1, 10);
+    });
+  });
+
+  it("renders unknown action fallback", async () => {
+    const unknownTask: Task = {
+      ...mockTask,
+      id: 50,
+      action: "weird_action" as any,
+      payload: "something",
+    };
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <ScheduleTaskRow schedule={mockSchedule} task={unknownTask} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(await screen.findByText(/Send console command/)).toBeDefined();
+  });
 });

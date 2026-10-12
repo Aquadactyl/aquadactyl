@@ -248,4 +248,31 @@ describe("components/server/console/ServerDetailsBlock", () => {
       });
     }).not.toThrow();
   });
+
+  it("handles null status rendering Offline for uptime and stats event with zero/missing uptime", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper status={null}>
+          <ServerDetailsBlock />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    await screen.findByText("Address");
+    expect(screen.getByText("Offline")).toBeDefined();
+
+    act(() => {
+      websocketCallback!(
+        JSON.stringify({
+          memory_bytes: 100,
+          cpu_absolute: 10,
+          disk_bytes: 200,
+          network: { tx_bytes: 5, rx_bytes: 5 },
+          uptime: 0,
+        }),
+      );
+    });
+
+    expect(screen.getByText("Offline")).toBeDefined();
+  });
 });

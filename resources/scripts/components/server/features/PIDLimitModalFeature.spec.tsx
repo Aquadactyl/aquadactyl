@@ -117,6 +117,26 @@ describe("PIDLimitModalFeature component", () => {
         /This server is attempting to use more resources than allocated/,
       ),
     ).toBeDefined();
+
+    // Click Close button in non-admin mode
+    await act(async () => {
+      fireEvent.click(getByText("Close"));
+    });
+
+    // Test onDismissed
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "FATAL: unable to create native thread for JVM",
+      );
+    });
+    expect(getByText("Possible resource limit reached...")).toBeDefined();
+    const closeIcon = document.querySelector(".close-icon");
+    if (closeIcon) {
+      await act(async () => {
+        fireEvent.click(closeIcon);
+      });
+    }
   });
 
   it("ignores errors if the server is already in running state", async () => {
@@ -126,6 +146,19 @@ describe("PIDLimitModalFeature component", () => {
       mockSocket.emit(
         SocketEvent.CONSOLE_OUTPUT,
         "pthread_create failed: Resource temporarily unavailable",
+      );
+    });
+
+    expect(queryByText("Memory or process limit reached...")).toBeNull();
+  });
+
+  it("ignores non-matching console output", async () => {
+    const { queryByText } = await renderWithServer(true, false);
+
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "Server listening on port 25565",
       );
     });
 

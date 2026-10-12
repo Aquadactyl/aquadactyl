@@ -126,4 +126,26 @@ describe("RenameServerBox", () => {
       });
     });
   });
+
+  it("submits empty description and falls back to empty string", async () => {
+    vi.mocked(renameServer).mockResolvedValueOnce(undefined as any);
+
+    render(
+      <Wrapper>
+        <RenameServerBox />
+      </Wrapper>,
+    );
+
+    const descInput = screen.getByLabelText("Server Description");
+    fireEvent.change(descInput, { target: { value: "" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      expect(renameServer).toHaveBeenCalledWith(
+        "server-rename-uuid",
+        "My Minecraft Server",
+        "",
+      );
+    });
+  });
 });

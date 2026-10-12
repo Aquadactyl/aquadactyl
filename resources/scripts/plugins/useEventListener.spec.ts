@@ -56,4 +56,16 @@ describe("useEventListener hook", () => {
 
     addEventListenerSpy.mockRestore();
   });
+
+  it("does not attach listener if window.addEventListener is not supported", () => {
+    const originalAddEventListener = window.addEventListener;
+    // @ts-expect-error test unsupported environment
+    window.addEventListener = undefined;
+
+    expect(() => {
+      renderHook(() => useEventListener("click", vi.fn()));
+    }).not.toThrow();
+
+    window.addEventListener = originalAddEventListener;
+  });
 });

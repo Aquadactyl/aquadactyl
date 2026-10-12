@@ -3,15 +3,21 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import ServerPlayerCount from "./ServerPlayerCount";
 import { Server } from "@/api/server/getServer";
+import getGameQuery from "@/api/server/getGameQuery";
 
 let mockQueryData: any = null;
 let mockQueryError: any = null;
 
+let capturedQueryFn: any = null;
+
 vi.mock("@/lib/queryClient", () => ({
-  useTanStackQuery: () => ({
-    data: mockQueryData,
-    error: mockQueryError,
-  }),
+  useTanStackQuery: (_key: any, fn: any) => {
+    capturedQueryFn = fn;
+    return {
+      data: mockQueryData,
+      error: mockQueryError,
+    };
+  },
 }));
 
 vi.mock("@/api/server/getGameQuery", () => ({
@@ -123,5 +129,24 @@ describe("components/dashboard/ServerPlayerCount", () => {
     mockQueryError = new Error("Query timeout");
     rerender(<ServerPlayerCount server={baseServer} state="running" />);
     expect(screen.getByText("Unavailable")).toBeDefined();
+  });
+
+  it("executes getGameQuery via queryFn", () => {
+    render(<ServerPlayerCount server={baseServer} state="running" />);
+    expect(capturedQueryFn).toBeDefined();
+    capturedQueryFn();
+    expect(getGameQuery).toHaveBeenCalledWith("uuid-1");
+  });
+
+  it("updates refresh interval for multiple pending polls and non-pending updates", () => {
+    mockQueryData = { status: "pending" };
+    const { rerender } = render(
+      <ServerPlayerCount server={baseServer} state="running" />,
+    );
+    mockQueryData = { status: "pending", timestamp: 1 };
+    rerender(<ServerPlayerCount server={baseServer} state="running" />);
+    mockQueryData = { status: "available", players: 1 };
+    rerender(<ServerPlayerCount server={baseServer} state="running" />);
+    expect(screen.getByText("1")).toBeDefined();
   });
 });

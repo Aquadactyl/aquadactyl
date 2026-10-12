@@ -129,7 +129,7 @@ const ConfigureTwoFactorForm = ({ onTokens }: Props) => {
         }
       />
       <Dialog.Footer>
-        <Button.Text onClick={close}>
+        <Button.Text type={"button"} onClick={close}>
           {t("two_factor_setup.cancel", "Cancel")}
         </Button.Text>
         <Tooltip

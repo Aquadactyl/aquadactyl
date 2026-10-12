@@ -107,4 +107,43 @@ describe("Checkbox component", () => {
     // Clicking when no form context is available should safely do nothing
     fireEvent.click(checkbox);
   });
+
+  it("handles undefined form values and non-array form values gracefully", () => {
+    const NonArrayTestForm = () => {
+      const methods = useForm({
+        defaultValues: {
+          testField: undefined,
+        },
+      });
+
+      return (
+        <FormProvider {...methods}>
+          <Checkbox
+            name="testField"
+            value="option1"
+            data-testid="checkbox-undefined"
+          />
+          <button
+            type="button"
+            data-testid="set-non-array"
+            onClick={() => methods.setValue("testField", "string-value" as any)}
+          >
+            Set Non Array
+          </button>
+        </FormProvider>
+      );
+    };
+
+    const { getByTestId } = render(<NonArrayTestForm />);
+    const cb = getByTestId("checkbox-undefined");
+    expect(cb.getAttribute("aria-checked")).toBe("false");
+
+    // Click when undefined
+    fireEvent.click(cb);
+    expect(cb.getAttribute("aria-checked")).toBe("true");
+
+    // Set non-array and click to trigger fallback branch
+    fireEvent.click(getByTestId("set-non-array"));
+    fireEvent.click(cb);
+  });
 });

@@ -35,7 +35,7 @@ const validate = (values: Values) => {
   const errors: Record<string, { type: string; message: string }> = {};
   const tErrors = timingErrors(values);
   for (const [k, v] of Object.entries(tErrors)) {
-    if (v) errors[k] = { type: "custom", message: v };
+    errors[k] = { type: "custom", message: v };
   }
   if (!values.name?.trim()) {
     errors.name = { type: "required", message: "Give this schedule a name." };

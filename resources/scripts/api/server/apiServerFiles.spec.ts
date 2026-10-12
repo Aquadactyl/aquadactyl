@@ -125,14 +125,21 @@ describe("api/server/files", () => {
 
     const content = await getFileContents("srv-1", "server.properties");
 
-    expect(http.get).toHaveBeenCalledWith(
-      "/api/client/servers/srv-1/files/contents",
-      expect.objectContaining({
-        params: { file: "server.properties" },
-        responseType: "text",
-      }),
+    const getCall = vi.mocked(http.get).mock.calls[0];
+    expect(getCall[0]).toBe("/api/client/servers/srv-1/files/contents");
+    expect(getCall[1]?.params).toEqual({ file: "server.properties" });
+    expect(getCall[1]?.transformResponse).toBeDefined();
+    expect((getCall[1]!.transformResponse as any)("raw string")).toBe(
+      "raw string",
     );
     expect(content).toBe("motd=A Minecraft Server");
+  });
+
+  it("getFileContents rejects when request fails", async () => {
+    vi.mocked(http.get).mockRejectedValueOnce(new Error("File not found"));
+    await expect(getFileContents("srv-1", "missing.txt")).rejects.toThrow(
+      "File not found",
+    );
   });
 
   it("getFileDownloadUrl gets signed download url", async () => {
@@ -178,6 +185,20 @@ describe("api/server/files", () => {
     expect(files.length).toBe(1);
     expect(files[0].name).toBe("server.properties");
     expect(files[0].size).toBe(1024);
+  });
+
+  it("loadDirectory handles omitted directory and empty data fallback", async () => {
+    vi.mocked(http.get).mockResolvedValueOnce({
+      data: {},
+    } as any);
+
+    const files = await loadDirectory("srv-1");
+
+    expect(http.get).toHaveBeenCalledWith(
+      "/api/client/servers/srv-1/files/list",
+      { params: { directory: "/" } },
+    );
+    expect(files).toEqual([]);
   });
 
   it("renameFiles posts rename array", async () => {

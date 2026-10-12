@@ -58,7 +58,7 @@ const DisableTOTPDialog = () => {
         }
       />
       <Dialog.Footer>
-        <Button.Text onClick={close}>
+        <Button.Text type={"button"} onClick={close}>
           {t("two_factor_disable.cancel", "Cancel")}
         </Button.Text>
         <Tooltip

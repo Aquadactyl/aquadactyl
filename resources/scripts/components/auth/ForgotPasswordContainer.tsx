@@ -26,6 +26,8 @@ export default () => {
   const { t } = usePanelTranslation();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
+  const tokenRef = useRef("");
+  tokenRef.current = token;
 
   const { clearFlashes, addFlash } = useFlash();
   const recaptchaEnabled = useAppStore(
@@ -54,10 +56,11 @@ export default () => {
 
   const handleSubmission = async ({ email }: Values) => {
     clearFlashes();
+    const currentToken = tokenRef.current || token;
 
     // If there is no token in the state yet, request the token and then abort this submit request
     // since it will be re-submitted when the recaptcha data is returned by the component.
-    if (recaptchaEnabled && !token) {
+    if (recaptchaEnabled && !currentToken) {
       try {
         await ref.current!.execute();
       } catch (error) {
@@ -72,7 +75,7 @@ export default () => {
     }
 
     try {
-      const response = await requestPasswordResetEmail(email, token);
+      const response = await requestPasswordResetEmail(email, currentToken);
       reset();
       addFlash({
         type: "success",
@@ -87,6 +90,7 @@ export default () => {
         message: httpErrorToHuman(error),
       });
     } finally {
+      tokenRef.current = "";
       setToken("");
       if (ref.current) ref.current.reset();
     }
@@ -128,10 +132,12 @@ export default () => {
           provider={provider}
           sitekey={siteKey || "_invalid_key"}
           onVerify={(response) => {
+            tokenRef.current = response;
             setToken(response);
             void handleSubmit(handleSubmission)();
           }}
           onExpire={() => {
+            tokenRef.current = "";
             setToken("");
           }}
         />

@@ -17,12 +17,18 @@ export function UPlotChart({ options, data, className }: UPlotChartProps) {
   const height = (options.height as number) || 160;
 
   useEffect(() => {
-    if (!containerRef.current) return;
-    const width = containerRef.current.clientWidth || 300;
+    if (chartRef.current) {
+      chartRef.current.setData(data as uPlot.AlignedData);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const el = containerRef.current!;
+    const width = el.clientWidth || 300;
     const chart = new uPlot(
       { ...options, width, height },
       data as uPlot.AlignedData,
-      containerRef.current,
+      el,
     );
     chartRef.current = chart;
 
@@ -37,7 +43,7 @@ export function UPlotChart({ options, data, className }: UPlotChartProps) {
         }
       }
     });
-    observer.observe(containerRef.current);
+    observer.observe(el);
 
     return () => {
       observer.disconnect();
@@ -45,12 +51,6 @@ export function UPlotChart({ options, data, className }: UPlotChartProps) {
       chartRef.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    if (chartRef.current) {
-      chartRef.current.setData(data as uPlot.AlignedData);
-    }
-  }, [data]);
 
   return (
     <div

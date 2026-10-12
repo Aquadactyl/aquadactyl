@@ -115,4 +115,10 @@ describe("UpdatePasswordForm component", () => {
     const flashes = store.getState().flashes.items;
     expect(flashes.some((f) => f.key === "account:password")).toBe(true);
   });
+
+  it("returns null when user data is not present in store", () => {
+    store.getActions().user.setUserData(undefined as any);
+    const { container } = render(<UpdatePasswordForm />);
+    expect(container.firstChild).toBeNull();
+  });
 });

@@ -187,4 +187,24 @@ describe("BackupRow", () => {
     expect(warnSpy).toHaveBeenCalled();
     warnSpy.mockRestore();
   });
+
+  it("handles websocket event with fallback values when payload fields are missing", () => {
+    render(
+      <Wrapper>
+        <BackupRow backup={successfulBackup} />
+      </Wrapper>,
+    );
+
+    act(() => {
+      websocketCallback!(JSON.stringify({}));
+    });
+
+    expect(mockMutate).toHaveBeenCalled();
+    const mutateCallback = mockMutate.mock.calls[0][0];
+    const initialData = { items: [successfulBackup] };
+    const updated = mutateCallback(initialData);
+    expect(updated.items[0].isSuccessful).toBe(true);
+    expect(updated.items[0].checksum).toBe(":");
+    expect(updated.items[0].bytes).toBe(0);
+  });
 });

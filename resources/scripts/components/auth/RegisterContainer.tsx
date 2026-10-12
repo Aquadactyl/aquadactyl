@@ -49,6 +49,8 @@ const RegisterContainer = () => {
   const navigate = useNavigate();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
+  const tokenRef = useRef("");
+  tokenRef.current = token;
 
   const { clearFlashes, clearAndAddHttpError } = useFlash();
 
@@ -93,8 +95,9 @@ const RegisterContainer = () => {
 
   const onSubmit = async (values: Values) => {
     clearFlashes();
+    const currentToken = tokenRef.current || token;
 
-    if (recaptchaEnabled && !token) {
+    if (recaptchaEnabled && !currentToken) {
       try {
         await ref.current!.execute();
       } catch (error) {
@@ -105,7 +108,10 @@ const RegisterContainer = () => {
     }
 
     try {
-      const response = await registerApi({ ...values, recaptchaData: token });
+      const response = await registerApi({
+        ...values,
+        recaptchaData: currentToken,
+      });
       if (response.complete) {
         window.location.assign(response.intended || "/");
         return;
@@ -114,6 +120,7 @@ const RegisterContainer = () => {
       navigate("/auth/login");
     } catch (error) {
       console.error(error);
+      tokenRef.current = "";
       setToken("");
       if (ref.current) ref.current.reset();
       clearAndAddHttpError({ error });
@@ -207,10 +214,12 @@ const RegisterContainer = () => {
           provider={provider}
           sitekey={siteKey || "_invalid_key"}
           onVerify={(response) => {
+            tokenRef.current = response;
             setToken(response);
             void handleSubmit(onSubmit)();
           }}
           onExpire={() => {
+            tokenRef.current = "";
             setToken("");
           }}
         />

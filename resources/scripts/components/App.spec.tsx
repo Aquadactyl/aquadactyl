@@ -89,4 +89,28 @@ describe("components/App", () => {
 
     expect(await screen.findByTestId("server-router")).toBeDefined();
   });
+
+  it("handles user initialization with string avatar_url and default blur_sensitive_data", async () => {
+    (store.getActions() as any).user.setUserData(null);
+    (window as any).PterodactylUser = {
+      uuid: "user-uuid-2",
+      username: "bob",
+      email: "bob@example.com",
+      root_admin: false,
+      use_totp: true,
+      language: "en",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      avatar_url: "https://example.com/avatar.png",
+      blur_sensitive_data: undefined,
+    };
+
+    render(<App />);
+
+    expect(store.getState().user.data?.username).toBe("bob");
+    expect(store.getState().user.data?.avatarUrl).toBe(
+      "https://example.com/avatar.png",
+    );
+    expect(store.getState().user.data?.blurSensitiveData).toBe(false);
+  });
 });

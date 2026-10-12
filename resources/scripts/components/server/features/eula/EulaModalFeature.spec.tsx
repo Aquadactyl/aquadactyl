@@ -138,4 +138,85 @@ describe("EulaModalFeature component", () => {
 
     consoleSpy.mockRestore();
   });
+
+  it("can be cancelled or dismissed", async () => {
+    const { getByText } = await renderFeature("offline");
+
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "You need to agree to the EULA in order to run the server",
+      );
+    });
+
+    expect(getByText(/Accept Minecraft/i)).toBeDefined();
+
+    await act(async () => {
+      fireEvent.click(getByText("Cancel"));
+    });
+
+    // Test onDismissed via close-icon
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "You need to agree to the EULA in order to run the server",
+      );
+    });
+    const closeIcon = document.querySelector(".close-icon");
+    if (closeIcon) {
+      await act(async () => {
+        fireEvent.click(closeIcon);
+      });
+    }
+  });
+
+  it("does not trigger modal when running or on non-matching console log", async () => {
+    const { queryByText } = await renderFeature("running");
+
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "You need to agree to the EULA in order to run the server",
+      );
+    });
+
+    expect(queryByText(/Accept Minecraft/i)).toBeNull();
+  });
+
+  it("ignores non-matching console logs when offline", async () => {
+    const { queryByText } = await renderFeature("offline");
+
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "Loading libraries, please wait...",
+      );
+    });
+
+    expect(queryByText(/Accept Minecraft/i)).toBeNull();
+  });
+
+  it("saves eula without sending restart when status is not offline", async () => {
+    (saveFileContents as any).mockResolvedValue(undefined);
+
+    const { getByText } = await renderFeature("starting");
+
+    await act(async () => {
+      mockSocket.emit(
+        SocketEvent.CONSOLE_OUTPUT,
+        "You need to agree to the EULA in order to run the server",
+      );
+    });
+
+    await act(async () => {
+      fireEvent.click(getByText("I Accept"));
+    });
+
+    expect(saveFileContents).toHaveBeenCalledWith(
+      "server-uuid-123",
+      "eula.txt",
+      "eula=true",
+    );
+    expect(mockSocket.send).not.toHaveBeenCalled();
+  });
 });

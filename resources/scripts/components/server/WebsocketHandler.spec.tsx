@@ -202,4 +202,82 @@ describe("components/server/WebsocketHandler", () => {
 
     expect(closeSpy).toHaveBeenCalled();
   });
+
+  it("handles token expired and concurrent updateToken guard", async () => {
+    render(<WebsocketHandler />);
+
+    vi.mocked(getWebsocketToken).mockClear();
+    let resolveToken: any;
+    vi.mocked(getWebsocketToken).mockReturnValueOnce(
+      new Promise((resolve) => {
+        resolveToken = resolve;
+      }),
+    );
+
+    // First call sets updatingToken = true
+    act(() => {
+      socketListeners["token expired"]();
+    });
+    expect(getWebsocketToken).toHaveBeenCalledTimes(1);
+
+    // Second call while pending returns early (updatingToken guard)
+    act(() => {
+      socketListeners["token expiring"]();
+    });
+    expect(getWebsocketToken).toHaveBeenCalledTimes(1);
+
+    // Resolve first call
+    await act(async () => {
+      resolveToken({ token: "done_token", socket: "wss://node.test/ws" });
+    });
+  });
+
+  it("handles error during token update and initial connection failure", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    // Token update error
+    render(<WebsocketHandler />);
+    vi.mocked(getWebsocketToken).mockRejectedValueOnce(
+      new Error("Refresh failed"),
+    );
+    await act(async () => {
+      socketListeners["token expiring"]();
+    });
+    expect(consoleSpy).toHaveBeenCalled();
+
+    // Initial connection getWebsocketToken failure
+    vi.mocked(getWebsocketToken).mockRejectedValueOnce(
+      new Error("Connect failed"),
+    );
+    render(<WebsocketHandler />);
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(consoleSpy).toHaveBeenCalled();
+
+    consoleSpy.mockRestore();
+  });
+
+  it("clears error on connected state change and exits early without uuid", () => {
+    mockState.socket.connected = false;
+    const { rerender, getByText, queryByText } = render(<WebsocketHandler />);
+
+    act(() => {
+      socketListeners["SOCKET_ERROR"]();
+    });
+    expect(getByText(/having some trouble connecting/)).toBeDefined();
+
+    // Re-render with connected = true
+    mockState.socket.connected = true;
+    rerender(<WebsocketHandler />);
+    expect(queryByText(/having some trouble connecting/)).toBeNull();
+
+    // Re-render with connected = false (branch when connected is falsy)
+    mockState.socket.connected = false;
+    rerender(<WebsocketHandler />);
+
+    // Test early return when uuid is missing
+    mockState.server.data = null as any;
+    rerender(<WebsocketHandler />);
+  });
 });

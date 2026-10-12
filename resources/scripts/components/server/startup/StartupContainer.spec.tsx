@@ -165,4 +165,195 @@ describe("components/server/startup/StartupContainer", () => {
       );
     });
   });
+
+  it("handles failure when updating docker image", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(setSelectedDockerImage).mockRejectedValueOnce(
+      new Error("Failed to set image"),
+    );
+
+    const { container } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <StartupContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const select = await waitFor(() => {
+      const el = container.querySelector("select");
+      if (!el) throw new Error("Select not found");
+      return el;
+    });
+
+    fireEvent.change(select, {
+      target: { value: "ghcr.io/pterodactyl/yolks:java_21" },
+    });
+
+    await waitFor(() => {
+      expect(consoleSpy).toHaveBeenCalled();
+    });
+    consoleSpy.mockRestore();
+  });
+
+  it("renders loading spinner when data is not yet loaded", () => {
+    vi.mocked(getServerStartup).mockReturnValueOnce({
+      data: null,
+      error: null,
+      isValidating: false,
+      mutate: mockMutate,
+    } as any);
+
+    const { container } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <StartupContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(container.querySelector(".spinner")).toBeDefined();
+  });
+
+  it("renders loading spinner when error exists but isValidating is true", () => {
+    vi.mocked(getServerStartup).mockReturnValueOnce({
+      data: null,
+      error: new Error("Server error"),
+      isValidating: true,
+      mutate: mockMutate,
+    } as any);
+
+    const { container } = render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <StartupContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(container.querySelector(".spinner")).toBeDefined();
+  });
+
+  it("renders ServerError and handles retry when error occurs and not validating", () => {
+    vi.mocked(getServerStartup).mockReturnValueOnce({
+      data: null,
+      error: new Error("Failed to load startup"),
+      isValidating: false,
+      mutate: mockMutate,
+    } as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <StartupContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(screen.getByText("Failed to load startup")).toBeDefined();
+    const retryBtn = screen.getByRole("button");
+    fireEvent.click(retryBtn);
+    expect(mockMutate).toHaveBeenCalled();
+  });
+
+  it("renders custom docker image message when image is not in dockerImages", async () => {
+    vi.mocked(getServerStartup).mockReturnValueOnce({
+      data: {
+        ...mockStartupData,
+        dockerImages: {
+          "Java 17": "ghcr.io/pterodactyl/yolks:java_17",
+          "Java 21": "ghcr.io/pterodactyl/yolks:java_21",
+        },
+      },
+      error: null,
+      isValidating: false,
+      mutate: mockMutate,
+    } as any);
+
+    const CustomWrapper = ({ children }: { children: React.ReactNode }) => {
+      const isReady = ServerContext.useStoreState(
+        (s) => !!s.server.data && s.server.permissions.length > 0,
+      );
+      const setServer = ServerContext.useStoreActions(
+        (a) => a.server.setServer,
+      );
+      const setPermissions = ServerContext.useStoreActions(
+        (a) => a.server.setPermissions,
+      );
+
+      useEffect(() => {
+        setServer({
+          id: "serv_custom" as any,
+          uuid: "server-uuid-custom",
+          name: "Custom Server",
+          node: "Node 1",
+          isNodeUnderMaintenance: false,
+          status: null,
+          invocation: "java -jar server.jar",
+          dockerImage: "custom/unlisted:image",
+          sftpDetails: { ip: "127.0.0.1", port: 2022 },
+          description: "",
+          limits: {
+            memory: 1024,
+            swap: 0,
+            disk: 1024,
+            io: 500,
+            cpu: 100,
+            threads: "",
+          },
+          featureLimits: { databases: 1, allocations: 5, backups: 2 },
+          isTransferring: false,
+          eggFeatures: [],
+          allocations: [],
+          variables: mockStartupData.variables as any,
+        } as any);
+        setPermissions(["*"]);
+      }, []);
+
+      if (!isReady) return null;
+      return <>{children}</>;
+    };
+
+    render(
+      <ServerContext.Provider>
+        <CustomWrapper>
+          <StartupContainer />
+        </CustomWrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(
+      await screen.findByText(
+        /Docker image has been manually set by an administrator/,
+      ),
+    ).toBeDefined();
+  });
+
+  it("renders read-only image input without custom message when only 1 docker image is configured", async () => {
+    vi.mocked(getServerStartup).mockReturnValueOnce({
+      data: {
+        ...mockStartupData,
+        dockerImages: {
+          "Default Java": "ghcr.io/pterodactyl/yolks:java_17",
+        },
+      },
+      error: null,
+      isValidating: false,
+      mutate: mockMutate,
+    } as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <StartupContainer />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    expect(
+      screen.queryByText(
+        /Docker image has been manually set by an administrator/,
+      ),
+    ).toBeNull();
+  });
 });

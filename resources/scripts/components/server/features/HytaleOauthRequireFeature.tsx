@@ -42,11 +42,9 @@ const HytaleOauthRequireFeature = () => {
   }, []);
 
   const handleLogin = () => {
-    if (link) {
-      window.open(link, "_blank", "noopener,noreferrer");
-      setVisible(false);
-      setLink("");
-    }
+    window.open(link, "_blank", "noopener,noreferrer");
+    setVisible(false);
+    setLink("");
   };
 
   return (

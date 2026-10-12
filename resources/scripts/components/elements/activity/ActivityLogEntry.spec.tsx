@@ -53,6 +53,7 @@ const mockActivity: ActivityLog = {
     file_count: 5,
     token: "secret_value",
     files: ["a.txt", "b.txt"],
+    enabled: true,
   },
   hasAdditionalMetadata: true,
   timestamp: new Date("2026-01-01T12:00:00Z"),
@@ -123,5 +124,14 @@ describe("components/elements/activity/ActivityLogEntry", () => {
     );
 
     expect(screen.getByTestId("custom-child")).toBeDefined();
+  });
+
+  it("falls back to eventLabel when description is null", () => {
+    const noDescActivity = {
+      ...mockActivity,
+      description: null,
+    };
+    renderComponent(noDescActivity);
+    expect(screen.getByTestId("translate")).toBeDefined();
   });
 });

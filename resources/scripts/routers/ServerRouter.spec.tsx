@@ -187,4 +187,42 @@ describe("routers/ServerRouter", () => {
     const adminLink = screen.getByRole("link");
     expect(adminLink.getAttribute("href")).toBe("/admin/servers/view/42");
   });
+
+  it("allows rootAdmin to access root server url during conflict state", () => {
+    mockRootAdmin = true;
+    mockServerState.data = {
+      id: "srv-1",
+      uuid: "uuid-1",
+      internalId: 42,
+    };
+    mockServerState.inConflictState = true;
+
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1"]}>
+        <ServerRouter />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId("navigation-router")).toBeDefined();
+    expect(screen.queryByTestId("conflict-state")).toBeNull();
+  });
+
+  it("shows conflict state to rootAdmin when on subpath during conflict state", () => {
+    mockRootAdmin = true;
+    mockServerState.data = {
+      id: "srv-1",
+      uuid: "uuid-1",
+      internalId: 42,
+    };
+    mockServerState.inConflictState = true;
+
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files"]}>
+        <ServerRouter />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId("conflict-state")).toBeDefined();
+    expect(screen.queryByTestId("navigation-router")).toBeNull();
+  });
 });

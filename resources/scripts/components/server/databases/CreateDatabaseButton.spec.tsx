@@ -15,8 +15,15 @@ vi.mock("@/api/server/databases/createServerDatabase", () => ({
 }));
 
 vi.mock("@/components/elements/Modal", () => ({
-  default: ({ visible, children }: any) =>
-    visible ? <div data-testid="modal">{children}</div> : null,
+  default: ({ visible, onDismissed, children }: any) =>
+    visible ? (
+      <div data-testid="modal">
+        <button data-testid="dismiss-modal-btn" onClick={onDismissed}>
+          Dismiss
+        </button>
+        {children}
+      </div>
+    ) : null,
 }));
 
 vi.mock("@/components/FlashMessageRender", () => ({
@@ -114,6 +121,15 @@ describe("components/server/databases/CreateDatabaseButton", () => {
     expect(screen.getByTestId("modal")).toBeDefined();
 
     fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByTestId("modal")).toBeNull();
+  });
+
+  it("dismisses modal via onDismissed", () => {
+    render(<CreateDatabaseButton />);
+    fireEvent.click(screen.getByRole("button", { name: "New Database" }));
+    expect(screen.getByTestId("modal")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("dismiss-modal-btn"));
     expect(screen.queryByTestId("modal")).toBeNull();
   });
 });

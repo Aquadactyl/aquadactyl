@@ -152,4 +152,104 @@ describe("schedule timing editor", () => {
       dayOfWeek: "*",
     });
   });
+
+  it("renders and selects minutes frequency", async () => {
+    render();
+    await choose("frequency", "Every few minutes");
+    expect(
+      container.querySelector('[id="schedule-minuteInterval"]'),
+    ).toBeDefined();
+    await choose("minuteInterval", "5 minutes");
+    await submit();
+    expect(save).toHaveBeenCalledWith({
+      minute: "*/5",
+      hour: "*",
+      dayOfMonth: "*",
+      month: "*",
+      dayOfWeek: "*",
+    });
+  });
+
+  it("renders and selects hours frequency with clock note", async () => {
+    render();
+    await choose("frequency", "Every few hours");
+    expect(
+      container.querySelector('[id="schedule-hourInterval"]'),
+    ).toBeDefined();
+    await choose("hourInterval", "2 hours");
+    expect(container.textContent).toContain(
+      "Runs follow the clock, starting at midnight",
+    );
+    await act(async () => {
+      fireEvent.change(container.querySelector('input[name="hourMinute"]')!, {
+        target: { name: "hourMinute", value: "15" },
+      });
+    });
+    await submit();
+    expect(save).toHaveBeenCalledWith({
+      minute: "15",
+      hour: "*/2",
+      dayOfMonth: "*",
+      month: "*",
+      dayOfWeek: "*",
+    });
+  });
+
+  it("renders and selects weekly frequency", async () => {
+    render();
+    await choose("frequency", "Every week");
+    expect(container.querySelector('[id="schedule-weekday"]')).toBeDefined();
+    await choose("weekday", "Friday");
+    await submit();
+    expect(save).toHaveBeenCalledWith({
+      minute: "0",
+      hour: "3",
+      dayOfMonth: "*",
+      month: "*",
+      dayOfWeek: "5",
+    });
+  });
+
+  it("clicks edit these times as advanced cron button with valid values", async () => {
+    render();
+    const advancedBtn = Array.from(
+      container.querySelectorAll('button[type="button"]'),
+    ).find((b) => b.textContent?.includes("Edit these times"))!;
+    expect(advancedBtn.textContent).toBe("Edit these times as advanced cron");
+    await act(async () => {
+      click(advancedBtn);
+    });
+    expect(container.querySelector('input[name="minute"]')).toBeDefined();
+  });
+
+  it("handles catch block when clicking edit times as advanced cron with invalid values", async () => {
+    render();
+    await act(async () => {
+      fireEvent.change(container.querySelector('input[name="time"]')!, {
+        target: { name: "time", value: "invalid-time" },
+      });
+    });
+    expect(container.textContent).toContain(
+      "Choose a valid time to see when this schedule will run.",
+    );
+    const advancedBtn = Array.from(
+      container.querySelectorAll('button[type="button"]'),
+    ).find((b) => b.textContent?.includes("Edit these times"))!;
+    await act(async () => {
+      click(advancedBtn);
+    });
+    // Still in basic mode because catch prevented setting next
+    expect(container.querySelector('input[name="time"]')).toBeDefined();
+  });
+
+  it("handles catch block when switching to custom frequency with invalid values", async () => {
+    render();
+    await act(async () => {
+      fireEvent.change(container.querySelector('input[name="time"]')!, {
+        target: { name: "time", value: "invalid-time" },
+      });
+    });
+    await choose("frequency", "Custom cron (advanced)");
+    expect(container.querySelector('input[name="minute"]')).toBeDefined();
+  });
 });

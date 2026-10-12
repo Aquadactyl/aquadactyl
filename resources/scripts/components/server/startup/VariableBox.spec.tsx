@@ -338,4 +338,168 @@ describe("VariableBox", () => {
 
     expect(updateStartupVariable).not.toHaveBeenCalled();
   });
+
+  it("toggles integer boolean from 0 to 1", async () => {
+    const booleanVariable: ServerEggVariable = {
+      name: "Auto Update",
+      description: "Automatically update on restart",
+      envVariable: "AUTO_UPDATE",
+      defaultValue: "0",
+      serverValue: "0",
+      isEditable: true,
+      rules: ["in:0,1"],
+    };
+
+    vi.mocked(updateStartupVariable).mockResolvedValueOnce([
+      { ...booleanVariable, serverValue: "1" },
+      "command",
+    ]);
+
+    render(
+      <Wrapper>
+        <VariableBox variable={booleanVariable} />
+      </Wrapper>,
+    );
+
+    const switchElement = screen.getByRole("switch");
+    fireEvent.click(switchElement);
+
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(updateStartupVariable).toHaveBeenCalledWith(
+      "server-startup-uuid",
+      "AUTO_UPDATE",
+      "1",
+    );
+  });
+
+  it("toggles string boolean from true to false", async () => {
+    const stringBoolVariable: ServerEggVariable = {
+      name: "EULA Accept",
+      description: "Accept EULA",
+      envVariable: "EULA",
+      defaultValue: "true",
+      serverValue: "true",
+      isEditable: true,
+      rules: ["boolean", "string"],
+    };
+
+    vi.mocked(updateStartupVariable).mockResolvedValueOnce([
+      { ...stringBoolVariable, serverValue: "false" },
+      "command",
+    ]);
+
+    render(
+      <Wrapper>
+        <VariableBox variable={stringBoolVariable} />
+      </Wrapper>,
+    );
+
+    const switchElement = screen.getByRole("switch");
+    fireEvent.click(switchElement);
+
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(updateStartupVariable).toHaveBeenCalledWith(
+      "server-startup-uuid",
+      "EULA",
+      "false",
+    );
+  });
+
+  it("does not toggle switch when readOnly or not editable", () => {
+    const booleanVariable: ServerEggVariable = {
+      name: "Auto Update",
+      description: "Automatically update on restart",
+      envVariable: "AUTO_UPDATE",
+      defaultValue: "1",
+      serverValue: "1",
+      isEditable: false,
+      rules: ["in:0,1"],
+    };
+
+    render(
+      <Wrapper permissions={[]}>
+        <VariableBox variable={booleanVariable} />
+      </Wrapper>,
+    );
+
+    const switchElement = screen.getByRole("switch");
+    fireEvent.click(switchElement);
+
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    expect(updateStartupVariable).not.toHaveBeenCalled();
+  });
+
+  it("renders select with fallback defaultValue when serverValue is null", () => {
+    const selectVariable: ServerEggVariable = {
+      name: "Difficulty",
+      description: "Game difficulty level",
+      envVariable: "DIFFICULTY",
+      defaultValue: "peaceful",
+      serverValue: null as any,
+      isEditable: true,
+      rules: ["in:peaceful,easy,normal,hard"],
+    };
+
+    const { container } = render(
+      <Wrapper>
+        <VariableBox variable={selectVariable} />
+      </Wrapper>,
+    );
+
+    const select = container.querySelector("select")!;
+    expect(select.value).toBe("peaceful");
+  });
+
+  it("renders text input with empty fallback when serverValue is null", () => {
+    const textVariable: ServerEggVariable = {
+      ...baseVariable,
+      serverValue: null as any,
+    };
+
+    render(
+      <Wrapper>
+        <VariableBox variable={textVariable} />
+      </Wrapper>,
+    );
+
+    const input = screen.getByPlaceholderText("latest") as HTMLInputElement;
+    expect(input.value).toBe("");
+  });
+
+  it("handles cache mutate when data.variables is undefined", async () => {
+    vi.mocked(updateStartupVariable).mockResolvedValueOnce([
+      baseVariable,
+      "java -jar server.jar",
+    ]);
+
+    render(
+      <Wrapper>
+        <VariableBox variable={baseVariable} />
+      </Wrapper>,
+    );
+
+    const input = screen.getByDisplayValue("1.20.4") as HTMLInputElement;
+    fireEvent.keyUp(input);
+
+    act(() => {
+      vi.advanceTimersByTime(600);
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    const mutateCallback = mockMutate.mock.calls[0][0];
+    const newCache = mutateCallback({ invocation: "old" });
+    expect(newCache.variables).toEqual([]);
+  });
 });

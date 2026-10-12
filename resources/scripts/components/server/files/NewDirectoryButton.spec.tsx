@@ -7,7 +7,15 @@ import createDirectory from "@/api/server/files/createDirectory";
 
 vi.mock("@/api/server/files/createDirectory");
 
-const mockMutate = vi.fn();
+let generatedDir: any = null;
+const mockMutate = vi.fn().mockImplementation((fn) => {
+  if (typeof fn === "function") {
+    const res = fn([]);
+    generatedDir = res[0];
+    return res;
+  }
+  return Promise.resolve();
+});
 vi.mock("@/plugins/useFileManagerQuery", () => ({
   default: () => ({
     mutate: mockMutate,
@@ -92,6 +100,32 @@ describe("NewDirectoryButton", () => {
         "my-new-folder",
       );
       expect(mockMutate).toHaveBeenCalled();
+      expect(generatedDir.isArchiveType()).toBe(false);
+      expect(generatedDir.isEditable()).toBe(false);
+    });
+  });
+
+  it("handles directory name resulting in empty split fallback", async () => {
+    vi.mocked(createDirectory).mockResolvedValueOnce(undefined as any);
+
+    render(
+      <Wrapper>
+        <NewDirectoryButton />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Create Directory" }));
+    const input = screen.getByLabelText("Name");
+    fireEvent.change(input, { target: { value: "/" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create" }));
+
+    await waitFor(() => {
+      expect(createDirectory).toHaveBeenCalledWith(
+        "server-uuid-123",
+        "/config",
+        "/",
+      );
+      expect(generatedDir.name).toBe("/");
     });
   });
 
@@ -114,5 +148,7 @@ describe("NewDirectoryButton", () => {
     await waitFor(() => {
       expect(mockClearAndAddHttpError).toHaveBeenCalledWith(apiError);
     });
+
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
   });
 });

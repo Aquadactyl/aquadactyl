@@ -112,6 +112,96 @@ describe("components/dashboard/forms TOTP Dialogs", () => {
         expect(onTokens).toHaveBeenCalledWith(["token-1", "token-2"]);
       });
     });
+
+    it("handles error loading token data and cancel click", async () => {
+      vi.mocked(getTwoFactorTokenData).mockRejectedValueOnce(
+        new Error("Network Error"),
+      );
+      const onClose = vi.fn();
+
+      render(
+        <SetupTOTPDialog open={true} onClose={onClose} onTokens={vi.fn()} />,
+      );
+
+      await waitFor(() => {
+        expect(getTwoFactorTokenData).toHaveBeenCalled();
+      });
+
+      // Click cancel
+      const cancelBtn = screen.getByRole("button", { name: "Cancel" });
+      fireEvent.click(cancelBtn);
+      expect(onClose).toHaveBeenCalled();
+    });
+
+    it("handles submit failure when enabling 2FA", async () => {
+      const onClose = vi.fn();
+      vi.mocked(getTwoFactorTokenData).mockResolvedValueOnce({
+        secret: "ABCD1234EFGH5678",
+        image_url_data: "otpauth://test",
+      });
+      vi.mocked(enableAccountTwoFactor).mockRejectedValueOnce(
+        new Error("Invalid Code"),
+      );
+
+      render(
+        <SetupTOTPDialog open={true} onClose={onClose} onTokens={vi.fn()} />,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("qr-code")).toBeDefined();
+      });
+
+      fireEvent.change(screen.getByLabelText("Authentication Code"), {
+        target: { value: "123456" },
+      });
+      fireEvent.change(screen.getByLabelText("Account Password"), {
+        target: { value: "secret123" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Enable" }));
+
+      await waitFor(() => {
+        expect(enableAccountTwoFactor).toHaveBeenCalled();
+      });
+    });
+
+    it("ignores submission when already submitting", async () => {
+      let resolveEnable: any;
+      vi.mocked(getTwoFactorTokenData).mockResolvedValueOnce({
+        secret: "ABCD",
+        image_url_data: "otpauth://test",
+      });
+      vi.mocked(enableAccountTwoFactor).mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveEnable = resolve;
+          }),
+      );
+
+      const { container } = render(
+        <SetupTOTPDialog open={true} onClose={vi.fn()} onTokens={vi.fn()} />,
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId("qr-code")).toBeDefined();
+      });
+
+      fireEvent.change(screen.getByLabelText("Authentication Code"), {
+        target: { value: "123456" },
+      });
+      fireEvent.change(screen.getByLabelText("Account Password"), {
+        target: { value: "secret123" },
+      });
+
+      const form = container.querySelector("#enable-totp-form")!;
+      fireEvent.submit(form);
+      expect(enableAccountTwoFactor).toHaveBeenCalledTimes(1);
+
+      // Fire submit again while submitting is true
+      fireEvent.submit(form);
+      expect(enableAccountTwoFactor).toHaveBeenCalledTimes(1);
+
+      resolveEnable(["token-1"]);
+    });
   });
 
   describe("DisableTOTPDialog", () => {
@@ -130,6 +220,57 @@ describe("components/dashboard/forms TOTP Dialogs", () => {
         expect(disableAccountTwoFactor).toHaveBeenCalledWith("password123");
         expect(mockUpdateUserData).toHaveBeenCalledWith({ useTotp: false });
         expect(onClose).toHaveBeenCalled();
+      });
+    });
+
+    it("ignores submission when already submitting", async () => {
+      let resolveDisable: any;
+      vi.mocked(disableAccountTwoFactor).mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveDisable = resolve;
+          }),
+      );
+
+      const { container } = render(
+        <DisableTOTPDialog open={true} onClose={vi.fn()} />,
+      );
+
+      fireEvent.change(screen.getByLabelText("Password"), {
+        target: { value: "password123" },
+      });
+
+      const form = container.querySelector("#disable-totp-form")!;
+      fireEvent.submit(form);
+      expect(disableAccountTwoFactor).toHaveBeenCalledTimes(1);
+
+      // Fire submit again while submitting is true
+      fireEvent.submit(form);
+      expect(disableAccountTwoFactor).toHaveBeenCalledTimes(1);
+
+      resolveDisable();
+    });
+
+    it("handles cancel button and failure to disable 2FA", async () => {
+      const onClose = vi.fn();
+      vi.mocked(disableAccountTwoFactor).mockRejectedValueOnce(
+        new Error("Wrong password"),
+      );
+
+      render(<DisableTOTPDialog open={true} onClose={onClose} />);
+
+      // Cancel button
+      fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+      expect(onClose).toHaveBeenCalled();
+
+      // Submit error
+      fireEvent.change(screen.getByLabelText("Password"), {
+        target: { value: "wrong" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Disable" }));
+
+      await waitFor(() => {
+        expect(disableAccountTwoFactor).toHaveBeenCalledWith("wrong");
       });
     });
   });
@@ -159,6 +300,67 @@ describe("components/dashboard/forms TOTP Dialogs", () => {
         );
         expect(onTokens).toHaveBeenCalledWith(["rec-1", "rec-2"]);
         expect(onClose).toHaveBeenCalled();
+      });
+    });
+
+    it("ignores submission when already submitting", async () => {
+      let resolveRegen: any;
+      vi.mocked(regenerateAccountRecoveryTokens).mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            resolveRegen = resolve;
+          }),
+      );
+
+      const { container } = render(
+        <RegenerateRecoveryTokensDialog
+          open={true}
+          onClose={vi.fn()}
+          onTokens={vi.fn()}
+        />,
+      );
+
+      fireEvent.change(screen.getByLabelText("Password"), {
+        target: { value: "mypassword" },
+      });
+
+      const form = container.querySelector("#regenerate-tokens-form")!;
+      fireEvent.submit(form);
+      expect(regenerateAccountRecoveryTokens).toHaveBeenCalledTimes(1);
+
+      // Fire submit again while submitting is true
+      fireEvent.submit(form);
+      expect(regenerateAccountRecoveryTokens).toHaveBeenCalledTimes(1);
+
+      resolveRegen(["rec-1"]);
+    });
+
+    it("handles cancel button and error when regenerating tokens", async () => {
+      const onClose = vi.fn();
+      vi.mocked(regenerateAccountRecoveryTokens).mockRejectedValueOnce(
+        new Error("Auth failed"),
+      );
+
+      render(
+        <RegenerateRecoveryTokensDialog
+          open={true}
+          onClose={onClose}
+          onTokens={vi.fn()}
+        />,
+      );
+
+      // Cancel
+      fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+      expect(onClose).toHaveBeenCalled();
+
+      // Submit error
+      fireEvent.change(screen.getByLabelText("Password"), {
+        target: { value: "badpass" },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Regenerate Codes" }));
+
+      await waitFor(() => {
+        expect(regenerateAccountRecoveryTokens).toHaveBeenCalledWith("badpass");
       });
     });
   });

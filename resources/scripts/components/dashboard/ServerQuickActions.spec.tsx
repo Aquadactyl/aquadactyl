@@ -107,6 +107,13 @@ describe("components/dashboard/ServerQuickActions", () => {
       expect(sendServerPowerAction).toHaveBeenCalledWith("uuid-1", "restart");
       expect(onPower).toHaveBeenCalledWith("restart");
     });
+
+    fireEvent.click(stopBtn);
+
+    await waitFor(() => {
+      expect(sendServerPowerAction).toHaveBeenCalledWith("uuid-1", "stop");
+      expect(onPower).toHaveBeenCalledWith("stop");
+    });
   });
 
   it("displays error message if power action fails", async () => {
@@ -126,10 +133,21 @@ describe("components/dashboard/ServerQuickActions", () => {
     });
   });
 
-  it("returns null if user has no permissions", () => {
+  it("returns null if user has no permissions or undefined permissions", () => {
     const restrictedServer = { ...mockServer, userPermissions: [] };
-    const { container } = renderComponent(restrictedServer);
+    const { container, rerender } = renderComponent(restrictedServer);
+    expect(container.firstChild).toBeNull();
 
+    rerender(
+      <MemoryRouter>
+        <ServerQuickActions
+          server={{ ...mockServer, userPermissions: undefined as any }}
+          state="offline"
+          onPower={onPower}
+          onRefresh={onRefresh}
+        />
+      </MemoryRouter>,
+    );
     expect(container.firstChild).toBeNull();
   });
 });

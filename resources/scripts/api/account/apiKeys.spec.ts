@@ -23,6 +23,12 @@ describe("api/account/api-keys", () => {
       expect(result.allowedIps).toEqual(["127.0.0.1"]);
       expect(result.createdAt).toBeInstanceOf(Date);
       expect(result.lastUsedAt).toBeNull();
+
+      const nullDates = rawDataToApiKey({
+        ...raw,
+        created_at: null,
+      });
+      expect(nullDates.createdAt).toBeNull();
     });
   });
 
@@ -49,6 +55,20 @@ describe("api/account/api-keys", () => {
       expect(keys).toHaveLength(1);
       expect(keys[0].identifier).toBe("k1");
       expect(keys[0].lastUsedAt).toBeInstanceOf(Date);
+    });
+
+    it("handles missing data.data and falls back to empty array", async () => {
+      vi.mocked(http.get).mockResolvedValueOnce({
+        data: {},
+      } as any);
+
+      const keys = await getApiKeys();
+      expect(keys).toEqual([]);
+    });
+
+    it("rejects when http.get fails", async () => {
+      vi.mocked(http.get).mockRejectedValueOnce(new Error("API Error"));
+      await expect(getApiKeys()).rejects.toThrow("API Error");
     });
   });
 

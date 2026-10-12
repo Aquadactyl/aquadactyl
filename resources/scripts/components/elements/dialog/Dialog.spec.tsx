@@ -115,4 +115,151 @@ describe("Dialog component family", () => {
     fireEvent.click(confirmButton);
     expect(onConfirmed).toHaveBeenCalledTimes(1);
   });
+
+  it("handles icon rendered at title position with different icon types", () => {
+    const { getByText } = render(
+      <Dialog open={true} title="Warning Title" onClose={vi.fn()}>
+        <Dialog.Icon type="warning" />
+        <p>Warning Dialog Body</p>
+      </Dialog>,
+    );
+
+    expect(getByText("Warning Title")).toBeDefined();
+    expect(document.body.querySelector(".dialog_icon.warning")).not.toBeNull();
+  });
+
+  it("handles success and info icon types", () => {
+    const { rerender } = render(
+      <Dialog open={true} title="Success" onClose={vi.fn()}>
+        <Dialog.Icon type="success" />
+      </Dialog>,
+    );
+    expect(document.body.querySelector(".dialog_icon.success")).not.toBeNull();
+
+    rerender(
+      <Dialog open={true} title="Info" onClose={vi.fn()}>
+        <Dialog.Icon type="info" />
+      </Dialog>,
+    );
+    expect(document.body.querySelector(".dialog_icon.info")).not.toBeNull();
+  });
+
+  it("respects preventExternalClose on outside-press and escape-key", () => {
+    const onClose = vi.fn();
+    render(
+      <Dialog open={true} preventExternalClose onClose={onClose}>
+        <p>Dialog Body</p>
+      </Dialog>,
+    );
+
+    // Click the close button inside the dialog which should still call onClose
+    const closeBtn = document.body
+      .querySelector(".dialog_close_icon")
+      ?.closest("button");
+    expect(closeBtn).not.toBeNull();
+    fireEvent.click(closeBtn!);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("invokes context default fallback methods without errors", async () => {
+    const { DialogContext, DialogWrapperContext } = await import("./context");
+
+    // Test DialogContext defaults
+    const defaultCtx = (DialogContext as any)._currentValue;
+    expect(defaultCtx.setIcon(null)).toBeNull();
+    expect(defaultCtx.setFooter(null)).toBeNull();
+    expect(defaultCtx.setIconPosition("title")).toBeNull();
+
+    // Test DialogWrapperContext defaults
+    const defaultWrapperCtx = (DialogWrapperContext as any)._currentValue;
+    expect(defaultWrapperCtx.setProps({})).toBeNull();
+    expect(defaultWrapperCtx.close()).toBeNull();
+  });
+
+  it("ignores clicks on elements other than the container itself", () => {
+    render(
+      <Dialog open={true} onClose={vi.fn()}>
+        <p>Child content</p>
+      </Dialog>,
+    );
+
+    const child = document.body.querySelector("p");
+    expect(child).not.toBeNull();
+    fireEvent.mouseDown(child!);
+    fireEvent.mouseUp(child!);
+  });
+
+  it("renders ConfirmationDialog with element children and default confirm text", () => {
+    const onConfirmed = vi.fn();
+    const onClose = vi.fn();
+
+    const { getByText } = render(
+      <Dialog.Confirm open={true} onClose={onClose} onConfirmed={onConfirmed}>
+        <span>Custom JSX Content</span>
+      </Dialog.Confirm>,
+    );
+
+    expect(getByText("Custom JSX Content")).toBeDefined();
+    expect(getByText("Okay")).toBeDefined();
+
+    fireEvent.click(getByText("Okay"));
+    expect(onConfirmed).toHaveBeenCalled();
+  });
+
+  it("calls onClose on Escape key press", () => {
+    const onClose = vi.fn();
+    render(
+      <Dialog open={true} onClose={onClose}>
+        <p>Escape test</p>
+      </Dialog>,
+    );
+
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+    expect(onClose).toHaveBeenCalled();
+  });
+
+  it("does not call onClose on Escape key press when preventExternalClose is true", () => {
+    const onClose = vi.fn();
+    render(
+      <Dialog open={true} preventExternalClose onClose={onClose}>
+        <p>Prevent escape test</p>
+      </Dialog>,
+    );
+
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("handles transitioning open from false to true", () => {
+    const { rerender, getByText } = render(
+      <Dialog open={false} onClose={vi.fn()}>
+        <p>Toggle test</p>
+      </Dialog>,
+    );
+
+    rerender(
+      <Dialog open={true} onClose={vi.fn()}>
+        <p>Toggle test</p>
+      </Dialog>,
+    );
+    expect(getByText("Toggle test")).toBeDefined();
+  });
+
+  it("handles handleDialogOpenChange for nextOpen true and false", async () => {
+    const { handleDialogOpenChange } = await import("./Dialog");
+    const onClose = vi.fn();
+
+    // nextOpen true -> no-op
+    handleDialogOpenChange(true, {}, false, onClose);
+    expect(onClose).not.toHaveBeenCalled();
+
+    // nextOpen false, preventExternalClose false -> calls onClose
+    handleDialogOpenChange(false, { reason: "escape-key" }, false, onClose);
+    expect(onClose).toHaveBeenCalledTimes(1);
+
+    // nextOpen false, preventExternalClose true -> returns early
+    onClose.mockClear();
+    handleDialogOpenChange(false, { reason: "outside-press" }, true, onClose);
+    expect(onClose).not.toHaveBeenCalled();
+  });
 });

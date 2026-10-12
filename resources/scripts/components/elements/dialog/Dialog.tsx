@@ -37,6 +37,24 @@ const variants = {
   },
 };
 
+export const handleDialogOpenChange = (
+  nextOpen: boolean,
+  eventDetails: { reason?: string },
+  preventExternalClose: boolean | undefined,
+  onClose: () => void,
+) => {
+  if (!nextOpen) {
+    if (
+      preventExternalClose &&
+      (eventDetails.reason === "outside-press" ||
+        eventDetails.reason === "escape-key")
+    ) {
+      return;
+    }
+    onClose();
+  }
+};
+
 export default ({
   open,
   title,
@@ -69,16 +87,12 @@ export default ({
       open={open}
       disablePointerDismissal={preventExternalClose}
       onOpenChange={(nextOpen, eventDetails) => {
-        if (!nextOpen) {
-          if (
-            preventExternalClose &&
-            (eventDetails.reason === "outside-press" ||
-              eventDetails.reason === "escape-key")
-          ) {
-            return;
-          }
-          onClose();
-        }
+        handleDialogOpenChange(
+          nextOpen,
+          eventDetails,
+          preventExternalClose,
+          onClose,
+        );
       }}
     >
       <Dialog.Portal>

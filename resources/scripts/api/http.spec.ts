@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
+import http, {
   getPaginationSet,
   httpErrorToHuman,
   withQueryBuilderParams,
@@ -126,6 +126,46 @@ describe("api/http", () => {
 
       expect(result.page).toBe(3);
       expect(result["filter[tag]"]).toBe("prod");
+    });
+  });
+
+  describe("interceptors", () => {
+    it("handles request interceptor logic", () => {
+      const reqHandlers = (http.interceptors.request as any).handlers;
+      const handler = reqHandlers[0];
+
+      // Request not ending with /resources
+      const req1 = { url: "/api/client" };
+      expect(handler.fulfilled(req1)).toBe(req1);
+
+      // Request ending with /resources
+      const req2 = { url: "/api/client/servers/123/resources" };
+      expect(handler.fulfilled(req2)).toBe(req2);
+
+      // Request with undefined url
+      const req3 = {};
+      expect(handler.fulfilled(req3)).toBe(req3);
+    });
+
+    it("handles response interceptor fulfilled and rejected", () => {
+      const respHandlers = (http.interceptors.response as any).handlers;
+      const handler = respHandlers[0];
+
+      // Response not ending with /resources
+      const resp1 = { request: { url: "/api/client" } };
+      expect(handler.fulfilled(resp1)).toBe(resp1);
+
+      // Response ending with /resources
+      const resp2 = { request: { url: "/api/client/servers/123/resources" } };
+      expect(handler.fulfilled(resp2)).toBe(resp2);
+
+      // Response with undefined request or url
+      const resp3 = { request: {} };
+      expect(handler.fulfilled(resp3)).toBe(resp3);
+
+      // Response error handler
+      const err = new Error("Request failed");
+      expect(() => handler.rejected(err)).toThrow("Request failed");
     });
   });
 });

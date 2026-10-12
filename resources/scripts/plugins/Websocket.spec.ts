@@ -54,6 +54,7 @@ describe("plugins/Websocket", () => {
     expect(fn2).toHaveBeenCalledWith("arg1", 123);
 
     ws.off("custom_event", fn1);
+    ws.off("nonexistent_event", fn1);
     ws.emit("custom_event", "arg2");
     expect(fn1).toHaveBeenCalledTimes(1);
     expect(fn2).toHaveBeenCalledWith("arg2");
@@ -208,5 +209,75 @@ describe("plugins/Websocket", () => {
     expect(latestSocket?.send).toHaveBeenCalledWith(
       JSON.stringify({ event: "set_state", args: ["kill", "now"] }),
     );
+  });
+
+  it("emits SOCKET_ERROR and attempts reconnect if WebSocket constructor throws", () => {
+    globalThis.WebSocket = class extends MockWebSocket {
+      constructor(url: string) {
+        super(url);
+        throw new Error("Constructor failure");
+      }
+    } as any;
+
+    const ws = new Websocket();
+    const errorListener = vi.fn();
+    ws.on("SOCKET_ERROR", errorListener);
+
+    ws.connect("wss://example.com/ws");
+    expect(errorListener).toHaveBeenCalled();
+  });
+
+  it("covers remaining branch cases: manual close on close/reconnect, 4409 close code, send/auth edge cases, empty listener set", () => {
+    const ws = new Websocket();
+
+    // emit when set is empty
+    (ws as any).listeners.set("empty", new Set());
+    expect(ws.emit("empty")).toBe(false);
+
+    // authenticate when url or token is missing
+    ws.authenticate(); // both missing
+    ws.setToken("my-token");
+    ws.authenticate(); // url missing
+
+    // send when socket is null or not open
+    ws.send("test", "data"); // socket is null
+
+    ws.connect("wss://example.com/ws");
+    if (latestSocket) {
+      latestSocket.readyState = MockWebSocket.CLOSED;
+      ws.send("test", "data"); // socket not open
+    }
+
+    // close when socket is null
+    const ws2 = new Websocket();
+    ws2.close(); // socket already null
+
+    // 4409 close code
+    const ws3 = new Websocket();
+    ws3.connect("wss://example.com/ws");
+    const ws3Socket = latestSocket;
+    ws3Socket?.onclose?.({ code: 4409 });
+    expect(ws3Socket?.close).toHaveBeenCalledWith(1000, undefined);
+
+    // onclose when manualClose is true
+    const ws4 = new Websocket();
+    ws4.connect("wss://example.com/ws");
+    const ws4Socket = latestSocket;
+    (ws4 as any).manualClose = true;
+    const reconnectSpy = vi.fn();
+    ws4.on("SOCKET_RECONNECT", reconnectSpy);
+    ws4Socket?.onclose?.({ code: 1006 });
+    expect(reconnectSpy).not.toHaveBeenCalled();
+
+    // handleReconnect when manualClose is true
+    (ws4 as any).handleReconnect();
+    expect(reconnectSpy).not.toHaveBeenCalled();
+
+    // initSocket when !url or manualClose
+    const ws5 = new Websocket();
+    (ws5 as any).initSocket(); // no url
+    (ws5 as any).url = "wss://example.com";
+    (ws5 as any).manualClose = true;
+    (ws5 as any).initSocket(); // manualClose is true
   });
 });

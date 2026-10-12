@@ -18,14 +18,56 @@ vi.mock("@/components/elements/SpinnerOverlay", () => ({
   default: () => null,
 }));
 
+vi.mock("@/components/elements/ScreenBlock", () => ({
+  ServerError: ({ message, onBack }: any) => (
+    <div data-testid="server-error">
+      <span>{message}</span>
+      <button onClick={onBack}>Back</button>
+    </div>
+  ),
+}));
+
+let provideFetchContent = true;
 vi.mock("@/components/elements/CodemirrorEditor", () => ({
-  default: ({ fetchContent, initialContent }: any) => {
+  default: ({
+    fetchContent,
+    initialContent,
+    onContentSaved,
+    onContentChanged,
+    onModeChanged,
+  }: any) => {
     React.useEffect(() => {
-      fetchContent?.(() =>
-        Promise.resolve(initialContent || "server.port=25565"),
-      );
+      if (provideFetchContent) {
+        fetchContent?.(() =>
+          Promise.resolve(initialContent || "server.port=25565"),
+        );
+      }
     }, [fetchContent, initialContent]);
-    return <div data-testid="codemirror-editor" />;
+    return (
+      <div data-testid="codemirror-editor">
+        <button data-testid="btn-save-content" onClick={onContentSaved}>
+          Save Shortcut
+        </button>
+        <button
+          data-testid="btn-change-content"
+          onClick={() => onContentChanged?.("new draft text")}
+        >
+          Change Draft
+        </button>
+        <button
+          data-testid="btn-empty-draft"
+          onClick={() => onContentChanged?.("")}
+        >
+          Empty Draft
+        </button>
+        <button
+          data-testid="btn-change-mode"
+          onClick={() => onModeChanged?.("application/json")}
+        >
+          Change Mode
+        </button>
+      </div>
+    );
   },
 }));
 
@@ -47,12 +89,13 @@ vi.mock("@/components/server/files/FileManagerBreadcrumbs", () => ({
 }));
 
 vi.mock("@/components/server/files/FileNameModal", () => ({
-  default: ({ visible, onFileNamed }: any) =>
+  default: ({ visible, onFileNamed, onDismissed }: any) =>
     visible ? (
       <div data-testid="filename-modal">
         <button onClick={() => onFileNamed("config.yml")}>
           Confirm File Name
         </button>
+        <button onClick={onDismissed}>Cancel File Name</button>
       </div>
     ) : null,
 }));
@@ -200,5 +243,167 @@ describe("components/server/files/FileEditContainer", () => {
     await waitFor(() => {
       expect(screen.getByText(/File not found/i)).toBeDefined();
     });
+
+    // Test back button
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+  });
+
+  it("triggers save shortcut from editor in edit mode and in new mode", async () => {
+    // Edit mode
+    const { unmount } = render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/file.txt"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(getFileContents).toHaveBeenCalled());
+
+    fireEvent.click(screen.getByTestId("btn-save-content"));
+    await waitFor(() => {
+      expect(saveFileContents).toHaveBeenCalledWith(
+        "srv-uuid-1",
+        "/file.txt",
+        expect.any(String),
+      );
+    });
+    unmount();
+
+    // New mode
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/new#/"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByTestId("btn-save-content"));
+    expect(screen.getByTestId("filename-modal")).toBeDefined();
+    fireEvent.click(screen.getByText("Cancel File Name"));
+    expect(screen.queryByTestId("filename-modal")).toBeNull();
+  });
+
+  it("handles drafts in sessionStorage for new files", async () => {
+    // Set initial draft
+    sessionStorage.setItem(
+      "pterodactyl:new-file:srv-uuid-1:/",
+      "existing draft",
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/new#/"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    // Change draft
+    fireEvent.click(screen.getByTestId("btn-change-content"));
+    expect(sessionStorage.getItem("pterodactyl:new-file:srv-uuid-1:/")).toBe(
+      "new draft text",
+    );
+
+    // Empty draft
+    fireEvent.click(screen.getByTestId("btn-empty-draft"));
+    expect(
+      sessionStorage.getItem("pterodactyl:new-file:srv-uuid-1:/"),
+    ).toBeNull();
+  });
+
+  it("displays warning banner when editing a .pteroignore file", async () => {
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/.pteroignore"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/You're editing a/)).toBeDefined();
+    });
+  });
+
+  it("handles mode selection and mode change event", async () => {
+    const { container } = render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/test.json"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const nativeSelect = container.querySelector(
+      ".panel-select-native",
+    ) as HTMLSelectElement;
+    fireEvent.change(nativeSelect, { target: { value: "text/x-lua" } });
+    expect(nativeSelect.value).toBe("text/x-lua");
+
+    // Editor onModeChanged callback
+    fireEvent.click(screen.getByTestId("btn-change-mode"));
+    expect(nativeSelect.value).toBe("application/json");
+  });
+
+  it("handles save failure and records error", async () => {
+    vi.mocked(saveFileContents).mockRejectedValueOnce(
+      new Error("Failed to write to file"),
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/file.txt"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(getFileContents).toHaveBeenCalled());
+
+    fireEvent.click(screen.getByRole("button", { name: "Save Content" }));
+
+    await waitFor(() => {
+      expect(mockAddError).toHaveBeenCalledWith(
+        expect.objectContaining({ key: "files:view" }),
+      );
+    });
+  });
+
+  it("returns early when fetchFileContent is not available", async () => {
+    provideFetchContent = false;
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/file.txt"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Save Content" }));
+    expect(saveFileContents).not.toHaveBeenCalled();
+    provideFetchContent = true;
   });
 });

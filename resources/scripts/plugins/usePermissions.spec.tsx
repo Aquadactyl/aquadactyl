@@ -80,4 +80,44 @@ describe("usePermissions hook", () => {
 
     expect(result.current.perms).toEqual([true, false]);
   });
+
+  it("supports single string action with wildcard * and discrete permission", () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <ServerContext.Provider>{children}</ServerContext.Provider>
+    );
+
+    // Single string with wildcard *
+    const { result: wildcardResult } = renderHook(
+      () => {
+        const perms = usePermissions("control.start");
+        const setPerms = ServerContext.useStoreActions(
+          (actions) => actions.server.setPermissions,
+        );
+        return { perms, setPerms };
+      },
+      { wrapper },
+    );
+
+    act(() => {
+      wildcardResult.current.setPerms(["*"]);
+    });
+    expect(wildcardResult.current.perms).toEqual([true]);
+
+    // Single string with discrete permission
+    const { result: discreteResult } = renderHook(
+      () => {
+        const perms = usePermissions("file.read");
+        const setPerms = ServerContext.useStoreActions(
+          (actions) => actions.server.setPermissions,
+        );
+        return { perms, setPerms };
+      },
+      { wrapper },
+    );
+
+    act(() => {
+      discreteResult.current.setPerms(["file.read"]);
+    });
+    expect(discreteResult.current.perms).toEqual([true]);
+  });
 });

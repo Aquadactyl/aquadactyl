@@ -1,9 +1,10 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import Console from "./Console";
 import { SocketEvent, SocketRequest } from "@/components/server/events";
 
+let customKeyEventHandler: ((e: any) => boolean) | null = null;
 const mockTerminal = {
   element: null as any,
   open: vi.fn((el) => {
@@ -12,7 +13,9 @@ const mockTerminal = {
   loadAddon: vi.fn(),
   writeln: vi.fn(),
   clear: vi.fn(),
-  attachCustomKeyEventHandler: vi.fn(),
+  attachCustomKeyEventHandler: vi.fn((handler) => {
+    customKeyEventHandler = handler;
+  }),
   unicode: { activeVersion: "10" },
 };
 
@@ -65,7 +68,8 @@ vi.mock("@/plugins/XtermScrollDownHelperAddon", () => ({
 }));
 
 vi.mock("@/components/elements/SpinnerOverlay", () => ({
-  default: () => null,
+  default: ({ visible }: any) =>
+    visible ? <div data-testid="spinner-overlay" /> : null,
 }));
 
 vi.mock("@blueprint/components/Server/Terminal/CommandRow", () => ({
@@ -115,6 +119,7 @@ vi.mock("@/state/server", () => ({
 describe("components/server/console/Console", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    customKeyEventHandler = null;
     mockTerminal.element = null;
     socketListeners = {};
     mockCanSendCommands = true;
@@ -124,6 +129,10 @@ describe("components/server/console/Console", () => {
       server: { data: { id: "srv-1", isTransferring: false } },
       status: { value: "running" },
     };
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("renders console container and attaches addons when connected", () => {
@@ -140,6 +149,44 @@ describe("components/server/console/Console", () => {
     );
   });
 
+  it("handles custom key event handler for copy, search, escape, and normal keys", () => {
+    document.execCommand = vi.fn();
+    render(<Console />);
+
+    expect(customKeyEventHandler).not.toBeNull();
+
+    // Ctrl+C copies
+    const copyEvent = { ctrlKey: true, key: "c" };
+    expect(customKeyEventHandler!(copyEvent)).toBe(false);
+    expect(document.execCommand).toHaveBeenCalledWith("copy");
+
+    // Meta+F opens search bar
+    const searchEvent = { metaKey: true, key: "f", preventDefault: vi.fn() };
+    expect(customKeyEventHandler!(searchEvent)).toBe(false);
+    expect(searchEvent.preventDefault).toHaveBeenCalled();
+    expect(mockSearchBar.show).toHaveBeenCalled();
+
+    // Escape hides search bar
+    const escapeEvent = { key: "Escape" };
+    expect(customKeyEventHandler!(escapeEvent)).toBe(true);
+    expect(mockSearchBar.hidden).toHaveBeenCalled();
+
+    // Normal key returns true
+    expect(customKeyEventHandler!({ key: "a" })).toBe(true);
+  });
+
+  it("handles window resize and triggers fitAddon", () => {
+    vi.useFakeTimers();
+    render(<Console />);
+
+    window.dispatchEvent(new Event("resize"));
+    act(() => {
+      vi.advanceTimersByTime(150);
+    });
+
+    expect(mockFit).toHaveBeenCalled();
+  });
+
   it("renders command input when user has permissions and sends command on Enter", () => {
     render(<Console />);
 
@@ -148,6 +195,15 @@ describe("components/server/console/Console", () => {
     ) as HTMLInputElement;
     expect(input).toBeDefined();
 
+    // Enter with empty value does not send
+    fireEvent.change(input, { target: { value: "" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(mockSocketInstance.send).not.toHaveBeenCalledWith(
+      "send command",
+      "",
+    );
+
+    // Enter with value sends command
     fireEvent.change(input, { target: { value: "stop" } });
     fireEvent.keyDown(input, { key: "Enter" });
 
@@ -158,7 +214,7 @@ describe("components/server/console/Console", () => {
     expect(mockSetHistory).toHaveBeenCalled();
   });
 
-  it("navigates through command history with ArrowUp and ArrowDown", () => {
+  it("navigates through command history with ArrowUp and ArrowDown back to empty", () => {
     render(<Console />);
 
     const input = screen.getByLabelText(
@@ -173,9 +229,13 @@ describe("components/server/console/Console", () => {
     fireEvent.keyDown(input, { key: "ArrowUp" });
     expect(input.value).toBe("status");
 
-    // Arrow down moves forward
+    // Arrow down moves back to help
     fireEvent.keyDown(input, { key: "ArrowDown" });
     expect(input.value).toBe("help");
+
+    // Arrow down moves back to empty (-1)
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(input.value).toBe("");
   });
 
   it("does not render input when permission is false", () => {
@@ -185,7 +245,7 @@ describe("components/server/console/Console", () => {
     expect(screen.queryByLabelText("Console command input.")).toBeNull();
   });
 
-  it("handles incoming socket output events", () => {
+  it("handles incoming socket output events including non-failure transfer status", () => {
     render(<Console />);
 
     // Console output
@@ -229,6 +289,39 @@ describe("components/server/console/Console", () => {
     expect(mockTerminal.writeln).toHaveBeenCalledWith(
       expect.stringContaining("Transfer has failed."),
     );
+
+    // Transfer status other
+    act(() => {
+      socketListeners[SocketEvent.TRANSFER_STATUS]("completed");
+    });
+  });
+
+  it("does not clear console when server isTransferring is true", () => {
+    mockServerState = {
+      socket: { connected: true, instance: mockSocketInstance },
+      server: { data: { id: "srv-1", isTransferring: true } },
+      status: { value: "running" },
+    };
+
+    render(<Console />);
+
+    expect(mockTerminal.clear).not.toHaveBeenCalled();
+  });
+
+  it("renders spinner overlay when socket is not connected and disables input", () => {
+    mockServerState = {
+      socket: { connected: false, instance: null },
+      server: { data: { id: "srv-1", isTransferring: false } },
+      status: { value: "" },
+    };
+
+    render(<Console />);
+
+    expect(screen.getByTestId("spinner-overlay")).toBeDefined();
+    const input = screen.getByLabelText(
+      "Console command input.",
+    ) as HTMLInputElement;
+    expect(input.disabled).toBe(true);
   });
 
   it("cleans up socket listeners when unmounting", () => {
@@ -236,5 +329,44 @@ describe("components/server/console/Console", () => {
     unmount();
 
     expect(mockSocketInstance.removeListener).toHaveBeenCalled();
+  });
+
+  it("handles ArrowUp with empty command history", () => {
+    mockHistory = [];
+    render(<Console />);
+
+    const input = screen.getByLabelText(
+      "Console command input.",
+    ) as HTMLInputElement;
+
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(input.value).toBe("");
+  });
+
+  it("does not fit addon on resize when terminal.element is null", () => {
+    vi.useFakeTimers();
+    render(<Console />);
+    mockFit.mockClear();
+    mockTerminal.element = null;
+
+    fireEvent(window, new Event("resize"));
+    vi.advanceTimersByTime(200);
+
+    expect(mockFit).not.toHaveBeenCalled();
+    vi.useRealTimers();
+  });
+
+  it("does not write status on mount when status is null", () => {
+    mockServerState = {
+      socket: { connected: true, instance: mockSocketInstance },
+      server: { data: { id: "srv-1", isTransferring: false } },
+      status: { value: null as any },
+    };
+
+    render(<Console />);
+
+    expect(mockTerminal.writeln).not.toHaveBeenCalledWith(
+      expect.stringContaining("Server marked as"),
+    );
   });
 });

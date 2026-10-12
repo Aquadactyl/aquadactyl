@@ -1,10 +1,11 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, act } from "@testing-library/react";
 import React from "react";
 import { MemoryRouter } from "react-router";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import ServerRow from "./ServerRow";
 import { Server } from "@/api/server/getServer";
 import { store } from "@/state";
+import getServerResourceUsage from "@/api/server/getServerResourceUsage";
 
 vi.mock("@/plugins/usePanelTranslation", () => ({
   default: () => ({
@@ -31,13 +32,23 @@ let mockServerStats: any = {
   networkTxInBytes: 0,
   uptime: 1000,
 };
+let mockQueryError: any = null;
+const mockMutate = vi.fn();
+let capturedQueryFn: any = null;
 
 vi.mock("@/lib/queryClient", () => ({
-  useTanStackQuery: () => ({
-    data: mockServerStats,
-    error: null,
-    mutate: vi.fn(),
-  }),
+  useTanStackQuery: (_key: any, fn: any) => {
+    capturedQueryFn = fn;
+    return {
+      data: mockServerStats,
+      error: mockQueryError,
+      mutate: mockMutate,
+    };
+  },
+}));
+
+vi.mock("@/api/server/getServerResourceUsage", () => ({
+  default: vi.fn(),
 }));
 
 vi.mock(
@@ -74,7 +85,13 @@ vi.mock("./ServerPlayerCount", () => ({
   default: () => null,
 }));
 vi.mock("./ServerQuickActions", () => ({
-  default: () => null,
+  default: ({ onPower, onRefresh }: any) => (
+    <div data-testid="quick-actions">
+      <button onClick={() => onPower("stop")}>Stop Action</button>
+      <button onClick={() => onPower("start")}>Start Action</button>
+      <button onClick={onRefresh}>Refresh Action</button>
+    </div>
+  ),
 }));
 
 const mockServer: Server = {
@@ -118,6 +135,8 @@ const mockServer: Server = {
 
 describe("components/dashboard/ServerRow", () => {
   beforeEach(() => {
+    vi.clearAllMocks();
+    mockQueryError = null;
     mockServerStats = {
       status: "running",
       isSuspended: false,
@@ -141,7 +160,7 @@ describe("components/dashboard/ServerRow", () => {
   it("renders server name, address, and connects link to /server/:id", () => {
     render(
       <MemoryRouter>
-        <ServerRow server={mockServer} />
+        <ServerRow server={mockServer} className="custom-row" />
       </MemoryRouter>,
     );
 
@@ -152,6 +171,18 @@ describe("components/dashboard/ServerRow", () => {
         .getAllByRole("link", { name: "Open My Minecraft Server" })[0]
         .getAttribute("href"),
     ).toBe("/server/serv_srv-1");
+    expect(screen.getByRole("article").className).toContain("custom-row");
+  });
+
+  it("executes query function when querying resources", () => {
+    render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+    expect(capturedQueryFn).toBeDefined();
+    capturedQueryFn();
+    expect(getServerResourceUsage).toHaveBeenCalledWith("uuid-srv-1");
   });
 
   it("renders unlimited limits when memory, cpu, disk limits are 0", () => {
@@ -292,5 +323,88 @@ describe("components/dashboard/ServerRow", () => {
     );
 
     expect(screen.getByText("Transferring")).toBeDefined();
+  });
+
+  it("displays unavailable when query produces error", () => {
+    mockQueryError = new Error("Connection failed");
+    render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("Unavailable")).toBeDefined();
+  });
+
+  it("displays connecting when stats are null without error", () => {
+    mockServerStats = null;
+    render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+    expect(screen.getByText("Connecting")).toBeDefined();
+  });
+
+  it("handles power and refresh actions from ServerQuickActions", () => {
+    vi.useFakeTimers();
+
+    const { unmount } = render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+
+    // Stop action
+    fireEvent.click(screen.getByText("Stop Action"));
+    expect(mockMutate).toHaveBeenCalled();
+    const stopUpdater = mockMutate.mock.calls[0][0];
+    expect(stopUpdater(mockServerStats)).toEqual({
+      ...mockServerStats,
+      status: "stopping",
+    });
+    expect(stopUpdater(null)).toBeNull();
+
+    // Start action
+    mockMutate.mockClear();
+    fireEvent.click(screen.getByText("Start Action"));
+    expect(mockMutate).toHaveBeenCalled();
+    const startUpdater = mockMutate.mock.calls[0][0];
+    expect(startUpdater(mockServerStats)).toEqual({
+      ...mockServerStats,
+      status: "starting",
+    });
+
+    // Refresh action (click multiple times to test timer debounce and cleanup)
+    mockMutate.mockClear();
+    fireEvent.click(screen.getByText("Refresh Action"));
+    fireEvent.click(screen.getByText("Refresh Action"));
+    act(() => {
+      vi.advanceTimersByTime(1500);
+    });
+    expect(mockMutate).toHaveBeenCalled();
+
+    // Click refresh again, then unmount to test timer cleanup on unmount
+    fireEvent.click(screen.getByText("Refresh Action"));
+    unmount();
+
+    vi.useRealTimers();
+  });
+
+  it("hides ServerQuickActions when serverQuickActions feature is disabled", () => {
+    store.getActions().settings.setSettings({
+      name: "Pterodactyl",
+      locale: "en",
+      recaptcha: { enabled: false, siteKey: "" },
+      blueprint: { disable_attribution: true },
+      features: { serverQuickActions: false },
+    } as any);
+
+    render(
+      <MemoryRouter>
+        <ServerRow server={mockServer} />
+      </MemoryRouter>,
+    );
+
+    expect(screen.queryByTestId("quick-actions")).toBeNull();
   });
 });

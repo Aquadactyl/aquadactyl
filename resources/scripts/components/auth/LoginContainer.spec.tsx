@@ -53,6 +53,28 @@ vi.mock("@blueprint/components/Authentication/Container/AfterContent", () => ({
   default: () => null,
 }));
 
+const mockCaptchaExecute = vi.fn();
+const mockCaptchaReset = vi.fn();
+vi.mock("@/components/elements/Captcha", () => ({
+  default: React.forwardRef(
+    ({ onVerify, onExpire, sitekey }: any, ref: any) => {
+      React.useImperativeHandle(ref, () => ({
+        execute: mockCaptchaExecute,
+        reset: mockCaptchaReset,
+      }));
+      return (
+        <div data-testid="captcha" data-sitekey={sitekey}>
+          <button
+            data-testid="captcha-verify"
+            onClick={() => onVerify("captcha_token_abc")}
+          />
+          <button data-testid="captcha-expire" onClick={() => onExpire()} />
+        </div>
+      );
+    },
+  ),
+}));
+
 describe("components/auth/LoginContainer", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -347,5 +369,254 @@ describe("components/auth/LoginContainer", () => {
 
     expect(await screen.findByText("Forgot password?")).toBeDefined();
     expect(screen.queryByText("Create an account")).toBeNull();
+  });
+
+  it("navigates to checkpoint when passkey login requires confirmation", async () => {
+    vi.mocked(getSignInMethods).mockResolvedValueOnce({
+      passkeys_enabled: true,
+      providers: [],
+    } as any);
+    vi.mocked(loginWithPasskey).mockResolvedValueOnce({
+      complete: false,
+      confirmationToken: "passkey_conf_token_456",
+    } as any);
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const passkeyBtn = await screen.findByRole("button", {
+      name: "Sign in with a passkey",
+    });
+    fireEvent.click(passkeyBtn);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith("/auth/login/checkpoint", {
+        replace: true,
+        state: { token: "passkey_conf_token_456" },
+      });
+    });
+  });
+
+  it("redirects to '/' when passkey login is complete but intended is empty", async () => {
+    const assignSpy = vi.fn();
+    Object.defineProperty(window, "location", {
+      writable: true,
+      value: { assign: assignSpy },
+    });
+
+    vi.mocked(getSignInMethods).mockResolvedValueOnce({
+      passkeys_enabled: true,
+      providers: [],
+    } as any);
+    vi.mocked(loginWithPasskey).mockResolvedValueOnce({
+      complete: true,
+      intended: "",
+    } as any);
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const passkeyBtn = await screen.findByRole("button", {
+      name: "Sign in with a passkey",
+    });
+    fireEvent.click(passkeyBtn);
+
+    await waitFor(() => {
+      expect(assignSpy).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("triggers captcha execution when captcha is enabled and token is missing", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      recaptcha: {
+        enabled: true,
+        provider: "recaptcha",
+        siteKey: "my-site-key",
+      },
+    });
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const captcha = await screen.findByTestId("captcha");
+    expect(captcha.getAttribute("data-sitekey")).toBe("my-site-key");
+
+    const usernameInput = screen.getByLabelText(/Username or email/i);
+    const passwordInput = screen.getByLabelText(/^Password$/i);
+    const submitBtn = screen.getByRole("button", { name: "Sign in" });
+
+    fireEvent.change(usernameInput, { target: { value: "myuser" } });
+    fireEvent.change(passwordInput, { target: { value: "secret123" } });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockCaptchaExecute).toHaveBeenCalledTimes(1);
+    });
+    expect(login).not.toHaveBeenCalled();
+  });
+
+  it("handles captcha execution error", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      recaptcha: {
+        enabled: true,
+        provider: "hcaptcha",
+        siteKey: "",
+      },
+    });
+    mockCaptchaExecute.mockRejectedValueOnce(new Error("Captcha failed"));
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const captcha = await screen.findByTestId("captcha");
+    expect(captcha.getAttribute("data-sitekey")).toBe("_invalid_key");
+
+    const usernameInput = screen.getByLabelText(/Username or email/i);
+    const passwordInput = screen.getByLabelText(/^Password$/i);
+    const submitBtn = screen.getByRole("button", { name: "Sign in" });
+
+    fireEvent.change(usernameInput, { target: { value: "myuser" } });
+    fireEvent.change(passwordInput, { target: { value: "secret123" } });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(mockCaptchaExecute).toHaveBeenCalledTimes(1);
+    });
+    expect(login).not.toHaveBeenCalled();
+  });
+
+  it("handles captcha verify and expire callbacks, and resets captcha on login failure", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      recaptcha: {
+        enabled: true,
+        provider: "recaptcha",
+        siteKey: "some-key",
+      },
+    });
+    vi.mocked(login).mockRejectedValueOnce(new Error("Invalid login"));
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const usernameInput = await screen.findByLabelText(/Username or email/i);
+    const passwordInput = screen.getByLabelText(/^Password$/i);
+
+    fireEvent.change(usernameInput, { target: { value: "user1" } });
+    fireEvent.change(passwordInput, { target: { value: "pass1" } });
+
+    // Test onExpire
+    fireEvent.click(screen.getByTestId("captcha-expire"));
+
+    // Test onVerify which triggers submission with token
+    fireEvent.click(screen.getByTestId("captcha-verify"));
+
+    await waitFor(() => {
+      expect(login).toHaveBeenCalledWith({
+        username: "user1",
+        password: "pass1",
+        recaptchaData: "captcha_token_abc",
+      });
+      expect(mockCaptchaReset).toHaveBeenCalled();
+    });
+  });
+
+  it("submits login form and redirects to '/' when intended is omitted", async () => {
+    const assignSpy = vi.fn();
+    Object.defineProperty(window, "location", {
+      writable: true,
+      value: { assign: assignSpy },
+    });
+
+    vi.mocked(login).mockResolvedValueOnce({
+      complete: true,
+    } as any);
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const usernameInput = await screen.findByLabelText(/Username or email/i);
+    const passwordInput = screen.getByLabelText(/^Password$/i);
+    const submitBtn = screen.getByRole("button", { name: "Sign in" });
+
+    fireEvent.change(usernameInput, { target: { value: "myuser" } });
+    fireEvent.change(passwordInput, { target: { value: "secret123" } });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(assignSpy).toHaveBeenCalledWith("/");
+    });
+  });
+
+  it("handles undefined features in settings without error", async () => {
+    store.getActions().settings.setSettings({
+      name: "Pterodactyl",
+      locale: "en",
+      recaptcha: { enabled: false, siteKey: "", provider: "recaptcha" },
+    } as any);
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    expect(await screen.findByText("Forgot password?")).toBeDefined();
+    expect(screen.queryByText("Create an account")).toBeNull();
+  });
+
+  it("aborts form submission if passkey login is in progress", async () => {
+    let resolvePasskey: any;
+    vi.mocked(getSignInMethods).mockResolvedValueOnce({
+      passkeys_enabled: true,
+      providers: [],
+    } as any);
+    vi.mocked(loginWithPasskey).mockReturnValueOnce(
+      new Promise((res) => {
+        resolvePasskey = res;
+      }),
+    );
+
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+
+    const passkeyBtn = await screen.findByRole("button", {
+      name: "Sign in with a passkey",
+    });
+    fireEvent.click(passkeyBtn);
+
+    const usernameInput = screen.getByLabelText(/Username or email/i);
+    const passwordInput = screen.getByLabelText(/^Password$/i);
+    const form = usernameInput.closest("form")!;
+
+    fireEvent.change(usernameInput, { target: { value: "myuser" } });
+    fireEvent.change(passwordInput, { target: { value: "secret123" } });
+    fireEvent.submit(form);
+
+    expect(login).not.toHaveBeenCalled();
+    resolvePasskey({ complete: true, intended: "/" });
   });
 });

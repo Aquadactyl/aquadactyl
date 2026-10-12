@@ -45,7 +45,7 @@ const optionsFromChildren = (
 ): (Option | Group)[] =>
   React.Children.toArray(children).flatMap((child): (Option | Group)[] => {
     if (!React.isValidElement(child)) return [];
-    const childProps = (child.props || {}) as Record<string, any>;
+    const childProps = child.props as Record<string, any>;
     if (child.type === React.Fragment) {
       return optionsFromChildren(childProps.children, disabled);
     }
@@ -79,6 +79,40 @@ const values = (value: SelectProps["value"]): string[] | undefined =>
     : Array.isArray(value)
       ? value.map(String)
       : [String(value)];
+
+export const isItemEqualToValue = (a: Option, b: Option) =>
+  a?.value === b?.value;
+export const itemToStringLabel = (item: Option) => item?.label ?? "";
+export const itemToStringValue = (item: Option) => item?.value ?? "";
+
+export const processSelectionChange = (
+  next: Option | Option[] | null | undefined,
+  element: HTMLSelectElement | null,
+  isMultiple: boolean | undefined,
+  isUncontrolled: boolean,
+  setUncontrolled: (values: string[]) => void,
+) => {
+  const nextValues = Array.isArray(next)
+    ? next.map((o) => o.value)
+    : next
+      ? [next.value]
+      : [];
+
+  if (element) {
+    if (isMultiple) {
+      Array.from(element.options).forEach((option) => {
+        option.selected = nextValues.includes(option.value);
+      });
+    } else {
+      element.value = nextValues[0] ?? "";
+    }
+    if (isUncontrolled) {
+      setUncontrolled(nextValues);
+    }
+    element.dispatchEvent(new Event("input", { bubbles: true }));
+    element.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+};
 
 const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
   (
@@ -187,32 +221,14 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const handleSelectionChange = (
       next: Option | Option[] | null | undefined,
     ) => {
-      const nextValues = Array.isArray(next)
-        ? next.map((o) => o.value)
-        : next
-          ? [next.value]
-          : [];
-
-      const element = native.current;
-      if (element) {
-        if (props.multiple) {
-          Array.from(element.options).forEach((option) => {
-            option.selected = nextValues.includes(option.value);
-          });
-        } else {
-          element.value = nextValues[0] ?? "";
-        }
-        if (value === undefined) {
-          setUncontrolled(nextValues);
-        }
-        element.dispatchEvent(new Event("input", { bubbles: true }));
-        element.dispatchEvent(new Event("change", { bubbles: true }));
-      }
+      processSelectionChange(
+        next,
+        native.current,
+        props.multiple,
+        value === undefined,
+        setUncontrolled,
+      );
     };
-
-    const isItemEqualToValue = (a: Option, b: Option) => a?.value === b?.value;
-    const itemToStringLabel = (item: Option) => item?.label ?? "";
-    const itemToStringValue = (item: Option) => item?.value ?? "";
 
     return (
       <div

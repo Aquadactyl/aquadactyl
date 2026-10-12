@@ -151,4 +151,36 @@ describe("ResetPasswordContainer", () => {
       });
     });
   });
+
+  it("renders and submits when email param and token are omitted", async () => {
+    vi.mocked(performPasswordReset).mockResolvedValueOnce(undefined as any);
+
+    const assignSpy = vi.fn();
+    delete (window as any).location;
+    window.location = { assign: assignSpy } as any;
+
+    render(
+      <MemoryRouter initialEntries={["/auth/password/reset"]}>
+        <ResetPasswordContainer />
+      </MemoryRouter>,
+    );
+    expect(screen.getByLabelText("New Password")).toBeDefined();
+
+    fireEvent.change(screen.getByLabelText("New Password"), {
+      target: { value: "newSecurePass123!" },
+    });
+    fireEvent.change(screen.getByLabelText("Confirm New Password"), {
+      target: { value: "newSecurePass123!" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Reset Password" }));
+
+    await waitFor(() => {
+      expect(performPasswordReset).toHaveBeenCalledWith("", {
+        token: "",
+        password: "newSecurePass123!",
+        passwordConfirmation: "newSecurePass123!",
+      });
+      expect(assignSpy).toHaveBeenCalledWith("/");
+    });
+  });
 });

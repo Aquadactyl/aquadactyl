@@ -24,6 +24,28 @@ vi.mock("@/plugins/useFlash", () => ({
   }),
 }));
 
+const mockCaptchaExecute = vi.fn();
+const mockCaptchaReset = vi.fn();
+vi.mock("@/components/elements/Captcha", () => ({
+  default: React.forwardRef(
+    ({ onVerify, onExpire, sitekey }: any, ref: any) => {
+      React.useImperativeHandle(ref, () => ({
+        execute: mockCaptchaExecute,
+        reset: mockCaptchaReset,
+      }));
+      return (
+        <div data-testid="captcha" data-sitekey={sitekey}>
+          <button
+            data-testid="captcha-verify"
+            onClick={() => onVerify("captcha_token_xyz")}
+          />
+          <button data-testid="captcha-expire" onClick={() => onExpire()} />
+        </div>
+      );
+    },
+  ),
+}));
+
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>{children}</MemoryRouter>
 );
@@ -128,6 +150,114 @@ describe("ForgotPasswordContainer", () => {
         type: "error",
         title: "Error",
         message: "User not found",
+      });
+    });
+  });
+
+  it("triggers captcha execution when captcha is enabled and token is missing", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      recaptcha: {
+        enabled: true,
+        provider: "turnstile",
+        siteKey: "test-sitekey",
+      },
+    });
+
+    render(
+      <Wrapper>
+        <ForgotPasswordContainer />
+      </Wrapper>,
+    );
+
+    expect(screen.getByTestId("captcha")).toBeDefined();
+    expect(screen.getByTestId("captcha").getAttribute("data-sitekey")).toBe(
+      "test-sitekey",
+    );
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "user@example.com" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Send Email" }));
+
+    await waitFor(() => {
+      expect(mockCaptchaExecute).toHaveBeenCalledTimes(1);
+    });
+    expect(requestPasswordResetEmail).not.toHaveBeenCalled();
+  });
+
+  it("handles captcha execution error", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      recaptcha: {
+        enabled: true,
+        provider: "turnstile",
+        siteKey: "",
+      },
+    });
+    mockCaptchaExecute.mockRejectedValueOnce(new Error("Captcha failure"));
+
+    render(
+      <Wrapper>
+        <ForgotPasswordContainer />
+      </Wrapper>,
+    );
+
+    expect(screen.getByTestId("captcha").getAttribute("data-sitekey")).toBe(
+      "_invalid_key",
+    );
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "user@example.com" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Send Email" }));
+
+    await waitFor(() => {
+      expect(mockAddFlash).toHaveBeenCalledWith({
+        type: "error",
+        title: "Error",
+        message: "Captcha failure",
+      });
+    });
+  });
+
+  it("handles captcha verification and expire callbacks", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      recaptcha: {
+        enabled: true,
+        provider: "recaptcha",
+        siteKey: "my-key",
+      },
+    });
+    vi.mocked(requestPasswordResetEmail).mockResolvedValueOnce("Email sent!");
+
+    render(
+      <Wrapper>
+        <ForgotPasswordContainer />
+      </Wrapper>,
+    );
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "verify@example.com" },
+    });
+
+    // Test onExpire
+    fireEvent.click(screen.getByTestId("captcha-expire"));
+
+    // Test onVerify which triggers submission with token
+    fireEvent.click(screen.getByTestId("captcha-verify"));
+
+    await waitFor(() => {
+      expect(requestPasswordResetEmail).toHaveBeenCalledWith(
+        "verify@example.com",
+        "captcha_token_xyz",
+      );
+      expect(mockCaptchaReset).toHaveBeenCalled();
+      expect(mockAddFlash).toHaveBeenCalledWith({
+        type: "success",
+        title: "Success",
+        message: "Email sent!",
       });
     });
   });

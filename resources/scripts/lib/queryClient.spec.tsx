@@ -77,6 +77,11 @@ describe("lib/queryClient", () => {
       await waitFor(() => {
         expect(result.current.data).toBe(25);
       });
+
+      // Mutate with revalidate
+      await act(async () => {
+        await result.current.mutate();
+      });
     });
 
     it("respects enabled option and null queryKey", async () => {

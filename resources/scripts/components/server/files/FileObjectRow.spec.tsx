@@ -143,4 +143,98 @@ describe("FileObjectRow", () => {
       eventSpy,
     );
   });
+
+  it("renders symlink and archive icons, and format for date older than 48h", () => {
+    const oldDate = new Date(Date.now() - 72 * 3600 * 1000);
+    const symlinkFile = makeFile({
+      name: "symlink.txt",
+      isSymlink: true,
+      modifiedAt: oldDate,
+    });
+    const archiveFile = makeFile({
+      name: "archive.zip",
+      isArchiveType: () => true,
+    });
+    const symlinkDir = makeFile({
+      name: "symlink_dir",
+      isFile: false,
+      isSymlink: true,
+    });
+
+    const { rerender } = render(
+      <Wrapper>
+        <FileObjectRow file={symlinkFile} />
+      </Wrapper>,
+    );
+    expect(screen.getByText("symlink.txt")).toBeDefined();
+
+    rerender(
+      <Wrapper>
+        <FileObjectRow file={archiveFile} />
+      </Wrapper>,
+    );
+    expect(screen.getByText("archive.zip")).toBeDefined();
+
+    rerender(
+      <Wrapper>
+        <FileObjectRow file={symlinkDir} />
+      </Wrapper>,
+    );
+    expect(screen.getByText("symlink_dir")).toBeDefined();
+  });
+
+  it("renders non-clickable row when user lacks read permissions or file is not editable", () => {
+    const uneditableFile = makeFile({
+      name: "binary.bin",
+      isEditable: () => false,
+    });
+    const dir = makeFile({
+      name: "restricted_dir",
+      isFile: false,
+    });
+
+    const { rerender } = render(
+      <Wrapper permissions={["file.read"]}>
+        <FileObjectRow file={uneditableFile} />
+      </Wrapper>,
+    );
+
+    // Should not have a link
+    expect(screen.getByText("binary.bin").closest("a")).toBeNull();
+
+    // Directory when user has no permissions at all
+    rerender(
+      <Wrapper permissions={[]}>
+        <FileObjectRow file={dir} />
+      </Wrapper>,
+    );
+    expect(screen.getByText("restricted_dir").closest("a")).toBeNull();
+  });
+
+  it("exercises memo comparator on rerender with identical and changed file props", () => {
+    const fileA = makeFile({ name: "memo.txt", size: 100 });
+    const fileB = makeFile({ name: "memo.txt", size: 100 });
+    const fileC = makeFile({ name: "memo.txt", size: 200 });
+
+    const { rerender } = render(
+      <Wrapper>
+        <FileObjectRow file={fileA} />
+      </Wrapper>,
+    );
+
+    // Rerender with identical file data (triggers memo comparator returning true)
+    rerender(
+      <Wrapper>
+        <FileObjectRow file={fileB} />
+      </Wrapper>,
+    );
+
+    // Rerender with different file data (triggers memo comparator returning false)
+    rerender(
+      <Wrapper>
+        <FileObjectRow file={fileC} />
+      </Wrapper>,
+    );
+    expect(screen.getByText("memo.txt")).toBeDefined();
+  });
 });

@@ -57,6 +57,11 @@ describe("components/server/console/chart", () => {
         expect.any(HTMLDivElement),
       );
 
+      // Trigger resize with width 0 (does not setSize)
+      act(() => {
+        resizeCallback([{ contentRect: { width: 0 } }]);
+      });
+
       // Trigger resize
       act(() => {
         resizeCallback([{ contentRect: { width: 450 } }]);
@@ -88,6 +93,25 @@ describe("components/server/console/chart", () => {
       rerender(<UPlotChart options={options} data={nextData} />);
 
       expect(mockUPlotInstance.setData).toHaveBeenCalledWith(nextData);
+    });
+
+    it("handles default height when options.height is undefined", () => {
+      render(
+        <UPlotChart
+          options={{ width: 300 } as any}
+          data={
+            [
+              [1, 2],
+              [3, 4],
+            ] as any
+          }
+        />,
+      );
+      expect(mockUPlotConstructor).toHaveBeenCalledWith(
+        expect.objectContaining({ height: 160 }),
+        expect.anything(),
+        expect.anything(),
+      );
     });
   });
 
@@ -134,8 +158,22 @@ describe("components/server/console/chart", () => {
       expect(rangeFn(null, 0, 50)).toEqual([0, 100]); // suggestedMax is 100
     });
 
-    it("push appends new values and shifts data", () => {
-      const { result } = renderHook(() => useChart("CPU", { sets: 1 }));
+    it("applies fallback series options when empty series object is provided", () => {
+      const { result } = renderHook(() =>
+        useChart("FallbackLabel", {
+          sets: 1,
+          series: [{}],
+        }),
+      );
+
+      const seriesOption = result.current.props.options.series?.[1];
+      expect(seriesOption?.label).toBe("FallbackLabel");
+      expect(seriesOption?.stroke).toBeDefined();
+      expect(seriesOption?.fill).toBeDefined();
+    });
+
+    it("push appends new values, handles missing indices, and non-number types", () => {
+      const { result } = renderHook(() => useChart("CPU", { sets: 2 }));
 
       act(() => {
         result.current.push(42.567);
@@ -143,13 +181,16 @@ describe("components/server/console/chart", () => {
 
       const series1 = result.current.props.data[1];
       expect(series1[series1.length - 1]).toBe(42.57);
+      // second series is missing in input, should default to 0
+      const series2 = result.current.props.data[2];
+      expect(series2[series2.length - 1]).toBe(0);
 
-      // Push null/undefined
+      // Push non-number or null
       act(() => {
-        result.current.push(null);
+        result.current.push(["not-a-number" as any, null]);
       });
-      const seriesUpdated = result.current.props.data[1];
-      expect(seriesUpdated[seriesUpdated.length - 1]).toBe(0);
+      expect(result.current.props.data[1][19]).toBe(0);
+      expect(result.current.props.data[2][19]).toBe(0);
     });
 
     it("push works with multiple series sets", () => {

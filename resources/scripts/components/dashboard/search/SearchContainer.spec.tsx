@@ -136,4 +136,21 @@ describe("SearchContainer", () => {
     expect(preventDefault).not.toHaveBeenCalled();
     expect(screen.queryByTestId("search-modal")).toBeNull();
   });
+
+  it("defaults to input when event target has no tagName", () => {
+    render(<SearchContainer />);
+
+    const preventDefault = vi.fn();
+    act(() => {
+      keydownCallback!({
+        target: {},
+        ctrlKey: true,
+        key: "/",
+        preventDefault,
+      });
+    });
+
+    expect(preventDefault).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("search-modal")).toBeNull();
+  });
 });

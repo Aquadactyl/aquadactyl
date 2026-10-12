@@ -121,15 +121,23 @@ describe("components/server/databases/DatabasesContainer", () => {
         connectionString: "127.0.0.1:3306",
         allowConnectionsFrom: "%",
       },
+      {
+        id: "2",
+        name: "s1_db2",
+        username: "u2",
+        connectionString: "127.0.0.1:3306",
+        allowConnectionsFrom: "%",
+      },
     ];
 
     render(<DatabasesContainer />);
 
     expect(screen.getByText("s1_db1")).toBeDefined();
+    expect(screen.getByText("s1_db2")).toBeDefined();
     expect(
-      screen.getByText(/1 of 2 databases have been allocated to this server/),
+      screen.getByText(/2 of 2 databases have been allocated to this server/),
     ).toBeDefined();
-    expect(screen.getByText("Create Database Mock")).toBeDefined();
+    expect(screen.queryByText("Create Database Mock")).toBeNull();
   });
 
   it("handles fetch errors by adding flash error", async () => {

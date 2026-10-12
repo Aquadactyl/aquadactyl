@@ -4,12 +4,13 @@ import ConfigureTwoFactorForm from "./ConfigureTwoFactorForm";
 import { store } from "@/state";
 
 vi.mock("@/components/dashboard/forms/SetupTOTPDialog", () => ({
-  default: ({ open, onTokens }: any) =>
+  default: ({ open, onTokens, onClose }: any) =>
     open ? (
       <div data-testid="setup-totp-dialog">
         <button onClick={() => onTokens(["code-1", "code-2"])}>
           Finish Setup
         </button>
+        <button onClick={onClose}>Cancel Setup</button>
       </div>
     ) : null,
 }));
@@ -34,12 +35,13 @@ vi.mock("@/components/dashboard/forms/DisableTOTPDialog", () => ({
 }));
 
 vi.mock("@/components/dashboard/forms/RegenerateRecoveryTokensDialog", () => ({
-  default: ({ open, onTokens }: any) =>
+  default: ({ open, onTokens, onClose }: any) =>
     open ? (
       <div data-testid="regenerate-tokens-dialog">
         <button onClick={() => onTokens(["regen-1", "regen-2"])}>
           Confirm Regenerate
         </button>
+        <button onClick={onClose}>Cancel Regenerate</button>
       </div>
     ) : null,
 }));
@@ -83,6 +85,16 @@ describe("ConfigureTwoFactorForm component", () => {
     fireEvent.click(getByText("Finish Setup"));
     expect(getByTestId("recovery-tokens-dialog")).toBeDefined();
     expect(getByText("Recovery Tokens: code-1,code-2")).toBeDefined();
+
+    // Closing recovery tokens resets tokens and hides dialog
+    fireEvent.click(getByText("Close Recovery"));
+    expect(queryByTestId("recovery-tokens-dialog")).toBeNull();
+
+    // Reopen setup and cancel
+    fireEvent.click(enableBtn);
+    expect(getByTestId("setup-totp-dialog")).toBeDefined();
+    fireEvent.click(getByText("Cancel Setup"));
+    expect(queryByTestId("setup-totp-dialog")).toBeNull();
   });
 
   it("renders enabled state with Disable and Regenerate buttons", () => {
@@ -106,7 +118,13 @@ describe("ConfigureTwoFactorForm component", () => {
     fireEvent.click(getByText("Cancel Disable"));
     expect(queryByTestId("disable-totp-dialog")).toBeNull();
 
-    // Open regenerate dialog
+    // Open regenerate dialog and cancel
+    fireEvent.click(regenBtn);
+    expect(getByTestId("regenerate-tokens-dialog")).toBeDefined();
+    fireEvent.click(getByText("Cancel Regenerate"));
+    expect(queryByTestId("regenerate-tokens-dialog")).toBeNull();
+
+    // Open regenerate dialog again and confirm
     fireEvent.click(regenBtn);
     expect(getByTestId("regenerate-tokens-dialog")).toBeDefined();
 
@@ -114,5 +132,9 @@ describe("ConfigureTwoFactorForm component", () => {
     fireEvent.click(getByText("Confirm Regenerate"));
     expect(getByTestId("recovery-tokens-dialog")).toBeDefined();
     expect(getByText("Recovery Tokens: regen-1,regen-2")).toBeDefined();
+
+    // Close recovery dialog
+    fireEvent.click(getByText("Close Recovery"));
+    expect(queryByTestId("recovery-tokens-dialog")).toBeNull();
   });
 });

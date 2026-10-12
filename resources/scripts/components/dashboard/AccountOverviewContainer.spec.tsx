@@ -171,6 +171,25 @@ describe("account feature visibility", () => {
     expect(screen.queryByLabelText("Upload profile picture")).toBeNull();
     expect(screen.queryByLabelText("Blur sensitive data")).toBeNull();
   });
+
+  it("renders two-factor redirect error message when present in location state", async () => {
+    await act(async () => {
+      render(
+        <MemoryRouter
+          initialEntries={[
+            { pathname: "/", state: { twoFactorRedirect: true } },
+          ]}
+        >
+          <AccountOverviewContainer />
+        </MemoryRouter>,
+      );
+    });
+
+    expect(screen.getByText("Two-step verification required")).toBeTruthy();
+    expect(
+      screen.getByText("Enable two-step verification below to continue."),
+    ).toBeTruthy();
+  });
 });
 
 describe("available sign-in methods", () => {

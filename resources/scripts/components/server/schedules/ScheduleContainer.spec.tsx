@@ -20,12 +20,13 @@ vi.mock("@/components/server/schedules/ScheduleRow", () => ({
 }));
 
 vi.mock("@/components/server/schedules/EditScheduleModal", () => ({
-  default: ({ visible, onCreated }: any) =>
+  default: ({ visible, onCreated, onModalDismissed }: any) =>
     visible ? (
       <div data-testid="edit-schedule-modal">
         <button onClick={() => onCreated({ id: 10 })}>
           Create Schedule Confirm
         </button>
+        <button onClick={onModalDismissed}>Dismiss Modal</button>
       </div>
     ) : null,
 }));
@@ -116,9 +117,16 @@ describe("components/server/schedules/ScheduleContainer", () => {
     expect(screen.getByText("Restart Server")).toBeDefined();
     expect(screen.getByText("Daily Backup")).toBeDefined();
 
+    // Click schedule row
+    fireEvent.click(screen.getByText("Restart Server"));
+
     fireEvent.click(screen.getByRole("button", { name: "Create schedule" }));
     expect(screen.getByTestId("edit-schedule-modal")).toBeDefined();
 
+    fireEvent.click(screen.getByText("Dismiss Modal"));
+    expect(screen.queryByTestId("edit-schedule-modal")).toBeNull();
+
+    fireEvent.click(screen.getByRole("button", { name: "Create schedule" }));
     fireEvent.click(screen.getByText("Create Schedule Confirm"));
   });
 

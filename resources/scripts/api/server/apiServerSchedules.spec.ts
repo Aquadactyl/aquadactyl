@@ -84,6 +84,14 @@ describe("api/server/schedules", () => {
     expect(schedule.lastRunAt).toBeNull();
     expect(schedule.nextRunAt).toBeNull();
     expect(schedule.tasks).toEqual([]);
+
+    const scheduleWithoutRelationships = rawDataToServerSchedule({
+      ...mockScheduleRaw,
+      last_run_at: null,
+      next_run_at: null,
+      relationships: undefined,
+    });
+    expect(scheduleWithoutRelationships.tasks).toEqual([]);
   });
 
   it("createOrUpdateSchedule creates a new schedule when id is not provided", async () => {
@@ -255,6 +263,13 @@ describe("api/server/schedules", () => {
     );
     expect(schedules).toHaveLength(1);
     expect(schedules[0].id).toBe(10);
+
+    // Fallback when data.data is undefined
+    vi.mocked(http.get).mockResolvedValueOnce({
+      data: {},
+    } as any);
+    const emptySchedules = await getServerSchedules("srv-1");
+    expect(emptySchedules).toEqual([]);
   });
 
   it("triggerScheduleExecution posts execute request", async () => {

@@ -7,7 +7,15 @@ import chmodFiles from "@/api/server/files/chmodFiles";
 
 vi.mock("@/api/server/files/chmodFiles");
 
-const mockMutate = vi.fn();
+const mockMutate = vi.fn().mockImplementation((fn) => {
+  if (typeof fn === "function") {
+    return fn([
+      { name: "test.sh", isFile: true, mode: "0644", modeBits: "0644" },
+      { name: "other.sh", isFile: false, mode: "0755", modeBits: "0755" },
+    ]);
+  }
+  return Promise.resolve();
+});
 vi.mock("@/plugins/useFileManagerQuery", () => ({
   default: () => ({
     mutate: mockMutate,
@@ -152,6 +160,69 @@ describe("ChmodFileModal", () => {
         key: "files",
         error,
       });
+    });
+  });
+
+  it("handles empty files array and single file without initial mode", async () => {
+    vi.mocked(chmodFiles).mockResolvedValueOnce(undefined as any);
+    const onDismissed = vi.fn();
+
+    const { rerender } = render(
+      <Wrapper>
+        <ChmodFileModal
+          visible
+          files={[{ file: "nomode.txt" } as any]}
+          onDismissed={onDismissed}
+        />
+      </Wrapper>,
+    );
+
+    const input = screen.getByLabelText("File Mode") as HTMLInputElement;
+    expect(input.value).toBe("");
+
+    // Now test with empty files array
+    rerender(
+      <Wrapper>
+        <ChmodFileModal visible files={[]} onDismissed={onDismissed} />
+      </Wrapper>,
+    );
+    expect((screen.getByLabelText("File Mode") as HTMLInputElement).value).toBe(
+      "",
+    );
+
+    fireEvent.change(screen.getByLabelText("File Mode"), {
+      target: { value: "0755" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Update" }));
+
+    await waitFor(() => {
+      expect(chmodFiles).toHaveBeenCalledWith(
+        "server-chmod-uuid",
+        "/server",
+        [],
+      );
+      expect(onDismissed).toHaveBeenCalled();
+    });
+  });
+
+  it("updates folder mode where isFile is false", async () => {
+    vi.mocked(chmodFiles).mockResolvedValueOnce(undefined as any);
+    const onDismissed = vi.fn();
+
+    render(
+      <Wrapper>
+        <ChmodFileModal
+          visible
+          files={[{ file: "other.sh", mode: "0755" }]}
+          onDismissed={onDismissed}
+        />
+      </Wrapper>,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Update" }));
+
+    await waitFor(() => {
+      expect(onDismissed).toHaveBeenCalled();
     });
   });
 });

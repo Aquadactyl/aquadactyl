@@ -4,8 +4,21 @@ import { describe, expect, it, vi } from "vitest";
 import AddSubuserButton from "@/components/server/users/AddSubuserButton";
 
 vi.mock("@/components/server/users/EditSubuserModal", () => ({
-  default: ({ visible }: { visible: boolean }) =>
-    visible ? <div data-testid={"edit-subuser-modal"}>Modal Open</div> : null,
+  default: ({
+    visible,
+    onModalDismissed,
+  }: {
+    visible: boolean;
+    onModalDismissed: () => void;
+  }) =>
+    visible ? (
+      <div data-testid={"edit-subuser-modal"}>
+        Modal Open
+        <button data-testid={"dismiss-modal"} onClick={onModalDismissed}>
+          Dismiss
+        </button>
+      </div>
+    ) : null,
 }));
 
 describe("AddSubuserButton", () => {
@@ -19,5 +32,8 @@ describe("AddSubuserButton", () => {
     fireEvent.click(button);
 
     expect(screen.getByTestId("edit-subuser-modal")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("dismiss-modal"));
+    expect(screen.queryByTestId("edit-subuser-modal")).toBeNull();
   });
 });

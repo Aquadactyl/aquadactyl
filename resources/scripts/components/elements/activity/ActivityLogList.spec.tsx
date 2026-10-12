@@ -22,7 +22,11 @@ vi.mock("@/components/elements/Spinner", () => ({
 }));
 
 vi.mock("@/components/elements/table/PaginationFooter", () => ({
-  default: () => <div data-testid="pagination">Pagination</div>,
+  default: ({ onPageSelect }: any) => (
+    <button data-testid="pagination" onClick={() => onPageSelect(2)}>
+      Pagination
+    </button>
+  ),
 }));
 
 const mockControls = {
@@ -83,6 +87,9 @@ describe("components/elements/activity/ActivityLogList", () => {
     expect(screen.getByText("Server")).toBeDefined();
     expect(screen.getByText("server:power.start")).toBeDefined();
     expect(screen.getByTestId("pagination")).toBeDefined();
+
+    fireEvent.click(screen.getByTestId("pagination"));
+    expect(mockControls.update).toHaveBeenCalledWith({ page: "2" }, false);
   });
 
   it("shows spinner when data is loading and no error", () => {

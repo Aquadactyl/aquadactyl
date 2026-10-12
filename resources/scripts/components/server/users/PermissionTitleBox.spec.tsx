@@ -108,4 +108,23 @@ describe("PermissionTitleBox", () => {
     fireEvent.click(checkbox);
     expect(checkbox.getAttribute("aria-checked")).toBe("false");
   });
+
+  it("defaults to empty array when permissions form field is undefined", () => {
+    const EmptyWrapper = () => {
+      const methods = useForm();
+      return (
+        <FormProvider {...methods}>
+          <PermissionTitleBox
+            isEditable={true}
+            title="Empty Permissions"
+            permissions={["control.start"]}
+          />
+        </FormProvider>
+      );
+    };
+
+    render(<EmptyWrapper />);
+    const checkbox = screen.getByRole("checkbox");
+    expect(checkbox.getAttribute("aria-checked")).toBe("false");
+  });
 });

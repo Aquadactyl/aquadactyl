@@ -159,5 +159,30 @@ describe("api/server/backups", () => {
     expect(data.items).toHaveLength(1);
     expect(data.items[0].uuid).toBe("b-2");
     expect(data.backupCount).toBe(50);
+
+    // Test default Context value setPage
+    const { result: defaultCtx } = renderHook(() => React.useContext(Context));
+    expect(defaultCtx.current.page).toBe(1);
+    expect(defaultCtx.current.setPage(5)).toBe(1);
+
+    // Test missing data.data fallback
+    vi.mocked(http.get).mockResolvedValueOnce({
+      data: {
+        meta: {
+          pagination: {
+            current_page: 1,
+            total_pages: 0,
+            total: 0,
+            per_page: 10,
+            count: 0,
+          },
+          backup_count: 0,
+        },
+      },
+    } as any);
+
+    const emptyData = await capturedQueryFn!();
+    expect(emptyData.items).toEqual([]);
+    expect(emptyData.backupCount).toBe(0);
   });
 });

@@ -1,16 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import BackupContainer from "./BackupContainer";
 
 let mockBackupsData: any = null;
 let mockError: any = null;
 let mockIsValidating = false;
 
-vi.mock("@/api/server/backups/getServerBackups", async () => {
-  const actual: any = await vi.importActual(
-    "@/api/server/backups/getServerBackups",
-  );
+vi.mock("@/api/server/backups/getServerBackups", async (importOriginal) => {
+  const actual: any = await importOriginal();
   return {
     ...actual,
     default: () => ({
@@ -30,8 +28,13 @@ vi.mock("@/components/elements/Spinner", () => ({
 }));
 
 vi.mock("@/components/elements/Pagination", () => ({
-  default: ({ data, children }: any) => (
-    <div>{children({ items: data.items })}</div>
+  default: ({ data, onPageSelect, children }: any) => (
+    <div>
+      <button data-testid="next-page" onClick={() => onPageSelect(2)}>
+        Next Page
+      </button>
+      {children({ items: data.items })}
+    </div>
   ),
 }));
 
@@ -177,5 +180,70 @@ describe("components/server/backups/BackupContainer", () => {
     expect(mockClearAndAddHttpError).toHaveBeenCalledWith(
       expect.objectContaining({ error: mockError, key: "backups" }),
     );
+  });
+
+  it("renders multiple backup rows with spacing", () => {
+    mockBackupsData = {
+      items: [
+        { uuid: "b-1", name: "Backup 1" },
+        { uuid: "b-2", name: "Backup 2" },
+      ],
+      pagination: {
+        total: 2,
+        count: 2,
+        perPage: 10,
+        currentPage: 1,
+        totalPages: 1,
+      },
+      backupCount: 2,
+    };
+
+    render(<BackupContainer />);
+    expect(screen.getByText("Backup 1")).toBeDefined();
+    expect(screen.getByText("Backup 2")).toBeDefined();
+  });
+
+  it("shows out of backups message when page > 1 and items is empty", () => {
+    mockBackupsData = {
+      items: [],
+      pagination: {
+        total: 0,
+        count: 0,
+        perPage: 10,
+        currentPage: 1,
+        totalPages: 2,
+      },
+      backupCount: 1,
+    };
+
+    render(<BackupContainer />);
+    fireEvent.click(screen.getByTestId("next-page"));
+
+    expect(
+      screen.getByText(
+        "Looks like we've run out of backups to show you, try going back a page.",
+      ),
+    ).toBeDefined();
+  });
+
+  it("does not render create backup button when backupLimit equals backupCount", () => {
+    mockBackupLimit = 2;
+    mockBackupsData = {
+      items: [
+        { uuid: "b-1", name: "Backup 1" },
+        { uuid: "b-2", name: "Backup 2" },
+      ],
+      pagination: {
+        total: 2,
+        count: 2,
+        perPage: 10,
+        currentPage: 1,
+        totalPages: 1,
+      },
+      backupCount: 2,
+    };
+
+    render(<BackupContainer />);
+    expect(screen.queryByText("Create Backup Mock")).toBeNull();
   });
 });

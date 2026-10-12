@@ -3,14 +3,20 @@ import React, { createRef } from "react";
 import { render } from "@testing-library/react";
 import Captcha, { CaptchaRef } from "./Captcha";
 
+let shouldAttachRef = true;
+
 const mockRecaptchaExecute = vi.fn().mockResolvedValue(undefined);
 const mockRecaptchaReset = vi.fn().mockResolvedValue(undefined);
 vi.mock("@/components/elements/Reaptcha", () => {
   const MockReaptcha = React.forwardRef((props: any, ref: any) => {
-    React.useImperativeHandle(ref, () => ({
-      execute: mockRecaptchaExecute,
-      reset: mockRecaptchaReset,
-    }));
+    React.useImperativeHandle(ref, () =>
+      shouldAttachRef
+        ? {
+            execute: mockRecaptchaExecute,
+            reset: mockRecaptchaReset,
+          }
+        : null,
+    );
     return (
       <div
         data-testid="reaptcha"
@@ -25,10 +31,14 @@ const mockHcaptchaExecute = vi.fn().mockResolvedValue(undefined);
 const mockHcaptchaReset = vi.fn();
 vi.mock("@hcaptcha/react-hcaptcha", () => {
   const MockHcaptcha = React.forwardRef((props: any, ref: any) => {
-    React.useImperativeHandle(ref, () => ({
-      execute: mockHcaptchaExecute,
-      resetCaptcha: mockHcaptchaReset,
-    }));
+    React.useImperativeHandle(ref, () =>
+      shouldAttachRef
+        ? {
+            execute: mockHcaptchaExecute,
+            resetCaptcha: mockHcaptchaReset,
+          }
+        : null,
+    );
     return (
       <div data-testid="hcaptcha" onClick={() => props.onVerify?.("token-h")} />
     );
@@ -40,10 +50,14 @@ const mockTurnstileExecute = vi.fn();
 const mockTurnstileReset = vi.fn();
 vi.mock("@marsidev/react-turnstile", () => {
   const MockTurnstile = React.forwardRef((props: any, ref: any) => {
-    React.useImperativeHandle(ref, () => ({
-      execute: mockTurnstileExecute,
-      reset: mockTurnstileReset,
-    }));
+    React.useImperativeHandle(ref, () =>
+      shouldAttachRef
+        ? {
+            execute: mockTurnstileExecute,
+            reset: mockTurnstileReset,
+          }
+        : null,
+    );
     return (
       <div
         data-testid="turnstile"
@@ -114,5 +128,24 @@ describe("components/elements/Captcha", () => {
 
     await ref.current?.reset();
     expect(mockTurnstileReset).toHaveBeenCalled();
+  });
+
+  it("safely handles execute and reset when provider refs are null", async () => {
+    shouldAttachRef = false;
+    for (const provider of ["recaptcha", "hcaptcha", "turnstile"] as const) {
+      const ref = createRef<CaptchaRef>();
+      render(
+        <Captcha
+          ref={ref}
+          provider={provider}
+          sitekey="key-null"
+          onVerify={vi.fn()}
+        />,
+      );
+
+      await expect(ref.current?.execute()).resolves.toBeUndefined();
+      await expect(ref.current?.reset()).resolves.toBeUndefined();
+    }
+    shouldAttachRef = true;
   });
 });

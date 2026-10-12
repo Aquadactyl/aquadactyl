@@ -139,4 +139,18 @@ describe("components/server/users/UsersContainer", () => {
       expect.objectContaining({ key: "users" }),
     );
   });
+
+  it("handles permissions fetch failure", async () => {
+    mockGetPermissions.mockRejectedValueOnce(new Error("Perm fail"));
+
+    render(<UsersContainer />);
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(mockAddError).toHaveBeenCalledWith(
+      expect.objectContaining({ key: "users" }),
+    );
+  });
 });

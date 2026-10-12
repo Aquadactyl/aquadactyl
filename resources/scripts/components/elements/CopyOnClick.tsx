@@ -62,7 +62,7 @@ const CopyOnClick = ({
     );
   }
 
-  const childProps = (children.props || {}) as Record<string, any>;
+  const childProps = children.props as Record<string, any>;
   const onlyChild = React.Children.only(children) as React.ReactElement<
     Record<string, any>
   >;
@@ -88,7 +88,7 @@ const CopyOnClick = ({
     <>
       {copied && (
         <Portal>
-          <Fade in appear timeout={250} key={copied ? "visible" : "invisible"}>
+          <Fade in appear timeout={250} key={"visible"}>
             <div className={"fixed right-0 bottom-0 z-50 m-4"}>
               <div
                 className={

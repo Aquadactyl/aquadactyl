@@ -15,11 +15,14 @@ vi.mock("@/components/server/console/chart", () => ({
   UPlotChart: ({ options }: any) => (
     <div data-testid="uplot-chart" data-height={options?.height} />
   ),
-  useChart: () => ({
-    props: { options: { height: 160 }, data: [] },
-    push: mockNetPush,
-    clear: mockNetClear,
-  }),
+  useChart: (_label: string, options: any) => {
+    options?.formatTick?.(1024);
+    return {
+      props: { options: { height: 160 }, data: [] },
+      push: mockNetPush,
+      clear: mockNetClear,
+    };
+  },
   useChartTickLabel: (label: string) => {
     if (label === "CPU") {
       return {

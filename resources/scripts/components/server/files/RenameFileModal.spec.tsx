@@ -7,7 +7,12 @@ import renameFiles from "@/api/server/files/renameFiles";
 
 vi.mock("@/api/server/files/renameFiles");
 
-const mockMutate = vi.fn();
+const mockMutate = vi.fn().mockImplementation((fn) => {
+  if (typeof fn === "function") {
+    return fn([{ name: "old_name.txt" }, { name: "other.txt" }]);
+  }
+  return Promise.resolve();
+});
 vi.mock("@/plugins/useFileManagerQuery", () => ({
   default: () => ({
     mutate: mockMutate,
@@ -72,20 +77,34 @@ describe("RenameFileModal", () => {
     expect(screen.getByRole("button", { name: "Rename" })).toBeDefined();
   });
 
-  it("renders with Move terminology when useMoveTerminology is true", () => {
+  it("renders with Move terminology when useMoveTerminology is true", async () => {
+    vi.mocked(renameFiles).mockResolvedValueOnce(undefined as any);
+    const onDismissed = vi.fn();
+
     render(
       <Wrapper>
         <RenameFileModal
           visible
           useMoveTerminology
           files={["server.properties"]}
-          onDismissed={vi.fn()}
+          onDismissed={onDismissed}
         />
       </Wrapper>,
     );
 
     expect(screen.getByRole("button", { name: "Move" })).toBeDefined();
     expect(screen.getByText(/New location:/)).toBeDefined();
+
+    const input = screen.getByLabelText("File Name");
+    fireEvent.change(input, { target: { value: "new_dir" } });
+    fireEvent.click(screen.getByRole("button", { name: "Move" }));
+
+    await waitFor(() => {
+      expect(renameFiles).toHaveBeenCalledWith("server-uuid-xyz", "/server", [
+        { from: "server.properties", to: "new_dir" },
+      ]);
+      expect(onDismissed).toHaveBeenCalled();
+    });
   });
 
   it("submits rename API call and closes on success", async () => {
@@ -160,6 +179,81 @@ describe("RenameFileModal", () => {
         key: "files",
         error,
       });
+    });
+  });
+
+  it("handles single file move with slash in path", async () => {
+    vi.mocked(renameFiles).mockResolvedValueOnce(undefined as any);
+    const onDismissed = vi.fn();
+
+    render(
+      <Wrapper>
+        <RenameFileModal
+          visible
+          files={["old_name.txt"]}
+          onDismissed={onDismissed}
+        />
+      </Wrapper>,
+    );
+
+    const input = screen.getByLabelText("File Name");
+    fireEvent.change(input, { target: { value: "nested/dir/new_name.txt" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rename" }));
+
+    await waitFor(() => {
+      expect(renameFiles).toHaveBeenCalledWith("server-uuid-xyz", "/server", [
+        { from: "old_name.txt", to: "nested/dir/new_name.txt" },
+      ]);
+      expect(onDismissed).toHaveBeenCalled();
+    });
+  });
+
+  it("handles empty files array and multiple files without move terminology", async () => {
+    vi.mocked(renameFiles).mockResolvedValueOnce(undefined as any);
+    const onDismissed = vi.fn();
+
+    const { rerender } = render(
+      <Wrapper>
+        <RenameFileModal visible files={[]} onDismissed={onDismissed} />
+      </Wrapper>,
+    );
+
+    const input = screen.getByLabelText("File Name") as HTMLInputElement;
+    expect(input.value).toBe("");
+
+    fireEvent.change(input, { target: { value: "some_name.txt" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rename" }));
+
+    await waitFor(() => {
+      expect(renameFiles).toHaveBeenCalledWith(
+        "server-uuid-xyz",
+        "/server",
+        [],
+      );
+      expect(onDismissed).toHaveBeenCalled();
+    });
+
+    // Multiple files without useMoveTerminology
+    vi.mocked(renameFiles).mockResolvedValueOnce(undefined as any);
+    rerender(
+      <Wrapper>
+        <RenameFileModal
+          visible
+          files={["fileA.txt", "fileB.txt"]}
+          onDismissed={onDismissed}
+        />
+      </Wrapper>,
+    );
+
+    const input2 = screen.getByLabelText("File Name");
+    fireEvent.change(input2, { target: { value: "shared_dest" } });
+    fireEvent.click(screen.getByRole("button", { name: "Rename" }));
+
+    await waitFor(() => {
+      expect(renameFiles).toHaveBeenCalledWith("server-uuid-xyz", "/server", [
+        { from: "fileA.txt", to: "shared_dest" },
+        { from: "fileB.txt", to: "shared_dest" },
+      ]);
     });
   });
 });

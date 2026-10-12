@@ -120,5 +120,12 @@ describe("api/server/network", () => {
     );
     expect(allocations).toHaveLength(1);
     expect(allocations[0].id).toBe(10);
+
+    // Fallback when data.data is missing
+    vi.mocked(http.get).mockResolvedValueOnce({
+      data: {},
+    } as any);
+    const emptyAllocations = await capturedQueryFn!();
+    expect(emptyAllocations).toEqual([]);
   });
 });

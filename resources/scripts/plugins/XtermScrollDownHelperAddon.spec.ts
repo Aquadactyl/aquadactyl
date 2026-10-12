@@ -103,6 +103,26 @@ describe("plugins/XtermScrollDownHelperAddon", () => {
     expect(() => addon.show()).not.toThrow();
   });
 
+  it("does not hide on scroll if not scrolled down to bottom", () => {
+    const addon = new ScrollDownHelperAddon();
+    addon.activate(terminalMock);
+
+    const button = container.querySelector("div");
+    addon.show();
+    expect(button?.style.visibility).toBe("visible");
+
+    terminalMock.buffer.active.viewportY = 2;
+    terminalMock.buffer.active.baseY = 10;
+    scrollCallback();
+
+    expect(button?.style.visibility).toBe("visible");
+  });
+
+  it("hide does not throw when element is undefined", () => {
+    const addon = new ScrollDownHelperAddon();
+    expect(() => addon.hide()).not.toThrow();
+  });
+
   it("dispose runs without error", () => {
     const addon = new ScrollDownHelperAddon();
     expect(() => addon.dispose()).not.toThrow();

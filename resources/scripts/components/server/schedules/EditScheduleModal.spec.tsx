@@ -135,4 +135,178 @@ describe("components/server/schedules/EditScheduleModal", () => {
       );
     });
   });
+
+  it("submits new schedule and calls onCreated callback", async () => {
+    const onCreated = vi.fn();
+    vi.mocked(createOrUpdateSchedule).mockResolvedValueOnce({
+      ...mockSchedule,
+      id: 99,
+      name: "New Fresh Schedule",
+    });
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditScheduleModal visible={true} onCreated={onCreated} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const nameInput = await screen.findByLabelText("Schedule name");
+    fireEvent.change(nameInput, { target: { value: "New Fresh Schedule" } });
+
+    const submitBtn = screen.getByRole("button", {
+      name: "Save timing & add steps",
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(createOrUpdateSchedule).toHaveBeenCalledWith(
+        "server-uuid-1",
+        expect.objectContaining({
+          name: "New Fresh Schedule",
+        }),
+      );
+      expect(onCreated).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 99, name: "New Fresh Schedule" }),
+      );
+    });
+  });
+
+  it("shows validation error when name is empty", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditScheduleModal visible={true} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const nameInput = await screen.findByLabelText("Schedule name");
+    fireEvent.change(nameInput, { target: { value: "   " } });
+
+    const submitBtn = screen.getByRole("button", {
+      name: "Save timing & add steps",
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(screen.getByText("Give this schedule a name.")).toBeDefined();
+    });
+  });
+
+  it("shows validation error when name exceeds 191 characters", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditScheduleModal visible={true} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const nameInput = await screen.findByLabelText("Schedule name");
+    nameInput.removeAttribute("maxlength");
+    fireEvent.change(nameInput, { target: { value: "a".repeat(192) } });
+
+    const submitBtn = screen.getByRole("button", {
+      name: "Save timing & add steps",
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Use a name with no more than 191 characters."),
+      ).toBeDefined();
+    });
+  });
+
+  it("shows validation errors when custom cron fields are empty", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditScheduleModal
+            visible={true}
+            schedule={{
+              ...mockSchedule,
+              cron: {
+                minute: "30",
+                hour: "",
+                dayOfMonth: "",
+                month: "",
+                dayOfWeek: "",
+              },
+            }}
+          />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const nameInput = await screen.findByLabelText("Schedule name");
+    fireEvent.change(nameInput, { target: { value: "Custom Cron Schedule" } });
+
+    const freqSelect = document.getElementById("schedule-frequency-native");
+    expect(freqSelect).toBeDefined();
+    fireEvent.change(freqSelect!, { target: { value: "custom" } });
+
+    const submitBtn = screen.getByRole("button", {
+      name: "Save changes",
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Enter a cron value, or * for any.").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it("handles error during submission", async () => {
+    vi.mocked(createOrUpdateSchedule).mockRejectedValueOnce(
+      new Error("Failed to save schedule"),
+    );
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditScheduleModal visible={true} schedule={mockSchedule} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const submitBtn = await screen.findByRole("button", {
+      name: "Save changes",
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(createOrUpdateSchedule).toHaveBeenCalled();
+    });
+  });
+
+  it("shows timing errors when basic timing values are invalid", async () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <EditScheduleModal visible={true} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const nameInput = await screen.findByLabelText("Schedule name");
+    fireEvent.change(nameInput, { target: { value: "Invalid Time Schedule" } });
+
+    const timeInput = await screen.findByLabelText("Time (24-hour)");
+    fireEvent.change(timeInput, { target: { value: "99:99" } });
+
+    const submitBtn = screen.getByRole("button", {
+      name: "Save timing & add steps",
+    });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Choose a time in 24-hour format, such as 03:00."),
+      ).toBeDefined();
+    });
+  });
 });

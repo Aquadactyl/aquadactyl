@@ -33,7 +33,7 @@ describe("Tooltip component", () => {
   });
 
   it("handles object and number delay configurations and placement prop", () => {
-    const { getByText } = render(
+    const { getByText, rerender } = render(
       <Tooltip
         content="Right aligned popup"
         placement="right-start"
@@ -44,5 +44,19 @@ describe("Tooltip component", () => {
     );
 
     expect(getByText("Right tooltip")).toBeDefined();
+
+    rerender(
+      <Tooltip content="Numeric delay" delay={50}>
+        <button>Numeric tooltip</button>
+      </Tooltip>,
+    );
+    expect(getByText("Numeric tooltip")).toBeDefined();
+
+    rerender(
+      <Tooltip content="Rest delay" rest={25}>
+        <button>Rest tooltip</button>
+      </Tooltip>,
+    );
+    expect(getByText("Rest tooltip")).toBeDefined();
   });
 });
