@@ -22,4 +22,11 @@ const Can = ({ action, matchAny = false, renderOnError, children }: Props) => {
   );
 };
 
-export default memo(Can, isEqual);
+export default memo(Can, (prevProps, nextProps) => {
+  return (
+    prevProps.matchAny === nextProps.matchAny &&
+    prevProps.children === nextProps.children &&
+    prevProps.renderOnError === nextProps.renderOnError &&
+    isEqual(prevProps.action, nextProps.action)
+  );
+});
