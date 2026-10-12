@@ -20,6 +20,20 @@
         if (previewUrls[area]) URL.revokeObjectURL(previewUrls[area]);
         delete previewUrls[area];
     }
+    function savedImageUrl(value, area) {
+        if (typeof value !== 'string') return '';
+        var prefix = area === 'logo' ? '/storage/branding/' : '/storage/backgrounds/' + area + '/';
+        if (!value.startsWith(prefix)) return '';
+        var filename = value.slice(prefix.length);
+        // Uploads are re-encoded by the server as UUID-named PNGs. Never accept
+        // arbitrary schemes, external hosts, markup or paths from DOM/API data.
+        if (filename.length !== 40 || !/^[a-f0-9]{8}(?:-[a-f0-9]{4}){3}-[a-f0-9]{12}\.png$/.test(filename)) return '';
+        return prefix + encodeURIComponent(filename);
+    }
+    function previewImageUrl(area, saved) {
+        // Only URLs created by this editor may use the blob scheme.
+        return previewUrls[area] ? encodeURI(previewUrls[area]) : savedImageUrl(saved, area);
+    }
     function selectTab(area, focus) {
         editor.querySelectorAll('[data-preview-tab]').forEach(function (tab) {
             var selected = tab.dataset.previewTab === area;
@@ -56,17 +70,17 @@
             swatch.setAttribute('aria-pressed', swatch.dataset.color === color ? 'true' : 'false');
         });
         var name = document.getElementById('site-name').value;
-        var customLogo = previewUrls.logo || editor.dataset.logo;
+        var customLogo = previewImageUrl('logo', editor.dataset.logo);
         var showName = document.getElementById('show-site-name').value === 'true';
         var loginBrand = login.querySelector('.appearance-preview-logo');
         var loginImage = loginBrand.querySelector('img');
-        loginImage.src = customLogo || editor.dataset.defaultLogo;
+        loginImage.src = customLogo || '/branding/aquadactyl-wordmark.png';
         loginImage.hidden = !customLogo && name !== 'Aquadactyl';
         loginBrand.querySelector('.preview-site-name').textContent = (!customLogo && name !== 'Aquadactyl') || showName ? name : '';
         var clientBrand = client.querySelector('.preview-client-brand');
         clientBrand.querySelector('img').src = customLogo || '/branding/aquadactyl-emblem.png';
         clientBrand.querySelector('.preview-site-name').textContent = !customLogo || showName ? name : '';
-        document.getElementById('site-logo-preview').src = customLogo || editor.dataset.defaultLogo;
+        document.getElementById('site-logo-preview').src = customLogo || '/branding/aquadactyl-wordmark.png';
         ['login', 'client'].forEach(function (area) {
             var preview = area === 'login' ? login : client;
             var background = preview.querySelector('.appearance-preview-background');
@@ -74,7 +88,7 @@
             var overlay = document.getElementById(area + '-overlay').value;
             document.getElementById(area + '-blur-value').textContent = blur + 'px';
             document.getElementById(area + '-overlay-value').textContent = overlay + '%';
-            var url = previewUrls[area] || preview.dataset.background;
+            var url = previewImageUrl(area, preview.dataset.background);
             background.style.backgroundImage = url ? 'url(' + JSON.stringify(url) + ')' : '';
             preview.dataset.hasBackground = url ? 'true' : 'false';
             background.style.filter = 'blur(' + (Number(blur) / 3) + 'px)';
@@ -128,6 +142,7 @@
     editor.querySelectorAll('[data-preview-area]').forEach(function (input) {
         input.addEventListener('change', function () {
             var area = input.dataset.previewArea;
+            if (!['logo', 'login', 'client'].includes(area)) return;
             release(area);
             var file = input.files[0];
             if (file && ['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) previewUrls[area] = URL.createObjectURL(file);
@@ -141,6 +156,7 @@
             if (!window.fetch) return;
             event.preventDefault();
             var area = imageForm.dataset.imageAction;
+            if (!['logo', 'login', 'client'].includes(area)) return;
             if (pending[area]) return;
             var feedback = editor.querySelector('[data-image-status="' + area + '"]');
             var controls = editor.querySelectorAll('[data-image-action="' + area + '"] button, [data-image-action="' + area + '"] input[type="file"]');
@@ -162,11 +178,13 @@
                     var errors = result.errors;
                     throw new Error(Array.isArray(errors) && errors[0] ? errors[0].detail : result.message || editor.dataset.uploadError);
                 }
-                if (area === 'logo') editor.dataset.logo = result.url || '';
-                else (area === 'login' ? login : client).dataset.background = result.url || '';
+                var uploadedUrl = savedImageUrl(result.url, area);
+                if (result.url && !uploadedUrl) throw new Error(editor.dataset.uploadError);
+                if (area === 'logo') editor.dataset.logo = uploadedUrl;
+                else (area === 'login' ? login : client).dataset.background = uploadedUrl;
                 release(area);
                 editor.querySelector('[data-preview-area="' + area + '"]').value = '';
-                editor.querySelector('[data-image-remove="' + area + '"]').hidden = !result.url;
+                editor.querySelector('[data-image-remove="' + area + '"]').hidden = !uploadedUrl;
                 feedback.textContent = result.message;
                 update();
             } catch (error) {

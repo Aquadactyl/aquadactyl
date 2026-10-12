@@ -206,7 +206,13 @@ describe("components/server/files/MassActionsBar", () => {
 
     const dialog = screen.getByTestId("confirm-dialog");
     expect(dialog).toBeDefined();
-    expect(screen.getByText(/Are you sure you want to delete/)).toBeDefined();
+    expect(
+      within(dialog).getByText(
+        /These files and their contents cannot be recovered/,
+      ),
+    ).toBeDefined();
+    expect(within(dialog).getByText("file1.txt")).toBeDefined();
+    expect(within(dialog).getByText("file2.txt")).toBeDefined();
 
     const confirmBtn = within(dialog).getByRole("button", { name: "Delete" });
     fireEvent.click(confirmBtn);

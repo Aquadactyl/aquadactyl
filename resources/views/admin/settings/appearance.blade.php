@@ -31,7 +31,7 @@
             <button type="submit" form="appearance-settings" class="btn btn-primary" @disabled($disabled)>{{ __('admin/ui.save') }}</button>
         </div>
     </div>
-    <div class="appearance-editor" id="appearance-editor" data-logo="{{ $logoUrl ?? '' }}" data-default-logo="/branding/aquadactyl-wordmark.png" data-upload-error="{{ __('admin/custom.upload_error') }}">
+    <div class="appearance-editor" id="appearance-editor" data-logo="{{ $logoUrl ?? '' }}" data-upload-error="{{ __('admin/custom.upload_error') }}">
         <div class="appearance-controls">
             <section class="box" id="appearance-branding">
                 <div class="box-header with-border"><h3 class="box-title">{{ __('admin/custom.branding') }}</h3></div>
