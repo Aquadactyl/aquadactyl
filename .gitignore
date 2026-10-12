@@ -26,6 +26,8 @@ public/assets/manifest.json
 # for image related files
 /misc
 coverage.xml
+coverage/
+coverage-*/
 resources/lang/locales.js
 .phpunit.result.cache
 

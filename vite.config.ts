@@ -78,5 +78,15 @@ export default defineConfig({
         inline: ["boring-avatars"],
       },
     },
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json", "html"],
+      include: ["resources/scripts/**/*.{ts,tsx}"],
+      exclude: [
+        "resources/scripts/**/*.{test,spec}.{ts,tsx}",
+        "resources/scripts/setup-tests.ts",
+        "**/*.d.ts",
+      ],
+    },
   },
 });
