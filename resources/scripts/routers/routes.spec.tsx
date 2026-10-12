@@ -51,11 +51,14 @@ vi.mock("@/components/server/files/FileEditContainer", () => ({
 vi.mock("@/components/server/schedules/ScheduleEditContainer", () => ({
   default: () => <div>ScheduleEdit</div>,
 }));
+vi.mock("@/components/server/files/TrashContainer", () => ({
+  default: () => <div>Trash</div>,
+}));
 
 describe("routers/routes", () => {
   it("defines account and server routes and loads all lazy components", async () => {
     expect(routes.account.length).toBe(4);
-    expect(routes.server.length).toBe(12);
+    expect(routes.server.length).toBe(13);
 
     for (const route of [...routes.account, ...routes.server]) {
       const Component = route.component;

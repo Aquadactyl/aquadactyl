@@ -16,6 +16,12 @@ import useFileManagerQuery from "@/plugins/useFileManagerQuery";
 vi.mock("@/api/server/files/compressFiles");
 vi.mock("@/api/server/files/deleteFiles");
 vi.mock("@/plugins/useFileManagerQuery");
+vi.mock("@/plugins/usePanelTranslation", () => ({
+  default: () => ({
+    t: (_key: string, fallback: string, values: Record<string, unknown> = {}) =>
+      fallback.replace(/\{\{(\w+)\}\}/g, (_match, key) => String(values[key])),
+  }),
+}));
 
 vi.mock("@/components/elements/Fade", () => ({
   default: ({ in: show, children }: any) =>

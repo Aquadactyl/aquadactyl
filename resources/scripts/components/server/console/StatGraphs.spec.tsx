@@ -12,6 +12,7 @@ const mockNetPush = vi.fn();
 const mockNetClear = vi.fn();
 
 vi.mock("@/components/server/console/chart", () => ({
+  primaryChartStyle: { stroke: "#fff", fill: "#fff" },
   UPlotChart: ({ options }: any) => (
     <div data-testid="uplot-chart" data-height={options?.height} />
   ),

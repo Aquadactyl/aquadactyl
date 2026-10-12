@@ -64,7 +64,9 @@ vi.mock("@xterm/addon-unicode11", () => ({
 }));
 
 vi.mock("@/plugins/XtermScrollDownHelperAddon", () => ({
-  ScrollDownHelperAddon: class {},
+  ScrollDownHelperAddon: class {
+    setLabel = vi.fn();
+  },
 }));
 
 vi.mock("@/components/elements/SpinnerOverlay", () => ({
