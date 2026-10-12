@@ -8,6 +8,10 @@ import deleteScheduleTask from "@/api/server/schedules/deleteScheduleTask";
 
 vi.mock("@/api/server/schedules/deleteScheduleTask");
 
+vi.mock("@/components/elements/SpinnerOverlay", () => ({
+  default: () => null,
+}));
+
 vi.mock("@/components/server/schedules/TaskDetailsModal", () => ({
   default: ({ visible, onModalDismissed }: any) =>
     visible ? (
@@ -115,10 +119,10 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
       </ServerContext.Provider>,
     );
 
-    expect(await screen.findByText("Send Command")).toBeDefined();
+    expect(await screen.findByText(/Send console command/)).toBeDefined();
     expect(screen.getByText("say Server restarting soon!")).toBeDefined();
-    expect(screen.getByLabelText("Edit step")).toBeDefined();
-    expect(screen.getByLabelText("Delete step")).toBeDefined();
+    expect(screen.getByLabelText("Edit scheduled task")).toBeDefined();
+    expect(screen.getByLabelText("Delete scheduled task")).toBeDefined();
   });
 
   it("opens edit modal when clicking edit button", async () => {
@@ -130,7 +134,7 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
       </ServerContext.Provider>,
     );
 
-    const editBtn = await screen.findByLabelText("Edit step");
+    const editBtn = await screen.findByLabelText("Edit scheduled task");
     fireEvent.click(editBtn);
 
     expect(screen.getByTestId("task-details-modal")).toBeDefined();
@@ -147,7 +151,7 @@ describe("components/server/schedules/ScheduleTaskRow", () => {
       </ServerContext.Provider>,
     );
 
-    const deleteBtn = await screen.findByLabelText("Delete step");
+    const deleteBtn = await screen.findByLabelText("Delete scheduled task");
     fireEvent.click(deleteBtn);
 
     expect(screen.getByTestId("confirmation-modal")).toBeDefined();
