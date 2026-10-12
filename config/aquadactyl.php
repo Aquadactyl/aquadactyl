@@ -11,6 +11,11 @@ return [
         'privacy_mode' => true,
         'server_quick_actions' => true,
         'registration' => false,
+        'console_log_sharing' => false,
+        'file_trash' => false,
+    ],
+    'trash' => [
+        'retention_days' => 7,
     ],
     'appearance' => [
         'primary_color' => '#237c7f',

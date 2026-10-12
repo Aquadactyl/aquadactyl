@@ -11,6 +11,8 @@ import StatGraphs from "@/components/server/console/StatGraphs";
 import PowerButtons from "@/components/server/console/PowerButtons";
 import ServerDetailsBlock from "@/components/server/console/ServerDetailsBlock";
 import { Alert } from "@/components/elements/alert";
+import CopyOnClick from "@/components/elements/CopyOnClick";
+import { Copy, Server } from "lucide-react";
 
 import BeforeContent from "@blueprint/components/Server/Terminal/BeforeContent";
 import AfterContent from "@blueprint/components/Server/Terminal/AfterContent";
@@ -68,12 +70,20 @@ const ServerConsoleContainer = () => {
           >
             {name}
           </h1>
-          <p
-            className={"mb-1 font-mono text-xs break-all text-gray-400"}
-            title={t("console.server_uuid", "Server UUID")}
-          >
-            {uuid}
-          </p>
+          <CopyOnClick text={uuid} showInNotification={false}>
+            <button
+              type="button"
+              className={
+                "hover:text-primary-300 focus-visible:outline-primary-300 mb-1 flex max-w-full items-center gap-2 rounded-sm text-left font-mono text-xs break-all text-gray-400 focus-visible:outline-2 focus-visible:outline-offset-2"
+              }
+              title={t("console.copy_server_uuid", "Copy server UUID")}
+              aria-label={t("console.copy_server_uuid", "Copy server UUID")}
+            >
+              <Server className="h-3 w-3 shrink-0" aria-hidden />
+              <span>{uuid}</span>
+              <Copy className="h-3 w-3 shrink-0" aria-hidden />
+            </button>
+          </CopyOnClick>
           <p className={"line-clamp-2 text-sm text-gray-400"}>{description}</p>
         </div>
         <div className={"col-span-4 self-end sm:col-span-2 lg:col-span-1"}>
@@ -86,7 +96,7 @@ const ServerConsoleContainer = () => {
         </div>
       </div>
       <div className={"mb-4 grid grid-cols-4 gap-2 sm:gap-4"}>
-        <div className={"col-span-4 flex lg:col-span-3"}>
+        <div className={"col-span-4 flex min-w-0 lg:col-span-3"}>
           <Spinner.Suspense>
             <Console />
           </Spinner.Suspense>

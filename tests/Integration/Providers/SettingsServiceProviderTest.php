@@ -43,6 +43,28 @@ test('a saved telemetry consent overrides the initial environment default in UI 
     expect(config('aquadactyl.telemetry.enabled'))->toBeFalse();
 });
 
+test('saved branding overrides container defaults and literal site names stay strings', function () use ($setEnv, $bootProvider) {
+    $settings = app(SettingsRepositoryInterface::class);
+    $originalName = getenv('APP_NAME');
+    try {
+        app()->detectEnvironment(fn () => 'local');
+        $setEnv('APP_NAME', 'Container Default');
+        $setEnv('AQUADACTYL_BRANDING_SHOW_NAME', 'false');
+        $settings->set('settings::aquadactyl:branding:show_name', 'true');
+        foreach (['Custom Panel', 'true', 'null'] as $name) {
+            $settings->set('settings::app:name', $name);
+            $bootProvider();
+            expect(config('app.name'))->toBe($name)->and(config('aquadactyl.branding.show_name'))->toBeTrue();
+        }
+    } finally {
+        app()->detectEnvironment(fn () => 'testing');
+        $setEnv('APP_NAME', $originalName === false ? null : $originalName);
+        $setEnv('AQUADACTYL_BRANDING_SHOW_NAME', null);
+        $settings->forget('settings::app:name');
+        $settings->forget('settings::aquadactyl:branding:show_name');
+    }
+});
+
 test('environment variables override database settings for recaptcha', function () use ($setEnv, $bootProvider) {
     $settingsRepo = app(SettingsRepositoryInterface::class);
 

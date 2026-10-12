@@ -9,18 +9,20 @@ import { ScrollDownHelperAddon } from "@/plugins/XtermScrollDownHelperAddon";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import { ServerContext } from "@/state/server";
 import { usePermissions } from "@/plugins/usePermissions";
-import useEventListener from "@/plugins/useEventListener";
-import { debounce } from "es-toolkit";
 import { usePersistedState } from "@/plugins/usePersistedState";
 import { SocketEvent, SocketRequest } from "@/components/server/events";
 import clsx from "clsx";
 import { ChevronsRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import CommandRow from "@blueprint/components/Server/Terminal/CommandRow";
 
 import "@xterm/xterm/css/xterm.css";
 import { th } from "@/lib/theme";
 import { formatConsoleOutput } from "./formatConsoleOutput";
+import ConsoleLogShareButton from "./ConsoleLogShareButton";
+import getConsoleLogSnapshot from "./getConsoleLogSnapshot";
+import { useAppStore } from "@/state";
 
 const theme = {
   background: "#0c1116",
@@ -59,16 +61,25 @@ export default () => {
   const TERMINAL_PRELUDE = "\u001b[1m\u001b[33mcontainer@aquadactyl~ \u001b[0m";
   const ref = useRef<HTMLDivElement>(null);
   const terminal = useMemo(() => new Terminal({ ...terminalProps }), []);
-  const fitAddon = new FitAddon();
+  const { t } = useTranslation("panel");
+  const fitAddon = useMemo(() => new FitAddon(), []);
   const searchAddon = new SearchAddon();
   const searchBar = new SearchBarAddon({ searchAddon });
   const webLinksAddon = new WebLinksAddon();
   const unicode11Addon = new Unicode11Addon();
-  const scrollDownHelperAddon = new ScrollDownHelperAddon();
+  const scrollDownHelperAddon = useMemo(() => new ScrollDownHelperAddon(), []);
+  useEffect(() => {
+    scrollDownHelperAddon.setLabel(
+      t("console.scroll_to_latest", "Scroll to latest output"),
+    );
+  }, [scrollDownHelperAddon, t]);
   const { connected, instance } = ServerContext.useStoreState(
     (state) => state.socket,
   );
   const [canSendCommands] = usePermissions(["control.console"]);
+  const sharingEnabled = useAppStore(
+    (state) => state.settings.data?.features?.consoleLogSharing === true,
+  );
   const serverId = ServerContext.useStoreState(
     (state) => state.server.data!.id,
   );
@@ -179,14 +190,21 @@ export default () => {
     }
   }, [terminal, connected]);
 
-  useEventListener(
-    "resize",
-    debounce(() => {
-      if (terminal.element) {
-        fitAddon.fit();
-      }
-    }, 100),
-  );
+  useEffect(() => {
+    if (!ref.current || !terminal.element) return;
+
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => fitAddon.fit());
+    });
+    observer.observe(ref.current);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [terminal, fitAddon, connected]);
 
   useEffect(() => {
     const listeners: Record<string, (s: string) => void> = {
@@ -240,7 +258,9 @@ export default () => {
       {canSendCommands && (
         <div className={clsx("relative", "overflows_container")}>
           <input
-            className={clsx("peer", "command_input")}
+            className={clsx("peer", "command_input", {
+              console_share_input: sharingEnabled,
+            })}
             type={"text"}
             placeholder={"Type a command..."}
             aria-label={"Console command input."}
@@ -258,6 +278,9 @@ export default () => {
             <ChevronsRight className={"h-4 w-4"} />
           </div>
           <CommandRow />
+          <ConsoleLogShareButton
+            getLogs={() => getConsoleLogSnapshot(terminal)}
+          />
         </div>
       )}
     </div>

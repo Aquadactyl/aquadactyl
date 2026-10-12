@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React, { useEffect } from "react";
+import { MotionConfig } from "motion/react";
 import { describe, expect, it, vi } from "vitest";
 import NewDirectoryButton from "@/components/server/files/NewDirectoryButton";
 import { ServerContext } from "@/state/server";
@@ -51,9 +52,13 @@ const Inner = ({ children }: { children: React.ReactNode }) => {
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => {
   return (
-    <ServerContext.Provider>
-      <Inner>{children}</Inner>
-    </ServerContext.Provider>
+    // This test verifies directory actions; static motion avoids native animation
+    // promises being canceled when happy-dom cleans up the dialog.
+    <MotionConfig isStatic>
+      <ServerContext.Provider>
+        <Inner>{children}</Inner>
+      </ServerContext.Provider>
+    </MotionConfig>
   );
 };
 

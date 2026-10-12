@@ -85,7 +85,12 @@
       "rename_other": ":count Dateien in :directory umbenannt",
       "write": "Neuen Inhalt in :file geschrieben",
       "upload": "Datei-Upload gestartet",
-      "uploaded": ":directory:file hochgeladen"
+      "uploaded": ":directory:file hochgeladen",
+      "trash": {
+        "move": ":files in den Papierkorb verschoben",
+        "restore": ":file aus dem Papierkorb wiederhergestellt",
+        "delete": ":file endgültig aus dem Papierkorb gelöscht"
+      }
     },
     "sftp": {
       "denied": "SFTP-Zugriff aufgrund fehlender Berechtigungen blockiert",

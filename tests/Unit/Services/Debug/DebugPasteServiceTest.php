@@ -91,6 +91,13 @@ test('non-web paste URLs are rejected', function () {
     expect(fn () => $this->debug->upload('test'))->toThrow(RuntimeException::class, 'valid paste URL');
 });
 
+test('paste links cannot redirect users to another service or include credentials', function (string $url) {
+    Http::swap(new Illuminate\Http\Client\Factory());
+    Http::preventStrayRequests();
+    Http::fake(['https://debug.example.invalid/paste' => Http::response(['url' => $url])]);
+    expect(fn () => $this->debug->upload('test'))->toThrow(RuntimeException::class, 'valid paste URL');
+})->with(['https://other.example.invalid/paste/test', 'http://debug.example.invalid/paste/test', 'https://user:password@debug.example.invalid/paste/test']);
+
 test('supported expirations use the public API duration format', function (int $seconds, string $duration) {
     $this->debug->upload('test', $seconds);
     Http::assertSent(fn ($request) => $request['expiresIn'] === $duration);

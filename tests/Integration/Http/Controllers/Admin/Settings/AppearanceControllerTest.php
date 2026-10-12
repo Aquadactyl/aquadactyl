@@ -19,6 +19,40 @@ afterEach(function () {
     foreach (array_keys(config('aquadactyl.appearance')) as $key) {
         app(SettingsRepositoryInterface::class)->forget('settings::aquadactyl:appearance:' . $key);
     }
+    foreach (['app:name', 'aquadactyl:branding:show_name', 'aquadactyl:branding:logo_path'] as $key) {
+        app(SettingsRepositoryInterface::class)->forget('settings::' . $key);
+    }
+});
+
+test('branding controls live in appearance and general saves preserve them', function () {
+    $this->actingAs($this->admin)->get('/admin/settings/appearance')->assertOk()
+        ->assertSee('id="site-name" form="appearance-settings"', false)->assertSee('id="site-logo"', false);
+    $this->get('/admin/settings')->assertOk()->assertDontSee('id="site-name"', false)->assertDontSee('id="site-logo"', false);
+    $this->patch('/admin/settings/appearance', [...$this->appearance, 'app:name' => 'Custom Panel', 'aquadactyl:branding:show_name' => 'true'])
+        ->assertRedirect('/admin/settings/appearance');
+    $this->patch('/admin/settings', ['app:locale' => 'en', 'pterodactyl:auth:2fa_required' => '0'])->assertRedirect('/admin/settings');
+    app()->call([new SettingsServiceProvider(app()), 'boot']);
+    expect(config('app.name'))->toBe('Custom Panel')->and(config('aquadactyl.branding.show_name'))->toBeTrue();
+    $this->get('/')->assertOk()->assertSee('"name":"Custom Panel"', false)->assertSee('"showNameWithLogo":true', false);
+});
+
+test('invalid branding rejects the entire appearance update', function (array $branding) {
+    $this->actingAs($this->admin)->patchJson('/admin/settings/appearance', [...$this->appearance, ...$branding])->assertUnprocessable();
+    $this->assertDatabaseMissing('settings', ['key' => 'settings::aquadactyl:appearance:primary_color']);
+})->with([[['app:name' => '']], [['app:name' => str_repeat('a', 192)]], [['aquadactyl:branding:show_name' => 'yes']]]);
+
+test('image actions return fresh public URLs without submitting draft settings', function () {
+    $this->actingAs($this->admin)->withHeaders(['Accept' => 'application/json', 'X-Requested-With' => 'XMLHttpRequest']);
+    $response = $this->post('/admin/settings/logo', ['logo' => UploadedFile::fake()->image('logo.png')])->assertOk();
+    $path = Setting::query()->where('key', 'settings::aquadactyl:branding:logo_path')->value('value');
+    $response->assertJsonPath('url', '/storage/' . $path)->assertJsonStructure(['url', 'message']);
+    $this->post('/admin/settings/appearance/background/login', ['background' => UploadedFile::fake()->image('bg.png')])->assertOk()
+        ->assertJsonPath('url', '/storage/' . Setting::query()->where('key', 'settings::aquadactyl:appearance:login_background_path')->value('value'));
+    $this->delete('/admin/settings/logo')->assertOk()->assertJsonPath('url', null);
+    $this->delete('/admin/settings/appearance/background/login')->assertOk()->assertJsonPath('url', null);
+    $this->assertDatabaseMissing('settings', ['key' => 'settings::app:name']);
+    $this->assertDatabaseMissing('settings', ['key' => 'settings::aquadactyl:appearance:primary_color']);
+    expect(Storage::disk('public')->allFiles())->toBe([]);
 });
 
 test('appearance and background writes require an administrator', function () {
@@ -89,6 +123,8 @@ test('environment only mode prevents appearance uploads removals and saves', fun
     $this->actingAs($this->admin)->patchJson('/admin/settings/appearance', $this->appearance)->assertStatus(400);
     $this->post('/admin/settings/appearance/background/login', ['background' => UploadedFile::fake()->image('image.png')])->assertStatus(400);
     $this->delete('/admin/settings/appearance/background/client')->assertStatus(400);
+    $this->post('/admin/settings/logo', ['logo' => UploadedFile::fake()->image('logo.png')])->assertStatus(400);
+    $this->delete('/admin/settings/logo')->assertStatus(400);
     expect(Storage::disk('public')->allFiles())->toBe([]);
 });
 

@@ -77,6 +77,7 @@ Route::group([
     Route::get('/activity', Client\Servers\ActivityLogController::class)->name('api:client:server.activity');
 
     Route::post('/command', [Client\Servers\CommandController::class, 'index']);
+    Route::post('/console/share', Client\Servers\ConsoleLogShareController::class)->middleware('throttle:3,1,console-share:');
     Route::post('/power', [Client\Servers\PowerController::class, 'index']);
 
     Route::group(['prefix' => '/databases'], function () {
@@ -87,7 +88,14 @@ Route::group([
         Route::delete('/{database}', [Client\Servers\DatabaseController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/files'], function () {
+    Route::group(['prefix' => '/trash'], function () {
+        Route::get('/', [Client\Servers\FileTrashController::class, 'index']);
+        Route::post('/', [Client\Servers\FileTrashController::class, 'store'])->middleware('throttle:20,1,file-trash:');
+        Route::post('/{item}/restore', [Client\Servers\FileTrashController::class, 'restore'])->name('api:client:server.trash.restore');
+        Route::delete('/{item}', [Client\Servers\FileTrashController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => '/files', 'middleware' => [Pterodactyl\Http\Middleware\Api\Client\Server\ProtectTrashDirectory::class]], function () {
         Route::get('/list', [Client\Servers\FileController::class, 'directory']);
         Route::get('/contents', [Client\Servers\FileController::class, 'contents']);
         Route::get('/download', [Client\Servers\FileController::class, 'download']);

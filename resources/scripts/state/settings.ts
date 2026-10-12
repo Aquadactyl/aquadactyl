@@ -18,7 +18,10 @@ export interface SiteSettings {
     privacyMode: boolean;
     serverQuickActions: boolean;
     registration: boolean;
+    consoleLogSharing?: boolean;
+    fileTrash?: boolean;
   };
+  trash?: { retentionDays: number };
   recaptcha: {
     enabled: boolean;
     provider?: "recaptcha" | "hcaptcha" | "turnstile";

@@ -251,7 +251,16 @@
     "server_uuid": "Server-UUID",
     "the_node_of_this_server_is_currently_under_maintenance_and": "Der Knoten dieses Servers wird derzeit gewartet. Alle Aktionen sind nicht verfügbar.",
     "this_server_is_currently_running_its_installation_process_and_most": "Dieser Server wird derzeit installiert. Die meisten Aktionen sind nicht verfügbar.",
-    "this_server_is_currently_being_transferred_to_another_node_and": "Dieser Server wird auf einen anderen Knoten übertragen. Alle Aktionen sind nicht verfügbar."
+    "this_server_is_currently_being_transferred_to_another_node_and": "Dieser Server wird auf einen anderen Knoten übertragen. Alle Aktionen sind nicht verfügbar.",
+    "copy_server_uuid": "Server-UUID kopieren",
+    "scroll_to_latest": "Zur neuesten Konsolenausgabe scrollen",
+    "share_logs": "Bereinigte Konsolenprotokolle teilen",
+    "share_logs_help": "Bereinigte Konsolenprotokolle an debug.euphoriadevelopment.uk senden (Ablauf nach 24 Stunden).",
+    "share_title": "Link zum Konsolenprotokoll",
+    "share_description": "Deine bereinigten Protokolle sind 24 Stunden verfügbar. Nur du siehst diesen Link hier; jeder, mit dem du ihn teilst, kann die Protokolle lesen. Die Bereinigung kann unvollständig sein: Prüfe die Protokolle, bevor du sie teilst.",
+    "copy_log_link": "Link kopieren",
+    "share_empty": "Es gibt noch keine Konsolenprotokolle zum Teilen.",
+    "share_error": "Die Konsolenprotokolle konnten nicht geteilt werden. Bitte versuche es später erneut."
   },
   "databases": {
     "databases": "Datenbanken",
@@ -261,6 +270,7 @@
     "databases_cannot_be_created_for_this_server": "Für diesen Server können keine Datenbanken erstellt werden."
   },
   "files": {
+    "actions_for_file": "Aktionen für {{name}}",
     "file_manager": "Dateiverwaltung",
     "new_file": "Neue Datei",
     "this_directory_seems_to_be_empty": "Dieser Ordner scheint leer zu sein.",
@@ -402,5 +412,42 @@
     "server_name": "Server :name",
     "open_server": ":name öffnen",
     "open_node": "Server auf :node öffnen"
+  },
+  "trash": {
+    "deleted_items": "Gelöschte Elemente",
+    "selected_items": "Ausgewählte Elemente",
+    "storage_help": "Elemente bleiben bis zu ihrem Ablaufdatum auf diesem Server und zählen weiterhin zum belegten Speicherplatz.",
+    "empty_help": "Dateien und Ordner, die Sie in den Papierkorb verschieben, werden hier angezeigt.",
+    "loading": "Papierkorb wird geladen…",
+    "pending_label": "Ausstehend",
+    "expired": "Abgelaufen",
+    "available": "Wiederherstellbar",
+    "title": "Papierkorb",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "permanently_delete": "Endgültig löschen",
+    "move_to_trash": "In den Papierkorb",
+    "restore": "Wiederherstellen",
+    "choose_single": "Möchtest du diese Datei endgültig löschen oder in den Papierkorb verschieben?",
+    "choose_multiple": "Möchtest du diese Dateien endgültig löschen oder in den Papierkorb verschieben?",
+    "permanent_warning": "Dies ist endgültig. Diese Dateien und ihre Inhalte können nicht wiederhergestellt werden.",
+    "retention_help": "Elemente im Papierkorb können {{days}} Tage lang wiederhergestellt werden. Sie belegen weiterhin Speicherplatz auf diesem Server.",
+    "selection_limit": "Wähle höchstens 100 Elemente gleichzeitig aus, um sie in den Papierkorb zu verschieben.",
+    "more_items": "und {{count}} weitere",
+    "disabled": "Diese Seite ist nicht verfügbar.",
+    "back_to_files": "Zurück zu den Dateien",
+    "description": "Stelle Elemente am ursprünglichen Speicherort wieder her oder lösche sie endgültig. Abgelaufene Elemente werden automatisch entfernt.",
+    "retry": "Erneut versuchen",
+    "refresh": "Aktualisieren",
+    "deleted_at": "Gelöscht: {{date}}",
+    "expires_at": "Läuft ab: {{date}}",
+    "pending": "Verschieben wartet auf Bestätigung. Aktualisiere die Ansicht oder versuche es erneut, sobald Wings erreichbar ist.",
+    "empty": "Der Papierkorb dieses Servers ist leer.",
+    "previous": "Zurück",
+    "next": "Weiter",
+    "page": "Seite {{page}} von {{pages}}",
+    "purge_warning": "{{name}} endgültig löschen? Dies kann nicht rückgängig gemacht werden.",
+    "moving": "Dateien werden in den Papierkorb verschoben...",
+    "deleting": "Dateien werden gelöscht..."
   }
 }

@@ -251,7 +251,16 @@
     "server_uuid": "Server UUID",
     "the_node_of_this_server_is_currently_under_maintenance_and": "The node of this server is currently under maintenance and all actions are unavailable.",
     "this_server_is_currently_running_its_installation_process_and_most": "This server is currently running its installation process and most actions are unavailable.",
-    "this_server_is_currently_being_transferred_to_another_node_and": "This server is currently being transferred to another node and all actions are unavailable."
+    "this_server_is_currently_being_transferred_to_another_node_and": "This server is currently being transferred to another node and all actions are unavailable.",
+    "copy_server_uuid": "Copy server UUID",
+    "scroll_to_latest": "Scroll to latest output",
+    "share_logs": "Share redacted console logs",
+    "share_logs_help": "Upload redacted console logs to debug.euphoriadevelopment.uk (expires after 24 hours).",
+    "share_title": "Console log link",
+    "share_description": "Your redacted logs are available for 24 hours. Only you see this link here; anyone you share it with can read the paste. Redaction is best effort: check the paste before sharing it.",
+    "copy_log_link": "Copy link",
+    "share_empty": "There are no console logs to share yet.",
+    "share_error": "Unable to share console logs. Please try again later."
   },
   "databases": {
     "databases": "Databases",
@@ -261,6 +270,7 @@
     "databases_cannot_be_created_for_this_server": "Databases cannot be created for this server."
   },
   "files": {
+    "actions_for_file": "Actions for {{name}}",
     "file_manager": "File Manager",
     "new_file": "New File",
     "this_directory_seems_to_be_empty": "This directory seems to be empty.",
@@ -310,7 +320,7 @@
   },
   "users": {
     "users": "Users",
-    "it_looks_like_you_don_apos_t_have_any_subusers": "It looks like you don&apos;t have any subusers."
+    "it_looks_like_you_don_apos_t_have_any_subusers": "It looks like you don't have any subusers."
   },
   "backups": {
     "backups": "Backups",
@@ -328,7 +338,7 @@
   },
   "schedule_edit": {
     "schedules": "Schedules",
-    "larr_all_schedules": "&larr; All schedules",
+    "larr_all_schedules": "← All schedules",
     "panel_timezone": "Panel timezone:",
     "last_run": "Last run",
     "next_run": "Next run",
@@ -402,5 +412,42 @@
     "server_name": "Server :name",
     "open_server": "Open :name",
     "open_node": "Open server on :node"
+  },
+  "trash": {
+    "deleted_items": "Deleted items",
+    "selected_items": "Selected items",
+    "storage_help": "Items stay on this server until their expiry date and still count towards its disk usage.",
+    "empty_help": "Files and folders you move to trash will appear here.",
+    "loading": "Loading trash…",
+    "pending_label": "Pending",
+    "expired": "Expired",
+    "available": "Recoverable",
+    "title": "Trash",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "permanently_delete": "Permanently delete",
+    "move_to_trash": "Move to trash",
+    "restore": "Restore",
+    "choose_single": "Would you like to permanently delete this file or move it to your trash?",
+    "choose_multiple": "Would you like to permanently delete these files or move them to your trash?",
+    "permanent_warning": "This is permanent. These files and their contents cannot be recovered.",
+    "retention_help": "Trashed items can be restored for {{days}} days. They still count towards this server’s disk usage.",
+    "selection_limit": "Select up to 100 items at a time to move to trash.",
+    "more_items": "and {{count}} others",
+    "disabled": "This page is unavailable.",
+    "back_to_files": "Back to files",
+    "description": "Restore items to their original location or permanently delete them. Expired items are removed automatically.",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "deleted_at": "Deleted: {{date}}",
+    "expires_at": "Expires: {{date}}",
+    "pending": "Move pending confirmation. Refresh or retry when Wings is available.",
+    "empty": "Your server trash is empty.",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{page}} of {{pages}}",
+    "purge_warning": "Permanently delete {{name}}? This cannot be undone.",
+    "moving": "Moving files to trash...",
+    "deleting": "Deleting files..."
   }
 }

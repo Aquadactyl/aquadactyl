@@ -251,7 +251,16 @@
     "server_uuid": "UUID du serveur",
     "the_node_of_this_server_is_currently_under_maintenance_and": "Le nœud de ce serveur est en maintenance. Aucune action n’est disponible.",
     "this_server_is_currently_running_its_installation_process_and_most": "Ce serveur est en cours d’installation. La plupart des actions sont indisponibles.",
-    "this_server_is_currently_being_transferred_to_another_node_and": "Ce serveur est en cours de transfert vers un autre nœud. Aucune action n’est disponible."
+    "this_server_is_currently_being_transferred_to_another_node_and": "Ce serveur est en cours de transfert vers un autre nœud. Aucune action n’est disponible.",
+    "copy_server_uuid": "Copier l’UUID du serveur",
+    "scroll_to_latest": "Aller aux dernières lignes de la console",
+    "share_logs": "Partager les journaux expurgés de la console",
+    "share_logs_help": "Envoyer les journaux expurgés à debug.euphoriadevelopment.uk (expiration après 24 heures).",
+    "share_title": "Lien des journaux de la console",
+    "share_description": "Vos journaux expurgés sont disponibles pendant 24 heures. Ce lien ne s’affiche ici que pour vous ; toute personne à qui vous le transmettez peut lire les journaux. L’expurgation peut être incomplète : vérifiez les journaux avant de les partager.",
+    "copy_log_link": "Copier le lien",
+    "share_empty": "Aucun journal de console à partager pour le moment.",
+    "share_error": "Impossible de partager les journaux de la console. Veuillez réessayer plus tard."
   },
   "databases": {
     "databases": "Bases de données",
@@ -261,6 +270,7 @@
     "databases_cannot_be_created_for_this_server": "Il est impossible de créer des bases de données pour ce serveur."
   },
   "files": {
+    "actions_for_file": "Actions pour {{name}}",
     "file_manager": "Gestionnaire de fichiers",
     "new_file": "Nouveau fichier",
     "this_directory_seems_to_be_empty": "Ce dossier semble vide.",
@@ -402,5 +412,42 @@
     "server_name": "Serveur :name",
     "open_server": "Ouvrir :name",
     "open_node": "Ouvrir le serveur sur :node"
+  },
+  "trash": {
+    "deleted_items": "Éléments supprimés",
+    "selected_items": "Éléments sélectionnés",
+    "storage_help": "Les éléments restent sur ce serveur jusqu’à leur date d’expiration et comptent toujours dans son utilisation du disque.",
+    "empty_help": "Les fichiers et dossiers placés dans la corbeille apparaîtront ici.",
+    "loading": "Chargement de la corbeille…",
+    "pending_label": "En attente",
+    "expired": "Expiré",
+    "available": "Récupérable",
+    "title": "Corbeille",
+    "delete": "Supprimer",
+    "cancel": "Annuler",
+    "permanently_delete": "Supprimer définitivement",
+    "move_to_trash": "Mettre à la corbeille",
+    "restore": "Restaurer",
+    "choose_single": "Voulez-vous supprimer définitivement ce fichier ou le mettre à la corbeille ?",
+    "choose_multiple": "Voulez-vous supprimer définitivement ces fichiers ou les mettre à la corbeille ?",
+    "permanent_warning": "Cette suppression est définitive. Ces fichiers et leur contenu ne pourront pas être récupérés.",
+    "retention_help": "Les éléments de la corbeille peuvent être restaurés pendant {{days}} jours. Ils occupent toujours de l’espace disque sur ce serveur.",
+    "selection_limit": "Sélectionnez au maximum 100 éléments à la fois pour les mettre à la corbeille.",
+    "more_items": "et {{count}} autres",
+    "disabled": "Cette page n’est pas disponible.",
+    "back_to_files": "Retour aux fichiers",
+    "description": "Restaurez les éléments à leur emplacement d’origine ou supprimez-les définitivement. Les éléments expirés sont supprimés automatiquement.",
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "deleted_at": "Suppression : {{date}}",
+    "expires_at": "Expiration : {{date}}",
+    "pending": "Déplacement en attente de confirmation. Actualisez ou réessayez lorsque Wings est disponible.",
+    "empty": "La corbeille de ce serveur est vide.",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {{page}} sur {{pages}}",
+    "purge_warning": "Supprimer définitivement {{name}} ? Cette action est irréversible.",
+    "moving": "Déplacement des fichiers vers la corbeille...",
+    "deleting": "Suppression des fichiers..."
   }
 }

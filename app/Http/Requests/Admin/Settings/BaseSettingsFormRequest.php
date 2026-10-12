@@ -13,13 +13,16 @@ class BaseSettingsFormRequest extends AdminFormRequest
     public function rules(): array
     {
         return [
-            'app:name' => 'required|string|max:191',
+            'app:name' => 'sometimes|required|string|max:191',
             'aquadactyl:branding:show_name' => 'sometimes|required|in:true,false',
             'aquadactyl:features:player_counts' => 'sometimes|required|in:true,false',
             'aquadactyl:features:custom_profile_pictures' => 'sometimes|required|in:true,false',
             'aquadactyl:features:privacy_mode' => 'sometimes|required|in:true,false',
             'aquadactyl:features:server_quick_actions' => 'sometimes|required|in:true,false',
             'aquadactyl:features:registration' => 'sometimes|required|in:true,false',
+            'aquadactyl:features:console_log_sharing' => 'sometimes|required|in:true,false',
+            'aquadactyl:features:file_trash' => 'sometimes|required|in:true,false',
+            'aquadactyl:trash:retention_days' => 'sometimes|required|integer|min:1|max:365',
             'pterodactyl:auth:2fa_required' => 'required|integer|in:0,1,2',
             'app:locale' => ['required', 'string', Rule::in(array_keys($this->getAvailableLanguages()))],
         ];
@@ -35,6 +38,9 @@ class BaseSettingsFormRequest extends AdminFormRequest
             'aquadactyl:features:privacy_mode' => __('admin/ui.feature_privacy_mode'),
             'aquadactyl:features:server_quick_actions' => __('admin/ui.feature_server_quick_actions'),
             'aquadactyl:features:registration' => __('admin/ui.feature_registration'),
+            'aquadactyl:features:console_log_sharing' => __('admin/custom.console_log_sharing'),
+            'aquadactyl:features:file_trash' => __('admin/custom.file_trash'),
+            'aquadactyl:trash:retention_days' => __('admin/custom.trash_retention'),
             'pterodactyl:auth:2fa_required' => __('admin/ui.require_2_factor_authentication'),
             'app:locale' => __('admin/ui.default_language'),
         ];

@@ -11,6 +11,8 @@ class AppearanceSettingsFormRequest extends AdminFormRequest
     public function rules(): array
     {
         return [
+            'app:name' => ['sometimes', 'required', 'string', 'max:191'],
+            'aquadactyl:branding:show_name' => ['sometimes', 'required', 'in:true,false'],
             'primary_color' => ['required', 'string', 'regex:/\A#[a-f0-9]{6}\z/i'],
             'login_layout' => ['required', Rule::in(AppearanceService::LAYOUTS)],
             'login_logo_position' => ['required', Rule::in(AppearanceService::LOGO_POSITIONS)],
@@ -24,6 +26,8 @@ class AppearanceSettingsFormRequest extends AdminFormRequest
     public function attributes(): array
     {
         return [
+            'app:name' => __('admin/ui.site_name'),
+            'aquadactyl:branding:show_name' => __('admin/ui.show_site_name_beside_logo'),
             'primary_color' => __('admin/custom.primary_color'),
             'login_layout' => __('admin/custom.login_layout'),
             'login_logo_position' => __('admin/custom.logo_position'),

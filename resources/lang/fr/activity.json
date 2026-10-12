@@ -85,7 +85,12 @@
       "rename_other": ":count fichiers renommés dans :directory",
       "write": "Nouveau contenu écrit dans :file",
       "upload": "Transfert de fichier démarré",
-      "uploaded": ":directory:file transféré"
+      "uploaded": ":directory:file transféré",
+      "trash": {
+        "move": "Fichiers :files mis à la corbeille",
+        "restore": "Fichier :file restauré depuis la corbeille",
+        "delete": "Fichier :file supprimé définitivement de la corbeille"
+      }
     },
     "sftp": {
       "denied": "Accès SFTP bloqué faute de permissions",

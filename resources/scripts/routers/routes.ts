@@ -26,6 +26,9 @@ const StartupContainer = lazy(
 const FileManagerContainer = lazy(
   () => import("@/components/server/files/FileManagerContainer"),
 );
+const TrashContainer = lazy(
+  () => import("@/components/server/files/TrashContainer"),
+);
 const SettingsContainer = lazy(
   () => import("@/components/server/settings/SettingsContainer"),
 );
@@ -114,6 +117,12 @@ export default {
       permission: "file.*",
       name: undefined,
       component: FileEditContainer,
+    },
+    {
+      path: "/trash",
+      permission: "file.read",
+      name: undefined,
+      component: TrashContainer,
     },
     {
       path: "/databases",
