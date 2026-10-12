@@ -88,8 +88,9 @@
   },
   "scripts": {
     "test": "pest",
-    "cs:fix": "pint",
-    "cs:check": "pint --test",
+    "test:coverage": "pest --coverage",
+    "format": "pint",
+    "format:check": "pint --test",
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
       "@php artisan package:discover --ansi || true"
