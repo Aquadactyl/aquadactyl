@@ -10,5 +10,14 @@ const Dialog = Object.assign(DialogComponent, {
 });
 
 export { Dialog };
-export type * from "./types.d";
+export type {
+  Callback,
+  DialogContextType,
+  DialogIconProps,
+  DialogProps,
+  DialogWrapperContextType,
+  IconPosition,
+  RenderDialogProps,
+  WrapperProps,
+} from "@/globals";
 export * from "./context";

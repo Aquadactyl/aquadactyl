@@ -9,7 +9,7 @@ import { useFlashKey } from "@/plugins/useFlash";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
 import usePanelTranslation from "@/plugins/usePanelTranslation";
 import { ServerContext } from "@/state/server";
-import { WithClassname } from "@/components/types";
+import { WithClassname } from "@/globals";
 import Portal from "@/components/elements/Portal";
 import { ChevronDown, CloudUpload, FileUp, FolderUp } from "lucide-react";
 import { Menu } from "@base-ui/react/menu";

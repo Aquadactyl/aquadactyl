@@ -1,5 +1,5 @@
 import http from "@/api/http";
-import { ServerEggVariable } from "@/api/server/types";
+import { ServerEggVariable } from "@/globals";
 import { rawDataToServerEggVariable } from "@/api/transformers";
 
 export default async (

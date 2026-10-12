@@ -1,5 +1,5 @@
 import http from "@/api/http";
-import { ServerBackup } from "@/api/server/types";
+import { ServerBackup } from "@/globals";
 import { rawDataToServerBackup } from "@/api/transformers";
 
 interface RequestParameters {

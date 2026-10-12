@@ -3,8 +3,7 @@ import {
   rawDataToServerAllocation,
   rawDataToServerEggVariable,
 } from "@/api/transformers";
-import { ServerEggVariable, ServerStatus } from "@/api/server/types";
-import { Identifier } from "@/api/definitions";
+import { Identifier, ServerEggVariable, ServerStatus } from "@/globals";
 
 export interface Allocation {
   id: number;

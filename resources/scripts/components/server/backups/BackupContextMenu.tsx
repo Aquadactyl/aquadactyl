@@ -16,7 +16,7 @@ import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import deleteBackup from "@/api/server/backups/deleteBackup";
 import Can from "@/components/elements/Can";
 import getServerBackups from "@/api/server/backups/getServerBackups";
-import { ServerBackup } from "@/api/server/types";
+import { ServerBackup } from "@/globals";
 import { ServerContext } from "@/state/server";
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
 import { Check } from "lucide-react";

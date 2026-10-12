@@ -9,7 +9,7 @@ import BackupContextMenu from "@/components/server/backups/BackupContextMenu";
 import clsx from "clsx";
 import GreyRowBox from "@/components/elements/GreyRowBox";
 import getServerBackups from "@/api/server/backups/getServerBackups";
-import { ServerBackup } from "@/api/server/types";
+import { ServerBackup } from "@/globals";
 import { SocketEvent } from "@/components/server/events";
 
 interface Props {

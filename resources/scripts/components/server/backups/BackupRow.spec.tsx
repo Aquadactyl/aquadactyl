@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import BackupRow from "@/components/server/backups/BackupRow";
 import { ServerContext } from "@/state/server";
-import { ServerBackup } from "@/api/server/types";
+import { ServerBackup } from "@/globals";
 
 const mockMutate = vi.fn();
 vi.mock("@/api/server/backups/getServerBackups", () => ({

@@ -9,7 +9,7 @@ import React, { useEffect } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import BackupContextMenu from "./BackupContextMenu";
 import { ServerContext } from "@/state/server";
-import { ServerBackup } from "@/api/server/types";
+import { ServerBackup } from "@/globals";
 import getBackupDownloadUrl from "@/api/server/backups/getBackupDownloadUrl";
 import deleteBackup from "@/api/server/backups/deleteBackup";
 import getServerBackups from "@/api/server/backups/getServerBackups";

@@ -1,5 +1,5 @@
 import React, { memo, useState } from "react";
-import { ServerEggVariable } from "@/api/server/types";
+import { ServerEggVariable } from "@/globals";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import { usePermissions } from "@/plugins/usePermissions";
 import InputSpinner from "@/components/elements/InputSpinner";

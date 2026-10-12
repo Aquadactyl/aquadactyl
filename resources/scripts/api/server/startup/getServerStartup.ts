@@ -1,7 +1,7 @@
 import { useTanStackQuery } from "@/lib/queryClient";
 import http, { FractalResponseList } from "@/api/http";
 import { rawDataToServerEggVariable } from "@/api/transformers";
-import { ServerEggVariable } from "@/api/server/types";
+import { ServerEggVariable } from "@/globals";
 
 interface Response {
   invocation: string;

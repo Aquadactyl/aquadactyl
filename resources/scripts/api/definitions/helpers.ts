@@ -5,7 +5,7 @@ import {
   getPaginationSet,
   PaginatedResult,
 } from "@/api/http";
-import { Model } from "@definitions/index";
+import { Model } from "@/globals";
 
 type TransformerFunc<T> = (callback: FractalResponseData) => T;
 

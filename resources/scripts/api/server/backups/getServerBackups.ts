@@ -1,6 +1,6 @@
 import { useTanStackQuery } from "@/lib/queryClient";
 import http, { getPaginationSet, PaginatedResult } from "@/api/http";
-import { ServerBackup } from "@/api/server/types";
+import { ServerBackup } from "@/globals";
 import { rawDataToServerBackup } from "@/api/transformers";
 import { ServerContext } from "@/state/server";
 import { createContext, useContext } from "react";

@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import VariableBox from "@/components/server/startup/VariableBox";
 import { ServerContext } from "@/state/server";
-import { ServerEggVariable } from "@/api/server/types";
+import { ServerEggVariable } from "@/globals";
 import updateStartupVariable from "@/api/server/updateStartupVariable";
 
 vi.mock("@/api/server/updateStartupVariable");
