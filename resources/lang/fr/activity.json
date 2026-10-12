@@ -1,0 +1,134 @@
+{
+  "admin": {
+    "user": {
+      "avatar-removed": "Photo de profil d’un utilisateur supprimée"
+    }
+  },
+  "auth": {
+    "fail": "Échec de la connexion",
+    "success": "Connexion réussie",
+    "password-reset": "Mot de passe réinitialisé",
+    "reset-password": "Réinitialisation du mot de passe demandée",
+    "checkpoint": "Authentification à deux facteurs demandée",
+    "recovery-token": "Code de récupération à deux facteurs utilisé",
+    "token": "Vérification à deux facteurs réussie",
+    "ip-blocked": "Requête bloquée depuis une adresse IP non autorisée pour :identifier",
+    "sftp": {
+      "fail": "Échec de la connexion SFTP"
+    }
+  },
+  "user": {
+    "user": {
+      "create": "Utilisateur :email créé"
+    },
+    "account": {
+      "email-changed": "Adresse e-mail modifiée de :old à :new",
+      "password-changed": "Mot de passe modifié",
+      "avatar-updated": "Photo de profil mise à jour",
+      "avatar-removed": "Photo de profil supprimée",
+      "privacy-updated": "Paramètres de confidentialité mis à jour"
+    },
+    "api-key": {
+      "create": "Clé API :identifier créée",
+      "delete": "Clé API :identifier supprimée"
+    },
+    "ssh-key": {
+      "create": "Clé SSH :fingerprint ajoutée au compte",
+      "delete": "Clé SSH :fingerprint supprimée du compte"
+    },
+    "two-factor": {
+      "create": "Authentification à deux facteurs activée",
+      "delete": "Authentification à deux facteurs désactivée",
+      "regenerate-tokens": "Codes de secours deux facteurs régénérés"
+    }
+  },
+  "server": {
+    "reinstall": "Serveur réinstallé",
+    "console": {
+      "command": "Commande « :command » exécutée sur le serveur"
+    },
+    "power": {
+      "start": "Serveur démarré",
+      "stop": "Serveur arrêté",
+      "restart": "Serveur redémarré",
+      "kill": "Processus du serveur arrêté de force"
+    },
+    "backup": {
+      "download": "Sauvegarde :name téléchargée",
+      "delete": "Sauvegarde :name supprimée",
+      "restore": "Sauvegarde :name restaurée (fichiers supprimés : :truncate)",
+      "restore-complete": "Restauration de la sauvegarde :name terminée",
+      "restore-failed": "Échec de la restauration de la sauvegarde :name",
+      "start": "Sauvegarde :name démarrée",
+      "complete": "Sauvegarde :name marquée comme terminée",
+      "fail": "Sauvegarde :name marquée comme échouée",
+      "lock": "Sauvegarde :name verrouillée",
+      "unlock": "Sauvegarde :name déverrouillée"
+    },
+    "database": {
+      "create": "Base de données :name créée",
+      "rotate-password": "Mot de passe de la base de données :name renouvelé",
+      "delete": "Base de données :name supprimée"
+    },
+    "file": {
+      "compress_one": ":directory:files.0 compressé",
+      "compress_other": ":count fichiers compressés dans :directory",
+      "read": "Contenu de :file consulté",
+      "copy": "Copie de :file créée",
+      "create-directory": "Dossier :directory:name créé",
+      "decompress": ":files décompressé dans :directory",
+      "delete_one": ":directory:files.0 supprimé",
+      "delete_other": ":count fichiers supprimés dans :directory",
+      "download": ":file téléchargé",
+      "pull": "Fichier distant téléchargé de :url vers :directory",
+      "rename_one": ":directory:files.0.from renommé en :directory:files.0.to",
+      "rename_other": ":count fichiers renommés dans :directory",
+      "write": "Nouveau contenu écrit dans :file",
+      "upload": "Transfert de fichier démarré",
+      "uploaded": ":directory:file transféré"
+    },
+    "sftp": {
+      "denied": "Accès SFTP bloqué faute de permissions",
+      "create_one": ":files.0 créé",
+      "create_other": ":count nouveaux fichiers créés",
+      "write_one": "Contenu de :files.0 modifié",
+      "write_other": "Contenu de :count fichiers modifié",
+      "delete_one": ":files.0 supprimé",
+      "delete_other": ":count fichiers supprimés",
+      "create-directory_one": "Dossier :files.0 créé",
+      "create-directory_other": ":count dossiers créés",
+      "rename_one": ":files.0.from renommé en :files.0.to",
+      "rename_other": ":count fichiers renommés ou déplacés"
+    },
+    "allocation": {
+      "create": ":allocation ajouté au serveur",
+      "notes": "Notes de :allocation modifiées de « :old » à « :new »",
+      "primary": ":allocation défini comme allocation principale du serveur",
+      "delete": "Allocation :allocation supprimée"
+    },
+    "schedule": {
+      "create": "Planification :name créée",
+      "update": "Planification :name mise à jour",
+      "execute": "Planification :name exécutée manuellement",
+      "delete": "Planification :name supprimée"
+    },
+    "task": {
+      "create": "Tâche « :action » créée pour la planification :name",
+      "update": "Tâche « :action » mise à jour pour la planification :name",
+      "delete": "Tâche supprimée de la planification :name"
+    },
+    "settings": {
+      "rename": "Serveur renommé de :old en :new",
+      "description": "Description du serveur modifiée de :old à :new"
+    },
+    "startup": {
+      "edit": "Variable :variable modifiée de « :old » à « :new »",
+      "image": "Image Docker du serveur modifiée de :old à :new"
+    },
+    "subuser": {
+      "create": ":email ajouté comme sous-utilisateur",
+      "update": "Permissions du sous-utilisateur :email mises à jour",
+      "delete": ":email supprimé des sous-utilisateurs"
+    }
+  }
+}

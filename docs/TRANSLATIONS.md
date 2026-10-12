@@ -18,9 +18,9 @@ dependency is required.
 ## Installing a language pack
 
 1. Add a directory such as `resources/lang/es` or `resources/lang/pt-BR`.
-2. Copy `resources/lang/en/panel.php` into the directory, preserve its keys, and
-   translate the values. Copy and translate other English PHP files if the pack
-   also translates Laravel validation, activity messages, and backend notices.
+2. Copy `resources/lang/en/panel.json` into the directory, preserve its keys, and
+   translate the values. Copy and translate other English JSON files (e.g. `admin.json`, `auth.json`, `dashboard.json`)
+   if the pack also translates Laravel validation, activity messages, and backend notices.
 3. Add `locale.json` with the language's display names:
 
    ```json
@@ -38,8 +38,8 @@ dependency is required.
 Use `"direction": "rtl"` for a pack requiring right-to-left text; test the layout
 with that pack. Metadata is optional, so existing Pterodactyl language folders
 also work. Laravel's `pt_BR` directory naming is supported alongside `pt-BR`;
-choose one spelling for each installed locale. Translation files are executable
-PHP, so administrators should install trusted packs.
+choose one spelling for each installed locale. All language files are standard, safe
+JSON files without executable PHP code.
 
 For Docker deployments, include packs in the image source and rebuild the image,
 or manage them in an explicit volume mounted at `/app/resources/lang`. Changes
@@ -48,7 +48,7 @@ copied into a running container are lost when that container is replaced.
 ## Translation keys and fallbacks
 
 Core React translations use the `panel` namespace and the catalog in
-`resources/lang/en/panel.php`. The initial catalog covers account settings and
+`resources/lang/en/panel.json`. The catalog covers account settings and
 sign-in screens, navigation, dashboard controls and server statuses, and the
 main server page headings and descriptions. Some detailed server forms
 and addon-specific text still have their own English strings; adding
@@ -58,10 +58,9 @@ including validation errors, authentication notices, activity messages, and
 existing backend/admin translation strings.
 
 The administration area uses Laravel translations in
-`resources/lang/en/admin/ui.php` and `admin/custom.php`, with matching French and
-German catalogs. The latter contains appearance, mail service and avatar moderation
-controls.
-It follows the same account preference and browser selection as the client area.
+`resources/lang/en/admin.json` (under `ui` and `custom`), with matching French and
+German catalogs. It contains appearance, mail service and avatar moderation
+controls. It follows the same account preference and browser selection as the client area.
 Navigation, settings, management forms, help text, validation labels, confirmation
 dialogs, and dropdown messages are translated on the server. Names and descriptions
 entered by users or supplied by eggs and addons retain their original text.

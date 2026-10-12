@@ -6,8 +6,8 @@ use Illuminate\Filesystem\Filesystem;
 use Pterodactyl\Services\Users\LanguageService;
 
 test('bundled language catalogs preserve all English keys and interpolation', function (string $locale, string $catalog) {
-    $english = Arr::dot(require resource_path('lang/en/' . $catalog));
-    $translated = Arr::dot(require resource_path('lang/' . $locale . '/' . $catalog));
+    $english = Arr::dot(json_decode(file_get_contents(resource_path('lang/en/' . $catalog)), true));
+    $translated = Arr::dot(json_decode(file_get_contents(resource_path('lang/' . $locale . '/' . $catalog)), true));
     $englishKeys = array_keys($english);
     $translatedKeys = array_keys($translated);
     sort($englishKeys);
@@ -40,7 +40,7 @@ test('bundled language catalogs preserve all English keys and interpolation', fu
     }
 })->with(['fr', 'de'])->with(function () {
     foreach ((new Filesystem())->allFiles(dirname(__DIR__, 4) . '/resources/lang/en') as $file) {
-        if ($file->getExtension() === 'php') {
+        if ($file->getExtension() === 'json' && $file->getFilename() !== 'locale.json') {
             yield $file->getRelativePathname();
         }
     }

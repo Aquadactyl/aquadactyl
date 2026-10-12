@@ -1,0 +1,57 @@
+{
+  "daemon_connection_failed": "Bei der Kommunikation mit dem Daemon ist ein Fehler mit dem HTTP-Antwortcode :code aufgetreten. Dieser Fehler wurde protokolliert.",
+  "node": {
+    "servers_attached": "Ein Knoten kann nur gelöscht werden, wenn ihm keine Server zugeordnet sind.",
+    "daemon_off_config_updated": "Die Daemon-Konfiguration wurde aktualisiert, die automatische Änderung der Konfigurationsdatei ist jedoch fehlgeschlagen. Aktualisieren Sie die Datei config.yml des Daemons manuell, um die Änderungen anzuwenden."
+  },
+  "allocations": {
+    "server_using": "Diese Zuweisung wird von einem Server verwendet. Sie kann nur gelöscht werden, wenn ihr kein Server zugeordnet ist.",
+    "too_many_ports": "Es können nicht mehr als 1000 Ports in einem einzelnen Bereich gleichzeitig hinzugefügt werden.",
+    "invalid_mapping": "Die angegebene Zuordnung für :port ist ungültig und konnte nicht verarbeitet werden.",
+    "cidr_out_of_range": "Die CIDR-Notation erlaubt nur Netzmasken zwischen /25 und /32.",
+    "port_out_of_range": "Ports einer Zuweisung müssen größer als 1024 und kleiner oder gleich 65535 sein."
+  },
+  "nest": {
+    "delete_has_servers": "Ein Nest mit zugeordneten aktiven Servern kann nicht aus dem Panel gelöscht werden.",
+    "egg": {
+      "delete_has_servers": "Ein Egg mit zugeordneten aktiven Servern kann nicht aus dem Panel gelöscht werden.",
+      "invalid_copy_id": "Das als Skriptquelle ausgewählte Egg existiert nicht oder kopiert selbst bereits ein Skript.",
+      "must_be_child": "Die Einstellung „Einstellungen kopieren von“ dieses Eggs muss auf ein Egg im ausgewählten Nest verweisen.",
+      "has_children": "Dieses Egg wird von anderen Eggs als übergeordnetes Egg verwendet. Löschen Sie zuerst diese Eggs."
+    },
+    "variables": {
+      "env_not_unique": "Die Umgebungsvariable :name muss innerhalb dieses Eggs eindeutig sein.",
+      "reserved_name": "Der Name der Umgebungsvariable :name ist geschützt und darf nicht verwendet werden.",
+      "bad_validation_rule": "Die Validierungsregel „:rule“ ist für diese Anwendung ungültig."
+    },
+    "importer": {
+      "json_error": "Beim Verarbeiten der JSON-Datei ist ein Fehler aufgetreten: :error.",
+      "file_error": "Die angegebene JSON-Datei ist ungültig.",
+      "invalid_json_provided": "Das Format der angegebenen JSON-Datei wird nicht erkannt."
+    }
+  },
+  "subusers": {
+    "editing_self": "Sie dürfen Ihr eigenes Unterbenutzerkonto nicht bearbeiten.",
+    "user_is_owner": "Der Serverbesitzer kann für diesen Server nicht als Unterbenutzer hinzugefügt werden.",
+    "subuser_exists": "Ein Benutzer mit dieser E-Mail-Adresse ist bereits Unterbenutzer dieses Servers."
+  },
+  "databases": {
+    "delete_has_databases": "Ein Datenbank-Host mit zugeordneten aktiven Datenbanken kann nicht gelöscht werden."
+  },
+  "tasks": {
+    "chain_interval_too_long": "Der maximale Abstand zwischen verketteten Aufgaben beträgt 15 Minuten."
+  },
+  "locations": {
+    "has_nodes": "Ein Standort mit zugeordneten aktiven Knoten kann nicht gelöscht werden."
+  },
+  "users": {
+    "node_revocation_failed": "Die Schlüssel auf <a href=\":link\">Knoten #:node</a> konnten nicht widerrufen werden. :error"
+  },
+  "deployment": {
+    "no_viable_nodes": "Es wurden keine Knoten gefunden, die die Anforderungen für die automatische Bereitstellung erfüllen.",
+    "no_viable_allocations": "Es wurden keine Zuweisungen gefunden, die die Anforderungen für die automatische Bereitstellung erfüllen."
+  },
+  "api": {
+    "resource_not_found": "Die angeforderte Ressource existiert auf diesem Server nicht."
+  }
+}
