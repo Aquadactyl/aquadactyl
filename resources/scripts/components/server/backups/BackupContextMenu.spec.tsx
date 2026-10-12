@@ -109,7 +109,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       eggFeatures: [],
       allocations: [],
       variables: [],
-    });
+    } as any);
     setPermissions(["*"]);
   }, []);
 

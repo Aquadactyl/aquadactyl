@@ -18,7 +18,6 @@ const mockSchedule: Schedule = {
   id: 1,
   name: "Daily Restart",
   cron: { minute: "0", hour: "3", dayOfMonth: "*", month: "*", dayOfWeek: "*" },
-  timezone: "UTC",
   isActive: true,
   isProcessing: false,
   onlyWhenOnline: true,
@@ -47,12 +46,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
     } as any);
 
     setServer({
-      id: "1",
+      id: "serv_1" as any,
       uuid: "server-uuid-1",
       name: "Test Server",
       node: "Node 1",
       isNodeUnderMaintenance: false,
-      status: "running",
+      status: null,
       invocation: "start",
       dockerImage: "java",
       sftpDetails: { ip: "127.0.0.1", port: 2022 },
@@ -70,7 +69,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
       eggFeatures: [],
       allocations: [],
       variables: [],
-    });
+    } as any);
   }, []);
 
   if (!isReady) return null;

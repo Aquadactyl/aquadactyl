@@ -61,7 +61,7 @@ const Wrapper = ({
       eggFeatures: [],
       allocations: [],
       variables: [],
-    });
+    } as any);
     clearFileUploads();
     Object.entries(uploads).forEach(([name, data]) => {
       pushFileUpload({

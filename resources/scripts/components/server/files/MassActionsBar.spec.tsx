@@ -101,7 +101,7 @@ const Wrapper = ({
       eggFeatures: [],
       allocations: [],
       variables: [],
-    });
+    } as any);
     setPermissions(["*"]);
     setDirectory("/plugins");
     setSelectedFiles(selectedFiles);

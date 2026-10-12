@@ -59,7 +59,7 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
         },
       ],
       variables: [],
-    });
+    } as any);
     setServerStatus("running");
   }, []);
 

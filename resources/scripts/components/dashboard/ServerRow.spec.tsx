@@ -141,7 +141,10 @@ describe("components/dashboard/ServerRow", () => {
   });
 
   it("displays server status badge for suspended server", () => {
-    const suspendedServer = { ...mockServer, status: "suspended" };
+    const suspendedServer: Server = {
+      ...mockServer,
+      status: "suspended",
+    };
 
     render(
       <MemoryRouter>

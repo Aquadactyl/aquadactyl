@@ -100,7 +100,7 @@ describe("components/dashboard/search/SearchModal", () => {
             },
           ],
           variables: [],
-        },
+        } as any,
       ],
       pagination: {
         total: 1,
