@@ -63,7 +63,7 @@ export default () => {
         <p className={"text-center text-sm text-neutral-300"}>
           {t(
             "users.it_looks_like_you_don_apos_t_have_any_subusers",
-            "It looks like you don&apos;t have any subusers.",
+            "It looks like you don't have any subusers.",
           )}
         </p>
       ) : (

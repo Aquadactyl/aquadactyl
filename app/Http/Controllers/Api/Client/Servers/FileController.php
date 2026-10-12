@@ -47,6 +47,8 @@ class FileController extends ClientApiController
             ->setServer($server)
             ->getDirectory($request->get('directory') ?? '/');
 
+        $contents = array_values(array_filter($contents, fn ($file) => $file['name'] !== \Pterodactyl\Services\Files\TrashPath::DIRECTORY));
+
         return $this->fractal->collection($contents)
             ->transformWith($this->getTransformer(FileObjectTransformer::class))
             ->toArray();

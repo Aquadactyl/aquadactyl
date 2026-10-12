@@ -58,10 +58,11 @@ test('automatic admin language follows browser preferences on each request', fun
 test('localized settings keep user supplied values escaped and validation labels readable', function () {
     $admin = User::factory()->create(['root_admin' => true, 'language' => 'fr']);
     $unsafe = '<script>window.untrusted = true;</script>';
-    $this->actingAs($admin)->withSession(['_old_input' => ['app:name' => $unsafe]])->get('/admin/settings')
+    $this->actingAs($admin)->withSession(['_old_input' => ['app:name' => $unsafe]])->get('/admin/settings/appearance')
         ->assertOk()
         ->assertSee($unsafe)
-        ->assertDontSee($unsafe, false)
+        ->assertDontSee($unsafe, false);
+    $this->get('/admin/settings')->assertOk()
         ->assertSee('Nombre de joueurs')
         ->assertSee('Photos de profil personnalisées');
 

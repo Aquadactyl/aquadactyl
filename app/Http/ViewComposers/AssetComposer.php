@@ -40,7 +40,10 @@ class AssetComposer
                 'privacyMode' => (bool) config('aquadactyl.features.privacy_mode', true),
                 'serverQuickActions' => (bool) config('aquadactyl.features.server_quick_actions', true),
                 'registration' => (bool) config('aquadactyl.features.registration', false),
+                'consoleLogSharing' => (bool) config('aquadactyl.features.console_log_sharing', false),
+                'fileTrash' => (bool) config('aquadactyl.features.file_trash', false),
             ],
+            'trash' => ['retentionDays' => (int) config('aquadactyl.trash.retention_days', 7)],
             'recaptcha' => [
                 'enabled' => config('recaptcha.enabled', false),
                 'provider' => config('recaptcha.provider', 'recaptcha'),

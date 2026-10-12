@@ -6,7 +6,7 @@ interface Props {
   children: React.ReactNode;
   renderToggle: (
     onClick: (e: React.MouseEvent<any, MouseEvent>) => void,
-  ) => React.ReactNode;
+  ) => React.ReactElement;
 }
 
 export interface DropdownMenuRef {
@@ -36,31 +36,17 @@ const DropdownMenu = forwardRef<any, Props>(
 
     useImperativeHandle(ref, () => ({
       triggerMenu: () => {
-        setOpen((prev) => !prev);
+        setOpen(true);
       },
     }));
 
     const onClickHandler = (e: React.MouseEvent<any, MouseEvent>) => {
-      e.preventDefault();
       e.stopPropagation();
-      setOpen((prev) => !prev);
     };
 
     return (
       <Menu.Root open={open} onOpenChange={setOpen}>
-        <Menu.Trigger
-          render={(triggerProps) => (
-            <div
-              {...triggerProps}
-              onClick={(e) => {
-                triggerProps.onClick?.(e);
-                onClickHandler(e);
-              }}
-            >
-              {renderToggle(onClickHandler)}
-            </div>
-          )}
-        />
+        <Menu.Trigger render={renderToggle(onClickHandler)} />
         <Menu.Portal>
           <Menu.Positioner
             side="bottom"

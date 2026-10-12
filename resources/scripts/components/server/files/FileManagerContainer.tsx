@@ -28,7 +28,8 @@ import useFlash from "@/plugins/useFlash";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 import { FileActionCheckbox } from "@/components/server/files/SelectFileCheckbox";
 import { hashToPath } from "@/helpers";
-import { Search, X } from "lucide-react";
+import { Search, X, Trash2 } from "lucide-react";
+import { useAppStore } from "@/state";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 import BeforeContent from "@blueprint/components/Server/Files/Browse/BeforeContent";
@@ -46,6 +47,9 @@ const sortFiles = (files: FileObject[]): FileObject[] => {
 
 export default () => {
   const { t } = usePanelTranslation();
+  const trashEnabled = useAppStore(
+    (state) => state.settings.data?.features?.fileTrash === true,
+  );
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
   const { hash } = useLocation();
   const { data: files, error, mutate } = useFileManagerQuery();
@@ -227,17 +231,29 @@ export default () => {
               />
             }
           />
-          <Can action={"file.create"}>
-            <div className={"manager_actions"}>
-              <FileManagerStatus />
-              <FileButtons />
-              <NewDirectoryButton />
-              <UploadButton />
-              <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
-                <Button>{t("files.new_file", "New File")}</Button>
-              </NavLink>
-            </div>
-          </Can>
+          <div className="flex w-full flex-wrap items-center gap-3 md:w-auto md:justify-end">
+            {trashEnabled && (
+              <Can action="file.read">
+                <NavLink to={`/server/${id}/trash`}>
+                  <Button variant={Button.Variants.Secondary}>
+                    <Trash2 className="mr-2 inline h-4 w-4" aria-hidden />
+                    {t("trash.title", "Trash")}
+                  </Button>
+                </NavLink>
+              </Can>
+            )}
+            <Can action={"file.create"}>
+              <div className={"manager_actions"}>
+                <FileManagerStatus />
+                <FileButtons />
+                <NewDirectoryButton />
+                <UploadButton />
+                <NavLink to={`/server/${id}/files/new${window.location.hash}`}>
+                  <Button>{t("files.new_file", "New File")}</Button>
+                </NavLink>
+              </div>
+            </Can>
+          </div>
         </div>
       </ErrorBoundary>
       {!files ? (

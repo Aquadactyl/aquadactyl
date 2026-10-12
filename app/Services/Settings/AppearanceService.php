@@ -72,6 +72,9 @@ class AppearanceService
             '--aqua-focus' => $palette[400] . '47',
             '--panel-accent' => $palette[300],
             '--panel-accent-hover' => $palette[200],
+            '--panel-accent-soft' => $palette[500] . '2e',
+            '--panel-accent-border' => $palette[300] . '66',
+            '--panel-focus' => $palette[400] . '47',
         ];
 
         return $variables;

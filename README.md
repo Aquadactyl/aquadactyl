@@ -18,8 +18,10 @@ React. It is an independent Pterodactyl fork with Blueprint bundled into the
 panel, managed releases, and a focused deployment experience for hosting
 providers and communities.
 
-Manage your servers through Aquadactyl's interface, extend the panel
-with Blueprint, and deploy updates using pinned dependencies and automatic backups.
+Manage your servers through Aquadactyl's interface, customise your branding,
+sign in with passkeys or connected accounts, and choose your own panel language.
+Extend the panel with Blueprint and deploy updates using pinned dependencies
+and automatic backups.
 Game servers run on separate Wings nodes using Docker containers.
 
 Aquadactyl is an independent project and is not an official Pterodactyl or
@@ -43,6 +45,19 @@ server definitions.
 - **Charcoal default theme:** Soft grey surfaces, readable text and muted aqua
   accents across the dashboard, login, console and admin area. See the
   [theme guide](docs/THEME.md) for palette tokens and customisation.
+- **Appearance customiser:** Set the site name, logo and primary colour; upload
+  login and client backgrounds; adjust blur and overlays; and choose a centred
+  login card or a full-height left or right pane. Desktop and mobile previews
+  update as you edit. Buttons, navigation, controls and CPU, memory and outbound
+  network graphs follow the primary colour.
+- **Passkeys and OAuth:** Existing users and administrators can register passkeys
+  or link Discord, GitHub, Google and OpenID Connect. Admins configure available
+  methods under Settings → OAuth. Existing permissions and two-factor
+  verification still apply. See the [account security guide](docs/ACCOUNT-SECURITY.md).
+- **Languages per account:** English, French and German are bundled for the
+  client and admin areas. Users choose a language or follow their browser's
+  preferences, with support for additional JSON language packs. See the
+  [translation guide](docs/TRANSLATIONS.md).
 - **Blueprint built in:** Framework beta-2026-08, including its CLI, admin pages,
   extension routes and frontend hooks. The installer initializes the bundled framework.
 - **Managed installation and updates:** Linux scripts build assets, run migrations
@@ -54,19 +69,56 @@ server definitions.
 - **Deployment security defaults:** Restricted filesystem permissions, HTTPS
   session cookies, Nginx rules that protect hidden files and limit PHP execution
   to the front controller, and validation of update archives before extraction.
-- **Addon libraries:** Axios, Lucide icons, React Select and Lodash ES,
-  alongside the panel's React Hook Form, Zod, UI and chart libraries.
+- **Addon libraries:** Axios, Lucide icons, Base UI, es-toolkit, date-fns and
+  Motion, alongside React Hook Form, Zod, TanStack Query, Zustand and uPlot.
   See the [addon development guide](docs/ADDONS.md).
 - **Simple server schedules:** Choose daily, weekly, monthly, or regular interval
   timings, then add restart, backup, or command steps with readable delays.
   Advanced cron remains available. See the [schedule guide](docs/SCHEDULES.md).
 - **Egg Library:** Browse eggs.download from the admin area, preview egg settings,
   and import into an existing or new nest. See the [Egg Library guide](docs/EGG-LIBRARY.md).
+- **Server overview and console tools:** Player counts, optional node country
+  flags and permission-aware server shortcuts. Copy the full UUID from the
+  Console page and use the Lucide arrow to jump to the latest output.
+- **Recoverable file deletion:** Optional per-server trash for files and folders,
+  with restore, permanent deletion and admin-configured retention from 1–365 days.
+  Trash is disabled by default and keeps files within the server's disk limit.
+- **Console log sharing:** An optional clipboard button shares a redacted console
+  log tail through debug.euphoriadevelopment.uk and returns a copyable link to
+  the requesting user. Pastes expire after 24 hours; sharing is disabled by default.
+- **Mail services and account controls:** Configure SMTP, Mailgun, Postmark or
+  Amazon SES in admin settings. Admins can remove uploaded profile pictures and
+  control which optional features users see. Disabled or unconfigured sign-in
+  methods are hidden from account settings.
 - **Dependency maintenance:** Committed Composer and pnpm lockfiles, weekly
   Dependabot checks and CI audits for production dependencies.
 
 See [validation results](docs/VALIDATION.md) for the checks performed and remaining
 build dependency advisories.
+
+## Configure the new features
+
+Open **Admin → Settings → Appearance** for site branding, colours, backgrounds
+and login layouts; **Settings → OAuth** for passkeys and connected accounts; and
+**Settings → Mail** for email delivery. Most UI settings require
+`APP_ENVIRONMENT_ONLY=false`. OAuth and passkey settings remain database-backed
+in environment-only mode.
+
+The optional server tools are configured under **Admin → Settings → General**:
+
+| Feature             | Default | Behaviour when enabled                                                                                |
+| ------------------- | ------- | ----------------------------------------------------------------------------------------------------- |
+| Server file trash   | Off     | Offer move to trash or permanent deletion; open Trash from each server's Files page to restore items. |
+| Trash retention     | 7 days  | Admins choose 1–365 days for new deletions; existing expiry dates are preserved.                      |
+| Console log sharing | Off     | Show a clipboard button beside the console input and return a link lasting 24 hours.                  |
+
+Trash contents remain on Wings and count towards the server's disk usage.
+Scheduled cleanup runs every 15 minutes, including when trash is disabled;
+disabling it also blocks restoration. Keep both the panel database and Wings
+data in backups. Console log redaction is best effort; review a paste before
+sharing its link. See [site settings and server tools](BUILDING.md#site-settings)
+for permissions, retention and deployment details, or the
+[website feature guide](https://aquadactyl.uk/docs/panel/features) for an overview.
 
 ## Try it locally
 
@@ -177,6 +229,9 @@ The local guides retain deployment details, developer references and validation 
 | [Blueprint integration reference](docs/BLUEPRINT.md)                                        | Framework provenance and implementation details                                   |
 | [Addon development](docs/ADDONS.md)                                                         | Shared libraries, imports and dependency management for extensions and themes     |
 | [Default theme](docs/THEME.md)                                                              | Charcoal palette, shared colour tokens and theme customisation                    |
+| [Panel features](https://aquadactyl.uk/docs/panel/features)                                 | Appearance, account security, languages, file trash, console sharing and mail     |
+| [Account security](docs/ACCOUNT-SECURITY.md)                                                | Passkeys, Discord/GitHub/Google/OIDC setup and two-factor verification            |
+| [Translations](docs/TRANSLATIONS.md)                                                        | Per-user language selection, admin translations and additional language packs     |
 | [Validation](docs/VALIDATION.md)                                                            | Test results and dependency audit limitations                                     |
 | [Building](BUILDING.md)                                                                     | Frontend development and production builds                                        |
 | [Security policy](SECURITY.md)                                                              | Reporting vulnerabilities in Aquadactyl and its upstream projects                 |
@@ -216,7 +271,10 @@ controlled by its `telemetry_enabled` flag.
 
 Users can select a language for their own account under **Account → Language**,
 or choose automatic selection based on their browser language preferences.
-English, French, and German are bundled; additional packs are discovered automatically. See
+English, French, and German are bundled for both the client and admin areas;
+additional packs are discovered automatically. Automatic selection uses browser
+preferences, without an IP location lookup. Contributions live in
+[panel-translations](https://github.com/Aquadactyl/panel-translations). See
 [language-pack setup and translation coverage](docs/TRANSLATIONS.md).
 
 ## Sharing debug logs

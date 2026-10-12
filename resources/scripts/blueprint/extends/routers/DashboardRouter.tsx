@@ -13,6 +13,7 @@ import { UiBadge } from "@blueprint/ui";
 
 export const NavigationLinks = () => {
   const { t } = usePanelTranslation();
+  const { pathname } = useLocation();
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
   return (
     <>
@@ -22,7 +23,11 @@ export const NavigationLinks = () => {
         .map(({ path, name, exact = false }) => (
           <NavLink
             key={path}
-            to={`/account/${path}`.replace("//", "/")}
+            to={
+              path === "/" && pathname === "/account"
+                ? "/account"
+                : `/account/${path}`.replace("//", "/")
+            }
             end={exact}
           >
             {t(
@@ -40,7 +45,11 @@ export const NavigationLinks = () => {
           .map(({ path, name, exact = false, adminOnly }) => (
             <NavLink
               key={path}
-              to={`/account/${path}`.replace("//", "/")}
+              to={
+                path === "/" && pathname === "/account"
+                  ? "/account"
+                  : `/account/${path}`.replace("//", "/")
+              }
               end={exact}
             >
               {name}

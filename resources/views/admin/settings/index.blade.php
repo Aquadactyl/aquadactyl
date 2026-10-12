@@ -24,23 +24,7 @@
                 <form action="{{ route('admin.settings') }}" method="POST">
                     <div class="box-body">
                         <div class="row">
-                            <div class="form-group col-lg-4">
-                                <label class="control-label" for="site-name">{{ __('admin/ui.site_name') }}</label>
-                                <div>
-                                    <input id="site-name" type="text" class="form-control" name="app:name" value="{{ old('app:name', config('app.name')) }}" required maxlength="191" />
-                                    <p class="text-muted"><small>{{ __('admin/ui.this_is_the_name_that_is_used_throughout_the_panel_and_in_emails_sent_to_clients') }}</small></p>
-                                    <label class="control-label" for="show-site-name">{{ __('admin/ui.show_site_name_beside_logo') }}</label>
-                                    @php
-                                        $showName = in_array(old('aquadactyl:branding:show_name', config('aquadactyl.branding.show_name', false)), [true, 'true', 1, '1'], true);
-                                    @endphp
-                                    <select id="show-site-name" class="form-control" name="aquadactyl:branding:show_name">
-                                        <option value="false" @if(!$showName) selected @endif>{{ __('admin/ui.logo_only') }}</option>
-                                        <option value="true" @if($showName) selected @endif>{{ __('admin/ui.logo_and_site_name') }}</option>
-                                    </select>
-                                    <p class="text-muted"><small>{{ __('admin/ui.show_the_site_name_alongside_an_uploaded_logo_in_navigation_sign_in_and_admin_headers') }}</small></p>
-                                </div>
-                            </div>
-                            <div class="form-group col-lg-4">
+                            <div class="form-group col-lg-6">
                                 <label class="control-label">{{ __('admin/ui.require_2_factor_authentication') }}</label>
                                 <div>
                                     <div class="btn-group" data-toggle="buttons">
@@ -60,7 +44,7 @@
                                     <p class="text-muted"><small>{{ __('admin/ui.if_enabled_any_account_falling_into_the_selected_grouping_will_be_required_to_have_2') }}</small></p>
                                 </div>
                             </div>
-                            <div class="form-group col-lg-4">
+                            <div class="form-group col-lg-6">
                                 <label class="control-label">{{ __('admin/ui.default_language') }}</label>
                                 <div>
                                     <select name="app:locale" class="form-control">
@@ -83,13 +67,15 @@
                                 'privacy_mode' => [__('admin/ui.feature_privacy_mode'), __('admin/ui.feature_privacy_mode_description')],
                                 'server_quick_actions' => [__('admin/ui.feature_server_quick_actions'), __('admin/ui.feature_server_quick_actions_description')],
                                 'registration' => [__('admin/ui.feature_registration'), __('admin/ui.feature_registration_description')],
+                                'console_log_sharing' => [__('admin/custom.console_log_sharing'), __('admin/custom.console_log_sharing_help')],
+                                'file_trash' => [__('admin/custom.file_trash'), __('admin/custom.file_trash_help')],
                             ];
                         @endphp
                         <div class="row">
                             @foreach($features as $key => [$label, $description])
                                 @php
                                     $field = 'aquadactyl:features:' . $key;
-                                    $default = $key === 'registration' ? false : true;
+                                    $default = !in_array($key, ['registration', 'console_log_sharing', 'file_trash'], true);
                                     $enabled = in_array(old($field, config('aquadactyl.features.' . $key, $default)), [true, 'true', 1, '1'], true);
                                 @endphp
                                 <div class="form-group col-md-6">
@@ -104,6 +90,11 @@
                         </div>
                     </div>
                     <div class="box-footer">
+                        <div class="form-group" id="trash-retention-settings">
+                            <label class="control-label" for="trash-retention-days">{{ __('admin/custom.trash_retention') }}</label>
+                            <input type="number" class="form-control" id="trash-retention-days" name="aquadactyl:trash:retention_days" min="1" max="365" value="{{ old('aquadactyl:trash:retention_days', config('aquadactyl.trash.retention_days', 7)) }}" />
+                            <p class="text-muted"><small>{{ __('admin/custom.trash_retention_help') }}</small></p>
+                        </div>
                         {!! csrf_field() !!}
                         <button type="submit" name="_method" value="PATCH" class="btn btn-sm btn-primary pull-right">{{ __('admin/ui.save_site_settings') }}</button>
                     </div>
@@ -111,32 +102,23 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header with-border"><h3 class="box-title">{{ __('admin/ui.site_logo') }}</h3></div>
-                <div class="box-body">
-                    <p class="text-muted">{{ __('admin/ui.use_your_logo_on_the_sign_in_page_navigation_bar_admin_area_browser_tabs_and_home_scr') }}</p>
-                    <div class="site-logo-preview">
-                        <img src="{{ config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : '/branding/aquadactyl-wordmark.png' }}" alt="{{ __('admin/ui.current_site_logo') }}">
-                    </div>
-                    <form action="{{ route('admin.settings.logo') }}" method="POST" enctype="multipart/form-data">
-                        {!! csrf_field() !!}
-                        <div class="form-group">
-                            <label for="site-logo">{{ __('admin/ui.logo_file') }}</label>
-                            <input id="site-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" required>
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-primary">{{ __('admin/ui.upload_logo') }}</button>
-                    </form>
-                    @if(config('aquadactyl.branding.logo_path'))
-                        <form action="{{ route('admin.settings.logo') }}" method="POST" style="margin-top:12px;">
-                            {!! csrf_field() !!}
-                            {!! method_field('DELETE') !!}
-                            <button type="submit" class="btn btn-sm btn-default">{{ __('admin/ui.restore_default_logo') }}</button>
-                        </form>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
+    <p class="text-muted">{{ __('admin/custom.branding_moved') }} <a href="{{ route('admin.settings.appearance') }}">{{ __('admin/custom.appearance') }}</a></p>
+@endsection
+
+@section('footer-scripts')
+    @parent
+    <script>
+        (function () {
+            var feature = document.getElementById('feature-file_trash');
+            var container = document.getElementById('trash-retention-settings');
+            var input = document.getElementById('trash-retention-days');
+            function updateTrashRetention() {
+                var enabled = feature.value === 'true';
+                container.hidden = !enabled;
+                input.disabled = !enabled;
+            }
+            $(feature).on('change', updateTrashRetention);
+            updateTrashRetention();
+        })();
+    </script>
 @endsection

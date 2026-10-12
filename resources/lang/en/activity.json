@@ -85,7 +85,12 @@
       "rename_other": "Renamed :count files in :directory",
       "write": "Wrote new content to :file",
       "upload": "Began a file upload",
-      "uploaded": "Uploaded :directory:file"
+      "uploaded": "Uploaded :directory:file",
+      "trash": {
+        "move": "Moved :files to trash",
+        "restore": "Restored :file from trash",
+        "delete": "Permanently deleted :file from trash"
+      }
     },
     "sftp": {
       "denied": "Blocked SFTP access due to permissions",

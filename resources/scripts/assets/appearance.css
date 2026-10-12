@@ -13,14 +13,17 @@
 }
 .authentication-page[data-layout="split-left"],
 .authentication-page[data-layout="split-right"] {
-  padding-inline: clamp(20px, 6vw, 100px);
+  padding: 0;
+  align-items: stretch;
 }
 .authentication-page[data-layout^="split"] .authentication-container {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: 40px;
-  max-width: 1600px;
-  align-items: center;
+  gap: 0;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  align-items: stretch;
 }
 .authentication-form-panel {
   width: 100%;
@@ -28,17 +31,51 @@
   justify-self: center;
   min-width: 0;
 }
+.authentication-page[data-layout^="split"] .authentication-form-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(40px, 5vw, 80px) clamp(24px, 5vw, 80px);
+  background: #1c232a;
+}
+.authentication-page[data-layout^="split"] .authentication-form-panel > * {
+  width: 100%;
+  max-width: 440px;
+}
+.authentication-page[data-layout^="split"] .authentication-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
 .authentication-page[data-layout="split-left"] .authentication-form-panel {
   grid-column: 1;
   grid-row: 1;
+  border-right: 1px solid #303942;
 }
 .authentication-page[data-layout="split-right"] .authentication-form-panel {
   grid-column: 2;
   grid-row: 1;
+  border-left: 1px solid #303942;
 }
 .authentication-side-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   grid-row: 1;
   min-width: 0;
+  padding: 40px;
+}
+.authentication-side-brand .authentication-brand {
+  margin: 0;
+}
+.authentication-mobile-brand {
+  display: none;
 }
 .authentication-page[data-layout="split-left"] .authentication-side-brand {
   grid-column: 2;
@@ -66,15 +103,23 @@
 }
 @media (max-width: 800px) {
   .authentication-page[data-layout^="split"] .authentication-container {
-    display: flex;
-    flex-direction: column;
+    grid-template-columns: minmax(0, 1fr);
     gap: 0;
-    max-width: 440px;
+    max-width: none;
+  }
+  .authentication-page[data-layout^="split"] .authentication-form-panel {
+    grid-column: 1;
+    border: 0;
+    padding: 40px 24px;
   }
   .authentication-side-brand {
+    display: none;
+  }
+  .authentication-mobile-brand {
+    display: block;
     width: 100%;
   }
-  .authentication-side-brand .authentication-brand img {
+  .authentication-mobile-brand .authentication-brand img {
     width: 224px;
   }
 }

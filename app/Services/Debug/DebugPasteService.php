@@ -25,6 +25,7 @@ class DebugPasteService
         $response = Http::acceptJson()
             ->connectTimeout(5)
             ->timeout(15)
+            ->withoutRedirecting()
             ->post($endpoint . '/paste', $payload);
 
         $response->throw();
@@ -37,7 +38,12 @@ class DebugPasteService
         if ($url === null && is_string($id) && preg_match('/^[A-Za-z0-9_-]{1,128}$/D', $id)) {
             $url = $endpoint . '/paste/' . $id;
         }
-        if (!is_string($url) || !filter_var($url, FILTER_VALIDATE_URL) || !in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true)) {
+        if (!is_string($url) || !filter_var($url, FILTER_VALIDATE_URL)
+            || !in_array(parse_url($url, PHP_URL_SCHEME), ['http', 'https'], true)
+            || parse_url($url, PHP_URL_SCHEME) !== parse_url($endpoint, PHP_URL_SCHEME)
+            || parse_url($url, PHP_URL_HOST) !== parse_url($endpoint, PHP_URL_HOST)
+            || parse_url($url, PHP_URL_PORT) !== parse_url($endpoint, PHP_URL_PORT)
+            || parse_url($url, PHP_URL_USER) !== null || parse_url($url, PHP_URL_PASS) !== null) {
             throw new \RuntimeException('The debug service returned no valid paste URL.');
         }
 

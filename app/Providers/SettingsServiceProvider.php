@@ -35,6 +35,9 @@ class SettingsServiceProvider extends ServiceProvider
         'aquadactyl:features:privacy_mode',
         'aquadactyl:features:server_quick_actions',
         'aquadactyl:features:registration',
+        'aquadactyl:features:console_log_sharing',
+        'aquadactyl:features:file_trash',
+        'aquadactyl:trash:retention_days',
         'aquadactyl:telemetry:enabled',
         'recaptcha:enabled',
         'recaptcha:provider',
@@ -157,8 +160,11 @@ class SettingsServiceProvider extends ServiceProvider
 
         foreach ($keys as $key) {
             $fromEnv = false;
-            $savedMail = in_array($key, $this->emailKeys, true) && array_key_exists('settings::' . $key, $values);
-            $envVars = $savedMail ? [] : ($this->environmentKeys[$key] ?? []);
+            // Branding saved in the customiser must override Docker's initial
+            // APP_NAME and branding defaults when database settings are enabled.
+            $managed = in_array($key, array_merge($this->emailKeys, ['app:name', 'aquadactyl:branding:logo_path', 'aquadactyl:branding:show_name']), true);
+            $saved = $managed && array_key_exists('settings::' . $key, $values);
+            $envVars = $saved ? [] : ($this->environmentKeys[$key] ?? []);
             foreach ($envVars as $envVar) {
                 if ($this->hasEnvironmentVariable($envVar)) {
                     if ($this->app->environment('testing') && in_array($envVar, ['APP_NAME', 'APP_LOCALE'], true)) {
@@ -181,7 +187,7 @@ class SettingsServiceProvider extends ServiceProvider
                 }
             }
 
-            if (is_string($value) && !in_array($key, self::$encrypted, true)) {
+            if (is_string($value) && $key !== 'app:name' && !in_array($key, self::$encrypted, true)) {
                 switch (strtolower($value)) {
                     case 'true':
                     case '(true)':

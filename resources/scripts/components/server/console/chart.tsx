@@ -63,9 +63,16 @@ export function UPlotChart({ options, data, className }: UPlotChartProps) {
 
 export interface UseChartSeriesOption {
   label?: string;
-  stroke?: string;
-  fill?: string;
+  stroke?: uPlot.Series.Stroke;
+  fill?: uPlot.Series.Fill;
 }
+
+// Canvas cannot resolve CSS variables itself. Resolve the current palette on
+// each draw so colour changes do not require recreating the charts.
+export const primaryChartStyle = {
+  stroke: () => theme("colors.primary.400"),
+  fill: () => hexToRgba(theme("colors.primary.700"), 0.5),
+};
 
 export interface UseChartOptions {
   sets?: number;
@@ -92,8 +99,7 @@ export function useChart(label: string, opts?: UseChartOptions) {
     return [
       {
         label,
-        stroke: theme("colors.cyan.400"),
-        fill: hexToRgba(theme("colors.cyan.700"), 0.5),
+        ...primaryChartStyle,
       },
     ];
   }, [label, seriesProp]);
@@ -134,8 +140,8 @@ export function useChart(label: string, opts?: UseChartOptions) {
         {},
         ...series.map((s) => ({
           label: s.label || label,
-          stroke: s.stroke || theme("colors.cyan.400"),
-          fill: s.fill || hexToRgba(theme("colors.cyan.700"), 0.5),
+          stroke: s.stroke ?? primaryChartStyle.stroke,
+          fill: s.fill ?? primaryChartStyle.fill,
           width: 1.5,
           points: { show: false },
         })),

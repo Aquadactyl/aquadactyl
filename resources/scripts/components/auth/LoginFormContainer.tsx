@@ -72,6 +72,9 @@ export default forwardRef<HTMLFormElement, Props>(
           <div className="authentication-side-brand">{brand}</div>
         )}
         <div className="authentication-form-panel">
+          {logoPosition === "opposite" && (
+            <div className="authentication-mobile-brand">{brand}</div>
+          )}
           {logoPosition === "above" && brand}
           <div className={"authentication-card"}>
             {logoPosition === "inside" && brand}

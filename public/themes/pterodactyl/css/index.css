@@ -1421,8 +1421,8 @@ textarea.form-control {
 }
 
 ::selection {
-    background: #1d5558;
-    color: var(--aqua-heading);
+    background: var(--aqua-primary);
+    color: var(--aqua-on-primary);
 }
 
 .skin-blue .sidebar-menu > li > a,
@@ -1985,7 +1985,7 @@ html.privacy-mode select[data-sensitive] + .select2:is(:hover, :focus-within) .s
     filter: none;
 }
 [data-sensitive]:focus-visible {
-    outline: 2px solid #78d4cc;
+    outline: 2px solid var(--aqua-accent);
     outline-offset: 3px;
 }
 [data-sensitive] {

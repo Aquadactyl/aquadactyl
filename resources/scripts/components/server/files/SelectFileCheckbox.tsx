@@ -51,13 +51,13 @@ export const FileActionCheckbox: React.FC<FileActionCheckboxProps> = ({
       disabled={disabled}
       onCheckedChange={handleCheckedChange}
       className={clsx(
-        "inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78d4cc] data-checked:border-transparent data-checked:bg-cyan-500 data-disabled:cursor-not-allowed data-disabled:opacity-50 data-indeterminate:border-transparent data-indeterminate:bg-cyan-500",
+        "focus-visible:outline-primary-300 data-checked:bg-primary-500 data-indeterminate:bg-primary-500 inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 data-checked:border-transparent data-disabled:cursor-not-allowed data-disabled:opacity-50 data-indeterminate:border-transparent",
         "data-unchecked:hover:border-neutral-300",
         className,
       )}
       {...props}
     >
-      <BaseCheckbox.Indicator className="flex items-center justify-center text-white">
+      <BaseCheckbox.Indicator className="flex items-center justify-center text-[var(--color-primary-contrast)]">
         {indeterminate ? (
           <Minus className="h-3 w-3 stroke-3" />
         ) : (

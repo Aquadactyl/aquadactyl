@@ -101,7 +101,7 @@ export default () => {
           <AdditionalItems />
           <SearchContainer />
           <NavLink
-            to={"/account/"}
+            to={"/account"}
             id={"NavigationAccount"}
             aria-label={t("navigation.account_settings", "Account settings")}
           >

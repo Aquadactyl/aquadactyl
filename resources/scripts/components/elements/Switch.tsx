@@ -76,12 +76,12 @@ const Switch = forwardRef<any, SwitchProps>(
             disabled={disabled}
             readOnly={readOnly}
             className={clsx(
-              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border border-[#78838f] bg-[#39424b] p-0.5 transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78d4cc] data-checked:border-[#1d5558] data-checked:bg-[#237c7f] data-disabled:cursor-not-allowed data-disabled:opacity-50",
+              "focus-visible:outline-primary-300 data-checked:border-primary-700 data-checked:bg-primary-500 relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border border-[#78838f] bg-[#39424b] p-0.5 transition-colors duration-150 ease-in-out focus-visible:outline-2 focus-visible:outline-offset-2 data-disabled:cursor-not-allowed data-disabled:opacity-50",
               className,
             )}
             {...props}
           >
-            <BaseSwitch.Thumb className="pointer-events-none block h-5 w-5 rounded-full border border-[#bbc2ca] bg-[#d7dce1] transition-transform duration-150 ease-in-out data-checked:translate-x-5 data-checked:border-white data-checked:bg-white" />
+            <BaseSwitch.Thumb className="pointer-events-none block h-5 w-5 rounded-full border border-[#bbc2ca] bg-[#d7dce1] transition-transform duration-150 ease-in-out data-checked:translate-x-5 data-checked:border-[var(--color-primary-contrast)] data-checked:bg-[var(--color-primary-contrast)]" />
           </BaseSwitch.Root>
         )}
 

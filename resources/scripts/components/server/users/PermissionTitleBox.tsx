@@ -52,9 +52,9 @@ const PermissionTitleBox: React.FC<Props> = memo(
                 checked={isAllChecked}
                 indeterminate={isIndeterminate}
                 onCheckedChange={onCheckedChange}
-                className="inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-neutral-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#78d4cc] data-checked:border-transparent data-checked:bg-cyan-500 data-indeterminate:border-transparent data-indeterminate:bg-cyan-500"
+                className="focus-visible:outline-primary-300 data-checked:bg-primary-500 data-indeterminate:bg-primary-500 inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-neutral-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 data-checked:border-transparent data-indeterminate:border-transparent"
               >
-                <BaseCheckbox.Indicator className="flex items-center justify-center text-white">
+                <BaseCheckbox.Indicator className="flex items-center justify-center text-[var(--color-primary-contrast)]">
                   {isIndeterminate ? (
                     <Minus className="h-3.5 w-3.5 stroke-3" />
                   ) : (

@@ -137,7 +137,7 @@ describe("components/dashboard/ServerRow", () => {
       screen
         .getAllByRole("link", { name: "Open My Minecraft Server" })[0]
         .getAttribute("href"),
-    ).toBe("/server/srv-1");
+    ).toBe("/server/serv_srv-1");
   });
 
   it("displays server status badge for suspended server", () => {

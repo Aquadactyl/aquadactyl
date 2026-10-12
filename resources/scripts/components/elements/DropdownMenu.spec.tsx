@@ -1,61 +1,61 @@
 import React, { createRef } from "react";
-import { render, fireEvent, act, cleanup } from "@testing-library/react";
-import DropdownMenu, {
-  DropdownButtonRow,
-  DropdownMenuRef,
-} from "./DropdownMenu";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
+import { Menu } from "@base-ui/react/menu";
+import DropdownMenu, { DropdownMenuRef } from "./DropdownMenu";
 
-describe("DropdownMenu component", () => {
-  afterEach(cleanup);
+afterEach(cleanup);
 
-  it("renders trigger and opens menu on click", () => {
-    const { getByText, queryByText } = render(
-      <DropdownMenu
-        renderToggle={(onClick) => <button onClick={onClick}>Options</button>}
-      >
-        <DropdownButtonRow>Item 1</DropdownButtonRow>
-        <DropdownButtonRow danger>Delete</DropdownButtonRow>
-      </DropdownMenu>,
-    );
-
-    const trigger = getByText("Options");
-    expect(trigger).toBeDefined();
-
-    // Menu content is not visible before click
-    expect(queryByText("Item 1")).toBeNull();
-
-    // Click trigger to open menu
-    fireEvent.click(trigger);
-    expect(getByText("Item 1")).toBeDefined();
-    expect(getByText("Delete")).toBeDefined();
+it("keeps the menu open through mouse-down and click, then closes on selection", async () => {
+  const select = vi.fn();
+  render(
+    <DropdownMenu
+      renderToggle={(onClick) => (
+        <button onClick={onClick}>File actions</button>
+      )}
+    >
+      <Menu.Item onClick={select}>Rename</Menu.Item>
+    </DropdownMenu>,
+  );
+  const trigger = screen.getByRole("button", { name: "File actions" });
+  fireEvent.pointerDown(trigger, {
+    pointerType: "mouse",
+    button: 0,
+    width: 1,
+    height: 1,
   });
+  fireEvent.mouseDown(trigger, { button: 0 });
+  await screen.findByRole("menu");
+  fireEvent.pointerUp(trigger, { pointerType: "mouse", button: 0 });
+  fireEvent.mouseUp(trigger, { button: 0 });
+  fireEvent.click(trigger, { button: 0, detail: 1 });
+  expect(screen.getByRole("menu")).toBeDefined();
+  expect(trigger.getAttribute("aria-expanded")).toBe("true");
+  fireEvent.click(screen.getByRole("menuitem", { name: "Rename" }));
+  expect(select).toHaveBeenCalledOnce();
+  await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
+});
 
-  it("supports imperatively opening menu via ref", () => {
-    const ref = createRef<DropdownMenuRef>();
-
-    const { getByText, queryByText } = render(
-      <DropdownMenu ref={ref} renderToggle={() => <span>Menu</span>}>
-        <div>Ref Triggered Item</div>
-      </DropdownMenu>,
-    );
-
-    expect(queryByText("Ref Triggered Item")).toBeNull();
-
-    // Open via imperative ref
-    act(() => {
-      ref.current?.triggerMenu();
-    });
-
-    expect(getByText("Ref Triggered Item")).toBeDefined();
-  });
-
-  it("applies danger styling to DropdownButtonRow when danger prop is true", () => {
-    const { getByText } = render(
-      <DropdownButtonRow danger>Delete Server</DropdownButtonRow>,
-    );
-
-    const button = getByText("Delete Server");
-    expect(button.className).toContain("hover:bg-red-900");
-    expect(button.className).toContain("hover:text-red-200");
-  });
+it("keeps a context menu open when it is requested again", async () => {
+  const ref = createRef<DropdownMenuRef>();
+  render(
+    <DropdownMenu
+      ref={ref}
+      renderToggle={(onClick) => (
+        <button onClick={onClick}>File actions</button>
+      )}
+    >
+      <Menu.Item>Rename</Menu.Item>
+    </DropdownMenu>,
+  );
+  act(() => ref.current?.triggerMenu());
+  await screen.findByRole("menu");
+  act(() => ref.current?.triggerMenu());
+  expect(screen.getByRole("menu")).toBeDefined();
 });

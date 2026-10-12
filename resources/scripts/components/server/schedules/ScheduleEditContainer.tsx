@@ -89,7 +89,7 @@ export default () => {
             }
             to={"/server/" + id + "/schedules"}
           >
-            {t("schedule_edit.larr_all_schedules", "&larr; All schedules")}
+            {t("schedule_edit.larr_all_schedules", "← All schedules")}
           </Link>
           <div className={"rounded bg-neutral-900 p-4 shadow-sm sm:p-6"}>
             <div className={"flex flex-wrap items-start justify-between gap-4"}>

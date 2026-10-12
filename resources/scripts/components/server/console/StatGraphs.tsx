@@ -4,6 +4,7 @@ import { SocketEvent } from "@/components/server/events";
 import useWebsocketEvent from "@/plugins/useWebsocketEvent";
 import {
   UPlotChart,
+  primaryChartStyle,
   useChart,
   useChartTickLabel,
 } from "@/components/server/console/chart";
@@ -29,12 +30,11 @@ export default () => {
       formatTick: (value: number) => bytesToString(value),
       series: [
         {
-          label: "Network In",
-          stroke: theme("colors.cyan.400"),
-          fill: hexToRgba(theme("colors.cyan.700"), 0.5),
+          label: "Network Out",
+          ...primaryChartStyle,
         },
         {
-          label: "Network Out",
+          label: "Network In",
           stroke: theme("colors.yellow.400"),
           fill: hexToRgba(theme("colors.yellow.700"), 0.5),
         },
@@ -92,7 +92,7 @@ export default () => {
               <CloudDownload className={"mr-2 h-4 w-4 text-yellow-400"} />
             </Tooltip>
             <Tooltip arrow content={"Outbound"}>
-              <CloudUpload className={"h-4 w-4 text-cyan-400"} />
+              <CloudUpload className={"text-primary-400 h-4 w-4"} />
             </Tooltip>
           </>
         }
