@@ -12,12 +12,13 @@ class TranslationLoader extends FileLoader
      * @param string $locale
      * @param string $group
      * @param string|null $namespace
+     *
      * @return array
      */
     public function load($locale, $group, $namespace = null)
     {
-        if ($this->isUnsafePathSegment($locale) ||
-            ($group !== '*' && $this->isUnsafePathSegment($group, allowSlashes: true))) {
+        if ($this->isUnsafePathSegment($locale)
+            || ($group !== '*' && $this->isUnsafePathSegment($group, allowSlashes: true))) {
             return [];
         }
 
@@ -37,11 +38,11 @@ class TranslationLoader extends FileLoader
      * Supports:
      * 1. Direct JSON group: {path}/{locale}/{group}.json (e.g. panel.json, auth.json, strings.json)
      * 2. Domain JSON group when group has slash: {domain}/{subgroup} in {domain}.json (e.g. admin/ui -> admin.json['ui'])
-     * 3. Fallback to PHP files for backward-compatibility with extensions: {path}/{locale}/{group}.php
+     * 3. Fallback to PHP files for backward-compatibility with extensions: {path}/{locale}/{group}.php.
      *
-     * @param array $paths
      * @param string $locale
      * @param string $group
+     *
      * @return array
      */
     protected function loadPaths(array $paths, $locale, $group)
@@ -87,4 +88,3 @@ class TranslationLoader extends FileLoader
         return $output;
     }
 }
-

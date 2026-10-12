@@ -2,8 +2,8 @@
 
 namespace Pterodactyl\Providers;
 
-use Illuminate\Translation\TranslationServiceProvider as BaseServiceProvider;
 use Pterodactyl\Services\Translations\TranslationLoader;
+use Illuminate\Translation\TranslationServiceProvider as BaseServiceProvider;
 
 class TranslationServiceProvider extends BaseServiceProvider
 {
@@ -22,4 +22,3 @@ class TranslationServiceProvider extends BaseServiceProvider
         });
     }
 }
-
