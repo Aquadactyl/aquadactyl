@@ -8,8 +8,8 @@ permissions:
   contents: read
 jobs:
   deployment:
-    runs-on: ubuntu-24.04
+    runs-on: blacksmith-4vcpu-ubuntu-2404
     steps:
-      - uses: actions/checkout@v7
+      - uses: useblacksmith/checkout@v1
       - run: shellcheck scripts/helpers/extension-lifecycle.sh tests/Deployment/blueprint-guards.sh tests/Deployment/blueprint-smoke.sh
       - run: bash tests/Deployment/blueprint-guards.sh
