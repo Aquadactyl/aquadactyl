@@ -1,7 +1,11 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
 import { render, renderHook, act } from "@testing-library/react";
-import { UPlotChart, useChart, useChartTickLabel } from "./chart";
+import {
+  primaryChartStyle,
+  UPlotChart,
+  useChart,
+  useChartTickLabel,
+} from "./chart";
 
 let resizeCallback: (entries: any[]) => void = () => {};
 global.ResizeObserver = class {
@@ -37,6 +41,13 @@ vi.mock("uplot", () => {
 describe("components/server/console/chart", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe("primaryChartStyle", () => {
+    it("returns stroke and fill color strings", () => {
+      expect(typeof primaryChartStyle.stroke()).toBe("string");
+      expect(typeof primaryChartStyle.fill()).toBe("string");
+    });
   });
 
   describe("UPlotChart", () => {

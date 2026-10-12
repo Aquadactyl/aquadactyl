@@ -10,6 +10,15 @@ describe("lib/localization and lib/theme", () => {
       expect(theme("fontFamily.sans")).toContain("IBM Plex Sans");
       expect(theme("colors.nonexistent")).toBe("");
     });
+
+    it("returns computed CSS variable when present in DOM", () => {
+      document.documentElement.style.setProperty(
+        "--color-primary-400",
+        "#123456",
+      );
+      expect(theme("colors.primary.400")).toBe("#123456");
+      document.documentElement.style.removeProperty("--color-primary-400");
+    });
   });
 
   describe("localization", () => {

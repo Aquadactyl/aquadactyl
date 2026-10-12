@@ -17,6 +17,12 @@ const mockTerminal = {
     customKeyEventHandler = handler;
   }),
   unicode: { activeVersion: "10" },
+  buffer: {
+    active: {
+      length: 0,
+      getLine: vi.fn(),
+    },
+  },
 };
 
 vi.mock("@xterm/xterm", () => {
@@ -78,6 +84,15 @@ vi.mock("@blueprint/components/Server/Terminal/CommandRow", () => ({
   default: () => null,
 }));
 
+vi.mock("@/components/server/console/ConsoleLogShareButton", () => ({
+  default: ({ getLogs }: any) => {
+    getLogs?.();
+    return null;
+  },
+}));
+
+let resizeObserverCallback: (() => void) | null = null;
+
 let mockCanSendCommands = true;
 vi.mock("@/plugins/usePermissions", () => ({
   usePermissions: () => [mockCanSendCommands],
@@ -131,10 +146,31 @@ describe("components/server/console/Console", () => {
       server: { data: { id: "srv-1", isTransferring: false } },
       status: { value: "running" },
     };
+    resizeObserverCallback = null;
+    global.ResizeObserver = class {
+      constructor(cb: any) {
+        resizeObserverCallback = cb;
+      }
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    } as any;
   });
 
   afterEach(() => {
     vi.useRealTimers();
+  });
+
+  it("fits addon on resize observer callback", () => {
+    vi.useFakeTimers();
+    render(<Console />);
+    expect(resizeObserverCallback).not.toBeNull();
+    mockFit.mockClear();
+    act(() => {
+      resizeObserverCallback?.();
+      vi.advanceTimersByTime(50);
+    });
+    expect(mockFit).toHaveBeenCalled();
   });
 
   it("renders console container and attaches addons when connected", () => {

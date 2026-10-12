@@ -11,10 +11,12 @@ import MassActionsBar from "./MassActionsBar";
 import { ServerContext } from "@/state/server";
 import compressFiles from "@/api/server/files/compressFiles";
 import deleteFiles from "@/api/server/files/deleteFiles";
+import { moveFilesToTrash } from "@/api/server/files/trash";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
 
 vi.mock("@/api/server/files/compressFiles");
 vi.mock("@/api/server/files/deleteFiles");
+vi.mock("@/api/server/files/trash");
 vi.mock("@/plugins/useFileManagerQuery");
 vi.mock("@/plugins/usePanelTranslation", () => ({
   default: () => ({
@@ -32,18 +34,21 @@ vi.mock("@/components/elements/Portal", () => ({
   default: ({ children }: any) => <div>{children}</div>,
 }));
 
-vi.mock("@/components/elements/dialog", () => ({
-  Dialog: {
-    Confirm: ({ open, title, confirm, onConfirmed, children, onClose }: any) =>
-      open ? (
-        <div data-testid="confirm-dialog">
-          <h1>{title}</h1>
-          {children}
-          <button onClick={onConfirmed}>{confirm || "Confirm"}</button>
-          <button onClick={onClose}>Cancel</button>
-        </div>
-      ) : null,
-  },
+vi.mock("./DeleteFilesDialog", () => ({
+  default: ({ open, onClose, onDelete, onTrash, files }: any) =>
+    open ? (
+      <div data-testid="confirm-dialog">
+        <h1>Delete Files</h1>
+        <p>These files and their contents cannot be recovered</p>
+        {files.map((file: string) => (
+          <span key={file}>{file}</span>
+        ))}
+        {files.length > 15 && <span>and {files.length - 15} others</span>}
+        <button onClick={onDelete}>Delete</button>
+        <button onClick={onTrash}>Move to trash</button>
+        <button onClick={onClose}>Cancel</button>
+      </div>
+    ) : null,
 }));
 
 vi.mock("@/components/elements/SpinnerOverlay", () => ({
@@ -315,5 +320,62 @@ describe("components/server/files/MassActionsBar", () => {
     fireEvent.click(deleteBtn);
 
     expect(screen.getByText("and 2 others")).toBeDefined();
+  });
+
+  it("moves files to trash when clicking Move to trash and filters files", async () => {
+    vi.mocked(moveFilesToTrash).mockResolvedValueOnce(undefined as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper selectedFiles={["file1.txt", "file2.txt"]}>
+          <MassActionsBar />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByRole("button", { name: "Delete" });
+    fireEvent.click(deleteBtn);
+
+    const dialog = screen.getByTestId("confirm-dialog");
+    const trashBtn = within(dialog).getByRole("button", {
+      name: "Move to trash",
+    });
+    fireEvent.click(trashBtn);
+
+    await waitFor(() => {
+      expect(moveFilesToTrash).toHaveBeenCalledWith(
+        "server-uuid-1",
+        "/plugins",
+        ["file1.txt", "file2.txt"],
+      );
+      expect(mockMutate).toHaveBeenCalled();
+    });
+  });
+
+  it("handles move to trash failure, calls mutate and sets flash error", async () => {
+    const error = new Error("Trash failed");
+    vi.mocked(moveFilesToTrash).mockRejectedValueOnce(error);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper selectedFiles={["file1.txt"]}>
+          <MassActionsBar />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteBtn = await screen.findByRole("button", { name: "Delete" });
+    fireEvent.click(deleteBtn);
+
+    const dialog = screen.getByTestId("confirm-dialog");
+    const trashBtn = within(dialog).getByRole("button", {
+      name: "Move to trash",
+    });
+    fireEvent.click(trashBtn);
+
+    await waitFor(() => {
+      expect(moveFilesToTrash).toHaveBeenCalled();
+      expect(mockMutate).toHaveBeenCalled();
+    });
   });
 });

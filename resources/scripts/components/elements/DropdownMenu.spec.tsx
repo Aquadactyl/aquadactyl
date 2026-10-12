@@ -8,7 +8,10 @@ import {
   waitFor,
 } from "@testing-library/react";
 import { Menu } from "@base-ui/react/menu";
-import DropdownMenu, { DropdownButtonRow } from "./DropdownMenu";
+import DropdownMenu, {
+  DropdownButtonRow,
+  DropdownMenuRef,
+} from "./DropdownMenu";
 
 afterEach(cleanup);
 
@@ -51,6 +54,32 @@ describe("DropdownMenu component", () => {
     const button = getByText("Delete Server");
     expect(button.className).toContain("hover:bg-red-900");
     expect(button.className).toContain("hover:text-red-200");
+  });
+
+  it("applies normal styling to DropdownButtonRow when danger prop is false or undefined", () => {
+    const { getByText } = render(
+      <DropdownButtonRow>Normal Action</DropdownButtonRow>,
+    );
+
+    const button = getByText("Normal Action");
+    expect(button.className).toContain("hover:bg-neutral-600");
+    expect(button.className).toContain("hover:text-neutral-50");
+  });
+
+  it("opens menu imperatively via ref triggerMenu", async () => {
+    const ref = React.createRef<DropdownMenuRef>();
+    render(
+      <DropdownMenu
+        ref={ref}
+        renderToggle={(onClick) => <button onClick={onClick}>Trigger</button>}
+      >
+        <div>Ref Item</div>
+      </DropdownMenu>,
+    );
+    act(() => {
+      ref.current?.triggerMenu();
+    });
+    expect(await screen.findByText("Ref Item")).toBeDefined();
   });
 
   it("closes menu when clicking an item inside the popup", async () => {

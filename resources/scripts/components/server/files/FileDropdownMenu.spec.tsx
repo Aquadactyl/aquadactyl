@@ -16,13 +16,27 @@ import getFileDownloadUrl from "@/api/server/files/getFileDownloadUrl";
 import compressFiles from "@/api/server/files/compressFiles";
 import decompressFiles from "@/api/server/files/decompressFiles";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
+import { moveFilesToTrash } from "@/api/server/files/trash";
 
 vi.mock("@/api/server/files/deleteFiles");
+vi.mock("@/api/server/files/trash");
 vi.mock("@/api/server/files/copyFile");
 vi.mock("@/api/server/files/getFileDownloadUrl");
 vi.mock("@/api/server/files/compressFiles");
 vi.mock("@/api/server/files/decompressFiles");
 vi.mock("@/plugins/useFileManagerQuery");
+
+vi.mock("@/components/server/files/DeleteFilesDialog", () => ({
+  default: ({ open, onDelete, onTrash, title, onClose }: any) =>
+    open ? (
+      <div data-testid="confirm-dialog">
+        <h1>{title}</h1>
+        <button onClick={onDelete}>Delete</button>
+        <button onClick={onTrash}>Trash</button>
+        <button onClick={onClose}>Cancel</button>
+      </div>
+    ) : null,
+}));
 
 vi.mock("@blueprint/components/Server/Files/Browse/DropdownItems", () => ({
   default: () => null,
@@ -364,6 +378,32 @@ describe("components/server/files/FileDropdownMenu", () => {
     fireEvent.click(confirmBtn);
     await waitFor(() => {
       expect(deleteFiles).toHaveBeenCalledWith("server-uuid-1", "/", [
+        "test.txt",
+      ]);
+    });
+  });
+
+  it("opens delete confirmation and executes moveFilesToTrash when trash is confirmed", async () => {
+    vi.mocked(moveFilesToTrash).mockResolvedValueOnce(undefined as any);
+
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu file={mockFile} />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+
+    const deleteMenuBtn = await screen.findByText("Delete");
+    fireEvent.click(deleteMenuBtn);
+
+    const dialog = screen.getByTestId("confirm-dialog");
+    expect(dialog).toBeDefined();
+
+    const trashBtn = within(dialog).getByRole("button", { name: "Trash" });
+    fireEvent.click(trashBtn);
+    await waitFor(() => {
+      expect(moveFilesToTrash).toHaveBeenCalledWith("server-uuid-1", "/", [
         "test.txt",
       ]);
     });

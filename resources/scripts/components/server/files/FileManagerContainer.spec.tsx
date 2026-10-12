@@ -134,12 +134,27 @@ vi.mock("@/plugins/useFlash", () => ({
   }),
 }));
 
+let mockFileTrash = false;
+vi.mock("@/state", () => ({
+  useAppStore: (selector: any) =>
+    selector({
+      settings: {
+        data: {
+          features: {
+            fileTrash: mockFileTrash,
+          },
+        },
+      },
+    }),
+}));
+
 describe("components/server/files/FileManagerContainer", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockFiles = null;
     mockError = null;
     mockSelectedFilesLength = 0;
+    mockFileTrash = false;
   });
 
   const renderComponent = () =>
@@ -377,5 +392,12 @@ describe("components/server/files/FileManagerContainer", () => {
     fireEvent.click(checkbox);
     expect(mockSetSelectedFiles).toHaveBeenCalledWith([]);
     unmount();
+  });
+
+  it("renders trash button when fileTrash feature is enabled", () => {
+    mockFileTrash = true;
+    renderComponent();
+
+    expect(screen.getByRole("link", { name: /Trash/i })).toBeDefined();
   });
 });

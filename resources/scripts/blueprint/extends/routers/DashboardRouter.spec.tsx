@@ -99,6 +99,13 @@ describe("blueprint/extends/routers/DashboardRouter", () => {
   it("renders blueprint extension routes for normal user and admin", () => {
     mockBlueprintAccountRoutes = [
       {
+        path: "/",
+        name: "Root Extension",
+        exact: true,
+        adminOnly: false,
+        component: () => <div>Root Extension</div>,
+      },
+      {
         path: "/ext-general",
         name: "Extension Tab",
         exact: true,
@@ -120,8 +127,16 @@ describe("blueprint/extends/routers/DashboardRouter", () => {
       </MemoryRouter>,
     );
 
+    expect(screen.getByText("Root Extension")).toBeDefined();
     expect(screen.getByText("Extension Tab")).toBeDefined();
     expect(screen.queryByText("Admin Extension")).toBeNull();
+
+    // Re-render at a subpath to exercise path === '/' when pathname !== '/account'
+    rerender(
+      <MemoryRouter initialEntries={["/account/ext-general"]}>
+        <NavigationLinks />
+      </MemoryRouter>,
+    );
 
     mockRootAdmin = true;
     rerender(

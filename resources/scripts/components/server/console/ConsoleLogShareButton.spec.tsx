@@ -67,12 +67,15 @@ it("uploads once and displays the returned link with a copy control", async () =
     name: "Share redacted console logs",
   });
   fireEvent.click(button);
-  fireEvent.click(button);
+  expect(button.getAttribute("disabled")).not.toBeNull();
+  const reactPropsKey = Object.keys(button).find((k) =>
+    k.startsWith("__reactProps$"),
+  )!;
+  (button as any)[reactPropsKey]?.onClick?.();
   expect(shareConsoleLogs).toHaveBeenCalledExactlyOnceWith(
     "serv_test",
     "Server ready",
   );
-  expect(button.getAttribute("disabled")).not.toBeNull();
   await act(async () => {
     finish("https://debug.euphoriadevelopment.uk/paste/test-log");
   });
@@ -113,4 +116,35 @@ it("shows a safe error and allows retry when the upload fails", async () => {
   );
   expect(document.body.textContent).not.toContain("sensitive upstream");
   expect(button.getAttribute("disabled")).toBeNull();
+});
+
+it("closes dialog when onClose is triggered", async () => {
+  settings.enabled = true;
+  render(<ConsoleLogShareButton getLogs={() => "  "} />);
+  await act(async () => {
+    fireEvent.click(
+      screen.getByRole("button", { name: "Share redacted console logs" }),
+    );
+  });
+  expect(screen.getByRole("dialog")).toBeDefined();
+  const closeBtn = document
+    .querySelector(".dialog_close_icon")!
+    .closest("button")!;
+  await act(async () => {
+    fireEvent.click(closeBtn);
+  });
+  expect(screen.queryByRole("dialog")).toBeNull();
+});
+
+it("does not upload if enabled is false when button click is dispatched", async () => {
+  settings.enabled = true;
+  const getLogs = vi.fn();
+  const { rerender } = render(<ConsoleLogShareButton getLogs={getLogs} />);
+  const button = screen.getByRole("button", {
+    name: "Share redacted console logs",
+  });
+  settings.enabled = false;
+  rerender(<ConsoleLogShareButton getLogs={getLogs} />);
+  fireEvent.click(button);
+  expect(getLogs).not.toHaveBeenCalled();
 });

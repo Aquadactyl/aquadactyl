@@ -61,3 +61,22 @@ it("returns an empty snapshot for an empty console", () => {
     "",
   );
 });
+
+it("skips undefined lines in the buffer", () => {
+  const customTerminal = {
+    buffer: {
+      active: {
+        length: 2,
+        getLine: (index: number) =>
+          index === 0
+            ? undefined
+            : {
+                isWrapped: false,
+                translateToString: () => "valid line",
+              },
+      },
+    },
+  } as unknown as Pick<Terminal, "buffer">;
+
+  expect(getConsoleLogSnapshot(customTerminal)).toBe("valid line");
+});

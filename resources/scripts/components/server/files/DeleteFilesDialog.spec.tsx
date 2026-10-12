@@ -2,7 +2,10 @@ import React from "react";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import DeleteFilesDialog from "./DeleteFilesDialog";
 
-const settings = vi.hoisted(() => ({ enabled: false }));
+const settings = vi.hoisted(() => ({
+  enabled: false,
+  retentionDays: 14 as number | undefined,
+}));
 vi.mock("@/plugins/usePanelTranslation", () => ({
   default: () => ({
     t: (_key: string, fallback: string, values: Record<string, unknown> = {}) =>
@@ -15,7 +18,7 @@ vi.mock("@/state", () => ({
       settings: {
         data: {
           features: { fileTrash: settings.enabled },
-          trash: { retentionDays: 14 },
+          trash: { retentionDays: settings.retentionDays },
         },
       },
     }),
@@ -34,6 +37,7 @@ vi.mock("motion/react", () => ({
 afterEach(() => {
   cleanup();
   settings.enabled = false;
+  settings.retentionDays = 14;
 });
 const onDelete = vi.fn(),
   onTrash = vi.fn();
@@ -87,4 +91,21 @@ it("does not enable trash for oversized selections", () => {
   fireEvent.click(screen.getByRole("button", { name: "Permanently delete" }));
   expect(onDelete).toHaveBeenCalledOnce();
   expect(onTrash).not.toHaveBeenCalled();
+});
+
+it("shows single file choose message when deleting 1 file with trash enabled", () => {
+  settings.enabled = true;
+  show(["notes.txt"]);
+  expect(
+    screen.getByText(
+      "Would you like to permanently delete this file or move it to your trash?",
+    ),
+  ).toBeDefined();
+});
+
+it("falls back to 7 retention days when retentionDays is undefined", () => {
+  settings.enabled = true;
+  settings.retentionDays = undefined;
+  show(["notes.txt"]);
+  expect(screen.getByText(/7 days/)).toBeDefined();
 });
