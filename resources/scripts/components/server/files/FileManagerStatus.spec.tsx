@@ -38,12 +38,12 @@ const Wrapper = ({
 
   useEffect(() => {
     setServer({
-      id: "1",
+      id: "serv_1" as any,
       uuid: "server-uuid-1",
       name: "Test Server",
       node: "Node 1",
       isNodeUnderMaintenance: false,
-      status: "running",
+      status: null,
       invocation: "start",
       dockerImage: "java",
       sftpDetails: { ip: "127.0.0.1", port: 2022 },
