@@ -65,7 +65,12 @@ class Kernel extends ConsoleKernel
 
         // Blueprint telemetry
         $blueprint = app()->make(BlueprintExtensionLibrary::class);
-        if (filter_var($blueprint->dbGet('blueprint', 'flags:telemetry_enabled', false), FILTER_VALIDATE_BOOLEAN)) {
+        $telemetryEnabled = rescue(
+            fn () => (bool) filter_var($blueprint->dbGet('blueprint', 'flags:telemetry_enabled', false), FILTER_VALIDATE_BOOLEAN),
+            false,
+            false,
+        );
+        if ($telemetryEnabled) {
             $registerBlueprintTelemetry = app()->make(RegisterBlueprintTelemetry::class);
             $registerBlueprintTelemetry->register($schedule);
         }
