@@ -63,7 +63,7 @@ class LogController extends Controller
         if ($path === null) {
             $this->alert->danger('The requested log file does not exist.')->flash();
 
-            return redirect()->route('admin.settings.logs');
+            return new RedirectResponse(route('admin.settings.logs', [], false));
         }
 
         return response()->download($path, basename($file), [
@@ -82,6 +82,6 @@ class LogController extends Controller
             $this->alert->danger('Could not delete the requested log file.')->flash();
         }
 
-        return redirect()->route('admin.settings.logs');
+        return new RedirectResponse(route('admin.settings.logs', [], false));
     }
 }

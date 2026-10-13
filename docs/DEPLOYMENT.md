@@ -60,6 +60,19 @@ The installer creates an application key and Hashids salt when they are missing.
 Preserve both across every update and backup; the application key encrypts stored credentials. For local HTTP
 development, explicitly set `SESSION_SECURE_COOKIE=false`.
 
+When HTTPS is terminated by Nginx, Traefik or Dokploy, keep `APP_URL` set to the
+public HTTPS address and configure `TRUSTED_PROXIES` with the IP addresses or
+CIDRs of your reverse proxies. Those proxies must pass the original protocol,
+host and port. A backend served over HTTP otherwise generates HTTP URLs, which
+can interrupt settings saves and OAuth flows. The Docker image can serve HTTP
+behind a TLS proxy without `LE_EMAIL`; see the [Docker configuration guide](../.github/docker/README.md).
+
+After editing a native installation's `.env`, run `php artisan config:cache` and
+`php artisan queue:restart`. For Docker, recreate the panel after changing its
+environment so the entrypoint regenerates the cache. Use the public domain
+without the container's internal port. Admin settings forms and successful-save
+redirects use relative paths to preserve the browser's HTTPS origin.
+
 For a **new, empty panel**, seed the default nests and create your administrator:
 
 ```bash

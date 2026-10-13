@@ -5,7 +5,7 @@
 @section('content-header')
     <h1>{{ __('admin/custom.appearance') }}<small>{{ __('admin/custom.appearance_description') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li>
         <li class="active">{{ __('admin/custom.appearance') }}</li>
     </ol>
 @endsection
@@ -20,7 +20,7 @@
         <div class="alert alert-info">{{ __('admin/custom.environment_only') }}</div>
     @endif
     {{-- Fields are associated with this form so image actions can have their own forms. --}}
-    <form action="{{ route('admin.settings.appearance') }}" method="POST" id="appearance-settings">
+    <form action="{{ route('admin.settings.appearance', [], false) }}" method="POST" id="appearance-settings">
         @csrf
         @method('PATCH')
     </form>
@@ -54,14 +54,14 @@
                     <label>{{ __('admin/ui.site_logo') }}</label>
                     <div class="site-logo-preview appearance-brand-preview"><img id="site-logo-preview" src="{{ $logoUrl ?? '/branding/aquadactyl-wordmark.png' }}" alt="{{ __('admin/ui.current_site_logo') }}"></div>
                     <p class="text-muted">{{ __('admin/custom.logo_upload_help') }}</p>
-                    <form action="{{ route('admin.settings.logo') }}" method="POST" enctype="multipart/form-data" data-image-action="logo" class="appearance-image-form">
+                    <form action="{{ route('admin.settings.logo', [], false) }}" method="POST" enctype="multipart/form-data" data-image-action="logo" class="appearance-image-form">
                         @csrf
                         <fieldset @disabled($disabled)>
                             <div class="form-group"><label for="site-logo">{{ __('admin/ui.logo_file') }}</label><input id="site-logo" type="file" name="logo" accept="image/png,image/jpeg,image/webp" required class="form-control" data-preview-area="logo"></div>
                             <button type="submit" class="btn btn-primary btn-sm">{{ __('admin/ui.upload_logo') }}</button>
                         </fieldset>
                     </form>
-                    <form action="{{ route('admin.settings.logo') }}" method="POST" data-image-action="logo" data-image-remove="logo" class="appearance-image-form background-remove-form" @if(!$logoUrl) hidden @endif>
+                    <form action="{{ route('admin.settings.logo', [], false) }}" method="POST" data-image-action="logo" data-image-remove="logo" class="appearance-image-form background-remove-form" @if(!$logoUrl) hidden @endif>
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-default btn-sm" @disabled($disabled)>{{ __('admin/ui.restore_default_logo') }}</button>

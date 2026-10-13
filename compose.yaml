@@ -48,7 +48,8 @@ services:
       - panel-storage:/app/storage
     environment: &panel-environment
       APP_NAME: Aquadactyl
-      APP_URL: "http://localhost:${AQUADACTYL_PORT:-8081}"
+      APP_URL: "${AQUADACTYL_URL:-http://localhost:${AQUADACTYL_PORT:-8081}}"
+      TRUSTED_PROXIES: "${TRUSTED_PROXIES:-}"
       APP_ENV: local
       APP_DEBUG: "false"
       APP_ENVIRONMENT_ONLY: "false"
@@ -71,7 +72,7 @@ services:
       MAIL_MAILER: log
       MAIL_FROM_ADDRESS: noreply@aquadactyl.test
       MAIL_FROM_NAME: Aquadactyl
-      SESSION_SECURE_COOKIE: "false"
+      SESSION_SECURE_COOKIE: "${SESSION_SECURE_COOKIE:-false}"
       SESSION_SAME_SITE: lax
       RECAPTCHA_ENABLED: "false"
       HASHIDS_LENGTH: "8"

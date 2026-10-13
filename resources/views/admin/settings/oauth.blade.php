@@ -5,12 +5,12 @@
 
 @section('content-header')
     <h1>{{ __('admin/ui.oauth_settings') }}<small>{{ __('admin/ui.manage_account_sign_in_providers_and_passkeys') }}</small></h1>
-    <ol class="breadcrumb"><li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li><li>{{ __('admin/ui.settings') }}</li><li class="active">OAuth</li></ol>
+    <ol class="breadcrumb"><li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li><li>{{ __('admin/ui.settings') }}</li><li class="active">OAuth</li></ol>
 @endsection
 
 @section('content')
     @yield('settings::nav')
-    <form method="POST" action="{{ route('admin.settings.oauth') }}" autocomplete="off">
+    <form method="POST" action="{{ route('admin.settings.oauth', [], false) }}" autocomplete="off">
         @csrf
         @method('PATCH')
         <div class="box">

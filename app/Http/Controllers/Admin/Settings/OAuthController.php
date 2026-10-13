@@ -82,6 +82,6 @@ class OAuthController extends Controller
         });
         $alerts->success(__('admin/ui.oauth_saved'))->flash();
 
-        return redirect()->route('admin.settings.oauth');
+        return new RedirectResponse(route('admin.settings.oauth', [], false));
     }
 }

@@ -38,7 +38,7 @@ class AppearanceController extends Controller
         }
         $alerts->success(__('admin/custom.appearance_saved'))->flash();
 
-        return redirect()->route('admin.settings.appearance');
+        return new RedirectResponse(route('admin.settings.appearance', [], false));
     }
 
     public function upload(UpdateBackgroundRequest $request, string $area, SiteBackgroundService $backgrounds, AlertsMessageBag $alerts, SettingsRepositoryInterface $settings, AppearanceService $appearance): RedirectResponse|JsonResponse
@@ -52,7 +52,7 @@ class AppearanceController extends Controller
         }
         $alerts->success(__('admin/custom.background_saved'))->flash();
 
-        return redirect()->route('admin.settings.appearance');
+        return new RedirectResponse(route('admin.settings.appearance', [], false));
     }
 
     public function remove(Request $request, string $area, SiteBackgroundService $backgrounds, AlertsMessageBag $alerts): RedirectResponse|JsonResponse
@@ -64,7 +64,7 @@ class AppearanceController extends Controller
         }
         $alerts->success(__('admin/custom.background_removed'))->flash();
 
-        return redirect()->route('admin.settings.appearance');
+        return new RedirectResponse(route('admin.settings.appearance', [], false));
     }
 
     private function ensureEditable(): void

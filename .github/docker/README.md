@@ -33,13 +33,33 @@ docker compose exec panel php artisan p:user:make
 
 There are multiple environment variables to configure the panel when not providing your own `.env` file, see the following table for details on each available option.
 
-Note: If your `APP_URL` starts with `https://` you need to provide an `LE_EMAIL` as well so Certificates can be generated.
+When Nginx, Traefik, Dokploy or Cloudflare terminates HTTPS in front of the
+container, set `APP_URL` to the public HTTPS address and leave `LE_EMAIL` unset.
+The proxy handles certificates and forwards requests to the container's HTTP
+port. Set `TRUSTED_PROXIES` to the proxy's IP address or network CIDR so the panel
+accepts its forwarded HTTPS, host and port headers. Set `SESSION_SECURE_COOKIE=true`
+when users access the panel exclusively through HTTPS.
+
+For example, `dev.aquadactyl.uk` uses `APP_URL=https://dev.aquadactyl.uk`; the
+application URL must not contain the container's internal HTTP port. If you use
+the local `compose.yaml` behind a proxy, set `AQUADACTYL_URL` instead, since that
+file maps it to `APP_URL`.
+
+After changing runtime environment variables, recreate the panel container so
+its configuration cache is regenerated. Changing only Dokploy's public domain
+does not update Laravel's application URL or proxy trust settings.
+
+Set `LE_EMAIL` only when this container itself should obtain and serve a Let's
+Encrypt certificate. Do not enable the container's certificate setup when the
+reverse proxy already handles TLS.
 
 | Variable         | Description                                                       | Required |
 | ---------------- | ----------------------------------------------------------------- | -------- |
 | `APP_URL`        | The URL the panel will be reachable with (including protocol)     | yes      |
+| `TRUSTED_PROXIES` | Proxy IP addresses or CIDRs, separated by commas                  | behind a proxy |
+| `SESSION_SECURE_COOKIE` | Set to `true` for public HTTPS access                       | behind HTTPS |
 | `APP_TIMEZONE`   | The timezone to use for the panel                                 | yes      |
-| `LE_EMAIL`       | The email used for letsencrypt certificate generation             | yes      |
+| `LE_EMAIL`       | Email for certificates served by this container; omit behind a TLS proxy | direct TLS only |
 | `DB_HOST`        | The host of the mysql instance                                    | yes      |
 | `DB_PORT`        | The port of the mysql instance                                    | yes      |
 | `DB_DATABASE`    | The name of the mysql database                                    | yes      |

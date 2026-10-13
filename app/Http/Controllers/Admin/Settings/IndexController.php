@@ -55,6 +55,6 @@ class IndexController extends Controller
         $this->kernel->call('queue:restart');
         $this->alert->success(__('admin/ui.site_settings_saved'))->flash();
 
-        return redirect()->route('admin.settings');
+        return new RedirectResponse(route('admin.settings', [], false));
     }
 }

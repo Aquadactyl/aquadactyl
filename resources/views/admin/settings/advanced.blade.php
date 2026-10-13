@@ -8,7 +8,7 @@
 @section('content-header')
     <h1>{{ __('admin/ui.advanced_settings') }}<small>{{ __('admin/ui.configure_advanced_settings_for_aquadactyl') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li>
         <li class="active">{{ __('admin/ui.settings') }}</li>
     </ol>
 @endsection

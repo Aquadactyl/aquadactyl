@@ -4,7 +4,7 @@
 @section('title', __('admin/ui.mail_settings'))
 @section('content-header')
     <h1>{{ __('admin/ui.mail_settings') }}<small>{{ __('admin/ui.configure_how_aquadactyl_should_handle_sending_emails') }}</small></h1>
-    <ol class="breadcrumb"><li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li><li class="active">{{ __('admin/ui.settings') }}</li></ol>
+    <ol class="breadcrumb"><li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li><li class="active">{{ __('admin/ui.settings') }}</li></ol>
 @endsection
 
 @section('content')
@@ -104,10 +104,10 @@
                 $('#saveButton, #testButton').prop('disabled', true);
                 var payload = {};
                 form.serializeArray().forEach(function (field) { if (field.name !== '_token') payload[field.name] = field.value; });
-                $.ajax({method:'PATCH',url:@json(route('admin.settings.mail')),contentType:'application/json',data:JSON.stringify(payload),headers:{'X-CSRF-Token':form.find('[name="_token"]').val()}})
+                $.ajax({method:'PATCH',url:@json(route('admin.settings.mail', [], false)),contentType:'application/json',data:JSON.stringify(payload),headers:{'X-CSRF-Token':form.find('[name="_token"]').val()}})
                     .then(function () {
                         form.find('input[type="password"]').val('');
-                        if (test) return $.ajax({method:'POST',url:@json(route('admin.settings.mail.test')),headers:{'X-CSRF-Token':form.find('[name="_token"]').val()}});
+                        if (test) return $.ajax({method:'POST',url:@json(route('admin.settings.mail.test', [], false)),headers:{'X-CSRF-Token':form.find('[name="_token"]').val()}});
                     })
                     .done(function () { swal({title:@json(__('admin/ui.success')),text:test ? @json(__('admin/ui.the_test_message_was_sent_successfully')) : @json(__('admin/ui.mail_settings_have_been_updated_successfully_and_the_queue_worker_was_restarted_to_ap')),type:'success'}); })
                     .fail(showError)

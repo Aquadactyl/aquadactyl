@@ -6,8 +6,8 @@
 @section('content-header')
     <h1>{{ __('admin/custom.logs') }}<small>{{ __('admin/custom.logs_description') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
-        <li><a href="{{ route('admin.settings') }}">{{ __('admin/ui.settings') }}</a></li>
+        <li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.settings', [], false) }}">{{ __('admin/ui.settings') }}</a></li>
         <li class="active">{{ __('admin/custom.logs') }}</li>
     </ol>
 @endsection
@@ -19,7 +19,7 @@
         <div class="col-xs-12">
             <div class="box box-default">
                 <div class="box-body" style="padding: 16px;">
-                    <form method="GET" action="{{ route('admin.settings.logs') }}" id="log-file-form">
+                    <form method="GET" action="{{ route('admin.settings.logs', [], false) }}" id="log-file-form">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label for="select-log-file" class="control-label" style="margin-bottom: 6px; display: block;">
                                 {{ __('admin/custom.log_files') }}

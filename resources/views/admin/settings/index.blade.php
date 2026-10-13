@@ -8,7 +8,7 @@
 @section('content-header')
     <h1>{{ __('admin/ui.site_settings') }}<small>{{ __('admin/ui.configure_your_branding_and_the_features_available_to_users') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li>
         <li class="active">{{ __('admin/ui.settings') }}</li>
     </ol>
 @endsection
@@ -21,7 +21,7 @@
                 <div class="box-header with-border">
                     <h3 class="box-title">{{ __('admin/ui.site_configuration') }}</h3>
                 </div>
-                <form action="{{ route('admin.settings') }}" method="POST">
+                <form action="{{ route('admin.settings', [], false) }}" method="POST">
                     <div class="box-body">
                         <div class="row">
                             <div class="form-group col-lg-6">
@@ -102,7 +102,7 @@
             </div>
         </div>
     </div>
-    <p class="text-muted">{{ __('admin/custom.branding_moved') }} <a href="{{ route('admin.settings.appearance') }}">{{ __('admin/custom.appearance') }}</a></p>
+    <p class="text-muted">{{ __('admin/custom.branding_moved') }} <a href="{{ route('admin.settings.appearance', [], false) }}">{{ __('admin/custom.appearance') }}</a></p>
 @endsection
 
 @section('footer-scripts')

@@ -27,7 +27,7 @@ class LogoController extends Controller
         }
         $this->alert->success(__('admin/ui.logo_saved'))->flash();
 
-        return redirect()->route('admin.settings.appearance');
+        return new RedirectResponse(route('admin.settings.appearance', [], false));
     }
 
     public function destroy(Request $request): RedirectResponse|JsonResponse
@@ -39,7 +39,7 @@ class LogoController extends Controller
         }
         $this->alert->success(__('admin/ui.logo_restored'))->flash();
 
-        return redirect()->route('admin.settings.appearance');
+        return new RedirectResponse(route('admin.settings.appearance', [], false));
     }
 
     private function ensureEditable(): void
