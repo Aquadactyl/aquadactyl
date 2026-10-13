@@ -469,4 +469,15 @@ describe("Select interactions inside a label", () => {
     expect(option1.selected).toBe(true);
     expect(setUncontrolled).not.toHaveBeenCalled();
   });
+
+  it("renders popup with anchor width matching and scrollable styles", () => {
+    renderSelect();
+    click(container.querySelector(".panel-select__dropdown-indicator")!);
+
+    const popup = document.querySelector(".panel-select__menu");
+    expect(popup).not.toBeNull();
+    expect(popup?.classList.contains("overflow-y-auto")).toBe(true);
+    expect(popup?.classList.contains("max-h-64")).toBe(true);
+    expect(popup?.getAttribute("style")).toContain("var(--anchor-width)");
+  });
 });

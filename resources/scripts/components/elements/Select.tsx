@@ -137,6 +137,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     const selectId = id || generatedId;
     const native = useRef<HTMLSelectElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const controlRef = useRef<HTMLDivElement>(null);
     const [open, setOpen] = useState(false);
 
     const [uncontrolled, setUncontrolled] = useState(() =>
@@ -258,6 +259,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             itemToStringValue={itemToStringValue}
           >
             <div
+              ref={controlRef}
               className={clsx(
                 "panel-select__control",
                 "flex items-center justify-between",
@@ -330,15 +332,27 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
             <Combobox.Portal keepMounted>
               <Combobox.Positioner
+                anchor={controlRef}
                 side={"bottom"}
                 align={"start"}
                 sideOffset={6}
-                className={"z-50 w-(--anchor-width)"}
+                className={
+                  "z-50 w-(--anchor-width) max-w-(--available-width)"
+                }
+                style={{
+                  width: "var(--anchor-width)",
+                  maxWidth: "var(--available-width)",
+                }}
               >
                 <Combobox.Popup
                   className={
-                    "panel-select__menu panel-select__menu-list max-h-64 overflow-y-auto"
+                    "panel-select__menu panel-select__menu-list max-h-64 w-full overflow-y-auto overscroll-contain"
                   }
+                  style={{
+                    width: "var(--anchor-width)",
+                    maxWidth: "var(--available-width)",
+                    maxHeight: "min(var(--available-height, 16rem), 16rem)",
+                  }}
                 >
                   <Combobox.List>
                     {options.map((groupOrOption, groupIndex) => {
