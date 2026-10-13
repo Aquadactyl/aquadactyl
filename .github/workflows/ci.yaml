@@ -54,6 +54,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          ini-values: zend.assertions=1
           extensions: bcmath, cli, curl, gd, intl, mbstring, mysql, openssl, pdo, redis, tokenizer, xml, zip
           tools: composer:v2
           coverage: ${{ matrix.php == '8.5' && matrix.database == 'mariadb:11' && 'pcov' || 'none' }}

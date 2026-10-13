@@ -87,8 +87,8 @@
     }
   },
   "scripts": {
-    "test": "pest",
-    "test:coverage": "pest --coverage --min=100 --fail-on-warning --fail-on-deprecation",
+    "test": "@php -d zend.assertions=1 vendor/bin/pest",
+    "test:coverage": "@php -d zend.assertions=1 vendor/bin/pest --coverage --min=100 --fail-on-warning --fail-on-deprecation",
     "format": "pint",
     "format:check": "pint --test",
     "post-autoload-dump": [

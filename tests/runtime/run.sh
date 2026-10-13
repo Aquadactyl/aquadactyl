@@ -12,4 +12,4 @@ cp /source/.env.ci .env
 mkdir -p bootstrap/cache storage/logs storage/framework/{cache/data,sessions,views} public/build
 printf '%s\n' '{"resources/scripts/index.tsx":{"file":"assets/test.js","src":"resources/scripts/index.tsx","isEntry":true}}' > public/build/manifest.json
 composer install --no-interaction --no-progress --prefer-dist
-exec php -d pcov.enabled=1 -d pcov.directory=/app/app vendor/bin/pest "$@"
+exec php -d zend.assertions=1 -d pcov.enabled=1 -d pcov.directory=/app/app vendor/bin/pest "$@"

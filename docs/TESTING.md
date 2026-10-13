@@ -7,7 +7,7 @@ Verified on 13 October 2026:
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
 | Panel frontend       |         1,449 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         1,729 | 100% executable lines: 9,791 / 9,791 across 652 files          |
+| Panel PHP            |         1,730 | 100% executable lines: 9,793 / 9,793 across 652 files          |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
 All 499 PHP unit tests also pass with `DB_HOST=UNIT_NO_DB`. The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining PHP/database combinations run in CI.
@@ -63,6 +63,8 @@ Keep the dependency volumes for the next run. This command does not stop the pan
 ## CI and test design
 
 The PHP matrix checks PHP 8.4/8.5 with MariaDB 10/11 and MySQL 8/9. Unit tests also run with `DB_HOST=UNIT_NO_DB` to detect accidental database access. The PHP 8.5/MariaDB 11 job collects whole-suite PCOV coverage, requires 100% and uploads `php-coverage`.
+
+CI, Composer test scripts and the isolated Docker runner enable PHP assertions with `zend.assertions=1`. This keeps invariant checks active during tests and makes coverage consistent across PHP installations. Set this before PHP starts; changing it from a production setting after source files have been compiled cannot reliably enable assertions.
 
 Use real request validation and database transactions for API permission and ownership tests. Fake Wings, S3, OAuth and outbound HTTP at their transport boundaries. Assert the result and side effects: a denied request must not call a daemon or delete a resource, failed work must roll back, and logs or responses must not disclose credentials.
 
