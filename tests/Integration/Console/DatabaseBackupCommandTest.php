@@ -55,18 +55,30 @@ test('write failures stop an active dump without writing its remaining output to
     File::put($client, <<<'PHP'
 #!/usr/bin/env php
 <?php
-while (true) {
-    fwrite(STDOUT, str_repeat('dump data', 8192));
+fwrite(STDOUT, 'first dump chunk');
+$deadline = microtime(true) + 5;
+while (!file_exists(__DIR__ . '/resume') && microtime(true) < $deadline) {
+    usleep(1000);
 }
+fwrite(STDOUT, str_repeat('remaining output', 256));
+file_put_contents(__DIR__ . '/ready', 'ready');
+usleep(5000000);
 PHP);
     chmod($client, 0700);
     $originalPath = getenv('PATH');
     putenv('PATH=' . $this->backupDirectory . PATH_SEPARATOR . $originalPath);
     RuntimeFaults::$enabled['backup.write'] = true;
+    RuntimeFaults::$enabled['backup.before_write'] = function () {
+        File::put($this->backupDirectory . '/resume', 'resume');
+        $deadline = microtime(true) + 5;
+        while (!File::exists($this->backupDirectory . '/ready') && microtime(true) < $deadline) {
+            usleep(1000);
+        }
+    };
     $path = $this->backupDirectory . '/failed-stream.sql';
     try {
         $this->artisan('p:maintenance:backup-database', ['path' => $path])->expectsOutput('Cannot complete database backup.')->assertExitCode(1);
-        expect(File::exists($path))->toBeFalse();
+        expect(File::exists($path))->toBeFalse()->and(File::exists($this->backupDirectory . '/ready'))->toBeTrue();
     } finally {
         putenv('PATH=' . $originalPath);
     }

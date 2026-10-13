@@ -50,8 +50,8 @@ class BackupDatabaseCommand extends Command
         $streaming = true;
         try {
             $process->run(function (string $type, string $buffer) use ($handle, $process, &$streaming) {
-                if ($type === Process::OUT && $streaming) {
-                    if (fwrite($handle, $buffer) !== strlen($buffer)) {
+                if ($type === Process::OUT) {
+                    if ($streaming && fwrite($handle, $buffer) !== strlen($buffer)) {
                         throw new \RuntimeException('Cannot write database backup.');
                     }
                     $process->clearOutput();
