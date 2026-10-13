@@ -2,6 +2,9 @@ name: Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
   pull_request:
     branches:
       - "main"
@@ -33,6 +36,12 @@ jobs:
           - 3306
     steps:
       - uses: actions/checkout@v7
+      - name: Install MariaDB dump client
+        if: startsWith(matrix.database, 'mariadb:')
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends mariadb-client
+          mariadb-dump --version
       - id: composer-cache
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT

@@ -47,9 +47,10 @@ class BackupDatabaseCommand extends Command
 
         $process = new Process($arguments, null, ['MYSQL_PWD' => (string) $connection['password']]);
         $process->setTimeout(null);
+        $streaming = true;
         try {
-            $process->run(function (string $type, string $buffer) use ($handle, $process) {
-                if ($type === Process::OUT) {
+            $process->run(function (string $type, string $buffer) use ($handle, $process, &$streaming) {
+                if ($type === Process::OUT && $streaming) {
                     if (fwrite($handle, $buffer) !== strlen($buffer)) {
                         throw new \RuntimeException('Cannot write database backup.');
                     }
@@ -59,6 +60,8 @@ class BackupDatabaseCommand extends Command
                 }
             });
         } catch (\Throwable $exception) {
+            // Stopping the process may drain its pipes and call this callback again.
+            $streaming = false;
             $process->stop();
             fclose($handle);
             unlink($path);
