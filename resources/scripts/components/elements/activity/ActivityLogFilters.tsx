@@ -87,6 +87,7 @@ export default ({ events, hash, hasFilters, onChange, onClear }: Props) => {
             onChange={(event) =>
               onChange({
                 period: event.currentTarget.value || undefined,
+                date: undefined,
               })
             }
           >
@@ -96,6 +97,28 @@ export default ({ events, hash, hasFilters, onChange, onClear }: Props) => {
             <option value={"30d"}>Last 30 days</option>
             <option value={"90d"}>Last 90 days</option>
           </Select>
+        </label>
+        <label className={"activity-filter-date"}>
+          <span>Date</span>
+          <Input
+            type={"date"}
+            aria-label={"Date"}
+            className={"activity-date-input"}
+            value={hash.date || ""}
+            onClick={(event) => {
+              try {
+                event.currentTarget.showPicker?.();
+              } catch {
+                // Ignore if not supported by browser environment
+              }
+            }}
+            onChange={(event) =>
+              onChange({
+                date: event.currentTarget.value || undefined,
+                period: undefined,
+              })
+            }
+          />
         </label>
         <label>
           <span>Source</span>

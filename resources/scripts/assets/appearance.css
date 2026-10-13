@@ -40,7 +40,9 @@
   min-height: 100vh;
   min-height: 100svh;
   padding: clamp(40px, 5vw, 80px) clamp(24px, 5vw, 80px);
-  background: #1c232a;
+  background: var(--login-box-background, #1c232a);
+  backdrop-filter: var(--login-box-backdrop-filter, none);
+  -webkit-backdrop-filter: var(--login-box-backdrop-filter, none);
 }
 .authentication-page[data-layout^="split"] .authentication-form-panel > * {
   width: 100%;
@@ -52,6 +54,8 @@
   border-radius: 0;
   background: transparent;
   box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 .authentication-page[data-layout="split-left"] .authentication-form-panel {
   grid-column: 1;

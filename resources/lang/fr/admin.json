@@ -14,6 +14,8 @@
     "logo_inside": "Dans le formulaire",
     "logo_opposite": "Sur la moitié opposée",
     "logo_position_help": "Le logo apparaît au-dessus du formulaire avec la disposition centrée et sur les petits écrans.",
+    "login_translucency": "Translucidité de la boîte de connexion",
+    "login_translucency_help": "Ajustez le niveau de translucidité de la boîte de connexion pour que l'arrière-plan soit visible à travers le formulaire.",
     "login_preview": "Aperçu de la page de connexion",
     "client_preview": "Aperçu de l’arrière-plan client",
     "preview_help": "Prévisualisez vos modifications avant de les enregistrer. Sur mobile, le formulaire utilise toujours une seule colonne.",

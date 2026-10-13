@@ -19,6 +19,7 @@ export default () => {
         event_exact: hash.event_exact,
         ip: hash.ip,
         period: hash.period,
+        date: hash.date,
         source: hash.source,
       },
     }),
@@ -42,6 +43,7 @@ export default () => {
     hash.event_exact ||
     hash.ip ||
     hash.period ||
+    hash.date ||
     hash.source ||
     hash.sort,
   );

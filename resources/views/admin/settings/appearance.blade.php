@@ -110,6 +110,11 @@
                             </select>
                             <p class="text-muted">{{ __('admin/custom.logo_position_help') }}</p>
                         </div>
+                        <div class="form-group appearance-effect-control">
+                            <label for="login-translucency">{{ __('admin/custom.login_translucency') }} <output for="login-translucency" id="login-translucency-value">{{ old('login_translucency', $appearance['loginTranslucency'] ?? 0) }}%</output></label>
+                            <input type="range" form="appearance-settings" class="appearance-range" id="login-translucency" name="login_translucency" min="0" max="100" step="1" value="{{ old('login_translucency', $appearance['loginTranslucency'] ?? 0) }}" data-unit="%">
+                            <p class="text-muted">{{ __('admin/custom.login_translucency_help') }}</p>
+                        </div>
                     </fieldset>
                     @include('admin.settings.partials.appearance-background', ['area' => 'login'])
                 </div>
@@ -134,7 +139,7 @@
                         <button id="preview-tab-client" type="button" role="tab" data-preview-tab="client" aria-selected="false" aria-controls="preview-panel-client" tabindex="-1">{{ __('admin/custom.preview_client') }}</button>
                     </div>
                     <div id="preview-panel-login" role="tabpanel" aria-labelledby="preview-tab-login">
-                        <div class="appearance-preview" id="login-preview" data-background="{{ $appearance['loginBackground']['url'] ?? '' }}" data-device="desktop" aria-label="{{ __('admin/custom.login_preview') }}">
+                        <div class="appearance-preview" id="login-preview" style="--preview-box-translucency: {{ ($appearance['loginTranslucency'] ?? 0) / 100 }};" data-background="{{ $appearance['loginBackground']['url'] ?? '' }}" data-device="desktop" aria-label="{{ __('admin/custom.login_preview') }}">
                             <div class="appearance-preview-background"></div>
                             <div class="appearance-preview-pane" aria-hidden="true"></div>
                             <div class="appearance-preview-logo"><img src="{{ $logoUrl ?? '/branding/aquadactyl-wordmark.png' }}" alt=""><span class="preview-site-name"></span></div>

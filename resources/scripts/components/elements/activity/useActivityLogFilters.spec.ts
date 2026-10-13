@@ -66,7 +66,14 @@ describe("useActivityLogFilters", () => {
   });
 
   it("identifies hasFilters for different filter params", () => {
-    const params = ["event", "event_exact", "ip", "period", "source"] as const;
+    const params = [
+      "event",
+      "event_exact",
+      "ip",
+      "period",
+      "date",
+      "source",
+    ] as const;
     for (const param of params) {
       mockHashData = { [param]: "value" };
       const { result } = renderHook(() => useActivityLogFilters());

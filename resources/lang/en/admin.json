@@ -14,6 +14,8 @@
     "logo_inside": "Inside the form",
     "logo_opposite": "On the opposite half",
     "logo_position_help": "The opposite-half option appears above the form on centre layouts and smaller screens.",
+    "login_translucency": "Login box translucency",
+    "login_translucency_help": "Adjust the translucency level of the login box so the background is visible through the form.",
     "login_preview": "Login layout preview",
     "client_preview": "Client background preview",
     "preview_help": "Preview your changes before saving. Mobile uses a single column, even with a split layout.",

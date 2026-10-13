@@ -14,6 +14,8 @@
     "logo_inside": "Im Formular",
     "logo_opposite": "Auf der gegenüberliegenden Hälfte",
     "logo_position_help": "Beim zentrierten Layout und auf kleinen Bildschirmen erscheint das Logo über dem Formular.",
+    "login_translucency": "Transluzenz der Anmeldebox",
+    "login_translucency_help": "Passen Sie die Transluzenz der Anmeldebox an, sodass der Hintergrund durch das Formular sichtbar ist.",
     "login_preview": "Vorschau des Anmeldelayouts",
     "client_preview": "Vorschau des Kundenhintergrunds",
     "preview_help": "Prüfen Sie Ihre Änderungen vor dem Speichern. Auf Mobilgeräten wird das Formular immer einspaltig dargestellt.",

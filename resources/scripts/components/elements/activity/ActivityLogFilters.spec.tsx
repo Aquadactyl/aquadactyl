@@ -134,10 +134,16 @@ describe("components/elements/activity/ActivityLogFilters", () => {
     const sortSelect = selects[3];
 
     fireEvent.change(periodSelect, { target: { value: "24h" } });
-    expect(onChange).toHaveBeenCalledWith({ period: "24h" });
+    expect(onChange).toHaveBeenCalledWith({
+      period: "24h",
+      date: undefined,
+    });
 
     fireEvent.change(periodSelect, { target: { value: "" } });
-    expect(onChange).toHaveBeenCalledWith({ period: undefined });
+    expect(onChange).toHaveBeenCalledWith({
+      period: undefined,
+      date: undefined,
+    });
 
     fireEvent.change(sourceSelect, { target: { value: "sftp" } });
     expect(onChange).toHaveBeenCalledWith({ source: "sftp" });
@@ -150,6 +156,43 @@ describe("components/elements/activity/ActivityLogFilters", () => {
 
     fireEvent.change(sortSelect, { target: { value: "" } });
     expect(onChange).toHaveBeenCalledWith({ sort: undefined });
+  });
+
+  it("handles date calendar input change and clears period", () => {
+    const onChange = vi.fn();
+
+    const { rerender } = render(
+      <ActivityLogFilters
+        events={mockEvents}
+        hash={{ period: "7d" }}
+        hasFilters={true}
+        onChange={onChange}
+        onClear={vi.fn()}
+      />,
+    );
+
+    const dateInput = screen.getByLabelText("Date");
+    fireEvent.change(dateInput, { target: { value: "2026-10-13" } });
+    expect(onChange).toHaveBeenCalledWith({
+      date: "2026-10-13",
+      period: undefined,
+    });
+
+    rerender(
+      <ActivityLogFilters
+        events={mockEvents}
+        hash={{ date: "2026-10-13" }}
+        hasFilters={true}
+        onChange={onChange}
+        onClear={vi.fn()}
+      />,
+    );
+
+    fireEvent.change(dateInput, { target: { value: "" } });
+    expect(onChange).toHaveBeenCalledWith({
+      date: undefined,
+      period: undefined,
+    });
   });
 
   it("handles IP input submission on apply button click (valid and empty)", () => {

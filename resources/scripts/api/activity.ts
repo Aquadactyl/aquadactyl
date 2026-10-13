@@ -7,7 +7,7 @@ import {
 import { toPaginatedSet } from "@definitions/helpers";
 
 export type ActivityLogFilters = QueryBuilderParams<
-  "ip" | "event" | "event_exact" | "period" | "source",
+  "ip" | "event" | "event_exact" | "period" | "date" | "source",
   "timestamp"
 >;
 

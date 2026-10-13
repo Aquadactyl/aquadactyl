@@ -94,6 +94,13 @@
             background.style.filter = 'blur(' + (Number(blur) / 3) + 'px)';
             preview.style.setProperty('--preview-overlay', url ? Number(overlay) / 100 : 0);
         });
+        var translucencyInput = document.getElementById('login-translucency');
+        if (translucencyInput) {
+            var translucency = Number(translucencyInput.value) || 0;
+            var transOutput = document.getElementById('login-translucency-value');
+            if (transOutput) transOutput.textContent = translucency + '%';
+            login.style.setProperty('--preview-box-translucency', (translucency / 100).toString());
+        }
         var dirty = snapshot() !== initial;
         status.textContent = dirty ? status.dataset.unsaved : status.dataset.saved;
         status.classList.toggle('has-changes', dirty);

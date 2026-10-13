@@ -898,10 +898,12 @@
   overflow-wrap: anywhere;
 }
 .authentication-card {
-  background: #1c232a;
+  background: var(--login-box-background, #1c232a);
   border: 1px solid #303942;
   border-radius: 12px;
   padding: 32px;
+  backdrop-filter: var(--login-box-backdrop-filter, none);
+  -webkit-backdrop-filter: var(--login-box-backdrop-filter, none);
 }
 .authentication-heading {
   margin-bottom: 28px;
@@ -1181,7 +1183,7 @@
 }
 .activity-filter-grid {
   display: grid;
-  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
   gap: 16px;
 }
 .activity-filters label {
@@ -1196,15 +1198,25 @@
   margin-bottom: 8px;
   font-weight: 500;
 }
-.activity-filters select {
+.activity-filters select,
+.activity-filters input[type="date"] {
   height: 42px;
   padding-block: 8px;
   border-color: #39424b;
   border-radius: 6px;
   background-color: #151b21;
   color: #e9ecef;
+  color-scheme: dark;
 }
-.activity-filters select:hover {
+.activity-filters input[type="date"] {
+  cursor: pointer;
+}
+.activity-filters input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  filter: invert(0.8);
+}
+.activity-filters select:hover,
+.activity-filters input[type="date"]:hover {
   border-color: #596571;
 }
 .activity-filter-bottom {

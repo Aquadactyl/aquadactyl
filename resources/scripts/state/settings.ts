@@ -9,6 +9,7 @@ export interface SiteSettings {
     primaryColor: string;
     loginLayout: "center" | "split-left" | "split-right";
     loginLogoPosition: "above" | "inside" | "opposite";
+    loginTranslucency?: number;
     loginBackground: { url: string | null; blur: number; overlay: number };
     clientBackground: { url: string | null; blur: number; overlay: number };
   };

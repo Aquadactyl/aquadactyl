@@ -42,6 +42,7 @@ beforeEach(() => {
         <div class="appearance-preview-background"></div>
         <div class="preview-client-brand"><img><span class="preview-site-name"></span></div>
       </div>
+      <input id="login-translucency" value="0"><span id="login-translucency-value"></span>
       ${["logo", "login", "client"]
         .map(
           (area) => `
@@ -239,4 +240,24 @@ it("ignores unrecognized upload areas", () => {
   );
   expect(URL.createObjectURL).not.toHaveBeenCalled();
   expect(fetch).not.toHaveBeenCalled();
+});
+
+it("updates login box translucency output and preview style on slider input", () => {
+  start();
+  const input = element<HTMLInputElement>("#login-translucency");
+  const output = element("#login-translucency-value");
+  const loginPreview = element("#login-preview");
+
+  expect(output.textContent).toBe("0%");
+  expect(
+    loginPreview.style.getPropertyValue("--preview-box-translucency"),
+  ).toBe("0");
+
+  input.value = "45";
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+
+  expect(output.textContent).toBe("45%");
+  expect(
+    loginPreview.style.getPropertyValue("--preview-box-translucency"),
+  ).toBe("0.45");
 });

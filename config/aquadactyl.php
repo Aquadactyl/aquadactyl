@@ -21,6 +21,7 @@ return [
         'primary_color' => '#237c7f',
         'login_layout' => 'center',
         'login_logo_position' => 'above',
+        'login_translucency' => 0,
         'login_background_path' => null,
         'login_blur' => 0,
         'login_overlay' => 50,

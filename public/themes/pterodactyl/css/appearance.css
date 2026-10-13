@@ -65,13 +65,13 @@
 }
 .appearance-preview-background { position: absolute; inset: -20px; z-index: -2; background-position: center; background-size: cover; }
 .appearance-preview::before { content: ''; position: absolute; inset: 0; z-index: -1; background: rgba(12,17,22,var(--preview-overlay)); }
-.appearance-preview-form { position: absolute; width: 44%; left: 28%; top: 32%; padding: 16px; background: var(--aqua-surface); border: 1px solid var(--aqua-border); border-radius: 8px; }
+.appearance-preview-form { position: absolute; width: 44%; left: 28%; top: 32%; padding: 16px; background: rgba(28, 35, 42, calc(1 - var(--preview-box-translucency, 0))); backdrop-filter: blur(calc(var(--preview-box-translucency, 0) * 16px)); -webkit-backdrop-filter: blur(calc(var(--preview-box-translucency, 0) * 16px)); border: 1px solid var(--aqua-border); border-radius: 8px; }
 .appearance-preview-logo { display: flex; flex-direction: column; align-items: center; gap: 4px; position: absolute; width: 36%; left: 32%; top: 15%; color: var(--aqua-heading); text-align: center; font-weight: 600; }
 .appearance-preview-logo img { width: 100%; height: 30px; object-fit: contain; }
 .preview-site-name { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .preview-input, .preview-button { display: block; min-height: 20px; margin-top: 10px; background: var(--aqua-chrome); border: 1px solid var(--aqua-control-border); border-radius: 4px; }
 .preview-button { text-align: center; padding: 5px; border: 0; background: var(--preview-primary); color: var(--preview-contrast, #fff); }
-.appearance-preview-pane { display: none; position: absolute; inset: 0 50% 0 0; background: var(--aqua-surface); border-right: 1px solid var(--aqua-border); }
+.appearance-preview-pane { display: none; position: absolute; inset: 0 50% 0 0; background: rgba(28, 35, 42, calc(1 - var(--preview-box-translucency, 0))); backdrop-filter: blur(calc(var(--preview-box-translucency, 0) * 16px)); -webkit-backdrop-filter: blur(calc(var(--preview-box-translucency, 0) * 16px)); border-right: 1px solid var(--aqua-border); }
 .appearance-preview[data-layout^="split"] .appearance-preview-pane { display: block; }
 .appearance-preview[data-layout="split-right"] .appearance-preview-pane { inset: 0 0 0 50%; border-right: 0; border-left: 1px solid var(--aqua-border); }
 .appearance-preview[data-layout^="split"] .appearance-preview-form { width: 42%; border: 0; border-radius: 0; background: transparent; }

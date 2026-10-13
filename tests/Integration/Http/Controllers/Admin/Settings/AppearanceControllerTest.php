@@ -12,7 +12,7 @@ beforeEach(function () {
     Storage::fake('public');
     config()->set('pterodactyl.load_environment_only', false);
     $this->admin = User::factory()->create(['root_admin' => true]);
-    $this->appearance = ['primary_color' => '#a85cf4', 'login_layout' => 'split-right', 'login_logo_position' => 'opposite', 'login_blur' => 8, 'login_overlay' => 45, 'client_blur' => 4, 'client_overlay' => 80];
+    $this->appearance = ['primary_color' => '#a85cf4', 'login_layout' => 'split-right', 'login_logo_position' => 'opposite', 'login_translucency' => 20, 'login_blur' => 8, 'login_overlay' => 45, 'client_blur' => 4, 'client_overlay' => 80];
 });
 
 afterEach(function () {
@@ -68,10 +68,11 @@ test('appearance settings survive requests and reach client and admin styles', f
     app()->call([new SettingsServiceProvider(app()), 'boot']);
     expect(app(AppearanceService::class)->publicSettings())->toMatchArray([
         'primaryColor' => '#a85cf4', 'loginLayout' => 'split-right', 'loginLogoPosition' => 'opposite',
+        'loginTranslucency' => 20,
         'loginBackground' => ['url' => null, 'blur' => 8, 'overlay' => 45],
         'clientBackground' => ['url' => null, 'blur' => 4, 'overlay' => 80],
     ]);
-    $this->get('/')->assertOk()->assertSee('"loginLayout":"split-right"', false)->assertSee('--color-primary-500: #a85cf4;', false);
+    $this->get('/')->assertOk()->assertSee('"loginLayout":"split-right"', false)->assertSee('--color-primary-500: #a85cf4;', false)->assertSee('--login-box-background: #1c232acc;', false);
     $this->get('/admin/settings/appearance')->assertOk()->assertSee('--aqua-primary: #a85cf4;', false);
 });
 
@@ -80,7 +81,7 @@ test('invalid colours layouts and effects cannot alter saved appearance', functi
     $this->assertDatabaseMissing('settings', ['key' => 'settings::aquadactyl:appearance:primary_color']);
 })->with([
     ['primary_color', 'red; background:url(https://invalid.test)'], ['primary_color', '#fff'],
-    ['login_layout', 'unknown'], ['login_logo_position', 'unknown'], ['login_blur', 31], ['client_blur', -1], ['client_overlay', 96],
+    ['login_layout', 'unknown'], ['login_logo_position', 'unknown'], ['login_translucency', -1], ['login_translucency', 101], ['login_blur', 31], ['client_blur', -1], ['client_overlay', 96],
 ]);
 
 test('backgrounds are reencoded resized and isolated by area', function () {

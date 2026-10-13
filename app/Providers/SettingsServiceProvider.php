@@ -24,6 +24,7 @@ class SettingsServiceProvider extends ServiceProvider
         'aquadactyl:appearance:primary_color',
         'aquadactyl:appearance:login_layout',
         'aquadactyl:appearance:login_logo_position',
+        'aquadactyl:appearance:login_translucency',
         'aquadactyl:appearance:login_background_path',
         'aquadactyl:appearance:login_blur',
         'aquadactyl:appearance:login_overlay',

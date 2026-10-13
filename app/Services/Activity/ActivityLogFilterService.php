@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Services\Activity;
 
+use Carbon\CarbonImmutable;
 use Pterodactyl\Models\User;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -23,6 +24,16 @@ class ActivityLogFilterService
             AllowedFilter::callback('period', function (Builder $query, $value) {
                 $days = ['24h' => 1, '7d' => 7, '30d' => 30, '90d' => 90];
                 $query->where('activity_logs.timestamp', '>=', now()->subDays($days[$value]));
+            }),
+            AllowedFilter::callback('date', function (Builder $query, $value) {
+                if (is_string($value) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
+                    try {
+                        $start = CarbonImmutable::createFromFormat('Y-m-d', $value, config('app.timezone', 'UTC'))->startOfDay()->setTimezone('UTC');
+                        $end = CarbonImmutable::createFromFormat('Y-m-d', $value, config('app.timezone', 'UTC'))->endOfDay()->setTimezone('UTC');
+                        $query->whereBetween('activity_logs.timestamp', [$start, $end]);
+                    } catch (\Throwable) {
+                    }
+                }
             }),
             AllowedFilter::callback('source', function (Builder $query, $value) {
                 if ($value === 'api') {

@@ -231,4 +231,3 @@ test('instantiation of various custom pterodactyl exceptions', function () {
     $tooManyDatabases = new Pterodactyl\Exceptions\Service\Database\TooManyDatabasesException();
     expect($tooManyDatabases->getMessage())->toContain('Operation aborted');
 });
-

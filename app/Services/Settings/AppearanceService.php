@@ -21,6 +21,7 @@ class AppearanceService
             'primaryColor' => $this->primaryColor(),
             'loginLayout' => in_array($values['login_layout'] ?? '', self::LAYOUTS, true) ? $values['login_layout'] : 'center',
             'loginLogoPosition' => in_array($values['login_logo_position'] ?? '', self::LOGO_POSITIONS, true) ? $values['login_logo_position'] : 'above',
+            'loginTranslucency' => max(0, min(100, (int) ($values['login_translucency'] ?? 0))),
             'loginBackground' => $background('login'),
             'clientBackground' => $background('client'),
         ];
@@ -76,6 +77,10 @@ class AppearanceService
             '--panel-accent-border' => $palette[300] . '66',
             '--panel-focus' => $palette[400] . '47',
         ];
+
+        $translucency = max(0, min(100, (int) config('aquadactyl.appearance.login_translucency', 0)));
+        $alpha = sprintf('%02x', (int) round((1 - ($translucency / 100)) * 255));
+        $variables['--login-box-background'] = '#1c232a' . ($translucency > 0 ? $alpha : '');
 
         return $variables;
     }
