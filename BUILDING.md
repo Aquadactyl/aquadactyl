@@ -356,6 +356,11 @@ The protocol fixtures can be checked without running game servers:
 pnpm test:game-query
 ```
 
+## Tests and coverage
+
+See the [testing guide](docs/TESTING.md) for the frontend's 100% coverage gate,
+the isolated Docker/Pest runner, HTML reports, and the PHP coverage target.
+
 ## Wings
 
 The local Docker stack includes Wings. For a production Linux node, Wings is a

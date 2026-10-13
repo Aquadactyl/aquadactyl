@@ -22,7 +22,8 @@ trait ValidatesValidationRules
             $this->getValidator()->make(['__TEST' => 'test'], ['__TEST' => $rules])->fails();
         } catch (\BadMethodCallException $exception) {
             $matches = [];
-            if (preg_match('/Method \[(.+)\] does not exist\./', $exception->getMessage(), $matches)) {
+            if (preg_match('/Method \[(.+)\] does not exist\./', $exception->getMessage(), $matches)
+                || preg_match('/Method [\\\\\w]+::(validate\w+) does not exist\./', $exception->getMessage(), $matches)) {
                 throw new BadValidationRuleException(trans('exceptions.nest.variables.bad_validation_rule', ['rule' => Str::snake(str_replace('validate', '', array_get($matches, 1, 'unknownRule')))]), $exception);
             }
 

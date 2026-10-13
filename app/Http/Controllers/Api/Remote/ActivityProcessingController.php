@@ -59,7 +59,7 @@ class ActivityProcessingController extends Controller
                 'timestamp' => $when->setTimezone($tz),
             ];
 
-            if ($user = $users->get($datum['user'])) {
+            if ($user = $users->get($datum['user'] ?? null)) {
                 $log['actor_id'] = $user->id;
                 $log['actor_type'] = $user->getMorphClass();
             }

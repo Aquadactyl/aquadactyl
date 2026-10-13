@@ -1,5 +1,37 @@
 # Validation results
 
+## Expanded panel and API coverage — 13 October 2026
+
+The panel frontend passes 1,449 tests across 228 files with 100% statements,
+branches, functions and lines across the configured React/TypeScript source.
+PHP 8.5 with an isolated MariaDB 11 database passes 1,205 tests and 22,942
+assertions. Whole-application PCOV line coverage increased from 61.18% to
+76.18% (7,471 of 9,807 lines). All 381 PHP unit tests also pass with
+`DB_HOST=UNIT_NO_DB`, and the six standalone game-query protocol tests pass.
+
+The separate API passes 264 Vitest tests with 98.56% line, 98.12% statement,
+97.35% function and 91.41% branch coverage. Its six PostgreSQL/Redis integration
+tests pass, covering UTC snapshots, concurrent writes, rollback, retention,
+imports and restricted dashboard-reader permissions. The whole API and PHP
+application have not reached the requested 100% target; untested source remains
+in the coverage denominator and the strict API audit fails as expected.
+
+Regression tests exposed and verified fixes for mismatched server/database
+bindings, omitted Wings activity actors, success notifications after failed
+installs, current Laravel validation-rule errors, and incorrect DNS validation
+and timeout status codes. Remote backup tests use a mocked S3 client and assert
+multipart commands and ownership checks without uploading files.
+
+Frontend type checking and lint, API telemetry type checking and build, changed
+PHP file style, test formatting, ShellCheck and the frozen API lockfile check
+pass. GitHub Actions now retains frontend, PHP and API coverage reports; the
+frontend and fully covered API modules enforce 100%, with measured floors for
+the remaining source. See [TESTING.md](TESTING.md) for reproducible commands.
+
+The PHP stack has its own database and workspace, copies `.env.ci`, and mounts
+panel source read-only. The panel, Wings, game servers and telemetry deployment
+were not rebuilt or restarted during these checks.
+
 ## Two-factor input contrast — 9 October 2026
 
 The 2FA dialogs' separate input component inherited a white background from the

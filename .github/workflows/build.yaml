@@ -33,6 +33,13 @@ jobs:
       - run: pnpm audit --prod
       - run: pnpm run types
       - run: pnpm run lint
-      - run: pnpm run test
+      - run: pnpm run test:coverage
+      - name: Upload frontend coverage
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: frontend-coverage
+          path: coverage/
+          if-no-files-found: ignore
       - run: pnpm run test:game-query
       - run: pnpm run build

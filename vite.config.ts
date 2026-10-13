@@ -81,6 +81,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "json-summary", "html"],
+      thresholds: { 100: true },
       include: ["resources/scripts/**/*.{ts,tsx}"],
       exclude: [
         "resources/scripts/**/*.{test,spec}.{ts,tsx}",

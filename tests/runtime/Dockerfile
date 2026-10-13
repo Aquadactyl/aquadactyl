@@ -3,9 +3,11 @@ FROM composer:2 AS composer
 FROM node:24-bookworm-slim AS node
 FROM php:${PHP_VERSION}-cli-bookworm
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git zip unzip rsync shellcheck mariadb-client libonig-dev libzip-dev libpng-dev libjpeg62-turbo-dev libwebp-dev libsqlite3-dev \
+    git zip unzip rsync shellcheck mariadb-client libonig-dev libzip-dev libpng-dev libjpeg62-turbo-dev libwebp-dev libsqlite3-dev libicu-dev \
     && docker-php-ext-configure gd --with-jpeg --with-webp \
-    && docker-php-ext-install mbstring bcmath zip gd pdo_mysql pdo_sqlite \
+    && docker-php-ext-install mbstring bcmath zip gd pdo_mysql pdo_sqlite intl \
+    && pecl install pcov-1.0.12 redis \
+    && docker-php-ext-enable pcov redis \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 COPY --from=node /usr/local/bin/node /usr/local/bin/node

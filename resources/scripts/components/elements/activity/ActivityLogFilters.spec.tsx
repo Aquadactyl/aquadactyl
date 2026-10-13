@@ -218,4 +218,43 @@ describe("components/elements/activity/ActivityLogFilters", () => {
     fireEvent.click(screen.getByRole("button", { name: "Apply" }));
     expect(onChange).toHaveBeenCalledWith({ ip: undefined });
   });
+
+  it.each(["supported", "unsupported", "blocked"])(
+    "keeps the date input usable when its calendar picker is %s",
+    (support) => {
+      const onChange = vi.fn();
+      render(
+        <ActivityLogFilters
+          events={mockEvents}
+          hash={{}}
+          hasFilters={false}
+          onChange={onChange}
+          onClear={vi.fn()}
+        />,
+      );
+      const input = screen.getByLabelText("Date");
+      const showPicker = vi.fn(() => {
+        if (support === "blocked") {
+          throw new DOMException(
+            "User activation is required",
+            "NotAllowedError",
+          );
+        }
+      });
+      Object.defineProperty(input, "showPicker", {
+        value: support === "unsupported" ? undefined : showPicker,
+        configurable: true,
+      });
+
+      expect(() => fireEvent.click(input)).not.toThrow();
+      expect(showPicker).toHaveBeenCalledTimes(
+        support === "unsupported" ? 0 : 1,
+      );
+      fireEvent.change(input, { target: { value: "2026-10-13" } });
+      expect(onChange).toHaveBeenCalledWith({
+        date: "2026-10-13",
+        period: undefined,
+      });
+    },
+  );
 });

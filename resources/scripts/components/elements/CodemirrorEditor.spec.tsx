@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CodemirrorEditor from "./CodemirrorEditor";
+import { LanguageSupport } from "@codemirror/language";
 
 let lastEditorProps: any = null;
 let currentMockView: any = null;
@@ -281,5 +282,27 @@ describe("components/elements/CodemirrorEditor", () => {
       />,
     );
     expect(() => unmount()).not.toThrow();
+  });
+
+  it("installs the asynchronously loaded JSON language support", async () => {
+    render(
+      <CodemirrorEditor
+        initialContent={'{"enabled": true}'}
+        mode="application/json"
+        onModeChanged={vi.fn()}
+        fetchContent={vi.fn()}
+        onContentSaved={vi.fn()}
+      />,
+    );
+    await waitFor(() => {
+      expect(
+        lastEditorProps.extensions.some(
+          (extension: unknown) => extension instanceof LanguageSupport,
+        ),
+      ).toBe(true);
+    });
+    expect(
+      (screen.getByTestId("cm-textarea") as HTMLTextAreaElement).value,
+    ).toBe('{"enabled": true}');
   });
 });

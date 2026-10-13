@@ -1,0 +1,45 @@
+name: aquadactyl-coverage
+services:
+  database:
+    image: mariadb:11
+    environment:
+      MARIADB_DATABASE: testing
+      MARIADB_ROOT_PASSWORD: coverage-tests-only
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 40
+  php:
+    build:
+      context: .
+      dockerfile: tests/runtime/Dockerfile
+    image: aquadactyl-coverage:php85
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      APP_ENV: testing
+      DB_HOST: database
+      DB_DATABASE: testing
+      DB_USERNAME: root
+      DB_PASSWORD: coverage-tests-only
+      COMPOSER_HOME: /composer
+    volumes:
+      - .:/source:ro
+      - test-workspace:/app
+      - composer-cache:/composer
+      - ./coverage-php:/reports
+    entrypoint: ["bash", "/source/tests/runtime/run.sh"]
+    command:
+      - --coverage-clover=/reports/clover.xml
+      - --coverage-html=/reports/html
+      - --coverage-text=/reports/summary.txt
+      - --coverage
+      - --min=75
+      - --fail-on-warning
+volumes:
+  test-workspace:
+  composer-cache:

@@ -47,7 +47,7 @@ jobs:
           php-version: ${{ matrix.php }}
           extensions: bcmath, cli, curl, gd, intl, mbstring, mysql, openssl, pdo, redis, tokenizer, xml, zip
           tools: composer:v2
-          coverage: none
+          coverage: ${{ matrix.php == '8.5' && matrix.database == 'mariadb:11' && 'pcov' || 'none' }}
       - run: cp .env.ci .env
       - run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
       - run: composer audit --locked --no-dev
@@ -66,3 +66,16 @@ jobs:
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
+      - name: Measure complete PHP coverage
+        if: matrix.php == '8.5' && matrix.database == 'mariadb:11'
+        run: vendor/bin/pest --coverage --min=75 --coverage-clover=coverage-php/clover.xml --coverage-html=coverage-php/html --fail-on-deprecation
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
+      - name: Upload PHP coverage
+        if: always() && matrix.php == '8.5' && matrix.database == 'mariadb:11'
+        uses: actions/upload-artifact@v7
+        with:
+          name: php-coverage
+          path: coverage-php/
+          if-no-files-found: ignore
