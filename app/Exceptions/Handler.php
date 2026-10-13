@@ -269,9 +269,6 @@ class Handler extends ExceptionHandler
     {
         $previous = [];
         while ($value = $e->getPrevious()) {
-            if (!$value instanceof \Throwable) { // @phpstan-ignore instanceof.alwaysTrue
-                break;
-            }
             $previous[] = $value;
             $e = $value;
         }

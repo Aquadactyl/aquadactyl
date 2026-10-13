@@ -59,11 +59,7 @@ class BlueprintBaseLibrary
             return $default;
         }
 
-        try {
-            return $this->decodeValue($value->value);
-        } catch (\Exception $e) {
-            return $value->value;
-        }
+        return $this->decodeValue($value->value);
     }
 
     /**
@@ -106,11 +102,7 @@ class BlueprintBaseLibrary
                 continue;
             }
 
-            try {
-                $output[$record] = $this->decodeValue($value->value);
-            } catch (\Exception $e) {
-                $output[$record] = $value->value;
-            }
+            $output[$record] = $this->decodeValue($value->value);
         }
 
         return $output;

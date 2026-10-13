@@ -16,6 +16,16 @@ beforeEach(function () {
     $this->withHeader('Authorization', 'Bearer ' . $server->node->daemon_token_id . '.' . decrypt($server->node->daemon_token));
 });
 
+test('SFTP requests without a server identifier are rejected before password lookup', function () {
+    $request = Pterodactyl\Http\Requests\Api\Remote\SftpAuthenticationFormRequest::create('/', 'POST', ['username' => $this->user->username . '.', 'password' => 'foobar']);
+    $request->attributes->set('node', $this->server->node);
+    expect(fn () => app(Pterodactyl\Http\Controllers\Api\Remote\SftpAuthenticationController::class)($request))->toThrow(Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+});
+
+test('invalid supported public key material fails SFTP authentication safely', function () {
+    $this->postJson('/api/remote/sftp/auth', ['username' => $this->user->username . '.' . $this->server->identifier, 'password' => 'ssh-ed25519 AAAAinvalid', 'type' => 'public_key', 'ip' => '192.0.2.1'])->assertForbidden();
+});
+
 $getUsername = function ($user, $server, bool $long = false): string {
     return $user->username . '.' . ($long ? $server->uuid : $server->identifier);
 };

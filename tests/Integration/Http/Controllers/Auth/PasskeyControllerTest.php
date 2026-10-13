@@ -105,3 +105,27 @@ test('passkey feature toggle and HTTPS requirements are enforced', function () {
 test('account sign-in management requires a browser session', function () {
     $this->withHeader('Authorization', 'Bearer fake-api-token')->getJson('/account/security')->assertUnauthorized();
 });
+
+test('passkey decoding rejects noncanonical malformed and oversized binary encodings', function (string $encoded) {
+    expect(fn () => PasskeyService::decode($encoded))->toThrow(Illuminate\Validation\ValidationException::class);
+})->with(['', '=', 'A', 'AB', str_repeat('a', 131073)]);
+
+test('passkey registration rejects mismatched credential identifiers and malformed client data', function (string $failure) {
+    $options = $this->actingAs($this->user)->postJson('/account/security/passkeys/options', ['current_password' => 'PasskeyTesting123!'])->assertOk();
+    $registration = $this->authenticator->registration($options->json('publicKey.challenge'));
+    if ($failure === 'identifier') {
+        $registration['id'] = PasskeyService::encode(random_bytes(32));
+    } else {
+        $registration['response']['clientDataJSON'] = PasskeyService::encode('{');
+    }
+    $this->postJson('/account/security/passkeys', $registration)->assertUnprocessable();
+    $this->assertDatabaseMissing('account_passkeys', ['user_id' => $this->user->id]);
+})->with(['identifier', 'client-data']);
+
+test('an existing passkey is excluded from enrollment and cannot be registered twice', function () {
+    enrolTestPasskey($this);
+    $options = $this->actingAs($this->user)->postJson('/account/security/passkeys/options', ['current_password' => 'PasskeyTesting123!'])->assertOk();
+    expect($options->json('publicKey.excludeCredentials'))->toHaveCount(1);
+    $this->postJson('/account/security/passkeys', $this->authenticator->registration($options->json('publicKey.challenge')))->assertUnprocessable();
+    expect(AccountPasskey::where('user_id', $this->user->id)->count())->toBe(1);
+});

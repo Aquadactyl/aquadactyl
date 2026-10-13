@@ -15,7 +15,7 @@ class VerifyReCaptcha
     /**
      * VerifyReCaptcha constructor.
      */
-    public function __construct(private Dispatcher $dispatcher, private Repository $config)
+    public function __construct(private Dispatcher $dispatcher, private Repository $config, private ?Client $client = null)
     {
     }
 
@@ -37,7 +37,7 @@ class VerifyReCaptcha
             $endpoints = $this->config->get('recaptcha.endpoints', []);
             $endpoint = $endpoints[$provider] ?? $this->config->get('recaptcha.domain');
 
-            $client = new Client();
+            $client = $this->client ?? new Client();
             $res = $client->post($endpoint, [
                 'form_params' => [
                     'secret' => $this->config->get('recaptcha.secret_key'),
@@ -70,10 +70,6 @@ class VerifyReCaptcha
      */
     private function isResponseVerified(\stdClass $result, Request $request): bool
     {
-        if (!$this->config->get('recaptcha.verify_domain')) {
-            return false;
-        }
-
         $url = parse_url($request->url());
 
         return $result->hostname === array_get($url, 'host');

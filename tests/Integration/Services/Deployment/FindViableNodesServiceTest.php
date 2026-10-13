@@ -14,6 +14,13 @@ beforeEach(function () {
     Node::query()->delete();
 });
 
+test('viable deployment nodes can be paginated without bypassing resource constraints', function () {
+    $location = Location::factory()->create();
+    $node = Node::factory()->create(['location_id' => $location->id, 'memory' => 4096, 'disk' => 8192, 'public' => true]);
+    $result = app(FindViableNodesService::class)->setLocations([$location->id])->setMemory(256)->setDisk(512)->handle(1, 1);
+    expect($result)->toBeInstanceOf(Illuminate\Contracts\Pagination\LengthAwarePaginator::class)->and($result->items()[0]->id)->toBe($node->id);
+});
+
 test('exception is thrown if no disk space has been set', function () {
     $this->expectException(InvalidArgumentException::class);
     $this->expectExceptionMessage('Disk space must be an int, got NULL');

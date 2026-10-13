@@ -18,6 +18,7 @@ test('egg configuration preserves parsers, replaces server values and retains da
         'conditional' => ['old-value' => '{{env.SECRET}}'],
         'nested' => ['deeper' => ['key' => '{{server.name}}']],
         'number' => 42,
+        'list' => ['{{server.name}}', '{{env.SECRET}}'],
     ];
     $egg = (new Egg())->forceFill([
         'config_files' => json_encode(['server.properties' => ['parser' => 'properties', 'find' => $find], 'invalid' => false, 'missing-find' => ['parser' => 'file']]),
@@ -45,6 +46,24 @@ test('egg configuration preserves parsers, replaces server values and retains da
         ->and($replacements['port']['replace_with'])->toBe('{{server.build.default.port}}')
         ->and($replacements['conditional'])->toBe(['match' => 'conditional', 'if_value' => 'old-value', 'replace_with' => 'value'])
         ->and($replacements['number']['replace_with'])->toBe(42);
+});
+
+test('egg replacement retains values supplied by extensions that are not literal strings', function () {
+    $service = new class(Mockery::mock(ServerConfigurationStructureService::class)) extends EggConfigurationService {
+        public function replace(mixed $value): mixed
+        {
+            return $this->matchAndReplaceKeys($value, ['name' => 'Changed']);
+        }
+    };
+    $placeholder = new class implements Stringable {
+        public function __toString(): string
+        {
+            return '{{server.name}}';
+        }
+    };
+    expect($service->replace($placeholder))->toBe($placeholder);
+    $iterate = new ReflectionMethod(EggConfigurationService::class, 'iterate');
+    expect($iterate->invoke($service, 42, []))->toBe(42);
 });
 
 test('egg startup arrays and command stops retain their original values', function () {

@@ -19,7 +19,7 @@ class VersionCacheCommand extends Command
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): int
     {
         $res = Http::connectTimeout(5)->timeout(15)->get($this->PlaceholderService->api_url() . '/api/latest');
         $body = $res->body();
@@ -27,28 +27,20 @@ class VersionCacheCommand extends Command
         if ($body === false || empty($body)) {
             $this->blueprint->dbSet('blueprint', 'internal:version:latest', 'unknown');
 
-            return false;
+            return self::FAILURE;
         }
 
-        if ($body) {
-            $cleaned_response = preg_replace('/[[:^print:]]/', '', $body);
-            $data = json_decode($cleaned_response, true);
-            if (isset($data['name'])) {
-                $latest_version = $data['name'];
-                $this->blueprint->dbSet('blueprint', 'internal:version:latest', $latest_version);
+        $cleaned_response = preg_replace('/[[:^print:]]/', '', $body);
+        $data = json_decode($cleaned_response, true);
+        if (isset($data['name'])) {
+            $this->blueprint->dbSet('blueprint', 'internal:version:latest', $data['name']);
 
-                return true;
-            } else {
-                echo 'Error: Unable to fetch the latest release version.';
-                $this->blueprint->dbSet('blueprint', 'internal:version:latest', 'unknown');
-
-                return false;
-            }
-        } else {
-            echo 'Error: Failed to make the API request.';
-            $this->blueprint->dbSet('blueprint', 'internal:version:latest', 'unknown');
-
-            return false;
+            return self::SUCCESS;
         }
+
+        $this->error('Unable to fetch the latest release version.');
+        $this->blueprint->dbSet('blueprint', 'internal:version:latest', 'unknown');
+
+        return self::FAILURE;
     }
 }

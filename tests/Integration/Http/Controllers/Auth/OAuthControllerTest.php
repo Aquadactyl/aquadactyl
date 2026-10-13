@@ -195,3 +195,39 @@ test('each built-in provider exchanges codes and authenticates its linked identi
         expect($fields['code_verifier'])->toBe($verifier);
     }
 })->with(['discord', 'github', 'google']);
+
+test('OAuth provider startup failures are recoverable and never expose provider secrets', function (bool $link) {
+    $this->mock(OAuthProviderFactory::class)->shouldReceive('make')->andThrow(new RuntimeException('secret-client-value'));
+    if ($link) {
+        $this->actingAs($this->user)->postJson('/account/security/oauth/google', ['current_password' => 'OAuthTesting123!'])
+            ->assertUnprocessable()->assertJsonPath('errors.0.meta.source_field', 'provider')->assertDontSee('secret-client-value');
+    } else {
+        $this->get('/auth/oauth/google')->assertRedirect('/auth/login')->assertSessionHas('oauth_error');
+        expect(session('oauth_error'))->not->toContain('secret-client-value');
+    }
+})->with([true, false]);
+
+test('OAuth callbacks reject missing and oversized provider identifiers', function (string $subject) {
+    mockGoogleAccount($this, $subject);
+    $this->get('/auth/oauth/google')->assertRedirect();
+    completeGoogleCallback($this)->assertRedirect('/auth/login')->assertSessionHas('oauth_error');
+    $this->assertGuest();
+})->with(['', str_repeat('a', 256)]);
+
+test('a login callback cannot replace an account that signed in while authorization was pending', function () {
+    mockGoogleAccount($this);
+    linkedGoogleAccount($this);
+    $this->get('/auth/oauth/google')->assertRedirect();
+    $other = User::factory()->create();
+    $this->actingAs($other);
+    completeGoogleCallback($this)->assertRedirect('/auth/login')->assertSessionHas('oauth_error');
+    $this->assertAuthenticatedAs($other);
+});
+
+test('malformed panel origins and undecryptable provider secrets fail closed', function () {
+    $settings = app(AccountSecuritySettings::class);
+    $settings->set('oauth:google:client_secret', 'invalid-ciphertext');
+    expect($settings->provider('google')['enabled'])->toBeFalse()->and($settings->provider('google')['client_secret'])->toBe('');
+    config()->set('app.url', 'https://username:password@example.test');
+    expect(fn () => $settings->origin())->toThrow(RuntimeException::class, 'absolute panel URL');
+});

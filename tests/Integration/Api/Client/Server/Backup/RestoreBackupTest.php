@@ -29,6 +29,16 @@ test('backup can be restored', function () {
         ->assertStatus(Response::HTTP_NO_CONTENT);
 });
 
+test('S3 restores provide Wings a signed download URL and mark the server as restoring', function () {
+    [$user, $server] = $this->generateTestAccount();
+    $backup = Backup::factory()->create(['server_id' => $server->id, 'disk' => Backup::ADAPTER_AWS_S3]);
+    $url = 'https://s3.example.test/signed-backup';
+    $this->mock(Pterodactyl\Services\Backups\DownloadLinkService::class)->expects('handle')->with(Mockery::on(fn ($model) => $model->id === $backup->id), Mockery::on(fn ($account) => $account->id === $user->id))->andReturn($url);
+    $this->repository->expects('setServer->restore')->with(Mockery::on(fn ($model) => $model->id === $backup->id), $url, false)->andReturn(new GuzzleResponse());
+    $this->actingAs($user)->postJson($this->link($backup, 'restore'), ['truncate' => false])->assertNoContent();
+    expect($server->fresh()->status)->toBe(Pterodactyl\Models\Server::STATUS_RESTORING_BACKUP);
+});
+
 test('backup cannot be restored until successful and complete', function (bool $isSuccessful, bool $isCompleted) {
     [$user, $server] = $this->generateTestAccount([Permission::ACTION_BACKUP_RESTORE]);
 

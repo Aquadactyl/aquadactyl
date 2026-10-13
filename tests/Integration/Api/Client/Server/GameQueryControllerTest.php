@@ -17,6 +17,23 @@ beforeEach(function () {
     Cache::flush();
 });
 
+test('queries queued before a server is deleted terminate without contacting the game server', function () {
+    $settings = app(GameQuerySettingsService::class);
+    $runner = Mockery::mock(GameQueryRunner::class);
+    $runner->shouldNotReceive('query');
+    Cache::put('missing-query:pending', true, 20);
+    (new QueryGameServerJob(PHP_INT_MAX, 'missing-query'))->handle($settings, $runner);
+    expect(Cache::has('missing-query:pending'))->toBeFalse();
+});
+
+test('asynchronous query queues dispatch work immediately rather than waiting for the web response', function () {
+    config()->set('queue.default', 'redis');
+    [$user, $server] = $this->generateTestAccount();
+    $this->actingAs($user)->getJson($this->link($server, 'query'))->assertOk()->assertJsonPath('attributes.status', 'pending');
+    Bus::assertDispatched(QueryGameServerJob::class);
+    Bus::assertNotDispatchedAfterResponse(QueryGameServerJob::class);
+});
+
 test('known games are detected and non games do not dispatch queries', function () {
     [$user, $server] = $this->generateTestAccount();
     $settings = app(GameQuerySettingsService::class);

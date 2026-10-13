@@ -46,3 +46,19 @@ test('exception is thrown if invalid actions are passed', function () {
 
     app(SuspensionService::class)->toggle($server, 'foo');
 });
+
+test('failed Wings synchronization restores the previous suspension status', function (bool $suspended) {
+    $server = $this->createServerModel(['status' => $suspended ? Server::STATUS_SUSPENDED : null]);
+    $this->repository->expects('setServer')->with($server)->andReturnSelf();
+    $this->repository->expects('sync')->andThrow(new RuntimeException('Wings unavailable'));
+    expect(fn () => app(SuspensionService::class)->toggle($server, $suspended ? SuspensionService::ACTION_UNSUSPEND : SuspensionService::ACTION_SUSPEND))->toThrow(RuntimeException::class, 'Wings unavailable');
+    expect($server->refresh()->isSuspended())->toBe($suspended);
+})->with([true, false]);
+
+test('servers in an active transfer cannot change suspension status', function () {
+    $server = $this->createServerModel();
+    $server->setRelation('transfer', new Pterodactyl\Models\ServerTransfer());
+    $this->repository->shouldNotReceive('setServer');
+    expect(fn () => app(SuspensionService::class)->toggle($server))->toThrow(Symfony\Component\HttpKernel\Exception\ConflictHttpException::class);
+    expect($server->refresh()->isSuspended())->toBeFalse();
+});

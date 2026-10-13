@@ -52,7 +52,7 @@ trait HasRealtimeIdentifier
             return;
         }
 
-        $builder->where(self::$identifierDataColumn, Uuid::fromBytes($bytes)->toString());
+        $builder->where($this->qualifyColumn(self::$identifierDataColumn), Uuid::fromBytes($bytes)->toString());
     }
 
     protected static function bootHasRealtimeIdentifier(): void

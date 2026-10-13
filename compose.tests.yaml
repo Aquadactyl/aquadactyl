@@ -38,8 +38,9 @@ services:
       - --coverage-html=/reports/html
       - --coverage-text=/reports/summary.txt
       - --coverage
-      - --min=75
+      - --min=100
       - --fail-on-warning
+      - --fail-on-deprecation
 volumes:
   test-workspace:
   composer-cache:

@@ -48,7 +48,7 @@ test('saving advanced settings preserves the external HTTPS origin without trust
         'recaptcha:enabled' => 'false', 'pterodactyl:guzzle:timeout' => 30,
         'pterodactyl:guzzle:connect_timeout' => 10, 'pterodactyl:client_features:allocations:enabled' => 'false',
     ])->assertRedirect()->assertHeader('Location', '/admin/settings/advanced');
-    expect(\Illuminate\Http\Request::getTrustedProxies())->toBe([]);
+    expect(Illuminate\Http\Request::getTrustedProxies())->toBe([]);
 });
 
 test('appearance settings redirect to the same browser origin after saving', function () {

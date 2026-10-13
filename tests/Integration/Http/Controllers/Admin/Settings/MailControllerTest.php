@@ -105,3 +105,8 @@ test('SMTP passwords resembling environment values stay literal strings', functi
     app()->call([new SettingsServiceProvider(app()), 'boot']);
     expect(config('mail.mailers.smtp.password'))->toBe($password);
 })->with(['0', 'false', 'true', 'null']);
+
+test('administrators can explicitly clear an SMTP password using the supported empty sentinel', function () {
+    $this->actingAs($this->admin)->patchJson('/admin/settings/mail', ['mail:default' => 'smtp', ...$this->sender, 'mail:mailers:smtp:host' => 'smtp.example.test', 'mail:mailers:smtp:port' => 587, 'mail:mailers:smtp:encryption' => 'tls', 'mail:mailers:smtp:password' => '!e'])->assertNoContent();
+    expect(Setting::where('key', 'settings::mail:mailers:smtp:password')->value('value'))->toBe('');
+});

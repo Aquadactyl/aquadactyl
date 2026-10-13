@@ -68,7 +68,7 @@ jobs:
           DB_USERNAME: root
       - name: Measure complete PHP coverage
         if: matrix.php == '8.5' && matrix.database == 'mariadb:11'
-        run: vendor/bin/pest --coverage --min=75 --coverage-clover=coverage-php/clover.xml --coverage-html=coverage-php/html --fail-on-deprecation
+        run: vendor/bin/pest --coverage --min=100 --coverage-clover=coverage-php/clover.xml --coverage-html=coverage-php/html --fail-on-warning --fail-on-deprecation
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root

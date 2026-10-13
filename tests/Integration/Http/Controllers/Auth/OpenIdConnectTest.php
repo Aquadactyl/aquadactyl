@@ -111,3 +111,27 @@ test('OIDC discovery rejects a different issuer and insecure endpoints', functio
     ])]);
     expect(fn () => app(OpenIdConnectDiscovery::class)->metadata('https://sso.example.test'))->toThrow(RuntimeException::class);
 })->with(['issuer', 'endpoint']);
+
+test('OpenID discovery rejects oversized non-object and non-PKCE documents', function (string $failure) {
+    $body = match ($failure) {
+        'large' => str_repeat('a', 1048577), 'scalar' => 'null',
+        default => ['issuer' => 'https://sso.example.test', 'authorization_endpoint' => 'https://sso.example.test/authorize', 'token_endpoint' => 'https://sso.example.test/token', 'jwks_uri' => 'https://sso.example.test/keys', 'code_challenge_methods_supported' => ['plain']],
+    };
+    Http::fake(['*' => Http::response($body)]);
+    expect(fn () => app(OpenIdConnectDiscovery::class)->metadata('https://sso.example.test'))->toThrow(RuntimeException::class);
+})->with(['large', 'scalar', 'pkce']);
+
+test('OpenID providers refuse unsupported client authentication and missing identity tokens', function (string $failure) {
+    Http::fake(['*' => Http::response([
+        'issuer' => 'https://sso.example.test', 'authorization_endpoint' => 'https://sso.example.test/authorize',
+        'token_endpoint' => 'https://sso.example.test/token', 'jwks_uri' => 'https://sso.example.test/keys',
+        'code_challenge_methods_supported' => ['S256'], 'token_endpoint_auth_methods_supported' => [$failure === 'method' ? 'private_key_jwt' : 'client_secret_post'],
+    ])]);
+    $factory = new OAuthProviderFactory();
+    $this->mock(OAuthProviderFactory::class)->shouldReceive('make')->andReturnUsing(function ($config, $nonce) use ($factory) {
+        return $factory->make($config, $nonce)->setHttpClient(new Client(['handler' => HandlerStack::create(new MockHandler([new Response(200, ['Content-Type' => 'application/json'], '{"access_token":"test"}')]))]));
+    });
+    $this->get('/auth/oauth/oidc')->assertRedirect();
+    $this->get('/auth/oauth/oidc/callback?' . http_build_query(['state' => session('state'), 'code' => 'test-code']))->assertRedirect('/auth/login')->assertSessionHas('oauth_error');
+    $this->assertGuest();
+})->with(['method', 'token']);

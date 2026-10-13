@@ -65,3 +65,9 @@ test('error is returned when server is offline', function () {
     $response->assertJsonPath('errors.0.code', 'HttpException');
     $response->assertJsonPath('errors.0.detail', 'Server must be online in order to send commands.');
 });
+
+test('other Wings command failures retain their upstream status rather than reporting the server offline', function () {
+    [$user, $server] = $this->generateTestAccount();
+    $this->mock(DaemonCommandRepository::class)->expects('setServer->send')->andThrow(new DaemonConnectionException(new BadResponseException('Service unavailable', new Request('POST', '/commands'), new GuzzleResponse(503))));
+    $this->actingAs($user)->postJson($this->link($server, 'command'), ['command' => 'say testing'])->assertStatus(503)->assertJsonPath('errors.0.code', 'DaemonConnectionException');
+});

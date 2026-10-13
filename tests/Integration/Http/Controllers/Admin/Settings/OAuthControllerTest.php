@@ -16,6 +16,11 @@ beforeEach(function () {
     }
 });
 
+test('an enabled OpenID Connect provider requires an issuer even with valid client credentials', function () {
+    $this->payload['providers']['oidc'] = ['enabled' => '1', 'client_id' => 'oidc-client', 'client_secret' => 'oidc-secret', 'issuer' => ''];
+    $this->actingAs($this->admin)->patchJson('/admin/settings/oauth', $this->payload)->assertUnprocessable()->assertJsonPath('errors.0.meta.source_field', 'providers.oidc.issuer');
+});
+
 test('OAuth settings require an administrator and password confirmation', function () {
     $user = User::factory()->create(['root_admin' => false]);
     $this->actingAs($user)->get('/admin/settings/oauth')->assertForbidden();

@@ -35,8 +35,8 @@ class BulkPowerActionCommand extends Command
     public function handle()
     {
         $action = $this->argument('action');
-        $nodes = empty($this->option('nodes')) ? [] : explode(',', $this->option('nodes'));
-        $servers = empty($this->option('servers')) ? [] : explode(',', $this->option('servers'));
+        $nodes = ($this->option('nodes') ?? '') === '' ? [] : explode(',', $this->option('nodes'));
+        $servers = ($this->option('servers') ?? '') === '' ? [] : explode(',', $this->option('servers'));
 
         $validator = $this->validator->make([
             'action' => $action,
@@ -94,7 +94,9 @@ class BulkPowerActionCommand extends Command
         $instance = Server::query()->whereNull('status');
 
         if (!empty($nodes) && !empty($servers)) {
-            $instance->whereIn('id', $servers)->orWhereIn('node_id', $nodes);
+            $instance->where(function (Builder $query) use ($servers, $nodes) {
+                $query->whereIn('id', $servers)->orWhereIn('node_id', $nodes);
+            });
         } elseif (empty($nodes) && !empty($servers)) {
             $instance->whereIn('id', $servers);
         } elseif (!empty($nodes) && empty($servers)) { // @phpstan-ignore empty.variable

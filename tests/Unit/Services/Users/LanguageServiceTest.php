@@ -62,3 +62,13 @@ test('automatic selection honors header weights and excludes refused languages',
     ['fr;q=0,de;q=1', 'en'],
     ['fr;q=0,*;q=0', 'en'],
 ]);
+
+test('installations without English choose an installed fallback and empty pack lists remain usable', function (bool $installed, string $expected) {
+    $this->languages->available();
+    config()->set('app.locale', 'missing');
+    config()->set('app.fallback_locale', 'missing');
+    $files = m::mock(Filesystem::class);
+    $files->expects('directories')->andReturn($installed ? [resource_path('lang/fr')] : []);
+    $files->allows('exists')->andReturn(false);
+    expect((new LanguageService($files))->fallback())->toBe($expected);
+})->with([[true, 'fr'], [false, 'en']]);

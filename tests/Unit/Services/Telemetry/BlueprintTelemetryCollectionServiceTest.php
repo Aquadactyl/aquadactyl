@@ -68,3 +68,24 @@ test('enabled Blueprint telemetry submits its collected payload with bounded tim
     $service();
     Http::assertSent(fn ($request) => $request->url() === 'https://blueprint.example.test/api/telemetry' && $request['id'] === 'anonymous');
 });
+
+test('Blueprint telemetry transport failures are reported without interrupting scheduled work', function () {
+    Http::fake(['*' => Http::response([], 503)]);
+    $library = Mockery::mock(BlueprintConsoleLibrary::class);
+    $library->allows('dbGet')->with('blueprint', 'flags:telemetry_enabled', false)->andReturn(true);
+    $placeholders = Mockery::mock(BlueprintPlaceholderService::class);
+    $placeholders->allows('api_url')->andReturn('https://blueprint.example.test');
+    $service = Mockery::mock(BlueprintTelemetryCollectionService::class, [$library, $placeholders, Mockery::mock(BlueprintSeeder::class)])->makePartial();
+    $service->expects('collect')->andReturn(['id' => 'anonymous']);
+    $handler = $this->mock(Illuminate\Contracts\Debug\ExceptionHandler::class);
+    $handler->expects('report')->with(Mockery::type(Illuminate\Http\Client\RequestException::class));
+    $service();
+    Http::assertSentCount(1);
+});
+
+test('Blueprint telemetry preview prints collected information without transmitting it', function () {
+    Http::fake();
+    $this->mock(BlueprintTelemetryCollectionService::class)->expects('collect')->andReturn(['id' => 'anonymous']);
+    $this->artisan('bp:telemetry')->assertExitCode(0);
+    Http::assertNothingSent();
+});

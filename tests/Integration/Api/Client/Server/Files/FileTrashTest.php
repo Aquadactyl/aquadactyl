@@ -22,9 +22,13 @@ beforeEach(function () {
     $this->noOpRename = false;
     $this->failAfterMove = false;
     $this->failDelete = false;
+    $this->failDirectory = false;
     $repository = Mockery::mock(DaemonFileRepository::class);
     $repository->allows('setServer')->andReturnSelf();
     $repository->allows('getDirectory')->andReturnUsing(function ($path) {
+        if ($this->failDirectory) {
+            throw new DaemonConnectionException(new BadResponseException('Directory unavailable', new Request('GET', 'https://wings.example.invalid'), new Response(503)));
+        }
         $path = TrashPath::normalize($path);
         if (!isset($this->filesystem[$path])) {
             throw new DaemonConnectionException(new BadResponseException('Missing directory', new Request('GET', 'https://wings.example.invalid'), new Response(404)));
@@ -88,6 +92,17 @@ beforeEach(function () {
         return new Response(204);
     });
     $this->app->instance(DaemonFileRepository::class, $repository);
+});
+
+test('trash reconciliation retains recovery metadata when Wings directory listing fails', function () {
+    [$user, $server] = $this->generateTestAccount();
+    $this->actingAs($user)->postJson($this->link($server, 'trash'), ['root' => '/', 'files' => ['notes.txt']])->assertNoContent();
+    $item = FileTrashItem::first();
+    $item->update(['ready' => false]);
+    $this->failDirectory = true;
+    expect(fn () => app(Pterodactyl\Services\Files\FileTrashService::class)->reconcile($server, $item))->toThrow(DaemonConnectionException::class);
+    $this->assertDatabaseHas('file_trash_items', ['id' => $item->id]);
+    expect($this->deleted)->toBe([]);
 });
 
 test('files and whole directories move to trash and restore with their contents', function () {
@@ -237,13 +252,14 @@ test('retention cleanup deletes only expired trash and retries failed node reque
     $this->actingAs($user)->postJson($this->link($server, 'trash'), ['root' => '/', 'files' => ['notes.txt', 'world']])->assertNoContent();
     $expired = FileTrashItem::first();
     $expired->update(['expires_at' => now()->subMinute()]);
+    $secondExpired = FileTrashItem::create(['uuid' => fake()->uuid(), 'server_id' => $server->id, 'original_path' => '/second.txt', 'is_file' => true, 'expires_at' => now()->subMinute(), 'ready' => true]);
     config()->set('aquadactyl.features.file_trash', false);
     $this->failDelete = true;
     $this->artisan('p:maintenance:prune-file-trash')->assertFailed();
-    expect(FileTrashItem::count())->toBe(2);
+    expect(FileTrashItem::count())->toBe(3);
     $this->failDelete = false;
     $this->artisan('p:maintenance:prune-file-trash')->assertSuccessful();
-    expect(FileTrashItem::count())->toBe(1)->and($this->deleted)->toBe(['/.aquadactyl-trash/' . $expired->uuid]);
+    expect(FileTrashItem::count())->toBe(1)->and($this->deleted)->toBe(['/.aquadactyl-trash/' . $expired->uuid, '/.aquadactyl-trash/' . $secondExpired->uuid]);
 });
 
 test('expired items cannot be restored and changed retention affects only new moves', function () {
@@ -256,4 +272,47 @@ test('expired items cannot be restored and changed retention affects only new mo
         ->and(FileTrashItem::latest('id')->first()->expires_at->timestamp)->toBe(now()->addDays(14)->timestamp);
     $old->update(['expires_at' => now()->subSecond()]);
     $this->postJson($this->link($server, 'trash/' . $old->uuid . '/restore'))->assertStatus(409);
+});
+
+test('missing trash payloads cannot be restored and a no-op restore retains recovery metadata', function (bool $ready) {
+    [$user, $server] = $this->generateTestAccount();
+    $this->actingAs($user)->postJson($this->link($server, 'trash'), ['root' => '/', 'files' => ['notes.txt']])->assertNoContent();
+    $item = FileTrashItem::first();
+    $item->update(['ready' => $ready]);
+    if (!$ready) {
+        unset($this->filesystem['/.aquadactyl-trash/' . $item->uuid]);
+    } else {
+        $this->noOpRename = true;
+    }
+    $this->postJson($this->link($server, 'trash/' . $item->uuid . '/restore'))->assertStatus(409);
+    $this->assertDatabaseHas('file_trash_items', ['id' => $item->id]);
+})->with([true, false]);
+
+test('restore reconciles a completed rename before trying to move the same payload again', function () {
+    [$user, $server] = $this->generateTestAccount();
+    $this->actingAs($user)->postJson($this->link($server, 'trash'), ['root' => '/', 'files' => ['notes.txt']])->assertNoContent();
+    $item = FileTrashItem::first();
+    $item->update(['restore_started_at' => now()]);
+    $path = '/.aquadactyl-trash/' . $item->uuid;
+    $this->filesystem['/']['notes.txt'] = $this->filesystem[$path]['notes.txt'];
+    unset($this->filesystem[$path]['notes.txt']);
+    $this->postJson($this->link($server, 'trash/' . $item->uuid . '/restore'))->assertNoContent();
+    expect($this->renames)->toHaveCount(1)->and($this->filesystem['/']['notes.txt']['content'])->toBe('keep this content');
+    $this->assertDatabaseMissing('file_trash_items', ['id' => $item->id]);
+});
+
+test('purging a missing item or a live item during retention cleanup leaves stored files untouched', function () {
+    [$user, $server] = $this->generateTestAccount();
+    $this->actingAs($user)->postJson($this->link($server, 'trash'), ['root' => '/', 'files' => ['notes.txt']])->assertNoContent();
+    $item = FileTrashItem::first();
+    $service = app(Pterodactyl\Services\Files\FileTrashService::class);
+    $service->purge($server, $item, true);
+    $missing = clone $item;
+    $missing->uuid = fake()->uuid();
+    $service->purge($server, $missing);
+    expect($this->deleted)->toBe([]);
+    FileTrashItem::whereKey($item->id)->update(['uuid' => '../unsafe']);
+    $item->uuid = '../unsafe';
+    expect(fn () => $service->purge($server, $item))->toThrow(RuntimeException::class, 'Invalid trash storage identifier');
+    expect($this->deleted)->toBe([]);
 });

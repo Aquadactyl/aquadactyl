@@ -2,6 +2,16 @@
 
 The panel has separate React/Vitest and PHP/Pest suites. Both coverage configurations count untested source files. A passing test count alone does not mean the whole application is covered.
 
+Verified on 13 October 2026:
+
+| Suite                | Passing tests | Coverage                                                       |
+| -------------------- | ------------: | -------------------------------------------------------------- |
+| Panel frontend       |         1,449 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         1,729 | 100% executable lines: 9,791 / 9,791 across 652 files          |
+| Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
+
+All 499 PHP unit tests also pass with `DB_HOST=UNIT_NO_DB`. The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining PHP/database combinations run in CI.
+
 ## Frontend
 
 Use Node.js 24 and the pnpm version declared in `package.json`:
@@ -25,7 +35,7 @@ docker compose -f compose.tests.yaml build php
 docker compose -f compose.tests.yaml run --rm php
 ```
 
-The default command runs the entire unit and integration suite, generates Clover and HTML reports, fails on PHPUnit warnings, and checks the current 75% line-coverage floor. Open `coverage-php/html/index.html`; the text summary is `coverage-php/summary.txt` and Clover XML is `coverage-php/clover.xml`.
+The default command runs the entire unit and integration suite, generates Clover and HTML reports, fails on PHPUnit warnings and deprecations, and requires 100% line coverage. Open `coverage-php/html/index.html`; the text summary is `coverage-php/summary.txt` and Clover XML is `coverage-php/clover.xml`. On a configured test environment, `composer run test:coverage` enforces the same coverage requirement.
 
 To work on a particular area without collecting coverage:
 
@@ -34,13 +44,13 @@ docker compose -f compose.tests.yaml run --rm php tests/Integration/Api/Remote -
 docker compose -f compose.tests.yaml run --rm php --bootstrap vendor/autoload.php tests/Unit/Repositories/Wings --no-coverage
 ```
 
-To audit the requested full 100% PHP target:
+To run the full coverage gate explicitly:
 
 ```sh
 docker compose -f compose.tests.yaml run --rm php --coverage --min=100 --coverage-clover=/reports/clover.xml --coverage-html=/reports/html
 ```
 
-This audit will fail until all executable lines in `app/` are tested. PCOV measures line coverage; it does not establish branch or path coverage. The PHP suite has not yet reached 100%. Its coverage report identifies the remaining console, admin, request-validation, repository and Blueprint paths.
+The gate fails if any executable line in `app/` is uncovered, including files no test imports. PCOV measures line coverage; it does not measure branch or path coverage. The frontend and separate API use V8 coverage and require 100% for statements, branches, functions and lines. Keep these source include lists intact when extending the suites.
 
 Stop only the test stack when finished:
 
@@ -52,9 +62,11 @@ Keep the dependency volumes for the next run. This command does not stop the pan
 
 ## CI and test design
 
-The PHP matrix checks PHP 8.4/8.5 with MariaDB 10/11 and MySQL 8/9. Unit tests also run with `DB_HOST=UNIT_NO_DB` to detect accidental database access. The PHP 8.5/MariaDB 11 job collects whole-suite PCOV coverage, enforces the 75% minimum and uploads `php-coverage`.
+The PHP matrix checks PHP 8.4/8.5 with MariaDB 10/11 and MySQL 8/9. Unit tests also run with `DB_HOST=UNIT_NO_DB` to detect accidental database access. The PHP 8.5/MariaDB 11 job collects whole-suite PCOV coverage, requires 100% and uploads `php-coverage`.
 
 Use real request validation and database transactions for API permission and ownership tests. Fake Wings, S3, OAuth and outbound HTTP at their transport boundaries. Assert the result and side effects: a denied request must not call a daemon or delete a resource, failed work must roll back, and logs or responses must not disclose credentials.
+
+The regression suite covers authentication and token rotation, allocation rollback, account linking and passkeys, backup retention and signing, schedules, trash recovery, administrative settings, repository ownership and Blueprint compatibility. `tests/Fixtures/RuntimeFaults.php` simulates failures at native entropy, filesystem, DNS and regex boundaries. Faults default to the real PHP functions and must be reset after each owning test; they do not alter production code or remove source from coverage.
 
 The exception handler rolls back active transactions when rendering an error. Tests using `DatabaseTransactions` should make a single error-producing request per fixture; later requests cannot safely reuse models removed by that rollback.
 

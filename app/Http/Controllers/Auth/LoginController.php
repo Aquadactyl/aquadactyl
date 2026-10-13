@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
+use Pterodactyl\Http\Requests\Auth\LoginRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LoginController extends AbstractLoginController
@@ -28,6 +29,7 @@ class LoginController extends AbstractLoginController
      */
     public function login(Request $request): JsonResponse
     {
+        $request->validate((new LoginRequest())->rules());
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             $this->sendLockoutResponse($request);

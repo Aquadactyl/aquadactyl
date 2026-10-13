@@ -79,7 +79,7 @@ class ResetPasswordController extends Controller
         $user = $this->userRepository->update($user->id, [
             'password' => $this->hasher->make($password),
             $user->getRememberTokenName() => Str::random(60),
-        ]);
+        ], true, true);
 
         $this->dispatcher->dispatch(new PasswordReset($user));
         PasswordChanged::dispatch($user);

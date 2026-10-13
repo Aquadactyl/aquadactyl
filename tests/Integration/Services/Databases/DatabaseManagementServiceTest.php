@@ -148,3 +148,27 @@ test('exception encountered while creating database attempts to cleanup', functi
 
     $this->assertDatabaseMissing('databases', ['server_id' => $server->id]);
 });
+
+test('administrative database provisioning can explicitly override a server quota', function () {
+    $server = $this->createServerModel(['database_limit' => 0]);
+    $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
+    $this->repository->expects('createDatabase')->with('s' . $server->id . '_admin');
+    $this->repository->expects('createUser');
+    $this->repository->expects('assignUserToDatabase');
+    $this->repository->expects('flush');
+    $database = app(DatabaseManagementService::class)->setValidateDatabaseLimit(false)->create($server, [
+        'database' => 's' . $server->id . '_admin', 'database_host_id' => $host->id, 'remote' => '%',
+    ]);
+    $this->assertDatabaseHas('databases', ['id' => $database->id, 'server_id' => $server->id]);
+});
+
+test('database deletion removes remote resources before deleting panel metadata', function () {
+    $server = $this->createServerModel();
+    $host = DatabaseHost::factory()->create(['node_id' => $server->node_id]);
+    $database = Database::factory()->create(['server_id' => $server->id, 'database_host_id' => $host->id]);
+    $this->repository->expects('dropDatabase')->with($database->database)->ordered();
+    $this->repository->expects('dropUser')->with($database->username, $database->remote)->ordered();
+    $this->repository->expects('flush')->ordered();
+    expect(app(DatabaseManagementService::class)->delete($database))->toBeTrue();
+    $this->assertDatabaseMissing('databases', ['id' => $database->id]);
+});

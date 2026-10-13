@@ -25,6 +25,21 @@ beforeEach(function () {
     $this->swap(DaemonServerRepository::class, $this->daemonServerRepository);
 });
 
+test('server creation infers its node from the allocation and retries UUID collisions', function () {
+    $existing = $this->createServerModel();
+    $allocation = Allocation::factory()->create(['node_id' => $existing->node_id]);
+    $repository = Mockery::mock(Pterodactyl\Repositories\Eloquent\ServerRepository::class . '[isUniqueUuid]', [app()]);
+    $repository->expects('isUniqueUuid')->twice()->andReturn(false, true);
+    app()->instance(Pterodactyl\Repositories\Eloquent\ServerRepository::class, $repository);
+    $this->daemonServerRepository->expects('setServer->create')->andReturnUndefined();
+    $created = app(ServerCreationService::class)->handle([
+        'name' => 'Inferred node server', 'owner_id' => $existing->owner_id, 'allocation_id' => $allocation->id,
+        'egg_id' => $this->bungeecord->id, 'memory' => 256, 'swap' => 0, 'disk' => 1024, 'io' => 500, 'cpu' => 0,
+        'startup' => 'java -jar server.jar', 'image' => 'java:25', 'environment' => ['BUNGEE_VERSION' => 'latest', 'SERVER_JARFILE' => 'server.jar'],
+    ]);
+    expect($created->node_id)->toBe($existing->node_id)->and($allocation->fresh()->server_id)->toBe($created->id);
+});
+
 test('server is created with deployment object', function () {
     /** @var User $user */
     $user = User::factory()->create();

@@ -13,6 +13,17 @@ beforeEach(function () {
     Event::fake([Failed::class, DirectLogin::class, ProvidedAuthenticationToken::class]);
 });
 
+test('checkpoint sessions reject deleted users and invalid expiration timestamps', function (string $failure) {
+    Session::put('auth_confirmation_token', [
+        'user_id' => PHP_INT_MAX, 'token_value' => 'token',
+        'expires_at' => match ($failure) {
+            'type' => 'tomorrow', 'expired' => now()->subMinute(), default => now()->addMinute(),
+        },
+    ]);
+    $this->postJson(route('auth.login-checkpoint'), ['confirmation_token' => 'token', 'authentication_code' => '123456'])->assertBadRequest();
+    $this->assertGuest();
+})->with(['deleted', 'type', 'expired']);
+
 test('user can sign in using totp token', function (?int $ts) {
     $user = User::factory()->create([
         'use_totp' => true,

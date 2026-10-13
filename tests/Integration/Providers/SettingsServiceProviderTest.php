@@ -116,3 +116,35 @@ test('environment variables override database settings for registration and time
     $bootProvider();
     expect(config('pterodactyl.guzzle.timeout'))->toBe('15');
 });
+
+test('saved dotenv sentinel values retain their intended config types', function (string $value, mixed $expected) use ($bootProvider) {
+    $settings = app(SettingsRepositoryInterface::class);
+    try {
+        $settings->set('settings::aquadactyl:appearance:client_overlay', $value);
+        $bootProvider();
+        expect(config('aquadactyl.appearance.client_overlay'))->toBe($expected);
+    } finally {
+        $settings->forget('settings::aquadactyl:appearance:client_overlay');
+    }
+})->with([['(true)', true], ['(false)', false], ['(empty)', ''], ['empty', ''], ['(null)', null], ['null', null]]);
+
+test('a settings database outage preserves environment configuration and reports the failure', function () {
+    $settings = Mockery::mock(SettingsRepositoryInterface::class);
+    $settings->expects('all')->andThrow(new Illuminate\Database\QueryException('testing', 'select * from settings', [], new PDOException('Database offline')));
+    $log = Mockery::mock(Psr\Log\LoggerInterface::class);
+    $log->expects('notice')->with(Mockery::on(fn ($message) => str_contains($message, 'Database offline')));
+    config()->set('app.name', 'Environment fallback');
+    (new SettingsServiceProvider(app()))->boot(config(), app(Illuminate\Contracts\Encryption\Encrypter::class), $log, $settings);
+    expect(config('app.name'))->toBe('Environment fallback');
+});
+
+test('invalid encrypted mail settings become empty credentials rather than crashing panel startup', function () use ($bootProvider) {
+    $settings = app(SettingsRepositoryInterface::class);
+    try {
+        $settings->set('settings::services:postmark:token', 'not-valid-ciphertext');
+        $bootProvider();
+        expect(config('services.postmark.token'))->toBe('');
+    } finally {
+        $settings->forget('settings::services:postmark:token');
+    }
+});

@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Listeners;
 
+use Illuminate\Support\Arr;
 use Pterodactyl\Facades\Activity;
 use Illuminate\Auth\Events\Failed;
 use Pterodactyl\Events\Auth\DirectLogin;
@@ -23,7 +24,7 @@ class AuthenticationListener implements SubscribesToEvents
         }
 
         if ($event instanceof Failed) {
-            foreach ($event->credentials as $key => $value) {
+            foreach (Arr::only($event->credentials, ['email', 'username', 'user']) as $key => $value) {
                 $activity = $activity->property($key, $value);
             }
         }

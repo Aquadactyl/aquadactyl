@@ -1,5 +1,19 @@
 # Validation results
 
+## Admin settings behind an HTTPS proxy - 13 October 2026
+
+PHP 8.5 with the isolated MariaDB 11 test stack passes 141 settings and admin
+language tests with 908 assertions. Regression tests verify relative form actions,
+mail AJAX URLs, settings tabs and redirect headers when Laravel receives HTTP
+behind an HTTPS proxy. Saves persist their values, image uploads and removals
+return to Appearance, and validation errors return to the HTTPS referer.
+HTTP, HTTPS and localhost origins are covered without trusting arbitrary
+forwarded headers.
+
+The public Dokploy deployment was not changed or tested with an authenticated
+settings save. Deploy the updated code and configure the public application URL
+and trusted proxy addresses as described in [DEPLOYMENT.md](DEPLOYMENT.md).
+
 ## Expanded panel and API coverage — 13 October 2026
 
 The panel frontend passes 1,449 tests across 228 files with 100% statements,

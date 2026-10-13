@@ -53,30 +53,30 @@ Set `LE_EMAIL` only when this container itself should obtain and serve a Let's
 Encrypt certificate. Do not enable the container's certificate setup when the
 reverse proxy already handles TLS.
 
-| Variable         | Description                                                       | Required |
-| ---------------- | ----------------------------------------------------------------- | -------- |
-| `APP_URL`        | The URL the panel will be reachable with (including protocol)     | yes      |
-| `TRUSTED_PROXIES` | Proxy IP addresses or CIDRs, separated by commas                  | behind a proxy |
-| `SESSION_SECURE_COOKIE` | Set to `true` for public HTTPS access                       | behind HTTPS |
-| `APP_TIMEZONE`   | The timezone to use for the panel                                 | yes      |
-| `LE_EMAIL`       | Email for certificates served by this container; omit behind a TLS proxy | direct TLS only |
-| `DB_HOST`        | The host of the mysql instance                                    | yes      |
-| `DB_PORT`        | The port of the mysql instance                                    | yes      |
-| `DB_DATABASE`    | The name of the mysql database                                    | yes      |
-| `DB_USERNAME`    | The mysql user                                                    | yes      |
-| `DB_PASSWORD`    | The mysql password for the specified user                         | yes      |
-| `CACHE_DRIVER`   | The cache driver (see [Cache drivers](#cache-drivers) for detais) | yes      |
-| `SESSION_DRIVER` |                                                                   | yes      |
-| `QUEUE_DRIVER`   |                                                                   | yes      |
-| `REDIS_HOST`     | The hostname or IP address of the redis database                  | yes      |
-| `REDIS_PASSWORD` | The password used to secure the redis database                    | maybe    |
-| `REDIS_PORT`     | The port the redis database is using on the host                  | maybe    |
-| `MAIL_DRIVER`    | The email driver (see [Mail drivers](#mail-drivers) for details)  | yes      |
-| `MAIL_FROM`      | The email that should be used as the sender email                 | yes      |
-| `MAIL_HOST`      | The host of your mail driver instance                             | maybe    |
-| `MAIL_PORT`      | The port of your mail driver instance                             | maybe    |
-| `MAIL_USERNAME`  | The username for your mail driver                                 | maybe    |
-| `MAIL_PASSWORD`  | The password for your mail driver                                 | maybe    |
+| Variable                | Description                                                              | Required        |
+| ----------------------- | ------------------------------------------------------------------------ | --------------- |
+| `APP_URL`               | The URL the panel will be reachable with (including protocol)            | yes             |
+| `TRUSTED_PROXIES`       | Proxy IP addresses or CIDRs, separated by commas                         | behind a proxy  |
+| `SESSION_SECURE_COOKIE` | Set to `true` for public HTTPS access                                    | behind HTTPS    |
+| `APP_TIMEZONE`          | The timezone to use for the panel                                        | yes             |
+| `LE_EMAIL`              | Email for certificates served by this container; omit behind a TLS proxy | direct TLS only |
+| `DB_HOST`               | The host of the mysql instance                                           | yes             |
+| `DB_PORT`               | The port of the mysql instance                                           | yes             |
+| `DB_DATABASE`           | The name of the mysql database                                           | yes             |
+| `DB_USERNAME`           | The mysql user                                                           | yes             |
+| `DB_PASSWORD`           | The mysql password for the specified user                                | yes             |
+| `CACHE_DRIVER`          | The cache driver (see [Cache drivers](#cache-drivers) for detais)        | yes             |
+| `SESSION_DRIVER`        |                                                                          | yes             |
+| `QUEUE_DRIVER`          |                                                                          | yes             |
+| `REDIS_HOST`            | The hostname or IP address of the redis database                         | yes             |
+| `REDIS_PASSWORD`        | The password used to secure the redis database                           | maybe           |
+| `REDIS_PORT`            | The port the redis database is using on the host                         | maybe           |
+| `MAIL_DRIVER`           | The email driver (see [Mail drivers](#mail-drivers) for details)         | yes             |
+| `MAIL_FROM`             | The email that should be used as the sender email                        | yes             |
+| `MAIL_HOST`             | The host of your mail driver instance                                    | maybe           |
+| `MAIL_PORT`             | The port of your mail driver instance                                    | maybe           |
+| `MAIL_USERNAME`         | The username for your mail driver                                        | maybe           |
+| `MAIL_PASSWORD`         | The password for your mail driver                                        | maybe           |
 
 ### Cache drivers
 
