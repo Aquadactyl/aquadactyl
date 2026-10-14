@@ -48,6 +48,10 @@ development commands. See [addon development](ADDONS.md) for the shared dependen
 catalogue and examples. Extension scripts that invoke Yarn should be updated to
 use pnpm before installation on this fork.
 
+Older Pterodactyl addons can use the automatic [compatibility layer](BLUEPRINT-COMPATIBILITY.md)
+for legacy styling, store hooks, routing, forms and icons. Run `blueprint -check mytheme`
+to compile a package without installing it; the install command performs this check too.
+
 Keep the original `identifier.blueprint` package in the panel root for future
 panel updates. Install
 extensions from publishers you trust: their PHP, frontend and shell scripts become

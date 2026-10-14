@@ -16,6 +16,7 @@ Command() {
   -install [name]   -add -i  install/update a blueprint extension
   -remove [name]         -r  remove a blueprint extension (--yes skips the prompt)
   -query [name]          -q  information about a specific blueprint extension
+  -check [name]             check frontend compatibility without installing
   \x1b[0m
 
 ${help_dev_primary}Developer${help_dev_status}\x1b[0m${help_dev_secondary}
