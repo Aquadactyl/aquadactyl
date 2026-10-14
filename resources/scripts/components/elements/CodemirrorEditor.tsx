@@ -7,6 +7,7 @@ import { indentUnit } from "@codemirror/language";
 import { oneDark } from "@codemirror/theme-one-dark";
 
 import modes from "@/modes";
+import { LARGE_FILE_THRESHOLD } from "@/lib/filePreview";
 
 export interface Props {
   style?: React.CSSProperties;
@@ -348,6 +349,7 @@ export default ({
   const editorRef = useRef<ReactCodeMirrorRef>(null);
   const [content, setContent] = useState<string>(initialContent ?? "");
   const contentRef = useRef<string>(initialContent ?? "");
+  const lightweight = (initialContent?.length ?? 0) > LARGE_FILE_THRESHOLD;
 
   const onContentSavedRef = useRef(onContentSaved);
   onContentSavedRef.current = onContentSaved;
@@ -357,8 +359,12 @@ export default ({
 
   useEffect(() => {
     if (filename === undefined) return;
-    onModeChanged(findModeByFilename(filename)?.mime || "text/plain");
-  }, [filename]);
+    onModeChanged(
+      lightweight
+        ? "text/plain"
+        : findModeByFilename(filename)?.mime || "text/plain",
+    );
+  }, [filename, lightweight]);
 
   useEffect(() => {
     if (initialContent !== undefined) {
@@ -378,6 +384,10 @@ export default ({
   const [langExtension, setLangExtension] = useState<Extension>([]);
 
   useEffect(() => {
+    if (lightweight) {
+      setLangExtension([]);
+      return;
+    }
     let cancelled = false;
     getLanguageExtension(mode)
       .then((ext) => {
@@ -389,7 +399,7 @@ export default ({
     return () => {
       cancelled = true;
     };
-  }, [mode]);
+  }, [mode, lightweight]);
 
   const extensions = useMemo(() => {
     const saveKeymap = keymap.of([
@@ -403,14 +413,14 @@ export default ({
     ]);
 
     return [
-      EditorView.lineWrapping,
+      ...(lightweight ? [] : [EditorView.lineWrapping]),
       EditorState.tabSize.of(4),
       indentUnit.of("    "),
       customTheme,
       saveKeymap,
       ...(Array.isArray(langExtension) ? langExtension : [langExtension]),
     ];
-  }, [langExtension]);
+  }, [langExtension, lightweight]);
 
   const handleChange = (val: string) => {
     contentRef.current = val;
@@ -429,7 +439,20 @@ export default ({
         height="100%"
         className="h-full rounded-lg"
         theme={oneDark}
-        basicSetup={true}
+        basicSetup={
+          lightweight
+            ? {
+                foldGutter: false,
+                highlightActiveLine: false,
+                highlightActiveLineGutter: false,
+                highlightSelectionMatches: false,
+                syntaxHighlighting: false,
+                bracketMatching: false,
+                closeBrackets: false,
+                autocompletion: false,
+              }
+            : true
+        }
         extensions={extensions}
         onChange={handleChange}
       />

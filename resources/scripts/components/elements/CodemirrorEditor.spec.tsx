@@ -31,6 +31,36 @@ vi.mock("@uiw/react-codemirror", () => {
 });
 
 describe("components/elements/CodemirrorEditor", () => {
+  it("keeps large files editable with lightweight setup and lossless saving", async () => {
+    const content = "x".repeat(1024 * 1024 + 1);
+    let fetch: (() => Promise<string>) | undefined;
+    const onModeChanged = vi.fn();
+    render(
+      <CodemirrorEditor
+        filename="large.json"
+        initialContent={content}
+        mode="application/json"
+        onModeChanged={onModeChanged}
+        fetchContent={(callback) => {
+          fetch = callback;
+        }}
+        onContentSaved={vi.fn()}
+      />,
+    );
+    expect(onModeChanged).toHaveBeenCalledWith("text/plain");
+    await waitFor(() =>
+      expect(lastEditorProps.basicSetup).toMatchObject({
+        syntaxHighlighting: false,
+        foldGutter: false,
+      }),
+    );
+    expect(
+      lastEditorProps.extensions.some(
+        (ext: unknown) => ext instanceof LanguageSupport,
+      ),
+    ).toBe(false);
+    expect(await fetch!()).toBe(content);
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     lastEditorProps = null;

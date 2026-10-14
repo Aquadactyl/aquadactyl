@@ -1,7 +1,13 @@
-import { Archive, FileSymlink, FileText, Folder } from "lucide-react";
+import {
+  Archive,
+  FileSymlink,
+  FileText,
+  Folder,
+  Image as ImageIcon,
+} from "lucide-react";
 import { encodePathSegments } from "@/helpers";
 import { differenceInHours, format, formatDistanceToNow } from "date-fns";
-import React, { memo } from "react";
+import React, { memo, useState } from "react";
 import { FileObject } from "@/api/server/files/loadDirectory";
 import FileDropdownMenu from "@/components/server/files/FileDropdownMenu";
 import { ServerContext } from "@/state/server";
@@ -11,14 +17,34 @@ import SelectFileCheckbox from "@/components/server/files/SelectFileCheckbox";
 import { usePermissions } from "@/plugins/usePermissions";
 import { join } from "pathe";
 import { bytesToString } from "@/lib/formatters";
+import { imageMimeType } from "@/lib/filePreview";
+import FileImagePreview from "./FileImagePreview";
 
 const Clickable: React.FC<{ file: FileObject }> = memo(({ file, children }) => {
+  const [preview, setPreview] = useState(false);
   const [canRead] = usePermissions(["file.read"]);
   const [canReadContents] = usePermissions(["file.read-content"]);
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
   const directory = ServerContext.useStoreState(
     (state) => state.files.directory,
   );
+
+  if (canReadContents && imageMimeType(file)) {
+    return (
+      <>
+        <button
+          type="button"
+          className="details cursor-pointer text-left"
+          onClick={() => setPreview(true)}
+        >
+          {children}
+        </button>
+        {preview && (
+          <FileImagePreview file={file} onClose={() => setPreview(false)} />
+        )}
+      </>
+    );
+  }
 
   return (file.isFile && (!file.isEditable() || !canReadContents)) ||
     (!file.isFile && !canRead) ? (
@@ -54,6 +80,8 @@ const FileObjectRow = ({ file }: { file: FileObject }) => (
             <FileSymlink size={18} />
           ) : file.isArchiveType() ? (
             <Archive size={18} />
+          ) : imageMimeType(file) ? (
+            <ImageIcon size={18} />
           ) : (
             <FileText size={18} />
           )

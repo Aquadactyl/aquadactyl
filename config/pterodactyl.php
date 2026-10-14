@@ -130,7 +130,7 @@ return [
     */
 
     'files' => [
-        'max_edit_size' => env('PTERODACTYL_FILES_MAX_EDIT_SIZE', 1024 * 1024 * 4),
+        'max_edit_size' => env('PTERODACTYL_FILES_MAX_EDIT_SIZE', 1024 * 1024 * 32),
     ],
 
     /*

@@ -24,6 +24,13 @@ vi.mock("@/api/server/files/copyFile");
 vi.mock("@/api/server/files/getFileDownloadUrl");
 vi.mock("@/api/server/files/compressFiles");
 vi.mock("@/api/server/files/decompressFiles");
+vi.mock("@/components/server/files/FileImagePreview", () => ({
+  default: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="image-preview">
+      <button onClick={onClose}>Close image</button>
+    </div>
+  ),
+}));
 vi.mock("@/plugins/useFileManagerQuery");
 
 vi.mock("@/components/server/files/DeleteFilesDialog", () => ({
@@ -178,6 +185,21 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
 };
 
 describe("components/server/files/FileDropdownMenu", () => {
+  it("offers image preview from the file actions menu", () => {
+    render(
+      <ServerContext.Provider>
+        <Wrapper>
+          <FileDropdownMenu
+            file={{ ...mockFile, name: "photo.png", mimetype: "image/png" }}
+          />
+        </Wrapper>
+      </ServerContext.Provider>,
+    );
+    fireEvent.click(screen.getByText("Image preview"));
+    expect(screen.getByTestId("image-preview")).toBeDefined();
+    fireEvent.click(screen.getByText("Close image"));
+    expect(screen.queryByTestId("image-preview")).toBeNull();
+  });
   const mockMutate = vi.fn().mockImplementation((fn) => {
     if (typeof fn === "function") {
       return fn([{ key: "file_test.txt" }, { key: "file_other.txt" }]);

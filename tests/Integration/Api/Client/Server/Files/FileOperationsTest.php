@@ -60,6 +60,24 @@ test('file reads return plain text and pass the configured edit size limit to Wi
         ->assertOk()->assertHeader('Content-Type', 'text/plain; charset=utf-8')->assertContent('<example>plain text</example>');
 });
 
+test('image reads preserve binary bytes through the existing contents endpoint', function () {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ_CONTENT]);
+    $binary = "\x89PNG\r\n\x1a\n\x00\xff\x80";
+    $repository = Mockery::mock(DaemonFileRepository::class);
+    $repository->shouldReceive('setServer')->once()->andReturnSelf();
+    $repository->shouldReceive('getContent')->once()->with('/image.png', config('pterodactyl.files.max_edit_size'))->andReturn($binary);
+    $this->app->instance(DaemonFileRepository::class, $repository);
+    $this->actingAs($user)->get($this->link($server, '/files/contents?file=%2Fimage.png'))->assertOk()->assertContent($binary);
+});
+
+test('listing permission alone cannot read image bytes', function () {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ]);
+    $repository = Mockery::mock(DaemonFileRepository::class);
+    $repository->shouldNotReceive('setServer');
+    $this->app->instance(DaemonFileRepository::class, $repository);
+    $this->actingAs($user)->get($this->link($server, '/files/contents?file=%2Fimage.png'))->assertForbidden();
+});
+
 test('file writes forward the raw request body without JSON conversion', function () {
     [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_CREATE]);
     $repository = Mockery::mock(DaemonFileRepository::class);

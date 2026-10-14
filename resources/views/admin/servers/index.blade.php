@@ -30,9 +30,9 @@
                     </form>
                 </div>
             </div>
-            <div class="box-body table-responsive no-padding">
+            <div class="box-body table-responsive no-padding" tabindex="0" role="region" aria-label="{{ __('admin/ui.server_list') }}">
                 <table class="table table-hover">
-                    <tbody>
+                    <thead>
                         <tr>
                             <th>{{ __('admin/ui.server_name') }}</th>
                             <th>{{ __('admin/ui.uuid') }}</th>
@@ -42,6 +42,8 @@
                             <th></th>
                             <th></th>
                         </tr>
+                    </thead>
+                    <tbody>
                         @foreach ($servers as $server)
                             <tr data-server="{{ $server->identifier }}">
                                 <td><a href="{{ route('admin.servers.view', $server->id) }}">{{ $server->name }}</a></td>

@@ -107,6 +107,16 @@ deployment commands cache configuration, routes and views and reload FPM. The
 Nginx template compresses text assets, caches hashed assets and executes only
 `index.php`. It also denies hidden files and suppresses PHP version headers.
 
+The web file editor and image previews accept files up to 32 MiB by default.
+Set `PTERODACTYL_FILES_MAX_EDIT_SIZE` in `.env` to change this limit in bytes, then
+run `php artisan config:cache`. The bundled Nginx and PHP configuration accepts
+100 MiB request bodies; a separate reverse proxy must also allow the size you
+intend to save. Larger files remain available through Download and SFTP.
+Files over 1 MiB open without syntax highlighting or line wrapping to keep the
+editor responsive. PNG, JPEG, GIF, WebP, AVIF, BMP and ICO images can be previewed
+from their filename or the file actions menu, using the existing content-read
+permission. SVG files remain available in the text editor or as downloads.
+
 Source code is owned by root and readable by the web group. Only `storage/` and
 `bootstrap/cache/` are writable by the web user after deployment. Never use `777`.
 The scripts default to `www-data` and `php8.5-fpm`; customize when necessary:

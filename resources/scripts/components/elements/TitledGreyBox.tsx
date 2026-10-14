@@ -17,12 +17,14 @@ const TitledGreyBox = ({
 }: Props) => (
   <div
     className={clsx(
-      "rounded-lg border border-neutral-600 bg-neutral-700 shadow-xs",
+      "panel-form-section rounded-lg border border-neutral-600 bg-neutral-700 shadow-xs",
       className,
     )}
   >
     <div
-      className={"rounded-t-lg border-b border-neutral-600 bg-neutral-700 p-3"}
+      className={
+        "panel-form-section__header rounded-t-lg border-b border-neutral-600 bg-neutral-700 p-3"
+      }
     >
       {typeof title === "string" ? (
         <p className={"flex items-center text-sm uppercase"}>
@@ -35,7 +37,7 @@ const TitledGreyBox = ({
         title
       )}
     </div>
-    <div className={"p-3"}>{children}</div>
+    <div className={"panel-form-section__body p-3"}>{children}</div>
   </div>
 );
 

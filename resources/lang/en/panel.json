@@ -270,6 +270,11 @@
     "databases_cannot_be_created_for_this_server": "Databases cannot be created for this server."
   },
   "files": {
+    "preview_image": "Image preview",
+    "image_preview_failed": "This image could not be previewed. It may be too large or use an unsupported format. You can still download it.",
+    "close_preview": "Close",
+    "download_image": "Download",
+    "large_file_mode": "Large file mode: syntax highlighting and line wrapping are paused to keep editing responsive.",
     "actions_for_file": "Actions for {{name}}",
     "file_manager": "File Manager",
     "new_file": "New File",

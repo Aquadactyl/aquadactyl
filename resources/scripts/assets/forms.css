@@ -1,0 +1,77 @@
+/* Shared form details, retaining each page's existing field layout. */
+.panel-form-field {
+  min-width: 0;
+}
+
+.panel-form-field > label {
+  margin-bottom: 8px;
+  line-height: 1.5;
+}
+
+.panel-form-field .input-help {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.panel-form-field
+  :is(input, textarea):not([type="checkbox"]):not([type="radio"]):not(
+    [type="hidden"]
+  ) {
+  min-height: 44px;
+  border-radius: 6px;
+}
+
+.panel-form-section {
+  min-width: 0;
+  border-color: var(--panel-border);
+  background: var(--panel-surface);
+}
+
+.panel-form-section > .panel-form-section__header {
+  padding: 16px 20px;
+  border-color: var(--panel-border);
+  background: color-mix(
+    in srgb,
+    var(--color-neutral-700) 28%,
+    var(--panel-surface)
+  );
+}
+
+.panel-form-section__header > p {
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.panel-form-section__header > p > svg {
+  flex-shrink: 0;
+  margin-right: 0;
+}
+
+.panel-form-section > .panel-form-section__body {
+  padding: 20px;
+  min-width: 0;
+}
+
+.panel-app
+  :is(
+    a,
+    button,
+    [role="button"],
+    [role="tab"],
+    [role="combobox"]
+  ):focus-visible {
+  outline: 2px solid var(--panel-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  .panel-form-section
+    > :is(.panel-form-section__header, .panel-form-section__body) {
+    padding: 16px;
+  }
+}

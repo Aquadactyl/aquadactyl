@@ -78,5 +78,33 @@ test('file reads enforce size limits while allowing an exact limit and missing l
     [['Content-Length' => '6'], 5, true],
     [['Content-Length' => '5'], 5, false],
     [[], 5, false],
+    [[], 4, true],
+    [['Content-Length' => '1'], 4, true],
     [['Content-Length' => '500'], null, false],
 ]);
+
+test('bounded file reads stop at the limit and close the stream', function () {
+    $body = Mockery::mock(Psr\Http\Message\StreamInterface::class);
+    $body->shouldReceive('eof')->once()->andReturn(false);
+    $body->shouldReceive('read')->once()->with(6)->andReturn('123456');
+    $body->shouldReceive('close')->once();
+    $client = new Client(['base_uri' => 'http://wings.example.test', 'handler' => new MockHandler([new Response(200, [], $body)])]);
+    $server = (new Server())->forceFill(['uuid' => 'test-server'])->setRelation('node', new Node());
+    $repository = Mockery::mock(DaemonFileRepository::class, [$this->app])->makePartial();
+    $repository->shouldReceive('getHttpClient')->once()->andReturn($client);
+    $repository->setServer($server);
+    expect(fn () => $repository->getContent('/large.log', 5))->toThrow(FileSizeTooLargeException::class);
+});
+
+test('stalled file streams fail instead of returning silently truncated content', function () {
+    $body = Mockery::mock(Psr\Http\Message\StreamInterface::class);
+    $body->shouldReceive('eof')->twice()->andReturn(false);
+    $body->shouldReceive('read')->once()->with(6)->andReturn('');
+    $body->shouldReceive('close')->once();
+    $client = new Client(['base_uri' => 'http://wings.example.test', 'handler' => new MockHandler([new Response(200, [], $body)])]);
+    $server = (new Server())->forceFill(['uuid' => 'test-server'])->setRelation('node', new Node());
+    $repository = Mockery::mock(DaemonFileRepository::class, [$this->app])->makePartial();
+    $repository->shouldReceive('getHttpClient')->once()->andReturn($client);
+    $repository->setServer($server);
+    expect(fn () => $repository->getContent('/large.log', 5))->toThrow(RuntimeException::class, 'stopped before reaching the end');
+});

@@ -5,6 +5,8 @@ import Can from "@/components/elements/Can";
 import { ServerContext } from "@/state/server";
 import { PowerAction } from "@/components/server/console/ServerConsoleContainer";
 import { Dialog } from "@/components/elements/dialog";
+import { Play, RotateCw, Square, OctagonX } from "lucide-react";
+import clsx from "clsx";
 
 import AdditionalPowerButtons from "@blueprint/components/Server/Terminal/AdditionalPowerButtons";
 
@@ -43,7 +45,7 @@ export default ({ className }: PowerButtonProps) => {
   }, [status]);
 
   return (
-    <div className={className}>
+    <div className={clsx("console-power-actions", className)}>
       <Dialog.Confirm
         open={open}
         hideCloseIcon
@@ -60,29 +62,41 @@ export default ({ className }: PowerButtonProps) => {
       <AdditionalPowerButtons />
       <Can action={"control.start"}>
         <Button
-          className={"flex-1"}
+          className="console-power-button console-power-button--start"
           disabled={status !== "offline"}
           onClick={onButtonClick.bind(this, "start")}
         >
-          {t("power.start", "Start")}
+          <Play size={16} aria-hidden />
+          <span>{t("power.start", "Start")}</span>
         </Button>
       </Can>
       <Can action={"control.restart"}>
         <Button.Text
-          className={"flex-1"}
+          className="console-power-button console-power-button--restart"
           disabled={!status}
           onClick={onButtonClick.bind(this, "restart")}
         >
-          {t("power.restart", "Restart")}
+          <RotateCw size={16} aria-hidden />
+          <span>{t("power.restart", "Restart")}</span>
         </Button.Text>
       </Can>
       <Can action={"control.stop"}>
         <Button.Danger
-          className={"flex-1"}
+          className={clsx(
+            "console-power-button console-power-button--stop",
+            killable && "console-power-button--kill",
+          )}
           disabled={status === "offline"}
           onClick={onButtonClick.bind(this, killable ? "kill" : "stop")}
         >
-          {killable ? t("power.kill", "Kill") : t("power.stop", "Stop")}
+          {killable ? (
+            <OctagonX size={16} aria-hidden />
+          ) : (
+            <Square size={16} aria-hidden />
+          )}
+          <span>
+            {killable ? t("power.kill", "Kill") : t("power.stop", "Stop")}
+          </span>
         </Button.Danger>
       </Can>
     </div>

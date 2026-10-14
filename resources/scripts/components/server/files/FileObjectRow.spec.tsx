@@ -13,6 +13,14 @@ vi.mock("@/components/server/files/FileDropdownMenu", () => ({
   ),
 }));
 
+vi.mock("@/components/server/files/FileImagePreview", () => ({
+  default: ({ onClose }: { onClose: () => void }) => (
+    <div role="dialog">
+      <button onClick={onClose}>Close image</button>
+    </div>
+  ),
+}));
+
 const Inner = ({
   permissions,
   directory,
@@ -80,6 +88,28 @@ const makeFile = (overrides?: Partial<FileObject>): FileObject => ({
 });
 
 describe("FileObjectRow", () => {
+  it("opens an image in place and requires content-read permission", () => {
+    const file = makeFile({
+      name: "photo.png",
+      mimetype: "image/png",
+      isEditable: () => false,
+    });
+    const { rerender } = render(
+      <Wrapper>
+        <FileObjectRow file={file} />
+      </Wrapper>,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /photo.png/ }));
+    expect(screen.getByRole("dialog")).toBeDefined();
+    fireEvent.click(screen.getByText("Close image"));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    rerender(
+      <Wrapper permissions={["file.read"]}>
+        <FileObjectRow file={file} />
+      </Wrapper>,
+    );
+    expect(screen.queryByRole("button", { name: /photo.png/ })).toBeNull();
+  });
   it("renders file details, size, and clickable link when user has read permissions", () => {
     const file = makeFile({ name: "config.yml", size: 1024 });
 

@@ -1099,7 +1099,7 @@ pre {
 /* Shared spacing and surfaces for the admin panel. */
 body {
     background: var(--aqua-background);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-family: var(--panel-font-ui, 'Inter', 'Segoe UI', system-ui, sans-serif);
     -webkit-font-smoothing: antialiased;
 }
 

@@ -13,6 +13,7 @@
         @include('partials.favicons')
         <meta name="theme-color" content="#11161b">
         <meta name="color-scheme" content="dark">
+        @include('partials.fonts')
 
         @include('layouts.scripts')
 

@@ -61,8 +61,8 @@ const ServerConsoleContainer = () => {
         </Alert>
       )}
       <BeforeContent />
-      <div className={"mb-4 grid grid-cols-4 gap-4"}>
-        <div className={"col-span-4 pr-4 sm:col-span-2 lg:col-span-3"}>
+      <div className="console-header mb-4">
+        <div className="console-server-heading">
           <h1
             className={
               "font-header line-clamp-1 text-2xl leading-relaxed font-medium text-gray-50"
@@ -86,12 +86,12 @@ const ServerConsoleContainer = () => {
           </CopyOnClick>
           <p className={"line-clamp-2 text-sm text-gray-400"}>{description}</p>
         </div>
-        <div className={"col-span-4 self-end sm:col-span-2 lg:col-span-1"}>
+        <div className="console-header-actions">
           <Can
             action={["control.start", "control.stop", "control.restart"]}
             matchAny
           >
-            <PowerButtons className={"flex space-x-2 sm:justify-end"} />
+            <PowerButtons />
           </Can>
         </div>
       </div>

@@ -1,10 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  act,
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from "@testing-library/react";
 import FileEditContainer from "./FileEditContainer";
 import getFileContents from "@/api/server/files/getFileContents";
 import saveFileContents from "@/api/server/files/saveFileContents";
-import { MemoryRouter, Routes, Route } from "react-router";
+import { MemoryRouter, Routes, Route, useNavigate } from "react-router";
+
+vi.mock("@/plugins/usePanelTranslation", () => ({
+  default: () => ({ t: (_key: string, fallback: string) => fallback }),
+}));
 
 vi.mock("@/api/server/files/getFileContents", () => ({
   default: vi.fn().mockResolvedValue("server.port=25565\nmotd=Aqua"),
@@ -136,6 +146,142 @@ vi.mock("@/state/server", () => ({
 }));
 
 describe("components/server/files/FileEditContainer", () => {
+  it("explains large file mode while leaving the full file available to save", async () => {
+    const content = "x".repeat(1024 * 1024 + 1);
+    vi.mocked(getFileContents).mockResolvedValueOnce(content);
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/large.txt"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByText(/Large file mode:/)).toBeDefined();
+    fireEvent.click(screen.getByRole("button", { name: "Save Content" }));
+    await waitFor(() =>
+      expect(saveFileContents).toHaveBeenCalledWith(
+        "srv-uuid-1",
+        "/large.txt",
+        content,
+      ),
+    );
+  });
+  it("ignores an aborted request rejection after leaving the editor", async () => {
+    let reject!: (error: Error) => void;
+    vi.mocked(getFileContents).mockImplementationOnce(
+      () =>
+        new Promise((_, fail) => {
+          reject = fail;
+        }),
+    );
+    const { unmount } = render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/pending.txt"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    unmount();
+    await act(async () => {
+      reject(new DOMException("Cancelled", "AbortError"));
+    });
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
+  });
+  it("cancels a previous load and prevents saving stale content into the next file", async () => {
+    let resolve!: (value: string) => void;
+    vi.mocked(getFileContents)
+      .mockImplementationOnce(
+        () =>
+          new Promise((done) => {
+            resolve = done;
+          }),
+      )
+      .mockResolvedValueOnce("second file contents");
+    const SwitchFile = () => {
+      const navigate = useNavigate();
+      return (
+        <button
+          onClick={() => navigate("/server/srv-1/files/edit#/second.txt")}
+        >
+          Other file
+        </button>
+      );
+    };
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/edit#/first.txt"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={
+              <>
+                <SwitchFile />
+                <FileEditContainer />
+              </>
+            }
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    await waitFor(() => expect(getFileContents).toHaveBeenCalledOnce());
+    const signal = vi.mocked(getFileContents).mock.calls[0][2]!;
+    fireEvent.click(await screen.findByTestId("btn-save-content"));
+    expect(saveFileContents).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByText("Other file"));
+    await waitFor(() =>
+      expect(
+        (
+          screen.getByRole("button", {
+            name: "Save Content",
+          }) as HTMLButtonElement
+        ).disabled,
+      ).toBe(false),
+    );
+    expect(signal.aborted).toBe(true);
+    await act(async () => {
+      resolve("stale first file contents");
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save Content" }));
+    await waitFor(() =>
+      expect(saveFileContents).toHaveBeenCalledWith(
+        "srv-uuid-1",
+        "/second.txt",
+        "second file contents",
+      ),
+    );
+  });
+  it("allows saving a new file when the browser draft quota is full", async () => {
+    const store = vi
+      .spyOn(Storage.prototype, "setItem")
+      .mockImplementation(() => {
+        throw new DOMException("Full", "QuotaExceededError");
+      });
+    render(
+      <MemoryRouter initialEntries={["/server/srv-1/files/new#/"]}>
+        <Routes>
+          <Route
+            path="/server/:id/files/:action"
+            element={<FileEditContainer />}
+          />
+        </Routes>
+      </MemoryRouter>,
+    );
+    fireEvent.click(screen.getByTestId("btn-change-content"));
+    expect(
+      sessionStorage.getItem("pterodactyl:new-file:srv-uuid-1:/"),
+    ).toBeNull();
+    fireEvent.click(screen.getByRole("button", { name: "Create File" }));
+    fireEvent.click(screen.getByText("Confirm File Name"));
+    await waitFor(() => expect(saveFileContents).toHaveBeenCalled());
+    store.mockRestore();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     sessionStorage.clear();
@@ -159,6 +305,7 @@ describe("components/server/files/FileEditContainer", () => {
       expect(getFileContents).toHaveBeenCalledWith(
         "srv-uuid-1",
         "/server.properties",
+        expect.any(AbortSignal),
       );
       expect(mockSetDirectory).toHaveBeenCalledWith("/");
     });

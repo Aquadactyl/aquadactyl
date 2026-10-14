@@ -1,4 +1,11 @@
 /* AdminLTE's familiar layout, with Aquadactyl's shared appearance colours. */
+.aquadactyl-admin :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
+.aquadactyl-admin .main-header .logo,
+.aquadactyl-admin .tooltip,
+.aquadactyl-admin .popover {
+    font-family: var(--panel-font-ui, 'Inter', 'Segoe UI', system-ui, sans-serif);
+}
+
 .aquadactyl-admin .main-header {
     border-bottom: 1px solid var(--aqua-border);
     box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
@@ -56,11 +63,121 @@
     border-top: 1px solid var(--aqua-border);
 }
 
-.aquadactyl-admin .table > thead > tr > th {
+.aquadactyl-admin .table > :is(thead, tbody) > tr > th {
     border-bottom: 1px solid var(--aqua-border);
     color: var(--aqua-muted);
     font-size: 12px;
     font-weight: 600;
+    background: color-mix(in srgb, var(--aqua-chrome) 45%, var(--aqua-surface));
+    line-height: 1.5;
+}
+
+.aquadactyl-admin .table > tbody > tr > :is(td, th) {
+    border-top-color: var(--aqua-border);
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.aquadactyl-admin .table > tbody > tr:focus-within {
+    background: var(--aqua-hover);
+}
+
+.aquadactyl-admin .table-responsive {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--aqua-control-border) var(--aqua-chrome);
+}
+
+/* Wide lists scroll within their box instead of crushing six or more columns. */
+.aquadactyl-admin .table-responsive > .table:has(> :is(thead, tbody) > tr > th:nth-child(6)) {
+    min-width: 640px;
+}
+
+.aquadactyl-admin .table .label {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 5px;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.aquadactyl-admin .form-group {
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.aquadactyl-admin .form-group > label:not(.btn),
+.aquadactyl-admin .form-group > .control-label {
+    margin-bottom: 8px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.aquadactyl-admin .form-group :is(.help-block, p.small, p.text-muted) {
+    margin-top: 8px;
+    margin-bottom: 0;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+.aquadactyl-admin .form-group p.text-muted > small {
+    font-size: 12px;
+}
+
+.aquadactyl-admin .form-control {
+    min-height: 44px;
+}
+
+.aquadactyl-admin .form-control.input-sm,
+.aquadactyl-admin .input-group-sm > .form-control {
+    min-height: 36px;
+}
+
+.aquadactyl-admin .select2-container .select2-selection--single {
+    display: flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 12px;
+}
+
+.aquadactyl-admin .select2-container--default .select2-selection--single .select2-selection__rendered {
+    width: 100%;
+    line-height: 22px;
+}
+
+.aquadactyl-admin .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 42px;
+}
+
+.aquadactyl-admin .has-error .form-control:focus {
+    border-color: var(--aqua-danger) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--aqua-danger) 20%, transparent);
+}
+
+.aquadactyl-admin .has-error :is(.help-block, .control-label) {
+    color: var(--aqua-danger);
+}
+
+.aquadactyl-admin :is(a, button, [role='button'], [tabindex='0']):focus-visible {
+    outline: 2px solid var(--aqua-accent);
+    outline-offset: 3px;
+}
+
+.aquadactyl-admin .content-header > h1 {
+    line-height: 1.25;
+}
+
+.aquadactyl-admin .box-header > .box-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.aquadactyl-admin .box-header > .box-tools > form {
+    flex: 1 1 100%;
+    min-width: 0;
 }
 
 .aquadactyl-admin .form-control,

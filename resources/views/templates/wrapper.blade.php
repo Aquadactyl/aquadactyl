@@ -17,9 +17,7 @@
             @include('partials.favicons')
             <meta name="theme-color" content="#11161b">
             <meta name="color-scheme" content="dark">
-            <link rel="preconnect" href="https://fonts.googleapis.com">
-            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap">
+            @include('partials.fonts')
         @show
 
         @section('user-data')

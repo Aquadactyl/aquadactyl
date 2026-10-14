@@ -270,6 +270,11 @@
     "databases_cannot_be_created_for_this_server": "Il est impossible de créer des bases de données pour ce serveur."
   },
   "files": {
+    "preview_image": "Aperçu de l’image",
+    "image_preview_failed": "Impossible d’afficher cette image. Elle est peut-être trop volumineuse ou son format n’est pas pris en charge. Vous pouvez toujours la télécharger.",
+    "close_preview": "Fermer",
+    "download_image": "Télécharger",
+    "large_file_mode": "Mode fichier volumineux : la coloration syntaxique et le retour à la ligne sont désactivés pour conserver un éditeur réactif.",
     "actions_for_file": "Actions pour {{name}}",
     "file_manager": "Gestionnaire de fichiers",
     "new_file": "Nouveau fichier",

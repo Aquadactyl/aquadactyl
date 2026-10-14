@@ -1,6 +1,7 @@
 @import "tailwindcss" source("../..");
 @import "../blueprint/css/extensions.css";
 @import "./appearance.css";
+@import "./forms.css";
 
 @source "../../../.blueprint/extensions/*/components/**/*";
 @source "../../../.blueprint/extensions/*/views/**/*";
@@ -11,8 +12,8 @@
 }
 
 @theme {
-  --font-sans: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
-  --font-header: "IBM Plex Sans", "Roboto", system-ui, sans-serif;
+  --font-sans: "Inter", "Segoe UI", system-ui, sans-serif;
+  --font-header: "Inter", "Segoe UI", system-ui, sans-serif;
 
   --color-black: #0c1116;
 
@@ -1679,7 +1680,7 @@
   & > .details {
     @apply flex flex-1 items-center truncate overflow-hidden px-4 py-2 text-neutral-300 no-underline;
 
-    &:not(a) {
+    &:not(a):not(button) {
       @apply cursor-default;
     }
   }
@@ -1941,6 +1942,140 @@
 
   &:disabled {
     @apply bg-red-600/75 text-red-50/75;
+  }
+}
+
+/* Console power controls */
+.console-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 24px;
+}
+
+.console-server-heading {
+  flex: 1 1 280px;
+  min-width: 0;
+}
+
+.console-header-actions {
+  max-width: 100%;
+}
+
+.console-power-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.console-power-actions > .console-power-button {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 112px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--panel-border);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 15%);
+  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.console-power-button svg {
+  flex-shrink: 0;
+}
+
+.console-power-button span {
+  white-space: nowrap;
+}
+
+.console-power-actions > .console-power-button--start {
+  border-color: var(--color-primary-500);
+  background: var(--color-primary-500);
+  color: var(--color-primary-contrast, var(--color-primary-50));
+}
+
+.console-power-actions > .console-power-button--start:hover:not(:disabled) {
+  border-color: var(--color-primary-400);
+  background: var(--color-primary-600);
+}
+
+.console-power-actions > .console-power-button--restart {
+  border-color: var(--color-neutral-600);
+  background: var(--panel-surface);
+  color: var(--color-neutral-200);
+}
+
+.console-power-actions > .console-power-button--restart:hover:not(:disabled) {
+  border-color: var(--panel-accent);
+  background: var(--color-neutral-700);
+  color: var(--color-neutral-50);
+}
+
+.console-power-actions > .console-power-button--stop {
+  border-color: color-mix(in srgb, var(--color-red-400) 40%, var(--panel-border));
+  background: color-mix(in srgb, var(--color-red-500) 10%, var(--panel-surface));
+  color: var(--color-red-300);
+}
+
+.console-power-actions > .console-power-button--stop:hover:not(:disabled) {
+  border-color: var(--color-red-400);
+  background: color-mix(in srgb, var(--color-red-500) 20%, var(--panel-surface));
+  color: var(--color-red-200);
+}
+
+.console-power-actions > .console-power-button--kill {
+  border-color: var(--color-red-500);
+  background: var(--color-red-700);
+  color: var(--color-red-50);
+}
+
+.panel-app .console-power-actions > .btn.console-power-button:disabled {
+  border-color: var(--panel-border);
+  background: var(--color-neutral-800);
+  color: var(--color-neutral-400);
+  box-shadow: none;
+  opacity: .65;
+}
+
+.console-power-actions > .console-power-button:focus-visible {
+  outline: 2px solid var(--panel-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  .console-header-actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 419px) {
+  .console-power-actions > .console-power-button {
+    flex: 1 1 0;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    min-height: 62px;
+    padding: 10px 6px;
+    font-size: 12px;
+  }
+
+  .console-power-button span {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .console-power-actions > .console-power-button {
+    transition: none;
   }
 }
 

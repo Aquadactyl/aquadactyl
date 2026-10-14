@@ -30,7 +30,7 @@
                     </form>
                 </div>
             </div>
-            <div class="box-body table-responsive no-padding">
+            <div class="box-body table-responsive no-padding" tabindex="0" role="region" aria-label="{{ __('admin/ui.user_list') }}">
                 <table class="table table-hover">
                     <thead>
                         <tr>

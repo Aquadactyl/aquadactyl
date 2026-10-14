@@ -9,6 +9,7 @@ import {
   Archive,
   Download,
   Trash2,
+  Image as ImageIcon,
 } from "lucide-react";
 import RenameFileModal from "@/components/server/files/RenameFileModal";
 import { ServerContext } from "@/state/server";
@@ -33,10 +34,12 @@ import ChmodFileModal from "@/components/server/files/ChmodFileModal";
 import DeleteFilesDialog from "./DeleteFilesDialog";
 import usePanelTranslation from "@/plugins/usePanelTranslation";
 import { moveFilesToTrash } from "@/api/server/files/trash";
+import { imageMimeType } from "@/lib/filePreview";
+import FileImagePreview from "./FileImagePreview";
 
 import DropdownItems from "@blueprint/components/Server/Files/Browse/DropdownItems";
 
-type ModalType = "rename" | "move" | "chmod";
+type ModalType = "rename" | "move" | "chmod" | "image";
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: React.ComponentType<{ className?: string; size?: number }>;
@@ -156,7 +159,9 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
         onTrash={() => doDeletion(true)}
       />
       {modal ? (
-        modal === "chmod" ? (
+        modal === "image" ? (
+          <FileImagePreview file={file} onClose={() => setModal(null)} />
+        ) : modal === "chmod" ? (
           <ChmodFileModal
             visible
             appear
@@ -189,6 +194,15 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
           </button>
         )}
       >
+        {imageMimeType(file) && (
+          <Can action="file.read-content">
+            <Row
+              onClick={() => setModal("image")}
+              icon={ImageIcon}
+              title={t("files.preview_image", "Image preview")}
+            />
+          </Can>
+        )}
         <Can action={"file.update"}>
           <Row
             onClick={() => setModal("rename")}

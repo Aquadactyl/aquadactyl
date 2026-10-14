@@ -270,6 +270,11 @@
     "databases_cannot_be_created_for_this_server": "Für diesen Server können keine Datenbanken erstellt werden."
   },
   "files": {
+    "preview_image": "Bildvorschau",
+    "image_preview_failed": "Dieses Bild kann nicht angezeigt werden. Es ist möglicherweise zu groß oder verwendet ein nicht unterstütztes Format. Sie können es weiterhin herunterladen.",
+    "close_preview": "Schließen",
+    "download_image": "Herunterladen",
+    "large_file_mode": "Modus für große Dateien: Syntaxhervorhebung und Zeilenumbruch sind deaktiviert, damit der Editor flüssig bedienbar bleibt.",
     "actions_for_file": "Aktionen für {{name}}",
     "file_manager": "Dateiverwaltung",
     "new_file": "Neue Datei",

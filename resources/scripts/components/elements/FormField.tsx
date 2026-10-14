@@ -41,7 +41,7 @@ const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
     const isPassword = type === "password" && !hidePasswordToggle;
 
     return (
-      <div>
+      <div className="panel-form-field">
         {label && (
           <Label htmlFor={fieldId} isLight={light}>
             {label}
