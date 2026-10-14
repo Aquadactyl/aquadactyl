@@ -167,6 +167,16 @@
                     </div>
                     <div class="row">
                         <div class="form-group col-md-6">
+                            <label for="pUploadSize" class="form-label">{{ __('admin/ui.maximum_web_upload_filesize') }}</label>
+                            <div class="input-group">
+                                <input type="number" name="upload_size" class="form-control" id="pUploadSize" min="1" step="1" value="{{ old('upload_size', \Pterodactyl\Models\Node::DEFAULT_UPLOAD_SIZE) }}" />
+                                <span class="input-group-addon">MiB</span>
+                            </div>
+                            <p class="text-muted small">{{ __('admin/ui.web_upload_limit_help') }}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
                             <label for="pDaemonListen" class="form-label">{{ __('admin/ui.daemon_port') }}</label>
                             <input type="text" name="daemonListen" class="form-control" id="pDaemonListen" value="8080" />
                         </div>

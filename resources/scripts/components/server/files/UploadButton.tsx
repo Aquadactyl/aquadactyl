@@ -16,6 +16,7 @@ import { Menu } from "@base-ui/react/menu";
 import clsx from "clsx";
 import { cleanDirectoryPath } from "@/helpers";
 import { join } from "pathe";
+import { bytesToString } from "@/lib/formatters";
 
 interface UploadItem {
   file: File;
@@ -120,6 +121,9 @@ export default ({ className }: WithClassname) => {
   const { clearAndAddHttpError } = useFlashKey("files");
 
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const uploadLimit = ServerContext.useStoreState(
+    (state) => state.server.data!.uploadLimit || 0,
+  );
   const directory = ServerContext.useStoreState(
     (state) => state.files.directory,
   );
@@ -162,6 +166,22 @@ export default ({ className }: WithClassname) => {
   ) => {
     clearAndAddHttpError();
     if (items.length === 0 && emptyDirs.length === 0) return;
+
+    const oversized = items.find(
+      ({ file }) => uploadLimit > 0 && file.size > uploadLimit,
+    );
+    if (oversized) {
+      clearAndAddHttpError(
+        new Error(
+          t(
+            "files.upload_too_large",
+            "{{name}} exceeds this server's {{limit}} upload limit.",
+            { name: oversized.relativePath, limit: bytesToString(uploadLimit) },
+          ),
+        ),
+      );
+      return;
+    }
 
     // 1. Gather all subdirectories that need to exist on the server
     const dirSet = new Set<string>();
@@ -224,6 +244,8 @@ export default ({ className }: WithClassname) => {
               { files: item.file },
               {
                 signal: controller.signal,
+                // Large transfers must not inherit a short API request timeout.
+                timeout: 0,
                 headers: {
                   "Content-Type": "multipart/form-data",
                 },
@@ -240,11 +262,24 @@ export default ({ className }: WithClassname) => {
         );
     });
 
-    runWithConcurrency(uploads, 5)
+    // Keep large files from competing for bandwidth and Wings temporary space.
+    const concurrency = items.some(({ file }) => file.size >= 32 * 1024 * 1024)
+      ? 2
+      : 5;
+    runWithConcurrency(uploads, concurrency)
       .then(() => mutate())
       .catch((error) => {
         clearFileUploads();
-        clearAndAddHttpError(error);
+        clearAndAddHttpError(
+          error.response?.status === 413
+            ? new Error(
+                t(
+                  "files.upload_proxy_limit",
+                  "The upload was rejected by a proxy size limit. Ask your administrator to increase the Wings upload proxy limit.",
+                ),
+              )
+            : error,
+        );
       });
   };
 
@@ -419,6 +454,13 @@ export default ({ className }: WithClassname) => {
                 <FolderUp className={"h-4 w-4 text-blue-400"} />
                 <span>{t("files.upload_folder", "Upload Folder")}</span>
               </Menu.Item>
+              {uploadLimit > 0 && (
+                <p className="mt-1 border-t border-neutral-700 px-3 py-2 text-xs text-neutral-400">
+                  {t("files.upload_limit", "Up to {{limit}} per file", {
+                    limit: bytesToString(uploadLimit),
+                  })}
+                </p>
+              )}
             </Menu.Popup>
           </Menu.Positioner>
         </Menu.Portal>

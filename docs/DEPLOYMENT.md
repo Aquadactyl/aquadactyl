@@ -111,11 +111,64 @@ The web file editor and image previews accept files up to 32 MiB by default.
 Set `PTERODACTYL_FILES_MAX_EDIT_SIZE` in `.env` to change this limit in bytes, then
 run `php artisan config:cache`. The bundled Nginx and PHP configuration accepts
 100 MiB request bodies; a separate reverse proxy must also allow the size you
-intend to save. Larger files remain available through Download and SFTP.
+intend to save. Files above the editor limit can still be uploaded, downloaded,
+or accessed through SFTP. This editor limit is separate from browser uploads.
 Files over 1 MiB open without syntax highlighting or line wrapping to keep the
 editor responsive. PNG, JPEG, GIF, WebP, AVIF, BMP and ICO images can be previewed
 from their filename or the file actions menu, using the existing content-read
 permission. SVG files remain available in the text editor or as downloads.
+
+### Larger browser uploads
+
+New nodes default to **2048 MiB (2 GiB) per file**. For existing nodes, go to
+**Admin > Nodes > your node > Settings > Maximum Web Upload Filesize**, enter
+the size in MiB, and save. This sends the new limit to the running Wings
+instance. Existing node limits are preserved during panel updates. If Wings
+is unavailable or configured to ignore panel updates, apply `api.upload_limit`
+in its `config.yml` and restart Wings when convenient.
+
+The file manager shows the limit in the Upload menu and checks files and folders
+before transferring them. Large batches use at most two simultaneous transfers;
+uploads have no fixed browser request timeout. Keep the tab open until the upload
+finishes. Uploads still respect file creation permissions and server disk quotas.
+
+Files travel directly from the browser to **Wings**, so increasing the panel's
+PHP upload settings will not raise the server file upload limit. Any reverse
+proxy in front of Wings must allow the full file plus the multipart envelope.
+For a 2 GiB per-file limit, an Nginx Wings proxy can use:
+
+```nginx
+location = /upload/file {
+    client_max_body_size 2080m;
+    client_body_timeout 300s;
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_request_buffering off;
+    proxy_send_timeout 900s;
+    proxy_read_timeout 900s;
+}
+```
+
+Use your actual Wings upstream and retain any forwarding headers your proxy
+requires. Set the proxy body limit above your node's upload limit if increasing it
+further. On Traefik/Dokploy, check any buffering middleware's
+`maxRequestBodyBytes` and request timeouts. If a CDN imposes a smaller body limit,
+use a directly reachable HTTPS Wings hostname for browser uploads.
+
+The local Docker setup defaults new nodes to 2 GiB and includes a streaming upload
+location in its Wings relay. It preserves limits on existing nodes; adjust those
+in Admin settings. The local test daemon deliberately ignores panel configuration
+updates to preserve Docker-specific paths, so rerun its setup service after
+changing a node's limit and restart only Wings:
+
+```sh
+docker compose run --rm wings-setup
+docker compose restart wings
+```
+
+Profile picture, logo, background, and file editor limits
+continue to use their own settings.
 
 Source code is owned by root and readable by the web group. Only `storage/` and
 `bootstrap/cache/` are writable by the web user after deployment. Never use `777`.

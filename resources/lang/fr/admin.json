@@ -975,7 +975,8 @@
     "egg_invalid_settings": "Les réglages de l'egg téléchargé sont invalides : :errors",
     "egg_available": "L'egg est disponible dans :nest.",
     "server_databases": "Bases de données des serveurs",
-    "database_host_error": "Une erreur est survenue lors de la connexion à l'hôte ou de l'exécution d'une requête : « :error »"
+    "database_host_error": "Une erreur est survenue lors de la connexion à l'hôte ou de l'exécution d'une requête : « :error »",
+    "web_upload_limit_help": "Taille maximale de chaque fichier envoyé depuis le gestionnaire de fichiers. 2048 MiB = 2 GiB. Wings et tout proxy devant lui doivent autoriser cette taille et les données multipart supplémentaires."
   },
   "user": {
     "exceptions": {

@@ -292,7 +292,10 @@
     "upload_folder": "Upload Folder",
     "drag_and_drop_to_upload": "Drag and drop files or folders to upload.",
     "clear_search": "Clear search",
-    "no_matching_files": "No files or directories matching “:query”."
+    "no_matching_files": "No files or directories matching “:query”.",
+    "upload_limit": "Up to {{limit}} per file",
+    "upload_too_large": "{{name}} exceeds this server's {{limit}} upload limit.",
+    "upload_proxy_limit": "The upload was rejected by a proxy size limit. Ask your administrator to increase the Wings upload proxy limit."
   },
   "network": {
     "network": "Network",

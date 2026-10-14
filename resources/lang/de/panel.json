@@ -292,7 +292,10 @@
     "upload_folder": "Ordner hochladen",
     "drag_and_drop_to_upload": "Dateien oder Ordner zum Hochladen hierher ziehen.",
     "clear_search": "Suche löschen",
-    "no_matching_files": "Keine Dateien oder Ordner gefunden, die zu „:query“ passen."
+    "no_matching_files": "Keine Dateien oder Ordner gefunden, die zu „:query“ passen.",
+    "upload_limit": "Bis zu {{limit}} pro Datei",
+    "upload_too_large": "{{name}} überschreitet das Upload-Limit dieses Servers von {{limit}}.",
+    "upload_proxy_limit": "Der Upload wurde durch eine Größenbeschränkung eines Proxys abgelehnt. Bitte deinen Administrator, das Upload-Limit des Wings-Proxys zu erhöhen."
   },
   "network": {
     "network": "Netzwerk",

@@ -196,12 +196,12 @@
                 </div>
                 <div class="box-body row">
                     <div class="form-group col-xs-12">
-                        <label for="disk_overallocate" class="control-label">{{ __('admin/ui.maximum_web_upload_filesize') }}</label>
+                        <label for="upload_size" class="control-label">{{ __('admin/ui.maximum_web_upload_filesize') }}</label>
                         <div class="input-group">
-                            <input type="text" name="upload_size" class="form-control" value="{{ old('upload_size', $node->upload_size) }}"/>
+                            <input type="number" name="upload_size" id="upload_size" class="form-control" min="1" step="1" value="{{ old('upload_size', $node->upload_size) }}"/>
                             <span class="input-group-addon">MiB</span>
                         </div>
-                        <p class="text-muted"><small>{{ __('admin/ui.enter_the_maximum_size_of_files_that_can_be_uploaded_through_the_web_based_file_manag') }}</small></p>
+                        <p class="text-muted"><small>{{ __('admin/ui.web_upload_limit_help') }}</small></p>
                     </div>
                     <div class="col-xs-12">
                         <div class="row">

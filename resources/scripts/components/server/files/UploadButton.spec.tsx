@@ -7,6 +7,13 @@ import createDirectory from "@/api/server/files/createDirectory";
 
 vi.mock("axios");
 
+vi.mock("@/plugins/usePanelTranslation", () => ({
+  default: () => ({
+    t: (_key: string, fallback: string, values: Record<string, string> = {}) =>
+      fallback.replace(/\{\{(\w+)\}\}/g, (_match, key) => values[key]),
+  }),
+}));
+
 vi.mock("@/api/server/files/getFileUploadUrl", () => ({
   default: vi.fn().mockResolvedValue("https://node.example.com/upload"),
 }));
@@ -50,12 +57,13 @@ const mockPushFileUpload = vi.fn();
 const mockSetUploadProgress = vi.fn();
 const mockRemoveFileUpload = vi.fn();
 const mockClearFileUploads = vi.fn();
+let mockUploadLimit: number | undefined;
 
 vi.mock("@/state/server", () => ({
   ServerContext: {
     useStoreState: (selector: any) =>
       selector({
-        server: { data: { uuid: "srv-uuid-1" } },
+        server: { data: { uuid: "srv-uuid-1", uploadLimit: mockUploadLimit } },
         files: { directory: "/base" },
       }),
     useStoreActions: (selector: any) =>
@@ -73,6 +81,7 @@ vi.mock("@/state/server", () => ({
 describe("components/server/files/UploadButton", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUploadLimit = undefined;
   });
 
   afterEach(() => {
@@ -87,6 +96,83 @@ describe("components/server/files/UploadButton", () => {
     const fileInputs = container.querySelectorAll("input[type='file']");
     expect(fileInputs.length).toBe(2);
   });
+
+  it("shows the node limit and rejects oversized folders before creating directories or uploading", async () => {
+    mockUploadLimit = 2 * 1024 * 1024 * 1024;
+    const { container } = render(<UploadButton />);
+    fireEvent.click(screen.getByRole("button", { name: /Upload/i }));
+    expect(screen.getByText("Up to 2 GiB per file")).toBeDefined();
+
+    const file = new File(["small fixture"], "world.zip");
+    Object.defineProperties(file, {
+      size: { value: mockUploadLimit + 1 },
+      webkitRelativePath: { value: "world/world.zip" },
+    });
+    fireEvent.change(container.querySelectorAll("input[type='file']")[1], {
+      target: { files: [file] },
+    });
+
+    await waitFor(() =>
+      expect(mockClearAndAddHttpError).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "world/world.zip exceeds this server's 2 GiB upload limit.",
+        }),
+      ),
+    );
+    expect(createDirectory).not.toHaveBeenCalled();
+    expect(axios.post).not.toHaveBeenCalled();
+    expect(mockPushFileUpload).not.toHaveBeenCalled();
+  });
+
+  it("accepts a file exactly at the limit and limits large transfers to two concurrent requests", async () => {
+    mockUploadLimit = 2 * 1024 * 1024 * 1024;
+    const releases: (() => void)[] = [];
+    vi.mocked(axios.post).mockImplementation(
+      () => new Promise((resolve) => releases.push(() => resolve({} as any))),
+    );
+    const { container } = render(<UploadButton />);
+    const files = ["one.zip", "two.zip", "three.zip"].map((name) => {
+      const file = new File(["fixture"], name);
+      Object.defineProperty(file, "size", { value: mockUploadLimit });
+      return file;
+    });
+    fireEvent.change(container.querySelector("input[type='file']")!, {
+      target: { files },
+    });
+    await waitFor(() => expect(axios.post).toHaveBeenCalledTimes(2));
+    expect(vi.mocked(axios.post).mock.calls[0][2]).toMatchObject({
+      timeout: 0,
+    });
+    releases.shift()!();
+    await waitFor(() => expect(axios.post).toHaveBeenCalledTimes(3));
+    releases.splice(0).forEach((release) => release());
+    await waitFor(() => expect(mockMutate).toHaveBeenCalled());
+  });
+
+  it.each([413, 403, undefined])(
+    "explains a proxy limit while preserving other upload errors (%s)",
+    async (status) => {
+      const error = Object.assign(
+        new Error("Network error"),
+        status === undefined ? {} : { response: { status } },
+      );
+      vi.mocked(axios.post).mockRejectedValue(error);
+      const { container } = render(<UploadButton />);
+      fireEvent.change(container.querySelector("input[type='file']")!, {
+        target: { files: [new File(["test"], "file.zip")] },
+      });
+      const message =
+        status === 413
+          ? "The upload was rejected by a proxy size limit. Ask your administrator to increase the Wings upload proxy limit."
+          : "Network error";
+      await waitFor(() =>
+        expect(mockClearAndAddHttpError).toHaveBeenCalledWith(
+          expect.objectContaining({ message }),
+        ),
+      );
+      expect(mockClearFileUploads).toHaveBeenCalled();
+    },
+  );
 
   it("handles drag events and drag exit / non-file drag", () => {
     render(<UploadButton />);

@@ -23,6 +23,7 @@ export interface Server {
   node: string;
   nodeCountry?: string | null;
   nodeCountryName?: string | null;
+  uploadLimit?: number;
   userPermissions?: string[];
   gameQueryType?: string | null;
   isNodeUnderMaintenance: boolean;
@@ -66,6 +67,7 @@ export const rawDataToServerObject = ({
   node: data.node,
   nodeCountry: data.node_country ?? null,
   nodeCountryName: data.node_country_name ?? null,
+  uploadLimit: data.upload_limit,
   userPermissions: data.user_permissions || [],
   gameQueryType: data.game_query_type ?? null,
   isNodeUnderMaintenance: data.is_node_under_maintenance,

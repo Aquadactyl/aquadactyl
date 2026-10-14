@@ -49,6 +49,7 @@ class ServerTransformer extends BaseClientTransformer
             'node' => $server->node->name,
             'node_country' => $server->node->country_code,
             'node_country_name' => Countries::name($server->node->country_code),
+            'upload_limit' => $server->node->upload_size * 1024 * 1024,
             'user_permissions' => Container::getInstance()->make(GetUserPermissionsService::class)->handle($server, $user),
             'game_query_type' => Container::getInstance()->make(GameQuerySettingsService::class)->game($server),
             'is_node_under_maintenance' => $server->node->isUnderMaintenance(),

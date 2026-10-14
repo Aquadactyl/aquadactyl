@@ -21,6 +21,18 @@ test('application clients can create find update and delete a node', function ()
     $this->assertDatabaseMissing('nodes', ['id' => $id]);
 });
 
+test('new nodes default to two gibibytes and preserve explicitly configured upload limits', function (?int $limit) {
+    $location = Location::factory()->create();
+    $payload = ['name' => 'Upload test node', 'location_id' => $location->id, 'fqdn' => '127.0.0.1', 'scheme' => 'http', 'memory' => 2048, 'memory_overallocate' => 0, 'disk' => 4096, 'disk_overallocate' => 0, 'daemon_listen' => 8080, 'daemon_sftp' => 2022];
+    if ($limit !== null) {
+        $payload['upload_size'] = $limit;
+    }
+    $response = $this->postJson('/api/application/nodes', $payload)->assertCreated()
+        ->assertJsonPath('attributes.upload_size', $limit ?? 2048);
+    $node = Node::findOrFail($response->json('attributes.id'));
+    expect($node->getConfiguration()['api']['upload_limit'])->toBe($limit ?? 2048);
+})->with(['default limit' => [null], 'custom limit' => [4096]]);
+
 test('allocation creation list filtering and removal remain scoped to their node', function () {
     $server = $this->createServerModel();
     $base = '/api/application/nodes/' . $server->node_id . '/allocations';

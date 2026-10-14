@@ -14,6 +14,7 @@ const baseServerData: any = {
     node: "Node 1",
     node_country: "US",
     node_country_name: "United States",
+    upload_limit: 2 * 1024 * 1024 * 1024,
     user_permissions: ["control.start"],
     game_query_type: "minecraft",
     is_node_under_maintenance: false,
@@ -98,6 +99,7 @@ describe("api/server/getServer", () => {
       expect(server.name).toBe("Test Server");
       expect(server.nodeCountry).toBe("US");
       expect(server.nodeCountryName).toBe("United States");
+      expect(server.uploadLimit).toBe(2 * 1024 * 1024 * 1024);
       expect(server.gameQueryType).toBe("minecraft");
       expect(server.description).toBe("My Server Description");
       expect(server.variables).toHaveLength(1);

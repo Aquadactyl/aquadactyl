@@ -20,3 +20,10 @@ test('subusers without file creation permission cannot obtain upload tokens', fu
     [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_READ]);
     $this->actingAs($user)->getJson($this->link($server, '/files/upload'))->assertForbidden();
 });
+
+test('the client receives the configured node upload limit in bytes including values over two gibibytes', function () {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_FILE_CREATE]);
+    $server->node->update(['upload_size' => 4096]);
+    $this->actingAs($user)->getJson('/api/client/servers/' . $server->identifier)
+        ->assertOk()->assertJsonPath('attributes.upload_limit', 4294967296);
+});

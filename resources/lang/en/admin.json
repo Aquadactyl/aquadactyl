@@ -975,7 +975,8 @@
     "egg_invalid_settings": "The downloaded egg has invalid settings: :errors",
     "egg_available": "The egg is available in :nest.",
     "server_databases": "Server Databases",
-    "database_host_error": "There was an error while trying to connect to the host or while executing a query: \":error\""
+    "database_host_error": "There was an error while trying to connect to the host or while executing a query: \":error\"",
+    "web_upload_limit_help": "Maximum size per file uploaded through the file manager. 2048 MiB = 2 GiB. Wings and any proxy in front of it must allow this size plus multipart overhead."
   },
   "user": {
     "exceptions": {

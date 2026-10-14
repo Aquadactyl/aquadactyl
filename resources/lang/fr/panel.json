@@ -292,7 +292,10 @@
     "upload_folder": "Téléverser un dossier",
     "drag_and_drop_to_upload": "Glissez et déposez des fichiers ou dossiers pour les téléverser.",
     "clear_search": "Effacer la recherche",
-    "no_matching_files": "Aucun fichier ou dossier ne correspond à « :query »."
+    "no_matching_files": "Aucun fichier ou dossier ne correspond à « :query ».",
+    "upload_limit": "Jusqu’à {{limit}} par fichier",
+    "upload_too_large": "{{name}} dépasse la limite d’envoi de {{limit}} de ce serveur.",
+    "upload_proxy_limit": "L’envoi a été refusé par la limite de taille d’un proxy. Demandez à votre administrateur d’augmenter la limite du proxy Wings."
   },
   "network": {
     "network": "Réseau",

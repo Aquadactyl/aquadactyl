@@ -46,6 +46,20 @@ test('the node creation command persists the submitted resource limits and optio
     expect($node->memory)->toBe(4096)->and($node->disk)->toBe(8192)->and($node->getSftpDomain())->toBe('sftp.example.test');
 });
 
+test('noninteractive node creation defaults browser uploads to two gibibytes', function () {
+    $this->withoutMockingConsoleOutput();
+    $location = Location::factory()->create();
+    $exitCode = $this->artisan('p:node:make', [
+        '--name' => 'Large upload CLI node', '--description' => 'Default upload limit', '--locationId' => $location->id,
+        '--fqdn' => '127.0.0.1', '--scheme' => 'http', '--public' => '1', '--proxy' => '0', '--maintenance' => '0',
+        '--maxMemory' => '4096', '--overallocateMemory' => '0', '--maxDisk' => '8192', '--overallocateDisk' => '0',
+        '--daemonListeningPort' => '8080', '--daemonSFTPPort' => '2022', '--daemonBase' => '/srv/daemon-data',
+        '--sftpDomain' => 'sftp.example.test', '--no-interaction' => true,
+    ]);
+    expect($exitCode)->toBe(0);
+    expect(Node::query()->where('name', 'Large upload CLI node')->firstOrFail()->upload_size)->toBe(2048);
+});
+
 test('user creation command hashes passwords and assigns the requested administrator role', function (bool $admin) {
     $this->artisan('p:user:make', ['--email' => 'cli@example.test', '--username' => 'cliuser', '--name-first' => 'CLI', '--name-last' => 'User', '--password' => 'TestingPassword123!', '--admin' => $admin ? '1' : '0'])->assertExitCode(0);
     $user = User::query()->where('email', 'cli@example.test')->firstOrFail();

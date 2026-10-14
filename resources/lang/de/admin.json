@@ -975,7 +975,8 @@
     "egg_invalid_settings": "Das heruntergeladene Egg enthält ungültige Einstellungen: :errors",
     "egg_available": "Das Egg ist in :nest verfügbar.",
     "server_databases": "Serverdatenbanken",
-    "database_host_error": "Beim Verbinden mit dem Host oder Ausführen einer Abfrage ist ein Fehler aufgetreten: „:error“"
+    "database_host_error": "Beim Verbinden mit dem Host oder Ausführen einer Abfrage ist ein Fehler aufgetreten: „:error“",
+    "web_upload_limit_help": "Maximale Größe pro Datei beim Hochladen im Dateimanager. 2048 MiB = 2 GiB. Wings und ein vorgeschalteter Proxy müssen diese Größe zuzüglich Multipart-Daten erlauben."
   },
   "user": {
     "exceptions": {
