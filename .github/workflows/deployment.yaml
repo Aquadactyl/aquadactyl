@@ -11,5 +11,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-      - run: shellcheck scripts/helpers/extension-lifecycle.sh tests/Deployment/blueprint-guards.sh tests/Deployment/blueprint-smoke.sh
+      - run: shellcheck scripts/helpers/extension-lifecycle.sh scripts/commands/extensions/check.sh tests/Deployment/blueprint-guards.sh tests/Deployment/blueprint-smoke.sh
       - run: bash tests/Deployment/blueprint-guards.sh
+      - run: shellcheck tests/Deployment/blueprint-permissions.sh
+      - run: sudo bash tests/Deployment/blueprint-permissions.sh

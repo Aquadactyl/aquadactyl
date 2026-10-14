@@ -28,7 +28,7 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     cmd="${COMP_WORDS[1]}"
 
     case "${cmd}" in
-      -install|-add|-i|-query|-q)
+      -install|-add|-i|-query|-q|-check)
         opts="$(
           find "$BLUEPRINT__FOLDER"/*.blueprint 2> /dev/null |
           sed -e "s|^$BLUEPRINT__FOLDER/||g" -e "s|.blueprint$||g"
@@ -472,6 +472,7 @@ case "$cmd" in
   -add|-install|-i) source ./scripts/commands/extensions/install.sh ;;
   -remove|-r) source ./scripts/commands/extensions/remove.sh ;;
   -query|-q) source ./scripts/commands/extensions/query.sh ;;
+  -check) source ./scripts/commands/extensions/check.sh ;;
   -init|-I) source ./scripts/commands/developer/init.sh ;;
   -build|-b) source ./scripts/commands/developer/build.sh ;;
   -watch) source ./scripts/commands/developer/watch.sh ;;

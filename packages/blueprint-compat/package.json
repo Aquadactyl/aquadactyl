@@ -1,0 +1,36 @@
+{
+  "name": "@aquadactyl/blueprint-compat",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./vite": {
+      "types": "./vite-plugin.d.ts",
+      "default": "./vite-plugin.mjs"
+    }
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-brands-svg-icons": "^6.7.2",
+    "@fortawesome/free-regular-svg-icons": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^3.5.0",
+    "formik": "^2.4.9",
+    "lodash": "^4.17.23",
+    "styled-components": "^6.6.0",
+    "swr": "^2.3.0",
+    "yup": "^1.7.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-typescript": "^7.28.0",
+    "babel-plugin-macros": "^3.1.0",
+    "babel-plugin-styled-components": "^2.1.4",
+    "tailwindcss": "^3.4.19",
+    "twin.macro": "^3.4.1"
+  },
+  "peerDependencies": {
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  }
+}

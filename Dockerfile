@@ -8,6 +8,8 @@ WORKDIR /app
 RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
     npm install --global pnpm@12.10.1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages ./packages
+COPY patches ./patches
 RUN --mount=type=cache,id=aquadactyl-pnpm,target=/pnpm/store \
     pnpm install --frozen-lockfile --store-dir /pnpm/store
 # Backend and documentation edits do not invalidate the frontend build.
@@ -74,6 +76,7 @@ COPY --chown=nginx:nginx . ./
 COPY --from=frontend --chown=nginx:nginx /app/public/assets ./public/assets
 COPY --from=frontend --chown=nginx:nginx /app/public/build ./public/build
 COPY --from=frontend --chown=nginx:nginx /app/node_modules ./node_modules
+COPY --from=frontend --chown=nginx:nginx /app/packages ./packages
 
 RUN cp .env.example .env \
     && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \

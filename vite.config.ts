@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import fs from "node:fs";
+import { legacyBlueprint } from "@aquadactyl/blueprint-compat/vite";
 
 const certPath = path.resolve(import.meta.dirname, "../../docker/certificates");
 const useLocalCerts = process.env.USE_LOCAL_CERTS === "true";
@@ -19,6 +20,7 @@ const httpsOptions =
 
 export default defineConfig({
   plugins: [
+    legacyBlueprint(import.meta.dirname),
     // Vitest uses Vite's server API without serving the panel through Laravel.
     process.env.VITEST !== "true" &&
       laravel({
@@ -47,6 +49,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 1200,
   },
   resolve: {
+    dedupe: ["react", "react-dom", "styled-components"],
     alias: {
       "@": path.resolve(import.meta.dirname, "resources/scripts"),
       "@definitions": path.resolve(
@@ -82,7 +85,10 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "json-summary", "html"],
       thresholds: { 100: true },
-      include: ["resources/scripts/**/*.{ts,tsx}"],
+      include: [
+        "resources/scripts/**/*.{ts,tsx}",
+        "packages/blueprint-compat/vite-plugin.mjs",
+      ],
       exclude: [
         "resources/scripts/**/*.{test,spec}.{ts,tsx}",
         "resources/scripts/setup-tests.ts",

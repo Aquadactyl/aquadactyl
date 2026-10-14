@@ -60,6 +60,10 @@ server definitions.
   [translation guide](docs/TRANSLATIONS.md).
 - **Blueprint built in:** Framework beta-2026-08, including its CLI, admin pages,
   extension routes and frontend hooks. The installer initializes the bundled framework.
+- **Legacy addon compatibility:** Install older Blueprint packages with adapters
+  for Pterodactyl styling, store hooks, routing, forms and icons. Check frontend
+  compatibility before installation with `blueprint -check myaddon`. See the
+  [compatibility guide](docs/BLUEPRINT-COMPATIBILITY.md) for supported interfaces and limits.
 - **Managed installation and updates:** Linux scripts build assets, run migrations
   and refresh application caches. Updates verify release checksums, back up the
   database and panel files, and preserve configuration and extension data.

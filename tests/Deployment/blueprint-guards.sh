@@ -16,21 +16,29 @@ hide_progress() { :; }
 source "$GUARD_SOURCE/scripts/libraries/lock.sh"
 case "$GUARD_CASE" in
   remove-build) source "$GUARD_SOURCE/scripts/commands/extensions/remove.sh" ;;
+  check-frontend) source "$GUARD_SOURCE/scripts/commands/extensions/check.sh" ;;
   *) source "$GUARD_SOURCE/scripts/commands/extensions/install.sh" ;;
 esac
 depend() { if [[ $GUARD_CASE == dependencies ]]; then exit 7; fi; }
 pnpm() { return 13; }
+node() { printf 'Simulated frontend compatibility failure\n'; return 13; }
+parse_yaml() { printf 'conf_info_identifier=fixture\n'; }
+extract_extension() { mkdir -p .blueprint/tmp; touch .blueprint/tmp/conf.yml; }
 php() { :; }
 blueprint_extension_permissions() { :; }
 blueprint_extension_artisan() { [[ $1 != view:cache ]]; }
 blueprint_extension_reload_php() { touch "$FOLDER/reloaded"; }
-InstallExtension() { InstalledExtensions=fixture; YARN=y; [[ $GUARD_CASE != cache ]] || YARN=n; return 0; }
+if [[ $GUARD_CASE != install-preflight ]]; then
+  InstallExtension() { InstalledExtensions=fixture; YARN=y; [[ $GUARD_CASE != cache ]] || YARN=n; return 0; }
+fi
 RemoveExtension() { RemovedExtensions=fixture; YARN=y; return 0; }
 cd "$FOLDER" || exit 1
 Command fixture
+exit "$?"
 SH
 
-for scenario in dependencies install-build remove-build cache; do
+touch "$WORK/panel/fixture.blueprint"
+for scenario in dependencies install-build remove-build cache check-frontend install-preflight; do
   status=0
   GUARD_SOURCE="$ROOT" GUARD_PANEL="$WORK/panel" GUARD_CASE="$scenario" \
     bash "$WORK/run.sh" > "$WORK/output" 2>&1 || status=$?
@@ -40,6 +48,8 @@ for scenario in dependencies install-build remove-build cache; do
     dependencies) [[ $status == 7 ]] ;;
     *-build) grep -q 'frontend build failed' "$WORK/output" ;;
     cache) grep -q 'view:cache' "$WORK/output" ;;
+    check-frontend) [[ $status == 13 && ! -d "$WORK/panel/.blueprint/tmp" ]] ;;
+    install-preflight) grep -q 'installation was not started' "$WORK/output"; [[ ! -d "$WORK/panel/.blueprint/extensions/fixture" ]] ;;
   esac
 done
-echo 'Blueprint guards passed: dependency, install build, uninstall build and cache failures return errors and release locks.'
+echo 'Blueprint guards passed: dependency, build, cache and compatibility failures return errors and release locks.'

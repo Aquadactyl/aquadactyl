@@ -21,6 +21,14 @@ blueprint_extension_permissions() {
     chown -R "$WEBUSER:$web_group" "$FOLDER/storage" "$FOLDER/bootstrap/cache" &>> "$BLUEPRINT__DEBUG" || return 1
     find "$FOLDER/storage" "$FOLDER/bootstrap/cache" -type d -exec chmod 0750 {} + &>> "$BLUEPRINT__DEBUG" || return 1
     find "$FOLDER/storage" "$FOLDER/bootstrap/cache" -type f -exec chmod 0640 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    # Blueprint's public ExtensionFS is writable data, even when addon source is root-owned.
+    # Do not follow symlinks here: these roots must be real extension fs directories.
+    local extension_fs
+    while IFS= read -r -d '' extension_fs; do
+      chown -R "$WEBUSER:$web_group" "$extension_fs" &>> "$BLUEPRINT__DEBUG" || return 1
+      find "$extension_fs" -type d -exec chmod 0750 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+      find "$extension_fs" -type f -exec chmod 0640 {} + &>> "$BLUEPRINT__DEBUG" || return 1
+    done < <(find "$FOLDER/.blueprint/extensions" -mindepth 2 -maxdepth 2 -type d -name fs -print0)
     chmod 0640 "$FOLDER/.env" &>> "$BLUEPRINT__DEBUG" || return 1
   else
     # Avoid copying unchanged files into Docker's writable layer just to chown them.

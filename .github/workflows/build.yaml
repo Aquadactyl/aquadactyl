@@ -42,4 +42,5 @@ jobs:
           path: coverage/
           if-no-files-found: ignore
       - run: pnpm run test:game-query
+      - run: pnpm run test:blueprint-compat
       - run: pnpm run build

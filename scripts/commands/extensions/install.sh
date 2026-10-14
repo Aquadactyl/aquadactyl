@@ -140,6 +140,14 @@ InstallExtension() {
 
   ((PROGRESS_NOW++))
 
+  # Validate frontend interfaces before update scripts or panel files can change.
+  PRINT INFO "Checking Aquadactyl addon compatibility.."
+  if ! node "$FOLDER/scripts/helpers/check-blueprint.mjs" "$FOLDER/.blueprint/tmp" "$dashboard_components" "$identifier"; then
+    postexit
+    PRINT FATAL "Addon compatibility check failed; installation was not started."
+    return 1
+  fi
+
   # Detect if extension is already installed and prepare the upgrading process.
   if [[ $(cat .blueprint/extensions/blueprint/private/db/installed_extensions) == *"|$identifier,"* ]]; then
     PRINT INFO "Switching to update process as extension has already been installed."
