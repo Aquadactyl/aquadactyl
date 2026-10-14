@@ -1,6 +1,7 @@
 <?php
 
 use Pterodactyl\Console\Kernel;
+use Illuminate\Console\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\Console\BlueprintConsoleLibrary;
 
@@ -32,7 +33,7 @@ test('a fresh installation schedules essential maintenance without requiring Blu
     config()->set(['backups.prune_age' => 0, 'activity.prune_days' => null, 'aquadactyl.telemetry.enabled' => false]);
     $events = app(Kernel::class)->resolveConsoleSchedule()->events();
     expect($events)->toHaveCount(4);
-    expect(array_column($events, 'command'))->toContain("'/usr/local/bin/php' 'artisan' p:maintenance:prune-file-trash");
+    expect(array_column($events, 'command'))->toContain(Application::formatCommandString('p:maintenance:prune-file-trash'));
     expect(array_filter($events, fn ($event) => $event->description && str_contains($event->description, 'Telemetry')))->toBeEmpty();
 });
 

@@ -42,6 +42,11 @@ namespace Pterodactyl\Console\Commands\Maintenance {
 
     function fwrite($handle, string $buffer): int|false
     {
+        if (isset(\Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['backup.before_write'])) {
+            $beforeWrite = \Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['backup.before_write'];
+            unset(\Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['backup.before_write']);
+            $beforeWrite();
+        }
         if (isset(\Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['backup.write'])) {
             return max(0, strlen($buffer) - 1);
         }

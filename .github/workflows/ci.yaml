@@ -2,6 +2,9 @@ name: Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
   pull_request:
     branches:
       - "main"
@@ -33,6 +36,12 @@ jobs:
           - 3306
     steps:
       - uses: actions/checkout@v7
+      - name: Install MariaDB dump client
+        if: startsWith(matrix.database, 'mariadb:')
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends mariadb-client
+          mariadb-dump --version
       - id: composer-cache
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -45,6 +54,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          ini-values: zend.assertions=1
           extensions: bcmath, cli, curl, gd, intl, mbstring, mysql, openssl, pdo, redis, tokenizer, xml, zip
           tools: composer:v2
           coverage: ${{ matrix.php == '8.5' && matrix.database == 'mariadb:11' && 'pcov' || 'none' }}

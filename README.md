@@ -7,7 +7,7 @@
   </a>
 </p>
 
-![Tests](https://img.shields.io/github/actions/workflow/status/Aquadactyl/aquadactyl/ci.yaml?label=Tests&style=for-the-badge)
+[![Tests](https://img.shields.io/github/actions/workflow/status/Aquadactyl/aquadactyl/ci.yaml?branch=main&label=Tests&style=for-the-badge)](https://github.com/Aquadactyl/aquadactyl/actions/workflows/ci.yaml?query=branch%3Amain)
 ![GitHub release](https://img.shields.io/github/v/release/Aquadactyl/aquadactyl?style=for-the-badge)
 ![GitHub contributors](https://img.shields.io/github/contributors/Aquadactyl/aquadactyl?style=for-the-badge)
 

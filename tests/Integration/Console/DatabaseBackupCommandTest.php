@@ -50,6 +50,40 @@ test('database backups stop on storage errors and remove partial output', functi
     expect(File::exists($path))->toBeFalse();
 })->with(['open', 'write']);
 
+test('write failures stop an active dump without writing its remaining output to a closed backup', function () {
+    $client = $this->backupDirectory . '/mariadb-dump';
+    File::put($client, <<<'PHP'
+#!/usr/bin/env php
+<?php
+fwrite(STDOUT, 'first dump chunk');
+$deadline = microtime(true) + 5;
+while (!file_exists(__DIR__ . '/resume') && microtime(true) < $deadline) {
+    usleep(1000);
+}
+fwrite(STDOUT, str_repeat('remaining output', 256));
+file_put_contents(__DIR__ . '/ready', 'ready');
+usleep(5000000);
+PHP);
+    chmod($client, 0700);
+    $originalPath = getenv('PATH');
+    putenv('PATH=' . $this->backupDirectory . PATH_SEPARATOR . $originalPath);
+    RuntimeFaults::$enabled['backup.write'] = true;
+    RuntimeFaults::$enabled['backup.before_write'] = function () {
+        File::put($this->backupDirectory . '/resume', 'resume');
+        $deadline = microtime(true) + 5;
+        while (!File::exists($this->backupDirectory . '/ready') && microtime(true) < $deadline) {
+            usleep(1000);
+        }
+    };
+    $path = $this->backupDirectory . '/failed-stream.sql';
+    try {
+        $this->artisan('p:maintenance:backup-database', ['path' => $path])->expectsOutput('Cannot complete database backup.')->assertExitCode(1);
+        expect(File::exists($path))->toBeFalse()->and(File::exists($this->backupDirectory . '/ready'))->toBeTrue();
+    } finally {
+        putenv('PATH=' . $originalPath);
+    }
+});
+
 test('database backup socket connections are passed to the dump client and failed connections remove output', function () {
     config()->set('database.connections.mysql.unix_socket', '/nonexistent/coverage-mysql.sock');
     $path = $this->backupDirectory . '/failed-socket.sql';
