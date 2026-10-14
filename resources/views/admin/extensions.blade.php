@@ -5,205 +5,125 @@
 @endsection
 
 @php
-$is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($PlaceholderService->version() != "::"."v"));
+  $is_installed = $PlaceholderService->installed() != 'NOTINSTALLED' && $PlaceholderService->version() != '::'.'v';
+  $extensions = $is_installed ? $blueprint->extensionsConfigs() : collect();
 @endphp
 
 @section('content-header')
+  <h1>{{ __('admin/ui.extensions') }}<small>{{ __('admin/ui.extensions_description') }}</small></h1>
+  <ol class="breadcrumb">
+    <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+    <li class="active">{{ __('admin/ui.extensions') }}</li>
+  </ol>
+@endsection
+
+@section('content')
   @if($is_installed)
-    @if(($PlaceholderService->version() != $latestBlueprintVersion) && !in_array($PlaceholderService->version(), ["rolling", "unknown"]) && $latestBlueprintVersion != "unknown")
-      <div class="blueprint-statusbar blueprint-statusbar-danger">
-        <div style="margin-right: 14px;">
-          <i class="bi bi-exclamation-triangle-fill" style="font-size: 24px; color: #f52e98"></i>
-        </div>
+    @if($PlaceholderService->version() != $latestBlueprintVersion && !in_array($PlaceholderService->version(), ['rolling', 'unknown']) && $latestBlueprintVersion != 'unknown')
+      <div class="blueprint-statusbar blueprint-statusbar-danger" role="status">
+        <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
         <div>
-          <span class="text-bold" style="color: #ff6ab9;">
-            {{ __('admin/ui.blueprint_is_out_of_date') }}
-          </span>
-          {{ __('admin/ui.you_re_running_blueprint') }}
-          <code style="border: unset; background-color: unset; color: #cad1d8;">
-            {{ $PlaceholderService->version() }}
-          </code>
-          {{ __('admin/ui.which_is_outdated_update_to_version') }}
-          <code style="border: unset; background-color: unset; color: #cad1d8;">
-            {{ $latestBlueprintVersion }}
-          </code>
+          <strong>{{ __('admin/ui.blueprint_is_out_of_date') }}</strong>
+          {{ __('admin/ui.you_re_running_blueprint') }} <code>{{ $PlaceholderService->version() }}</code>
+          {{ __('admin/ui.which_is_outdated_update_to_version') }} <code>{{ $latestBlueprintVersion }}</code>
           {{ __('admin/ui.to_access_the_latest_features_and_improvements') }}
         </div>
       </div>
     @endif
 
-    @if($PlaceholderService->version() == "rolling")
-      <div class="blueprint-statusbar blueprint-statusbar-warning">
-        <div style="margin-right: 14px;">
-          <i class="bi bi-bug-fill" style="font-size: 24px; color: #f5952e"></i>
-        </div>
+    @if($PlaceholderService->version() == 'rolling')
+      <div class="blueprint-statusbar blueprint-statusbar-warning" role="status">
+        <i class="fa fa-bug" aria-hidden="true"></i>
         <div>
-          <span class="text-bold" style="color: #f9a040;">
-          {{ __('admin/ui.this_instance_is_running_a_development_preview_of_blueprint') }}
-          </span>
-          {{ __('admin/ui.you_may_run_into_bugs_extension_incompatibilities_and_more_if_you_run_into_any_issues') }} <a href="https://github.com/blueprintframework/framework/issues">{{ __('admin/ui.let_us_know') }}</a>.
+          <strong>{{ __('admin/ui.this_instance_is_running_a_development_preview_of_blueprint') }}</strong>
+          {{ __('admin/ui.you_may_run_into_bugs_extension_incompatibilities_and_more_if_you_run_into_any_issues') }}
+          <a href="https://github.com/blueprintframework/framework/issues" target="_blank" rel="noopener noreferrer">{{ __('admin/ui.let_us_know') }}</a>.
         </div>
       </div>
     @endif
 
-    @if($latestBlueprintVersion == "unknown" && $PlaceholderService->version() != "rolling")
-      <div class="blueprint-statusbar blueprint-statusbar-warning">
-        <div style="margin-right: 14px;">
-          <i class="bi bi-wifi-off" style="font-size: 24px; color: #f5952e"></i>
-        </div>
+    @if($latestBlueprintVersion == 'unknown' && $PlaceholderService->version() != 'rolling')
+      <div class="blueprint-statusbar blueprint-statusbar-warning" role="status">
+        <i class="fa fa-exclamation-circle" aria-hidden="true"></i>
         <div>
-          <span class="text-bold" style="color: #f9a040;">
-          {{ __('admin/ui.could_not_fetch_version_info') }}
-          </span>
+          <strong>{{ __('admin/ui.could_not_fetch_version_info') }}</strong>
           {{ __('admin/ui.blueprint_failed_to_fetch_the_latest_release_name_from_the_api') }}
         </div>
       </div>
     @endif
 
-    <div class="blueprint-page-header">
-      <div class="row">
-        <div class="col-lg-8 col-md-9 col-sm-9 col-xs-12" style="padding-top: 3px; padding-bottom: 3px;">
-          <p>
-            <span class="text-bold h4">{{ __('admin/ui.blueprint') }}</span>
-          </p>
-          <span>
-            {{ __('admin/ui.aquadactyl_s_favorite_modding_community_develop_collaborate_and_install_extensions_wi') }}
-          </span>
-        </div>
-        <div class="col-lg-4 col-md-3 col-sm-3 col-xs-12" style="padding-top: 3px; padding-bottom: 3px;">
-          <a href="https://blueprint.zip/" target="_blank" class="pull-right text-bold">
-            {{ __('admin/ui.learn_more') }}
+    <section class="blueprint-page-header" aria-labelledby="blueprintBannerTitle">
+      <div class="blueprint-banner-content">
+        <h2 id="blueprintBannerTitle">{{ __('admin/ui.blueprint') }}</h2>
+        <p>{{ __('admin/ui.aquadactyl_s_favorite_modding_community_develop_collaborate_and_install_extensions_wi') }}</p>
+      </div>
+      <a class="blueprint-banner-link" href="https://blueprint.zip/" target="_blank" rel="noopener noreferrer">
+        {{ __('admin/ui.learn_more') }} <i class="fa fa-external-link" aria-hidden="true"></i>
+      </a>
+    </section>
+
+    <div class="box box-primary admin-extensions">
+      <div class="box-header with-border">
+        <h3 class="box-title">
+          {{ __('admin/ui.installed_extensions') }}
+          <span class="extension-count">{{ $extensions->count() }}</span>
+        </h3>
+        <div class="box-tools">
+          <a class="btn btn-default btn-sm extensions-browse" href="https://blueprint.zip/browse" target="_blank" rel="noopener noreferrer">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ __('admin/ui.browse_extensions') }}
           </a>
         </div>
       </div>
-    </div>
-  @endif
-
-  <style>
-    .blueprint-statusbar {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      background-color: #1f2933;
-      border-radius: 8px;
-      padding: 10px 20px;
-      margin-bottom: 15px;
-    }
-    .blueprint-statusbar.blueprint-statusbar-danger {
-      background-image: linear-gradient(
-        to left,
-        #1f2933 50%,
-        #5c143b 100%
-      );
-    }
-    .blueprint-statusbar.blueprint-statusbar-warning {
-      background-image: linear-gradient(
-        to left,
-        #1f2933 60%,
-        #a43e006e 100%
-      );
-    }
-
-    .blueprint-page-header {
-      width: 100%;
-      background-color: #1f2933;
-      border-radius: 8px;
-      padding: 14px 20px;
-      background-image: linear-gradient(
-        to right,
-        #1f2933 50%,
-        transparent 100%
-      ), url('/assets/extensions/blueprint/promo-blur.jpg');
-      background-size: 100% 100%, cover;
-      background-position: left center, right center;
-      background-repeat: no-repeat;
-    }
-  </style>
-@endsection
-
-@section('content')
-  @if($is_installed)
-    <div class="row" style="padding-left: 15px; padding-right: 10px;">
-      <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 text-center" style="padding-left: 0px; padding-right: 17px;">
-        <button class="btn extension-btn" style="width:100%;margin-bottom:17px;" data-toggle="modal" data-target="#blueprintConfigModal">
-          <div class="extension-btn-overlay"></div>
-          <img src="/assets/extensions/blueprint/logo.jpg" alt="logo" class="extension-btn-image2"/>
-          <img src="/assets/extensions/blueprint/logo.jpg" alt="logo" class="extension-btn-image"/>
-          <p class="extension-btn-text">{{ __('admin/ui.blueprint') }}</p>
-          <p class="extension-btn-version" style="opacity: .6;">
-            <span style="padding-right:5px">
-              <i class="bi bi-gear-fill"></i>
-              <b>system</b>
+      <div class="box-body">
+        <div class="extensions-grid">
+          <button type="button" class="btn extension-btn extension-card" data-toggle="modal" data-target="#blueprintConfigModal" aria-label="{{ __('admin/ui.configure') }} {{ __('admin/ui.blueprint') }}">
+            <img src="/assets/extensions/blueprint/logo.jpg" alt="" class="extension-card-icon"/>
+            <span class="extension-card-details">
+              <span class="extension-card-name">{{ __('admin/ui.blueprint') }}</span>
+              <span class="extension-card-meta">
+                <span class="extension-card-tag">{{ __('admin/ui.extension_framework') }}</span>
+                <span>{{ $PlaceholderService->version() }}</span>
+              </span>
             </span>
-            {{ $PlaceholderService->version() }}
-          </p>
-          <i class="bi bi-three-dots-vertical" style="font-size: 20px;position: absolute;top: 25px;right: 37px;"></i>
-        </button>
-      </div>
-
-      @foreach($blueprint->extensionsConfigs() as $extension)
-        <?php
-          $extension = $extension['info'];
-          $metadataScoped = null;
-          if(isset($metadata[$extension['identifier']])) {
-            $metadataScoped = $metadata[$extension['identifier']];
-          }
-        ?>
-        @include("blueprint.admin.entry", [
-          'EXTENSION_ID' => $extension['identifier'],
-          'EXTENSION_NAME' => $extension['name'],
-          'EXTENSION_VERSION' => $extension['version'],
-          'EXTENSION_METADATA' => $metadataScoped,
-          'EXTENSION_ICON' => !empty($extension['icon'])
-            ? '/assets/extensions/'.$extension['identifier'].'/icon.'.pathinfo($extension['icon'], PATHINFO_EXTENSION)
-            : '/assets/extensions/'.$extension['identifier'].'/icon.jpg'
-        ])
-      @endforeach
-
-      <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 text-center" style="padding-left: 0px; padding-right: 20px;">
-        <a href="https://blueprint.zip/browse" target="_blank">
-          <button class="blueprint-add" style="margin-bottom:17px;">
-            <i class="bi bi-plus" style="font-size: 36px"></i>
+            <i class="fa fa-cog extension-card-action" aria-hidden="true"></i>
           </button>
-        </a>
+
+          @foreach($extensions as $extension)
+            @php
+              $info = $extension['info'];
+            @endphp
+            @include('blueprint.admin.entry', [
+              'EXTENSION_ID' => $info['identifier'],
+              'EXTENSION_NAME' => $info['name'],
+              'EXTENSION_VERSION' => $info['version'],
+              'EXTENSION_METADATA' => $metadata[$info['identifier']] ?? null,
+              'EXTENSION_ICON' => !empty($info['icon'])
+                ? '/assets/extensions/'.$info['identifier'].'/icon.'.pathinfo($info['icon'], PATHINFO_EXTENSION)
+                : '/assets/extensions/'.$info['identifier'].'/icon.jpg',
+            ])
+          @endforeach
+        </div>
       </div>
-
-      <style>
-        .blueprint-add {
-          background-color:rgb(44, 55, 67);
-          border: transparent;
-          border-radius: 8px;
-          height: 79px;
-          width: 79px;
-          float: left;
-          color: #CAD1D8;
-        }
-
-        .blueprint-flag-warning {
-          font-size: 14px;
-          vertical-align: middle;
-          margin-left: 8px;
-        }
-      </style>
+      <div class="box-footer extensions-footer">
+        <span><i class="fa fa-puzzle-piece" aria-hidden="true"></i> Blueprint Framework <code>{{ $PlaceholderService->version() }}</code></span>
+        <a href="https://blueprint.zip/" target="_blank" rel="noopener noreferrer">{{ __('admin/ui.learn_more') }} <i class="fa fa-external-link" aria-hidden="true"></i></a>
+      </div>
     </div>
-
-
 
     <!-- Blueprint configuration -->
-    <div class="modal fade" id="blueprintConfigModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="blueprintConfigModal" tabindex="-1" role="dialog" aria-labelledby="blueprintConfigTitle">
       <div class="modal-dialog" role="document">
-        <div class="modal-content" style="background-color:transparent">
+        <div class="modal-content">
           <form action="/admin/extensions/blueprint" method="POST" autocomplete="off">
-            <div class="modal-header" style="border-color:transparent; border-radius:12px 12px 5px 5px; margin-bottom: 8px">
-              <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin/ui.close') }}" style="color:#fff;box-shadow:none"><span aria-hidden="true"><i class="bi bi-x"></i></span></button>
-              <h3 class="modal-title">
-                <img src="/assets/extensions/blueprint/logo.jpg" alt="logo" height="34" width="34" class="pull-left" style="border-radius:3px;margin-right:10px"/>
-                {{ __('admin/ui.configure') }} <b>{{ __('admin/ui.blueprint') }}</b>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin/ui.close') }}"><span aria-hidden="true">&times;</span></button>
+              <h3 class="modal-title" id="blueprintConfigTitle">
+                <img src="/assets/extensions/blueprint/logo.jpg" alt="" height="34" width="34"/>
+                <span>{{ __('admin/ui.configure') }} <b>{{ __('admin/ui.blueprint') }}</b></span>
               </h3>
             </div>
 
-            <div class="modal-body" style="border-color:transparent; border-radius:5px; margin-bottom: 8px; padding-bottom: 5px;">
+            <div class="modal-body">
               <table class="table table-hover">
                 <thead>
                   <tr>
@@ -255,71 +175,28 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
               </table>
             </div>
 
-            <div class="modal-footer" style="border-color:transparent; border-radius:5px 5px 12px 12px">
+            <div class="modal-footer">
               {{ csrf_field() }}
               <input type="hidden" name="_method" value="PATCH">
-              <div class="row">
-                <div class="col-sm-10">
-                  <p class="text-muted small text-left">{{ __('admin/ui.flags_enable_certain_features_that_may_be_experimental_unstable_or_in_development_mod') }}</p>
-                </div>
-                <div class="col-sm-2">
-                  <button type="submit" class="btn btn-primary btn-sm" style="width:100%; margin-top:10px; margin-bottom:10px; border-radius:6px">{{ __('admin/ui.save') }}</button>
-                </div>
-              </div>
+              <p class="text-muted small text-left">{{ __('admin/ui.flags_enable_certain_features_that_may_be_experimental_unstable_or_in_development_mod') }}</p>
+              <button type="submit" class="btn btn-primary">{{ __('admin/ui.save') }}</button>
             </div>
           </form>
         </div>
       </div>
     </div>
-  </div>
-
   @else
-    <center>
-      <div style="padding-top: 50px;">
-        <span style="font-size: 36px">
-          <i class="bi bi-info-circle-fill"></i>
-        </span>
-        <br style="margin-bottom: 12px;">
-        <span style="font-size: 20px" class="text-bold">
-          {{ __('admin/ui.unfinished_installation') }}
-        </span>
-        <br style="margin-bottom: 12px;">
-        <span>
-          {{ __('admin/ui.blueprint_is_currently_only_partially_installed') }}<br>
-          {{ __('admin/ui.finish_the') }}
-          <a href="https://blueprint.zip/guides/admin/install">{{ __('admin/ui.installation_guide') }}</a>{{ __('admin/ui.then_return_to_this_page_afterwards') }}
-        </span>
-        <br style="margin-bottom: 12px;">
-        <span>
-          {{ __('admin/ui.you_may_be_able_to_fix_this_issue_by_running') }} <code>blueprint -upgrade</code>.
-        </span>
-      </div>
-    </center>
+    <div class="box extensions-installation-notice">
+      <i class="fa fa-info-circle" aria-hidden="true"></i>
+      <h3>{{ __('admin/ui.unfinished_installation') }}</h3>
+      <p>{{ __('admin/ui.blueprint_is_currently_only_partially_installed') }}</p>
+      <p>
+        {{ __('admin/ui.finish_the') }}
+        <a href="https://blueprint.zip/guides/admin/install" target="_blank" rel="noopener noreferrer">{{ __('admin/ui.installation_guide') }}</a>{{ __('admin/ui.then_return_to_this_page_afterwards') }}
+      </p>
+      <p>{{ __('admin/ui.you_may_be_able_to_fix_this_issue_by_running') }} <code>blueprint -upgrade</code>.</p>
+    </div>
   @endif
-
-  <style>
-    /* style content */
-    a:has(button.btn.extension-btn) {
-      height: 96px;
-      display: inline-block;
-      width: 100%;
-    }
-    section.content {
-      padding-right: 0px !important;
-      display: inline-block !important;
-      width: 100% !important;
-    }
-    .skin-blue .wrapper {
-      box-shadow: unset;
-    }
-
-    .blueprint-button-link {
-      font-size: 14px;
-      background: unset;
-      border: unset;
-      color: #ec55ad;
-    }
-  </style>
 @endsection
 
 @section('footer-scripts')
@@ -330,10 +207,13 @@ $is_installed=(($PlaceholderService->installed() != "NOTINSTALLED") && ($Placeho
 
       const createResetButton = (row, input) => {
         const button = document.createElement('button');
+        button.type = 'button';
         button.className = 'blueprint-button-link reset-flag';
+        button.title = @json(__('admin/ui.reset_to_default'));
+        button.setAttribute('aria-label', button.title);
         button.style.padding = '0';
         button.style.marginLeft = '8px';
-        button.innerHTML = '<i class="bi bi-exclamation-triangle-fill"></i>';
+        button.innerHTML = '<i class="fa fa-undo" aria-hidden="true"></i>';
 
         const defaultValue = getDefaultValue(row);
 

@@ -1,0 +1,404 @@
+/* AdminLTE's familiar layout, with Aquadactyl's shared appearance colours. */
+.aquadactyl-admin .main-header {
+    border-bottom: 1px solid var(--aqua-border);
+    box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+}
+
+.aquadactyl-admin .main-sidebar {
+    border-right: 1px solid var(--aqua-border);
+    box-shadow: none;
+}
+
+.aquadactyl-admin .sidebar-menu > li.header {
+    padding: 20px 18px 10px;
+    font-size: 10px;
+    letter-spacing: .1em;
+}
+
+.aquadactyl-admin .sidebar-menu > li > a {
+    margin: 3px 8px;
+    padding: 11px 12px;
+    border-radius: 6px;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+.aquadactyl-admin .sidebar-menu > li.active > a {
+    background: color-mix(in srgb, var(--aqua-primary) 14%, var(--aqua-chrome));
+    color: var(--aqua-heading);
+    border-left-color: var(--aqua-accent);
+}
+
+.aquadactyl-admin .sidebar-menu > li > a > .fa {
+    margin-right: 6px;
+}
+
+.aquadactyl-admin .box,
+.aquadactyl-admin .nav-tabs-custom {
+    border: 1px solid var(--aqua-border);
+    border-radius: 9px;
+}
+
+.aquadactyl-admin .box.box-primary {
+    border-top: 2px solid var(--aqua-primary);
+}
+
+.aquadactyl-admin .box-header.with-border {
+    border-bottom-color: var(--aqua-border);
+    background: color-mix(in srgb, var(--aqua-raised) 28%, var(--aqua-surface));
+}
+
+.aquadactyl-admin .box-header .box-title {
+    font-weight: 600;
+}
+
+.aquadactyl-admin .box-footer {
+    background: color-mix(in srgb, var(--aqua-chrome) 35%, var(--aqua-surface));
+    border-top: 1px solid var(--aqua-border);
+}
+
+.aquadactyl-admin .table > thead > tr > th {
+    border-bottom: 1px solid var(--aqua-border);
+    color: var(--aqua-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.aquadactyl-admin .form-control,
+.aquadactyl-admin .input-group-addon {
+    border-radius: 6px;
+}
+
+.aquadactyl-admin .input-group .form-control:not(:last-child),
+.aquadactyl-admin .input-group-addon:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.aquadactyl-admin .input-group .form-control:not(:first-child),
+.aquadactyl-admin .input-group-addon:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.aquadactyl-admin .nav-tabs-custom > .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 4px;
+    padding: 0 8px;
+}
+
+.aquadactyl-admin .nav-tabs-custom > .nav-tabs::before,
+.aquadactyl-admin .nav-tabs-custom > .nav-tabs::after {
+    display: none;
+}
+
+.aquadactyl-admin .nav-tabs-custom > .nav-tabs > li > a {
+    border-radius: 4px 4px 0 0;
+}
+
+.aquadactyl-admin .btn:focus-visible,
+.aquadactyl-admin .extension-card:focus-visible {
+    outline: 2px solid var(--aqua-accent);
+    outline-offset: 3px;
+}
+
+.blueprint-page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border: 1px solid var(--aqua-border);
+    border-radius: 9px;
+    background-color: var(--aqua-surface);
+    background-image: linear-gradient(
+        90deg,
+        var(--aqua-surface),
+        color-mix(in srgb, var(--aqua-surface) 90%, transparent) 60%,
+        color-mix(in srgb, var(--aqua-surface) 65%, transparent)
+    ), url('/assets/extensions/blueprint/promo-blur.jpg');
+    background-size: cover;
+    background-position: center, right center;
+}
+
+.blueprint-banner-content {
+    min-width: 0;
+    max-width: 800px;
+    overflow-wrap: anywhere;
+}
+
+.blueprint-banner-content h2 {
+    margin: 0 0 10px;
+    color: var(--aqua-heading);
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.blueprint-banner-content p {
+    margin: 0;
+    line-height: 1.7;
+}
+
+.blueprint-banner-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+/* Cards size themselves to the available content width, including the sidebar. */
+.admin-extensions .box-header .box-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.extension-count,
+.extension-card-tag {
+    padding: 3px 8px;
+    border: 1px solid var(--aqua-border);
+    border-radius: 5px;
+    background: var(--aqua-raised);
+    color: var(--aqua-muted);
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.extensions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+    gap: 16px;
+}
+
+.admin-extensions .extension-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    min-width: 0;
+    min-height: 104px;
+    height: auto;
+    padding: 18px !important;
+    border: 1px solid var(--aqua-border);
+    border-radius: 8px;
+    background: var(--aqua-chrome);
+    color: var(--aqua-text);
+    text-align: left;
+    white-space: normal;
+    overflow: visible;
+    text-decoration: none;
+    transition: background-color 150ms ease, border-color 150ms ease;
+}
+
+.admin-extensions .extension-card:hover {
+    border-color: var(--aqua-accent);
+    background: color-mix(in srgb, var(--aqua-primary) 8%, var(--aqua-chrome));
+    color: var(--aqua-heading);
+}
+
+.extension-card-icon {
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: var(--aqua-raised);
+}
+
+.extension-card-details {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.extension-card-name {
+    color: var(--aqua-heading);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.extension-card-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 8px;
+    color: var(--aqua-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.extension-card-meta > span {
+    min-width: 0;
+}
+
+.admin-extensions .extension-btn-update {
+    margin: 0;
+    max-width: 100%;
+    border-radius: 5px;
+    white-space: normal;
+}
+
+.extension-card-action {
+    flex-shrink: 0;
+    color: var(--aqua-muted);
+    font-size: 20px;
+}
+
+.extension-card:hover .extension-card-action {
+    color: var(--aqua-accent);
+}
+
+.extensions-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--aqua-muted);
+    font-size: 12px;
+}
+
+.extensions-footer > span,
+.extensions-browse {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+
+.extensions-footer::before,
+.extensions-footer::after {
+    display: none;
+}
+
+.blueprint-statusbar {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    border: 1px solid var(--aqua-border);
+    border-left: 3px solid var(--aqua-warning);
+    border-radius: 8px;
+    background: var(--aqua-surface);
+    color: var(--aqua-text);
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.blueprint-statusbar > .fa {
+    flex-shrink: 0;
+    margin-top: 3px;
+    color: var(--aqua-warning);
+    font-size: 18px;
+}
+
+.blueprint-statusbar-danger {
+    border-left-color: var(--aqua-danger);
+}
+
+.blueprint-statusbar-danger > .fa {
+    color: var(--aqua-danger);
+}
+
+#blueprintConfigModal .modal-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    line-height: 1.4;
+}
+
+#blueprintConfigModal .table {
+    margin-bottom: 0;
+    table-layout: fixed;
+}
+
+#blueprintConfigModal td {
+    overflow-wrap: anywhere;
+}
+
+#blueprintConfigModal .blueprint-button-link {
+    border: 0;
+    background: transparent;
+    color: var(--aqua-warning);
+}
+
+.extensions-installation-notice {
+    padding: 40px 24px;
+    text-align: center;
+    line-height: 1.7;
+}
+
+.extensions-installation-notice > .fa {
+    color: var(--aqua-accent);
+    font-size: 32px;
+}
+
+@media (min-width: 768px) {
+    .aquadactyl-admin.sidebar-collapse .sidebar-menu > li > a {
+        margin: 3px 4px;
+        padding-left: 10px;
+    }
+
+    .aquadactyl-admin.sidebar-collapse .sidebar-menu > li > a > .fa {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 767px) {
+    .blueprint-page-header {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        padding: 18px;
+        margin-bottom: 20px;
+    }
+
+    .blueprint-banner-link {
+        justify-self: start;
+    }
+
+    .admin-extensions .box-header > .box-tools {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .extensions-browse {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .extensions-grid {
+        gap: 12px;
+    }
+
+    .admin-extensions .extension-card {
+        gap: 12px;
+        padding: 14px !important;
+    }
+
+    #blueprintConfigModal .modal-header,
+    #blueprintConfigModal .modal-body,
+    #blueprintConfigModal .modal-footer {
+        padding: 16px;
+    }
+
+    #blueprintConfigModal .table > tbody > tr > td,
+    #blueprintConfigModal .table > thead > tr > th {
+        padding: 10px 6px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .aquadactyl-admin .sidebar-menu > li > a,
+    .admin-extensions .extension-card {
+        transition: none;
+    }
+}
