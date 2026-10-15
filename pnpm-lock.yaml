@@ -252,7 +252,7 @@ importers:
         version: 2.2.0
       '@hookform/resolvers':
         specifier: ^5.9.1
-        version: 5.9.1(react-hook-form@7.89.0(@types/react@19.3.0)(react@19.3.0))(yup@1.7.1)(zod@4.6.5)
+        version: 5.9.1(react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.0))(yup@1.7.1)(zod@4.6.5)
       '@kingironman2011/xterm-addon-search-bar':
         specifier: ^0.4.1
         version: 0.4.1(@xterm/addon-search@0.16.0)(@xterm/xterm@6.0.0)
@@ -335,8 +335,8 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(react@19.3.0)
       react-hook-form:
-        specifier: ^7.89.0
-        version: 7.89.0(@types/react@19.3.0)(react@19.3.0)
+        specifier: ^7.90.0
+        version: 7.90.0(@types/react@19.3.0)(react@19.3.0)
       react-i18next:
         specifier: ^17.0.16
         version: 17.0.16(i18next@26.4.3(typescript@7.0.2))(react-dom@19.3.0(react@19.3.0))(react@19.3.0)(typescript@7.0.2)
@@ -2801,8 +2801,8 @@ packages:
   react-fast-compare@2.0.4:
     resolution: {integrity: sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==}
 
-  react-hook-form@7.89.0:
-    resolution: {integrity: sha512-vKcoCfy8RKZDrhSdqsRFp0uEOdS1AhLjOL6hR7Wmfzg1akNxEhaPf5WORx8SgEQPVXakdDyDkqQp+KNxVnnPHg==}
+  react-hook-form@7.90.0:
+    resolution: {integrity: sha512-+NdG0FLzCPhFOp2NNxaUYLF9fyZhNjx9FTBBSYWF71/l6BBlmIc/j6xlp3DbaHWLJbIG7Zd8oznA19xJClU97w==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       '@types/react': '*'
@@ -3752,10 +3752,10 @@ snapshots:
 
   '@hcaptcha/react-hcaptcha@2.2.0': {}
 
-  '@hookform/resolvers@5.9.1(react-hook-form@7.89.0(@types/react@19.3.0)(react@19.3.0))(yup@1.7.1)(zod@4.6.5)':
+  '@hookform/resolvers@5.9.1(react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.0))(yup@1.7.1)(zod@4.6.5)':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.89.0(@types/react@19.3.0)(react@19.3.0)
+      react-hook-form: 7.90.0(@types/react@19.3.0)(react@19.3.0)
     optionalDependencies:
       yup: 1.7.1
       zod: 4.6.5
@@ -5240,7 +5240,7 @@ snapshots:
 
   react-fast-compare@2.0.4: {}
 
-  react-hook-form@7.89.0(@types/react@19.3.0)(react@19.3.0):
+  react-hook-form@7.90.0(@types/react@19.3.0)(react@19.3.0):
     dependencies:
       react: 19.3.0
     optionalDependencies:
