@@ -47,6 +47,11 @@ field or maximum-capacity results, and are separate from the Pterodactyl compari
   A 50-row integration test with five visible rows records five resource requests
   and five player queries per polling cycle, instead of querying all 50 rows.
   This verifies request volume; it is not a browser load-time benchmark.
+- Visible rows normally refresh every 30 seconds. Starting/stopping servers and
+  rows used for a power action refresh every two seconds (for one minute after
+  the action). Returning to a visible row or browser tab requests fresh status.
+  Resource responses cache running states for 20 seconds, with a two-second
+  cache for other states and the minute following a power action.
 - Server-list relationships and per-server variables are batched for the current
   page. Accessible-server IDs use a database subquery instead of first loading
   every accessible server into PHP. Permissions and variable overrides remain

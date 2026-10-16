@@ -1,6 +1,6 @@
 import usePanelTranslation from "@/plugins/usePanelTranslation";
 import SensitiveValue from "@/components/elements/SensitiveValue";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useViewportVisibility from "@/plugins/useViewportVisibility";
 import { useTanStackQuery } from "@/lib/queryClient";
 import CountryFlag from "@/components/elements/CountryFlag";
@@ -43,6 +43,7 @@ export default ({
   const features = useAppStore((state) => state.settings.data?.features);
   const row = useRef<HTMLElement>(null);
   const visible = useViewportVisibility(row);
+  const [powerRefreshUntil, setPowerRefreshUntil] = useState(0);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -56,8 +57,14 @@ export default ({
     enabled ? ["server-resources", server.uuid] : null,
     () => getServerResourceUsage(server.uuid),
     {
-      refetchInterval: 30000,
-      refetchOnWindowFocus: false,
+      refetchInterval: (query) =>
+        Date.now() < powerRefreshUntil ||
+        query.state.data?.status === "starting" ||
+        query.state.data?.status === "stopping"
+          ? 2000
+          : 30000,
+      refetchOnWindowFocus: true,
+      staleTime: 0,
       enabled: visible,
     },
   );
@@ -241,7 +248,8 @@ export default ({
         <ServerQuickActions
           server={server}
           state={state}
-          onPower={(action) =>
+          onPower={(action) => {
+            setPowerRefreshUntil(Date.now() + 60000);
             mutate(
               (value) =>
                 value
@@ -251,8 +259,8 @@ export default ({
                     }
                   : value,
               false,
-            )
-          }
+            );
+          }}
           onRefresh={() => {
             if (refreshTimer.current) clearTimeout(refreshTimer.current);
             refreshTimer.current = setTimeout(() => mutate(), 1500);

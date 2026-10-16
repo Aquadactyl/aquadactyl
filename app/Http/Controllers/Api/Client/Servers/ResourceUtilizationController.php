@@ -2,7 +2,6 @@
 
 namespace Pterodactyl\Http\Controllers\Api\Client\Servers;
 
-use Carbon\Carbon;
 use Pterodactyl\Models\Server;
 use Illuminate\Cache\Repository;
 use Pterodactyl\Transformers\Api\Client\StatsTransformer;
@@ -22,17 +21,22 @@ class ResourceUtilizationController extends ClientApiController
 
     /**
      * Return the current resource utilization for a server. This value is cached for up to
-     * 20 seconds at a time to ensure that repeated requests to this endpoint do not cause
-     * a flood of unnecessary API calls.
+     * 20 seconds for running servers, and two seconds while stopped, transitioning or
+     * following a power action. A separate cache prevents an older in-flight request
+     * from replacing the fresh status after a power action.
      *
      * @throws \Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException
      */
     public function __invoke(GetServerRequest $request, Server $server): array
     {
-        $key = "resources:$server->uuid";
-        $stats = $this->cache->remember($key, Carbon::now()->addSeconds(20), function () use ($server) {
-            return $this->repository->setServer($server)->getDetails();
-        });
+        $recentPower = $this->cache->has("resources:power:$server->uuid");
+        $key = "resources:$server->uuid" . ($recentPower ? ':power' : '');
+        $stats = $this->cache->get($key);
+        if ($stats === null) {
+            $stats = $this->repository->setServer($server)->getDetails();
+            $ttl = !$recentPower && ($stats['state'] ?? null) === 'running' ? 20 : 2;
+            $this->cache->put($key, $stats, $ttl);
+        }
 
         return $this->fractal->item($stats)
             ->transformWith($this->getTransformer(StatsTransformer::class))
