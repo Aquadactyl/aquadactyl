@@ -153,7 +153,7 @@ containers are managed by Wings rather than Compose.
 
 ## Requirements
 
-- Node.js 24 or later.
+- Node.js 24.11 or later.
 - pnpm 12.10.1, pinned in `package.json`.
 - PHP 8.4 or 8.5 and Composer 2 for backend work. Deployment defaults to PHP 8.5.
   GD must support PNG, JPEG and WebP for profile-picture uploads.

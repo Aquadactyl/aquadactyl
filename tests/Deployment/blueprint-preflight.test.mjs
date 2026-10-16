@@ -34,11 +34,14 @@ test("Blueprint preflight compiles unchanged legacy interfaces and blocks unsupp
       import Helper from '@blueprint/extensions/legacy/Helper';
       import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
       import { faServer } from '@fortawesome/free-solid-svg-icons';
+      import { faGithub } from '@fortawesome/free-brands-svg-icons';
+      import { faFile } from '@fortawesome/free-regular-svg-icons';
       const Card = tw.div\`bg-neutral-800 text-primary-500 p-4\`;
       export default function Legacy() {
         const add = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes.addError);
         const history = useHistory();
-        return <Card><Helper /><NavLink to='/account'>Account</NavLink><FontAwesomeIcon icon={faServer} />
+        return <Card><Helper /><NavLink to='/account'>Account</NavLink>
+          <FontAwesomeIcon icon={faServer} /><FontAwesomeIcon icon={faGithub} /><FontAwesomeIcon icon={faFile} />
           <Formik initialValues={{ name: '' }} validationSchema={Yup.object({ name: Yup.string().required() })}
             onSubmit={() => { add({ message: 'legacy' }); history.push('/account'); }}>
             <Form><Field name='name' label='Name' /><button css={tw\`p-2\`}>Save</button></Form>

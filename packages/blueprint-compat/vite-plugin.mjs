@@ -87,12 +87,18 @@ export function legacyBlueprint(root, extraRoot) {
     async transform(code, id) {
       if (!isExtension(id) || !/\.[jt]sx?(?:\?|$)/.test(id)) return;
       if (!/twin\.macro|styled-components|\bcss\s*=/.test(code)) return;
+      const { stripTypes } = await import("@aquadactyl/blueprint-typescript");
+      const filename = id.split("?")[0];
+      // Babel 8 handles TypeScript; legacy styling plugins still require Babel 7.
+      const stripped = await stripTypes(code, filename);
       const { transformAsync } = require("@babel/core");
-      const result = await transformAsync(code, {
-        filename: id.split("?")[0],
+      const result = await transformAsync(stripped.code, {
+        filename,
         babelrc: false,
         configFile: false,
         sourceMaps: true,
+        inputSourceMap: stripped.map,
+        parserOpts: { plugins: ["jsx"] },
         // Resolve the old macro beside its own Tailwind 3, never the panel's Tailwind 4.
         plugins: [
           [
@@ -109,12 +115,6 @@ export function legacyBlueprint(root, extraRoot) {
           [
             require("babel-plugin-styled-components"),
             { displayName: false, pure: true },
-          ],
-        ],
-        presets: [
-          [
-            require("@babel/preset-typescript"),
-            { allExtensions: true, isTSX: true },
           ],
         ],
       });

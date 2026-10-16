@@ -7,7 +7,7 @@ last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,509 | 100% statements, branches, functions and lines                 |
+| Panel frontend       |         1,513 | 100% statements, branches, functions and lines                 |
 | Panel PHP            |         1,763 | 100% executable lines; 25,033 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
@@ -16,7 +16,7 @@ PHP/database combinations and database-free unit tests run in CI.
 
 ## Frontend
 
-Use Node.js 24 and the pnpm version declared in `package.json`:
+Use Node.js 24.11 or later and the pnpm version declared in `package.json`:
 
 ```sh
 pnpm install --frozen-lockfile
@@ -25,7 +25,7 @@ pnpm run test:game-query
 pnpm run test:blueprint-compat
 ```
 
-The Vitest suite requires 100% statements, branches, functions and lines across `resources/scripts/**/*.{ts,tsx}` and the Blueprint compatibility Vite plugin. Open `coverage/index.html` for the report. The separate game-query and `pnpm run test:blueprint-compat` Node tests check standalone scripts and addon preflight builds; those Node suites are not included in the React coverage percentage. Vendor assets, Blueprint shell scripts and Blade markup are also outside the React denominator.
+The Vitest suite requires 100% statements, branches, functions and lines across `resources/scripts/**/*.{ts,tsx}`, the Blueprint compatibility Vite plugin and its TypeScript compiler. Open `coverage/index.html` for the report. The separate game-query and `pnpm run test:blueprint-compat` Node tests check standalone scripts and addon preflight builds; those Node suites are not included in the React coverage percentage. Vendor assets, Blueprint shell scripts and Blade markup are also outside the React denominator.
 
 GitHub Actions runs the 100% gate and uploads the report as `frontend-coverage`. Add a behavior test for every new branch, including permission failures, disabled features and transport errors.
 
