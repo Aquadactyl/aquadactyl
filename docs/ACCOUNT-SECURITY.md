@@ -88,6 +88,12 @@ OAuth access and refresh tokens are not retained in the panel database.
 
 ## Verification
 
+OpenID Connect discovery and signing-key downloads are streamed with a 1 MiB
+limit on decoded JSON, a ten-second download budget and a five-second idle-read
+timeout. Redirects remain disabled. Oversized, stalled, invalid and excessively
+nested documents are rejected, and response streams are closed on success and
+failure. These limits apply to discovery/JWKS documents.
+
 The integration tests use a software authenticator with real ES256 signatures and
 mock provider HTTP responses with real signed OIDC tokens. They cover origin,
 challenge, signature, user verification, replay, counters, session binding, state,

@@ -7,8 +7,8 @@ last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,513 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         1,763 | 100% executable lines; 25,033 assertions                       |
+| Panel frontend       |         1,517 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         1,777 | 100% executable lines; 25,077 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
 The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining

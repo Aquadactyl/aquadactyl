@@ -8,6 +8,13 @@ namespace Pterodactyl\Tests\Fixtures {
     }
 }
 
+namespace Pterodactyl\Services\Accounts\OAuth {
+    function hrtime(bool $asNumber = false): array|int|float|false
+    {
+        return \Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['oidc.time'] ?? \hrtime($asNumber);
+    }
+}
+
 namespace Pterodactyl\Services\Users {
     function random_int(int $minimum, int $maximum): int
     {

@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Cache;
 
 class OpenIdConnectDiscovery
 {
+    private const MAX_BYTES = 1048576;
+
     public static function requireHttps(string $url): void
     {
         $parts = parse_url($url);
@@ -19,12 +21,39 @@ class OpenIdConnectDiscovery
     public function document(string $url): array
     {
         self::requireHttps($url);
-        $response = Http::acceptJson()->connectTimeout(5)->timeout(10)->withoutRedirecting()->get($url)->throw();
-        if (strlen($response->body()) > 1048576 || !is_array($document = $response->json())) {
-            throw new \RuntimeException('Invalid OpenID Connect document.');
-        }
+        $deadline = hrtime(true) + 10_000_000_000;
+        $response = Http::acceptJson()->connectTimeout(5)->timeout(10)->withoutRedirecting()
+            ->withOptions(['stream' => true, 'read_timeout' => 5])->get($url);
+        $body = $response->toPsrResponse()->getBody();
+        try {
+            if (!$response->successful()) {
+                throw new \RuntimeException('Could not retrieve OpenID Connect document.');
+            }
+            $json = '';
+            while (true) {
+                $chunk = $body->read(min(8192, self::MAX_BYTES + 1 - strlen($json)));
+                if (hrtime(true) >= $deadline) {
+                    throw new \RuntimeException('OpenID Connect document download timed out.');
+                }
+                if ($chunk === '') {
+                    if (!$body->eof()) {
+                        throw new \RuntimeException('Invalid OpenID Connect document.');
+                    }
+                    break;
+                }
+                $json .= $chunk;
+                if (strlen($json) > self::MAX_BYTES) {
+                    throw new \RuntimeException('Invalid OpenID Connect document.');
+                }
+            }
+            if (!is_array($document = json_decode($json, true, 32))) {
+                throw new \RuntimeException('Invalid OpenID Connect document.');
+            }
 
-        return $document;
+            return $document;
+        } finally {
+            $body->close();
+        }
     }
 
     public function metadata(string $issuer): array

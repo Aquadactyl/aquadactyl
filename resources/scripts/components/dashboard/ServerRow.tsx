@@ -1,6 +1,7 @@
 import usePanelTranslation from "@/plugins/usePanelTranslation";
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect, useRef } from "react";
+import useViewportVisibility from "@/plugins/useViewportVisibility";
 import { useTanStackQuery } from "@/lib/queryClient";
 import CountryFlag from "@/components/elements/CountryFlag";
 import ServerPlayerCount from "./ServerPlayerCount";
@@ -40,6 +41,8 @@ export default ({
 }) => {
   const { t } = usePanelTranslation();
   const features = useAppStore((state) => state.settings.data?.features);
+  const row = useRef<HTMLElement>(null);
+  const visible = useViewportVisibility(row);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
@@ -55,6 +58,7 @@ export default ({
     {
       refetchInterval: 30000,
       refetchOnWindowFocus: false,
+      enabled: visible,
     },
   );
   const unavailable = Boolean(error);
@@ -142,6 +146,7 @@ export default ({
 
   return (
     <article
+      ref={row}
       className={"server-row" + (className ? " " + className : "")}
       aria-label={t("server_list.server_name", "Server {{name}}", {
         name: server.name,
@@ -198,7 +203,11 @@ export default ({
               />
             </span>
             {features?.playerCounts !== false && (
-              <ServerPlayerCount server={server} state={state} />
+              <ServerPlayerCount
+                server={server}
+                state={state}
+                active={visible}
+              />
             )}
           </Link>
         </div>

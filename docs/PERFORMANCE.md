@@ -41,6 +41,12 @@ field or maximum-capacity results, and are separate from the Pterodactyl compari
 
 ## Server requests and fonts
 
+- Dashboard resource and player-count queries run only for rows within 200 pixels
+  of the viewport. Queries pause when rows leave that area, while cached values
+  remain available. Browsers without IntersectionObserver retain eager fetching.
+  A 50-row integration test with five visible rows records five resource requests
+  and five player queries per polling cycle, instead of querying all 50 rows.
+  This verifies request volume; it is not a browser load-time benchmark.
 - Server-list relationships and per-server variables are batched for the current
   page. Accessible-server IDs use a database subquery instead of first loading
   every accessible server into PHP. Permissions and variable overrides remain
