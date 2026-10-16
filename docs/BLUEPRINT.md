@@ -10,7 +10,7 @@ The framework source comes from
 Its release ZIP was verified against SHA256
 `38bcee33b19abcbb3460578236ead74668ec39a7861200bbc6902a9152ac118d`.
 The provenance is recorded in `deploy/blueprint-release.json`; the upstream MIT
-license is included in `deploy/BLUEPRINT-LICENSE.md`. Artwork retains its upstream
+license is included in `licenses/BLUEPRINT-LICENSE.md`. Artwork retains its upstream
 license files under `.blueprint/assets/`. Those artwork terms prohibit general
 redistribution; the code's MIT license does not override them. See the
 [licensing review](BRANDING.md#names-and-artwork) for the separate permission issue.

@@ -2,15 +2,17 @@
 
 The panel has separate React/Vitest and PHP/Pest suites. Both coverage configurations count untested source files. A passing test count alone does not mean the whole application is covered.
 
-Latest verified results (frontend: 14 October 2026; PHP and API: 13 October 2026):
+Latest verified panel results: 16 October 2026. The separate API figures were
+last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,465 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         1,730 | 100% executable lines: 9,793 / 9,793 across 652 files          |
+| Panel frontend       |         1,509 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         1,763 | 100% executable lines; 25,033 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
-All 499 PHP unit tests also pass with `DB_HOST=UNIT_NO_DB`. The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining PHP/database combinations run in CI.
+The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining
+PHP/database combinations and database-free unit tests run in CI.
 
 ## Frontend
 
@@ -74,3 +76,19 @@ The regression suite covers authentication and token rotation, allocation rollba
 The exception handler rolls back active transactions when rendering an error. Tests using `DatabaseTransactions` should make a single error-producing request per fixture; later requests cannot safely reuse models removed by that rollback.
 
 Code style checks are `pnpm run lint`, `pnpm run types` and `vendor/bin/pint --test`. The separate API repository documents its unit, coverage and PostgreSQL/Redis suites in `docs/TESTING.md`.
+
+## Dependency audits
+
+Check the committed lockfiles before releasing:
+
+```sh
+composer audit --locked --no-dev
+pnpm audit --prod
+composer audit --locked
+pnpm audit
+```
+
+The first pair checks production dependencies; the second includes development
+and build tools. Review new advisories and dependency installation scripts as
+part of an update. A passing audit or coverage gate is not a complete security
+assessment. CI artifacts retain test and coverage reports for each revision.

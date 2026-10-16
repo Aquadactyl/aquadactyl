@@ -18,5 +18,5 @@ to Pterodactyl and is not an Aquadactyl contact. Report Blueprint-specific issue
 privately to the [Blueprint maintainers](https://github.com/BlueprintFramework/framework).
 
 Run a current, reviewed Aquadactyl release and keep Wings and extensions updated.
-The bundled dependencies and their validation are documented in
-[docs/VALIDATION.md](docs/VALIDATION.md).
+See [testing and dependency audits](docs/TESTING.md) for verification commands and
+coverage limits.

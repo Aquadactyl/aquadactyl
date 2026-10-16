@@ -238,8 +238,9 @@ also have vulnerabilities; do not treat a passing runtime audit as a complete
 security assessment. CI runs the panel's existing PHP and frontend checks and
 additional deployment guard tests.
 
-The tested versions, results and remaining build dependency advisories are recorded
-in [VALIDATION.md](VALIDATION.md).
+See [TESTING.md](TESTING.md#dependency-audits) for audit commands. Use current audit
+results when reviewing a release; historical advisory counts become stale as
+dependencies and vulnerability databases change.
 
 `php artisan p:upgrade` displays the managed update instructions and exits without
 changing the installation. Use `scripts/panel-update.sh`; upstream Panel archives
@@ -249,3 +250,57 @@ For local PHP verification on Windows, build `tests/runtime/Dockerfile`; it prov
 PHP 8.5, pnpm, Composer, a dump client and ShellCheck. Pass
 `--build-arg PHP_VERSION=8.4` to test the other supported PHP version. Production
 deployment remains a Linux Nginx/PHP installation.
+
+## Telemetry and troubleshooting
+
+Aquadactyl and Blueprint telemetry are disabled by default on new installations.
+Upstream Pterodactyl telemetry has been removed. Existing explicit opt-ins are
+preserved during updates; the collectors check consent when they run.
+
+With `APP_ENVIRONMENT_ONLY=false`, manage Aquadactyl's opt-in under **Admin →
+Settings → Advanced Settings → Aquadactyl Telemetry**. The saved toggle overrides
+the environment's initial default. Environment-only deployments can explicitly
+opt in with `AQUADACTYL_TELEMETRY_ENABLED=true`. The default endpoint is:
+
+```dotenv
+AQUADACTYL_TELEMETRY_ENDPOINT=https://api.euphoriadevelopment.uk/telemetry/panel
+```
+
+Public panel installations do not need a telemetry token. When enabled, one daily
+aggregate report contains an anonymous installation UUID, panel/PHP versions,
+driver names, Docker availability and counts of users, servers and nodes. The
+payload excludes names, emails, IP addresses, domains, server names, credentials,
+tokens and request contents. The receiver can still observe the connection's
+source IP. No request is made while telemetry is disabled or the endpoint is
+unset. Blueprint uses its separate `telemetry_enabled` flag.
+
+### Debug logs
+
+Normal logging uses `LOG_LEVEL=warning`, daily files and seven days of retention.
+For temporary troubleshooting, set `LOG_LEVEL=debug`, run
+`php artisan config:clear` and `php artisan queue:restart`. Keep `APP_DEBUG=false`
+on public deployments. Restore `LOG_LEVEL=warning` and repeat those commands when
+finished.
+
+Preview the redacted log locally before uploading:
+
+```bash
+php artisan p:debug --dry-run
+```
+
+To upload explicitly and receive a temporary share URL:
+
+```bash
+php artisan p:debug
+```
+
+The command sends a bounded tail of the configured single log or latest daily
+log (256 KiB by default) to
+[debug.euphoriadevelopment.uk](https://debug.euphoriadevelopment.uk). It redacts
+common passwords, tokens, API keys, cookies and authorization credentials.
+Redaction cannot guarantee that all sensitive data is removed; review the
+preview before uploading and sharing its URL.
+
+Pastes expire after 24 hours by default. Use `--file=/path/to/log` for another file
+or `--expires=3600` for an hour. Supported expiration values are `3600`, `86400`,
+`172800`, `604800` and `2592000` seconds; `0` disables automatic expiration.
