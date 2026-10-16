@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Translation\Translator;
 use Illuminate\Contracts\Translation\Loader;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Services\Users\LanguageService;
 use Pterodactyl\Http\Requests\Base\LocaleRequest;
 
 class LocaleController extends Controller
@@ -47,23 +48,6 @@ class LocaleController extends Controller
      */
     protected function i18n(array $data): array
     {
-        foreach ($data as $key => $value) {
-            if (is_array($value)) {
-                $data[$key] = $this->i18n($value);
-            } else {
-                // Find a Laravel style translation replacement in the string and replace it with
-                // one that the front-end is able to use. This won't always be present, especially
-                // for complex strings or things where we'd never have a backend component anyways.
-                //
-                // For example:
-                // "Hello :name, the :notifications.0.title notification needs :count actions :foo.0.bar."
-                //
-                // Becomes:
-                // "Hello {{name}}, the {{notifications.0.title}} notification needs {{count}} actions {{foo.0.bar}}."
-                $data[$key] = preg_replace('/:([\w.-]+\w)([^\w:]?|$)/m', '{{$1}}$2', $value);
-            }
-        }
-
-        return $data;
+        return LanguageService::forFrontend($data);
     }
 }

@@ -18,6 +18,7 @@
             <meta name="theme-color" content="#11161b">
             <meta name="color-scheme" content="dark">
             @include('partials.fonts')
+            @include('partials.client-preloads')
         @show
 
         @section('user-data')
@@ -27,6 +28,7 @@
                     'locale' => app()->getLocale(),
                     'fallbackLocale' => config('app.fallback_locale', 'en'),
                     'revision' => app(\Pterodactyl\Services\Users\LanguageService::class)->revision(),
+                    'resources' => app(\Pterodactyl\Services\Users\LanguageService::class)->initialResources(),
                 ]) }};
             </script>
             @if(!is_null(Auth::user()))

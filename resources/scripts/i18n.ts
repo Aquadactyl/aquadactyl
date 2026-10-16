@@ -38,6 +38,9 @@ i18n
     fallbackLng: [...new Set([localization.fallbackLocale, "en"])],
     load: "currentOnly",
     ns: ["panel"],
+    resources: localization.resources,
+    partialBundledLanguages: true,
+    initAsync: !localization.resources,
     // Preserve Blueprint addons that use the original default namespace.
     defaultNS: "translation",
     keySeparator: ".",

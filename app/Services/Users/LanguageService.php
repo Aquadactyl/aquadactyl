@@ -89,6 +89,34 @@ class LanguageService
         return substr(hash('sha256', implode('|', $files)), 0, 16);
     }
 
+    /**
+     * Core labels are available before React mounts. Addon namespaces still
+     * load on demand through the locale endpoint.
+     */
+    public function initialResources(): array
+    {
+        $resources = [];
+        $loader = app('translator')->getLoader();
+        foreach (array_unique([app()->getLocale(), $this->fallbackLocale, 'en']) as $locale) {
+            if (isset($this->available()[$locale])) {
+                $resources[$locale]['panel'] = self::forFrontend($loader->load($locale, 'panel'));
+            }
+        }
+
+        return $resources;
+    }
+
+    public static function forFrontend(array $data): array
+    {
+        foreach ($data as $key => $value) {
+            $data[$key] = is_array($value)
+                ? self::forFrontend($value)
+                : preg_replace('/:([\w.-]+\w)([^\w:]?|$)/m', '{{$1}}$2', $value);
+        }
+
+        return $data;
+    }
+
     public function forRequest(Request $request, ?string $preference): string
     {
         $preferred = [];

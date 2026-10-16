@@ -1,9 +1,11 @@
 import usePanelTranslation from "@/plugins/usePanelTranslation";
-import React, { useState } from "react";
+import React, { lazy, Suspense, useState } from "react";
 import { Search } from "lucide-react";
 import useEventListener from "@/plugins/useEventListener";
-import SearchModal from "@/components/dashboard/search/SearchModal";
 import Tooltip from "@/components/elements/tooltip/Tooltip";
+import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
+
+const SearchModal = lazy(() => import("./SearchModal"));
 
 export default () => {
   const { t } = usePanelTranslation();
@@ -25,11 +27,13 @@ export default () => {
   return (
     <>
       {visible && (
-        <SearchModal
-          appear
-          visible={visible}
-          onDismissed={() => setVisible(false)}
-        />
+        <Suspense fallback={<SpinnerOverlay visible fixed />}>
+          <SearchModal
+            appear
+            visible={visible}
+            onDismissed={() => setVisible(false)}
+          />
+        </Suspense>
       )}
       <Tooltip placement={"bottom"} content={t("search.search", "Search")}>
         <button

@@ -1,3 +1,5 @@
+import type { Resource } from "i18next";
+
 export interface LanguagePack {
   name: string;
   nativeName: string;
@@ -9,6 +11,7 @@ export interface PanelLocalization {
   locale: string;
   fallbackLocale: string;
   revision?: string;
+  resources?: Resource;
 }
 
 declare global {

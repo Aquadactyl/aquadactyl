@@ -34,27 +34,27 @@ describe("SearchContainer", () => {
     keydownCallback = null;
   });
 
-  it("renders search trigger button and opens modal on click", () => {
+  it("renders search trigger button and opens modal on click", async () => {
     render(<SearchContainer />);
 
     expect(screen.queryByTestId("search-modal")).toBeNull();
     const button = screen.getByRole("button", { name: /Search/i });
     fireEvent.click(button);
 
-    expect(screen.getByTestId("search-modal")).toBeDefined();
+    expect(await screen.findByTestId("search-modal")).toBeDefined();
   });
 
-  it("closes modal when onDismissed is called", () => {
+  it("closes modal when onDismissed is called", async () => {
     render(<SearchContainer />);
 
     fireEvent.click(screen.getByRole("button", { name: /Search/i }));
-    expect(screen.getByTestId("search-modal")).toBeDefined();
+    expect(await screen.findByTestId("search-modal")).toBeDefined();
 
     fireEvent.click(screen.getByText("Close Modal"));
     expect(screen.queryByTestId("search-modal")).toBeNull();
   });
 
-  it("opens modal on Ctrl+/ keyboard shortcut outside of input elements", () => {
+  it("opens modal on Ctrl+/ keyboard shortcut outside of input elements", async () => {
     render(<SearchContainer />);
 
     const preventDefault = vi.fn();
@@ -69,10 +69,10 @@ describe("SearchContainer", () => {
     });
 
     expect(preventDefault).toHaveBeenCalled();
-    expect(screen.getByTestId("search-modal")).toBeDefined();
+    expect(await screen.findByTestId("search-modal")).toBeDefined();
   });
 
-  it("opens modal on Meta+/ (Cmd+/) keyboard shortcut", () => {
+  it("opens modal on Meta+/ (Cmd+/) keyboard shortcut", async () => {
     render(<SearchContainer />);
 
     const preventDefault = vi.fn();
@@ -87,7 +87,7 @@ describe("SearchContainer", () => {
     });
 
     expect(preventDefault).toHaveBeenCalled();
-    expect(screen.getByTestId("search-modal")).toBeDefined();
+    expect(await screen.findByTestId("search-modal")).toBeDefined();
   });
 
   it("ignores keydown shortcut if target is an input or textarea", () => {
