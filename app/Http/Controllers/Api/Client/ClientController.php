@@ -9,6 +9,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Pterodactyl\Models\Filters\MultiFieldServerFilter;
 use Pterodactyl\Transformers\Api\Client\ServerTransformer;
 use Pterodactyl\Http\Requests\Api\Client\GetServersRequest;
+use Pterodactyl\Services\Servers\ServerListRelationsService;
 
 class ClientController extends ClientApiController
 {
@@ -53,15 +54,16 @@ class ClientController extends ClientApiController
             } else {
                 $builder = $type === 'admin-all'
                     ? $builder
-                    : $builder->whereNotIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+                    : $builder->whereNotIn('servers.id', $user->accessibleServers()->select('servers.id'));
             }
         } elseif ($type === 'owner') {
             $builder = $builder->where('servers.owner_id', $user->id);
         } else {
-            $builder = $builder->whereIn('servers.id', $user->accessibleServers()->pluck('id')->all());
+            $builder = $builder->whereIn('servers.id', $user->accessibleServers()->select('servers.id'));
         }
 
         $servers = $builder->paginate(min($request->query('per_page', 50), 100))->appends($request->query());
+        app(ServerListRelationsService::class)->handle($servers->getCollection());
 
         return $this->fractal->transformWith($transformer)->collection($servers)->toArray();
     }

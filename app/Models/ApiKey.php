@@ -67,6 +67,29 @@ class ApiKey extends Model implements HasAbilities
     use HasFactory;
 
     /**
+     * Sanctum saves the usage timestamp on authenticated requests. An unchanged
+     * key does not need identity/foreign-key queries on every timestamp update.
+     * Key creation and changes to any other attribute still use full validation.
+     */
+    public function validate(): void
+    {
+        if ($this->skipValidation) {
+            return;
+        }
+
+        if ($this->exists && !array_diff(array_keys($this->getDirty()), ['last_used_at', 'updated_at'])) {
+            static::$validatorFactory->make(
+                ['last_used_at' => $this->last_used_at],
+                ['last_used_at' => static::$validationRules['last_used_at']],
+            )->validate();
+
+            return;
+        }
+
+        parent::validate();
+    }
+
+    /**
      * The resource name for this model when it is transformed into an
      * API representation using fractal.
      */

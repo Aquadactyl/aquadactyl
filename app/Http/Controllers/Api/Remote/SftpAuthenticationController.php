@@ -93,6 +93,23 @@ class SftpAuthenticationController extends Controller
      */
     protected function getServer(Request $request, string $uuid): Server
     {
+        // Wings clients historically send the first eight UUID characters.
+        // Resolve that legacy form only within the authenticated node, and
+        // reject collisions instead of selecting an arbitrary server.
+        if (preg_match('/^[a-f0-9]{8}$/i', $uuid)) {
+            $matches = Server::query()
+                ->where('node_id', $request->attributes->get('node')->id)
+                ->where('uuid', 'like', $uuid . '%')
+                ->limit(2)
+                ->get();
+
+            if ($matches->count() !== 1) {
+                $this->reject($request);
+            }
+
+            return $matches->first();
+        }
+
         return Server::query()
             ->when(
                 str_starts_with($uuid, 'serv_'),

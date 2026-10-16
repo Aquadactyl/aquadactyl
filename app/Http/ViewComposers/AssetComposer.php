@@ -3,11 +3,15 @@
 namespace Pterodactyl\Http\ViewComposers;
 
 use Illuminate\View\View;
+use Illuminate\Http\Request;
 use Pterodactyl\Services\Helpers\AssetHashService;
 use Pterodactyl\BlueprintFramework\Libraries\ExtensionLibrary\Admin\BlueprintAdminLibrary as BlueprintExtensionLibrary;
 
 class AssetComposer
 {
+    private ?array $siteConfiguration = null;
+    private ?Request $configurationRequest = null;
+
     /**
      * AssetComposer constructor.
      */
@@ -22,11 +26,22 @@ class AssetComposer
      */
     public function compose(View $view): void
     {
+        $request = request();
+        if ($this->configurationRequest !== $request) {
+            $this->configurationRequest = $request;
+            $this->siteConfiguration = $this->configuration();
+        }
+        $view->with('asset', $this->assetHashService);
+        $view->with('siteConfiguration', $this->siteConfiguration);
+    }
+
+    private function configuration(): array
+    {
         $blueprintConfiguration = $this->blueprint->dbGetMany('blueprint', [
             'flags:disable_attribution',
         ]);
-        $view->with('asset', $this->assetHashService);
-        $view->with('siteConfiguration', [
+
+        return [
             'name' => config('app.name') ?? 'Aquadactyl',
             'appUrl' => config('app.url') ?? '',
             'locale' => config('app.locale') ?? 'en',
@@ -52,6 +67,6 @@ class AssetComposer
             'blueprint' => [
                 'disable_attribution' => (bool) $blueprintConfiguration['flags:disable_attribution'],
             ],
-        ]);
+        ];
     }
 }

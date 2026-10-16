@@ -19,6 +19,7 @@ import "@/assets/index.css";
 import Spinner from "@/components/elements/Spinner";
 import PrivacyMode from "@/components/elements/PrivacyMode";
 import PanelBackground from "@/components/elements/PanelBackground";
+import type { InitialRouter } from "@/routers/initialRouter";
 
 const DashboardRouter = lazy(() => import("@/routers/DashboardRouter"));
 const ServerRouter = lazy(() => import("@/routers/ServerRouter"));
@@ -44,7 +45,17 @@ interface ExtendedWindow extends Window {
 
 setupInterceptors(history);
 
-const App = () => {
+const App = ({ initialRouter }: { initialRouter?: InitialRouter }) => {
+  const AuthRouter =
+    initialRouter?.kind === "auth"
+      ? initialRouter.Component
+      : AuthenticationRouter;
+  const Dashboard =
+    initialRouter?.kind === "dashboard"
+      ? initialRouter.Component
+      : DashboardRouter;
+  const Server =
+    initialRouter?.kind === "server" ? initialRouter.Component : ServerRouter;
   const { PterodactylUser, SiteConfiguration } = window as ExtendedWindow;
   if (PterodactylUser && !store.getState().user.data) {
     store.getActions().user.setUserData({
@@ -78,7 +89,7 @@ const App = () => {
                 path={"/auth/*"}
                 element={
                   <Spinner.Suspense>
-                    <AuthenticationRouter />
+                    <AuthRouter />
                   </Spinner.Suspense>
                 }
               />
@@ -88,7 +99,7 @@ const App = () => {
                   <AuthenticatedRoute>
                     <Spinner.Suspense>
                       <ServerContext.Provider>
-                        <ServerRouter />
+                        <Server />
                       </ServerContext.Provider>
                     </Spinner.Suspense>
                   </AuthenticatedRoute>
@@ -99,7 +110,7 @@ const App = () => {
                 element={
                   <AuthenticatedRoute>
                     <Spinner.Suspense>
-                      <DashboardRouter />
+                      <Dashboard />
                     </Spinner.Suspense>
                   </AuthenticatedRoute>
                 }

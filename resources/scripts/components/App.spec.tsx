@@ -74,6 +74,20 @@ describe("components/App", () => {
     expect(store.getState().settings.data?.name).toBe("Test Panel");
   });
 
+  it.each([
+    { path: "/", kind: "dashboard" },
+    { path: "/auth/login", kind: "auth" },
+    { path: "/server/srv-1", kind: "server" },
+  ] as const)(
+    "mounts the resolved $kind shell synchronously",
+    ({ path, kind }) => {
+      history.push(path);
+      const Component = () => <div data-testid="resolved-shell">Ready</div>;
+      render(<App initialRouter={{ kind, Component }} />);
+      expect(screen.getByTestId("resolved-shell")).toBeDefined();
+    },
+  );
+
   it("routes to authentication router when on /auth/login", async () => {
     history.push("/auth/login");
 
