@@ -58,7 +58,7 @@ MariaDB, Redis, the panel, Blueprint and Wings automatically. See
 
 ## Linux installation
 
-Use PHP 8.5 with PHP-FPM (8.4 is also supported), Composer 2, Node.js 24 or later,
+Use PHP 8.5 with PHP-FPM (8.4 is also supported), Composer 2, Node.js 24.11 or later,
 pnpm 12.10.1, Nginx, MariaDB/MySQL, Redis and systemd. Prepare the required packages
 and services using the [installation guide](https://aquadactyl.uk/docs), then place
 a release or source checkout in `/var/www/aquadactyl`:

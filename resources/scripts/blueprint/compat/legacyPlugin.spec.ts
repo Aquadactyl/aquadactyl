@@ -111,7 +111,24 @@ it("compiles original twin syntax, css props and styled components using the cur
   expect(output.code).toContain("var(--font-header)");
   expect(output.code).toContain("&:hover");
   expect(output.map.sources.length).toBe(1);
+  expect(output.map.sourcesContent).toContain(code);
 });
+
+it.each(["js", "jsx", "ts", "tsx"])(
+  "preserves JSX and styling when compiling legacy %s sources",
+  async (extension) => {
+    const plugin = legacyBlueprint(root) as any;
+    const code = `import tw from 'twin.macro'; export default () => <div css={tw\`p-4\`}>Legacy</div>;`;
+    const output = await plugin.transform(
+      code,
+      addon.replace(".tsx", `.${extension}`),
+    );
+    expect(output.code).not.toContain("twin.macro");
+    expect(output.code).toContain("styled-components");
+    expect(output.code).toContain("Legacy");
+    expect(output.map.sourcesContent).toContain(code);
+  },
+);
 
 it("ignores modern modules and non-source assets; rejects unknown legacy utilities", async () => {
   const plugin = legacyBlueprint(root) as any;

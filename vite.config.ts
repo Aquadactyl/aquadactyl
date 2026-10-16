@@ -88,6 +88,7 @@ export default defineConfig({
       include: [
         "resources/scripts/**/*.{ts,tsx}",
         "packages/blueprint-compat/vite-plugin.mjs",
+        "packages/blueprint-typescript/index.mjs",
       ],
       exclude: [
         "resources/scripts/**/*.{test,spec}.{ts,tsx}",
