@@ -18,7 +18,7 @@ class LogViewerService
         $iterator = new \DirectoryIterator($logPath);
 
         foreach ($iterator as $fileInfo) {
-            if ($fileInfo->isDot() || !$fileInfo->isFile() || $fileInfo->getExtension() !== 'log') {
+            if ($fileInfo->isDot() || $fileInfo->isLink() || !$fileInfo->isFile() || $fileInfo->getExtension() !== 'log') {
                 continue;
             }
 
@@ -48,8 +48,8 @@ class LogViewerService
             return '';
         }
 
-        $path = storage_path('logs/' . $safeName);
-        if (!file_exists($path) || !is_file($path)) {
+        $path = $this->getLogPath($safeName);
+        if ($path === null) {
             return '';
         }
 
@@ -62,9 +62,9 @@ class LogViewerService
     public function getLogEntries(string $filename, int $maxEntries = 500): array
     {
         $safeName = basename($filename);
-        $path = storage_path('logs/' . $safeName);
+        $path = $this->getLogPath($safeName);
 
-        if (!file_exists($path) || !is_file($path)) {
+        if ($path === null) {
             return [
                 'entries' => [],
                 'counts' => ['all' => 0, 'error' => 0, 'warning' => 0, 'info' => 0, 'debug' => 0],
@@ -155,8 +155,8 @@ class LogViewerService
             return false;
         }
 
-        $path = storage_path('logs/' . $safeName);
-        if (file_exists($path) && is_file($path)) {
+        $path = $this->getLogPath($safeName);
+        if ($path !== null) {
             return @unlink($path);
         }
 
@@ -175,7 +175,7 @@ class LogViewerService
 
         $path = storage_path('logs/' . $safeName);
 
-        return (file_exists($path) && is_file($path)) ? $path : null;
+        return !is_link($path) && is_file($path) ? $path : null;
     }
 
     /**

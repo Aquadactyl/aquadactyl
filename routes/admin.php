@@ -5,6 +5,18 @@ use Pterodactyl\Http\Controllers\Admin;
 use Pterodactyl\Http\Middleware\Admin\Servers\ServerInstalled;
 
 Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
+Route::get('/extensions/install', [Admin\BlueprintInstallController::class, 'index'])->name('admin.extensions.install');
+Route::get('/extensions/install/status', [Admin\BlueprintInstallController::class, 'status']);
+Route::post('/extensions/install', [Admin\BlueprintInstallController::class, 'store'])->middleware('throttle:5,1,blueprint-install:');
+Route::get('/extensions/{identifier}/remove', [Admin\BlueprintInstallController::class, 'confirmRemoval'])->name('admin.extensions.remove');
+Route::post('/extensions/{identifier}/remove', [Admin\BlueprintInstallController::class, 'remove'])->middleware('throttle:5,1,blueprint-remove:');
+Route::get('/subdomains', [Admin\SubdomainsController::class, 'index'])->name('admin.subdomains');
+Route::post('/subdomains', [Admin\SubdomainsController::class, 'store']);
+Route::patch('/subdomains/{domain}', [Admin\SubdomainsController::class, 'update']);
+Route::delete('/subdomains/{domain}', [Admin\SubdomainsController::class, 'destroy']);
+Route::delete('/subdomains/records/{entry}', [Admin\SubdomainsController::class, 'remove']);
+Route::get('/daemon-stats', [Admin\DaemonStatsController::class, 'index'])->name('admin.daemon-stats');
+Route::get('/daemon-stats/{node:id}', [Admin\DaemonStatsController::class, 'status'])->name('admin.daemon-stats.status');
 
 Route::group(['prefix' => 'egg-library'], function () {
     Route::get('/', [Admin\EggLibraryController::class, 'index'])->name('admin.egg-library.index');
@@ -73,6 +85,7 @@ Route::group(['prefix' => 'databases'], function () {
 */
 Route::group(['prefix' => 'settings'], function () {
     Route::get('/', [Admin\Settings\IndexController::class, 'index'])->name('admin.settings');
+    Route::get('/maintenance/preview', [Admin\Settings\MaintenancePreviewController::class, 'index'])->name('admin.settings.maintenance-preview');
     Route::post('/logo', [Admin\Settings\LogoController::class, 'store'])->name('admin.settings.logo');
     Route::delete('/logo', [Admin\Settings\LogoController::class, 'destroy']);
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');

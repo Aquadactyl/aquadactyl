@@ -2,13 +2,13 @@
 
 The panel has separate React/Vitest and PHP/Pest suites. Both coverage configurations count untested source files. A passing test count alone does not mean the whole application is covered.
 
-Latest verified panel results: 16 October 2026. The separate API figures were
+Latest verified PHP results: 19 October 2026; frontend: 18 October 2026. The separate API figures were
 last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,526 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         1,782 | 100% executable lines; 25,142 assertions                       |
+| Panel frontend       |         1,552 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         1,959 | 100% executable lines; 27,300 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
 The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining
@@ -71,7 +71,7 @@ CI, Composer test scripts and the isolated Docker runner enable PHP assertions w
 
 Use real request validation and database transactions for API permission and ownership tests. Fake Wings, S3, OAuth and outbound HTTP at their transport boundaries. Assert the result and side effects: a denied request must not call a daemon or delete a resource, failed work must roll back, and logs or responses must not disclose credentials.
 
-The regression suite covers authentication and token rotation, allocation rollback, account linking and passkeys, backup retention and signing, schedules, trash recovery, administrative settings, repository ownership and Blueprint compatibility. `tests/Fixtures/RuntimeFaults.php` simulates failures at native entropy, filesystem, DNS and regex boundaries. Faults default to the real PHP functions and must be reset after each owning test; they do not alter production code or remove source from coverage.
+The regression suite covers authentication and token rotation, allocation rollback, account linking and passkeys, backup retention and signing, schedules, trash recovery, administrative settings, repository ownership and Blueprint compatibility. Blueprint removal checks administrator permissions, password confirmation, installed identifiers, duplicate requests, revoked access and private failure output. Maintenance tests cover admin sign-in, ordinary-user blocking, appearance settings, escaped messages and previews that do not change saved settings. `tests/Fixtures/RuntimeFaults.php` simulates failures at native entropy, filesystem, DNS and regex boundaries. Faults default to the real PHP functions and must be reset after each owning test; they do not alter production code or remove source from coverage.
 
 The exception handler rolls back active transactions when rendering an error. Tests using `DatabaseTransactions` should make a single error-producing request per fixture; later requests cannot safely reuse models removed by that rollback.
 

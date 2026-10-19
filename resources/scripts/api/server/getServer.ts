@@ -20,6 +20,7 @@ export interface Server {
   internalId: number | string;
   uuid: string;
   name: string;
+  folderId?: number | null;
   node: string;
   nodeCountry?: string | null;
   nodeCountryName?: string | null;
@@ -64,6 +65,7 @@ export const rawDataToServerObject = ({
   internalId: data.internal_id,
   uuid: data.uuid,
   name: data.name,
+  folderId: data.folder_id ?? null,
   node: data.node,
   nodeCountry: data.node_country ?? null,
   nodeCountryName: data.node_country_name ?? null,

@@ -6,6 +6,8 @@ import { useTanStackQuery } from "@/lib/queryClient";
 import CountryFlag from "@/components/elements/CountryFlag";
 import ServerPlayerCount from "./ServerPlayerCount";
 import ServerQuickActions from "./ServerQuickActions";
+import ServerFolderSelect from "./ServerFolderSelect";
+import { ServerFolder } from "@/api/serverFolders";
 import {
   ArrowRight,
   Cpu,
@@ -35,9 +37,11 @@ const isAlarmState = (current: number, limit: number): boolean =>
 export default ({
   server,
   className,
+  folders,
 }: {
   server: Server;
   className?: string;
+  folders?: ServerFolder[];
 }) => {
   const { t } = usePanelTranslation();
   const features = useAppStore((state) => state.settings.data?.features);
@@ -194,29 +198,38 @@ export default ({
             <Network size={12} aria-hidden />
             <SensitiveValue>{address}</SensitiveValue>
           </Link>
-          <Link
-            to={"/server/" + server.id}
-            className={"server-metadata"}
-            aria-label={t("server_list.open_node", "Open server on {{node}}", {
-              node: server.node,
-            })}
-          >
-            <span className={"server-node"}>
-              <MapPin size={12} aria-hidden />
-              <span>{server.node}</span>
-              <CountryFlag
-                code={server.nodeCountry}
-                name={server.nodeCountryName}
-              />
-            </span>
-            {features?.playerCounts !== false && (
-              <ServerPlayerCount
-                server={server}
-                state={state}
-                active={visible}
-              />
+          <div className="server-row-metadata">
+            <Link
+              to={"/server/" + server.id}
+              className={"server-metadata"}
+              aria-label={t(
+                "server_list.open_node",
+                "Open server on {{node}}",
+                {
+                  node: server.node,
+                },
+              )}
+            >
+              <span className={"server-node"}>
+                <MapPin size={12} aria-hidden />
+                <span>{server.node}</span>
+                <CountryFlag
+                  code={server.nodeCountry}
+                  name={server.nodeCountryName}
+                />
+              </span>
+              {features?.playerCounts !== false && (
+                <ServerPlayerCount
+                  server={server}
+                  state={state}
+                  active={visible}
+                />
+              )}
+            </Link>
+            {folders && (
+              <ServerFolderSelect server={server} folders={folders} />
             )}
-          </Link>
+          </div>
         </div>
       </div>
       <div className={"server-resources"}>

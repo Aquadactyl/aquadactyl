@@ -1,4 +1,27 @@
 {
+  "folders": {
+    "add": "Add to folder",
+    "choose": "Move to folder",
+    "title": "Server folders",
+    "folder": "Folder",
+    "filter": "Filter by folder",
+    "all": "All servers",
+    "unfiled": "Unfiled",
+    "create": "New folder",
+    "rename": "Rename folder",
+    "delete": "Delete folder",
+    "name": "Folder name",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "move_server": "Folder for :name",
+    "personal_help": "Folders are personal to your account and available on all your devices.",
+    "delete_help": "Only the folder is removed. Your servers and their files will remain unchanged.",
+    "empty": "No servers in this folder",
+    "empty_help": "Choose All servers, then use a server’s folder control to organise your list.",
+    "owner_search": "Search servers, username or email…",
+    "owner_no_matches": "No servers match this search. Try a server name, address, owner username or email."
+  },
   "language": {
     "title": "Language",
     "description": "Choose how the panel is displayed for your account.",
@@ -457,5 +480,21 @@
     "purge_warning": "Permanently delete {{name}}? This cannot be undone.",
     "moving": "Moving files to trash...",
     "deleting": "Deleting files..."
+  },
+  "subdomains": {
+    "title": "Server subdomain",
+    "help": "Choose a memorable address for this server. DNS changes may take a few minutes.",
+    "address": "Server address",
+    "name": "Name",
+    "domain": "Domain",
+    "srv": "Minecraft Java: connect without a port (SRV)",
+    "port_help": "Other games, including Bedrock, may still require the server port.",
+    "create": "Create subdomain",
+    "remove": "Remove subdomain",
+    "dns_error": "DNS setup failed. Ask an administrator to check the Cloudflare token, public IP and existing records. It will retry automatically.",
+    "status_pending": "Pending DNS setup",
+    "status_active": "Active",
+    "status_error": "DNS needs attention",
+    "status_deleting": "Removing DNS records"
   }
 }

@@ -46,6 +46,7 @@ class ServerTransformer extends BaseClientTransformer
             'internal_id' => $server->id,
             'uuid' => $server->uuid,
             'name' => $server->name,
+            'folder_id' => $server->getAttribute('user_folder_id'),
             'node' => $server->node->name,
             'node_country' => $server->node->country_code,
             'node_country_name' => Countries::name($server->node->country_code),

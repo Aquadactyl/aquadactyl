@@ -135,6 +135,12 @@
                             </a>
                         </li>
                         <li class="header">{{ __('admin/ui.service_management') }}</li>
+                        <li class="{{ request()->is('admin/daemon-stats*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.daemon-stats', [], false) }}"><i class="fa fa-heartbeat"></i> <span>{{ __('admin/operations.daemon_stats') }}</span></a>
+                        </li>
+                        <li class="{{ request()->is('admin/subdomains*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.subdomains', [], false) }}"><i class="fa fa-globe"></i> <span>{{ __('admin/operations.subdomains') }}</span></a>
+                        </li>
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.mounts') ?: 'active' }}">
                             <a href="{{ route('admin.mounts') }}">
                                 <i class="fa fa-magic"></i> <span>{{ __('admin/ui.mounts') }}</span>
@@ -159,6 +165,9 @@
                     @yield('content-header')
                 </section>
                 <section class="content">
+                    @if(config('aquadactyl.maintenance.enabled'))
+                        <div class="alert alert-warning" role="status"><strong>{{ __('admin/operations.maintenance') }}</strong> &middot; <a href="/admin/settings">{{ __('admin/ui.settings') }}</a></div>
+                    @endif
                     <div class="row">
                         <div class="col-xs-12">
                             @if (count($errors) > 0)

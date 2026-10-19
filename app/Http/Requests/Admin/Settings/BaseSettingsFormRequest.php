@@ -13,12 +13,15 @@ class BaseSettingsFormRequest extends AdminFormRequest
     public function rules(): array
     {
         return [
+            'aquadactyl:maintenance:enabled' => 'sometimes|required|in:true,false',
+            'aquadactyl:maintenance:message' => 'sometimes|nullable|string|max:1000',
             'app:name' => 'sometimes|required|string|max:191',
             'aquadactyl:branding:show_name' => 'sometimes|required|in:true,false',
             'aquadactyl:features:player_counts' => 'sometimes|required|in:true,false',
             'aquadactyl:features:custom_profile_pictures' => 'sometimes|required|in:true,false',
             'aquadactyl:features:privacy_mode' => 'sometimes|required|in:true,false',
             'aquadactyl:features:server_quick_actions' => 'sometimes|required|in:true,false',
+            'aquadactyl:features:server_folders' => 'sometimes|required|in:true,false',
             'aquadactyl:features:registration' => 'sometimes|required|in:true,false',
             'aquadactyl:features:console_log_sharing' => 'sometimes|required|in:true,false',
             'aquadactyl:features:file_trash' => 'sometimes|required|in:true,false',
@@ -37,6 +40,7 @@ class BaseSettingsFormRequest extends AdminFormRequest
             'aquadactyl:features:custom_profile_pictures' => __('admin/ui.feature_custom_profile_pictures'),
             'aquadactyl:features:privacy_mode' => __('admin/ui.feature_privacy_mode'),
             'aquadactyl:features:server_quick_actions' => __('admin/ui.feature_server_quick_actions'),
+            'aquadactyl:features:server_folders' => __('admin/custom.server_folders'),
             'aquadactyl:features:registration' => __('admin/ui.feature_registration'),
             'aquadactyl:features:console_log_sharing' => __('admin/custom.console_log_sharing'),
             'aquadactyl:features:file_trash' => __('admin/custom.file_trash'),

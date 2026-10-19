@@ -54,6 +54,7 @@ class AssetComposer
                 'customProfilePictures' => (bool) config('aquadactyl.features.custom_profile_pictures', true),
                 'privacyMode' => (bool) config('aquadactyl.features.privacy_mode', true),
                 'serverQuickActions' => (bool) config('aquadactyl.features.server_quick_actions', true),
+                'serverFolders' => (bool) config('aquadactyl.features.server_folders', true),
                 'registration' => (bool) config('aquadactyl.features.registration', false),
                 'consoleLogSharing' => (bool) config('aquadactyl.features.console_log_sharing', false),
                 'fileTrash' => (bool) config('aquadactyl.features.file_trash', false),

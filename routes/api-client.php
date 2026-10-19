@@ -21,6 +21,12 @@ Route::get('/', [Client\ClientController::class, 'index'])->name('api:client.ind
 Route::get('/permissions', [Client\ClientController::class, 'permissions']);
 
 Route::prefix('/account')->middleware(AccountSubject::class)->group(function () {
+    Route::get('/server-folders', [Client\ServerFolderController::class, 'index']);
+    Route::post('/server-folders', [Client\ServerFolderController::class, 'store']);
+    Route::put('/server-folders/{folder}', [Client\ServerFolderController::class, 'update'])->whereNumber('folder');
+    Route::delete('/server-folders/{folder}', [Client\ServerFolderController::class, 'destroy'])->whereNumber('folder');
+    Route::put('/server-folders/servers/{server}', [Client\ServerFolderController::class, 'assign']);
+
     Route::prefix('/')->withoutMiddleware(RequireTwoFactorAuthentication::class)->group(function () {
         Route::get('/', [Client\AccountController::class, 'index'])->name('api:client.account');
         Route::get('/two-factor', [Client\TwoFactorController::class, 'index']);
@@ -161,6 +167,9 @@ Route::group([
     });
 
     Route::group(['prefix' => '/settings'], function () {
+        Route::get('/subdomain', [Client\Servers\SubdomainController::class, 'index']);
+        Route::post('/subdomain', [Client\Servers\SubdomainController::class, 'store'])->middleware('throttle:10,1,subdomains:');
+        Route::delete('/subdomain', [Client\Servers\SubdomainController::class, 'destroy'])->middleware('throttle:10,1,subdomains:');
         Route::post('/rename', [Client\Servers\SettingsController::class, 'rename']);
         Route::post('/reinstall', [Client\Servers\SettingsController::class, 'reinstall']);
         Route::put('/docker-image', [Client\Servers\SettingsController::class, 'dockerImage']);

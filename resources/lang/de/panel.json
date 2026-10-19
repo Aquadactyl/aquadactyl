@@ -1,4 +1,27 @@
 {
+  "folders": {
+    "add": "Zum Ordner hinzufügen",
+    "choose": "In Ordner verschieben",
+    "title": "Serverordner",
+    "folder": "Ordner",
+    "filter": "Nach Ordner filtern",
+    "all": "Alle Server",
+    "unfiled": "Ohne Ordner",
+    "create": "Neuer Ordner",
+    "rename": "Ordner umbenennen",
+    "delete": "Ordner löschen",
+    "name": "Ordnername",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "cancel": "Abbrechen",
+    "move_server": "Ordner für :name",
+    "personal_help": "Ordner sind persönlich und auf allen Ihren Geräten verfügbar.",
+    "delete_help": "Nur der Ordner wird entfernt. Ihre Server und deren Dateien bleiben erhalten.",
+    "empty": "Keine Server in diesem Ordner",
+    "empty_help": "Wählen Sie Alle Server und verwenden Sie die Ordnerauswahl eines Servers, um Ihre Liste zu organisieren.",
+    "owner_search": "Server, Benutzername oder E-Mail suchen…",
+    "owner_no_matches": "Keine passenden Server gefunden. Versuchen Sie einen Servernamen, eine Adresse, einen Benutzernamen oder eine E-Mail-Adresse."
+  },
   "language": {
     "title": "Sprache",
     "description": "Wählen Sie die Anzeigesprache des Panels für Ihr Konto.",
@@ -457,5 +480,21 @@
     "purge_warning": "{{name}} endgültig löschen? Dies kann nicht rückgängig gemacht werden.",
     "moving": "Dateien werden in den Papierkorb verschoben...",
     "deleting": "Dateien werden gelöscht..."
+  },
+  "subdomains": {
+    "title": "Server-Subdomain",
+    "help": "Wähle eine Adresse für diesen Server. DNS-Änderungen können einige Minuten dauern.",
+    "address": "Serveradresse",
+    "name": "Name",
+    "domain": "Domain",
+    "srv": "Minecraft Java: ohne Port verbinden (SRV)",
+    "port_help": "Andere Spiele, einschließlich Bedrock, benötigen eventuell weiterhin den Serverport.",
+    "create": "Subdomain erstellen",
+    "remove": "Subdomain entfernen",
+    "dns_error": "DNS-Einrichtung fehlgeschlagen. Ein Administrator sollte Cloudflare, die öffentliche IP und vorhandene Einträge prüfen. Ein neuer Versuch erfolgt automatisch.",
+    "status_pending": "DNS-Einrichtung ausstehend",
+    "status_active": "Aktiv",
+    "status_error": "DNS prüfen",
+    "status_deleting": "DNS-Einträge werden entfernt"
   }
 }

@@ -2,7 +2,6 @@
 
 namespace Pterodactyl\Http\Controllers\Admin\Nodes;
 
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Pterodactyl\Models\Node;
 use Illuminate\Http\JsonResponse;
@@ -25,16 +24,8 @@ class SystemInformationController extends Controller
      */
     public function __invoke(Request $request, Node $node): JsonResponse
     {
-        $data = $this->repository->setNode($node)->getSystemInformation();
+        $data = $this->repository->setNode($node)->getSystemInformation(2);
 
-        return new JsonResponse([
-            'version' => $data['version'] ?? '',
-            'system' => [
-                'type' => Str::title($data['os'] ?? 'Unknown'),
-                'arch' => $data['architecture'] ?? '--',
-                'release' => $data['kernel_version'] ?? '--',
-                'cpus' => (int) ($data['cpu_count'] ?? 0),
-            ],
-        ]);
+        return new JsonResponse(app(\Pterodactyl\Services\Nodes\DaemonSystemInformation::class)->normalize($data));
     }
 }

@@ -20,6 +20,8 @@ import { usePersistedState } from "@/plugins/usePersistedState";
 import { useTanStackQuery } from "@/lib/queryClient";
 import { PaginatedResult } from "@/api/http";
 import Pagination from "@/components/elements/Pagination";
+import ServerFolderBar from "./ServerFolderBar";
+import { getServerFolders, ServerFolder } from "@/api/serverFolders";
 
 import BeforeContent from "@blueprint/components/Dashboard/Serverlist/BeforeContent";
 import AfterContent from "@blueprint/components/Dashboard/Serverlist/AfterContent";
@@ -28,12 +30,17 @@ export default () => {
   const { t } = usePanelTranslation();
   const { search } = useLocation();
   const params = new URLSearchParams(search);
+  const foldersEnabled = useAppStore(
+    (state) => state.settings.data?.features?.serverFolders !== false,
+  );
   const defaultPage = Number(params.get("page") || "1");
   const [page, setPage] = useState(
     Number.isInteger(defaultPage) && defaultPage > 0 ? defaultPage : 1,
   );
   const [searchText, setSearchText] = useState(params.get("q") || "");
   const [query, setQuery] = useState(searchText.trim());
+  const [storedFolder, setFolder] = useState(params.get("folder") || "all");
+  const folder = foldersEnabled ? storedFolder : "all";
   const [, startTransition] = useTransition();
   const { clearFlashes, clearAndAddHttpError } = useFlash();
   const uuid = useAppStore((state) => state.user.data!.uuid);
@@ -42,6 +49,14 @@ export default () => {
     uuid + ":show_all_servers",
     false,
   );
+  const {
+    data: folders,
+    error: folderError,
+    mutate: refreshFolders,
+  } = useTanStackQuery<ServerFolder[]>(
+    foldersEnabled ? ["/api/client/server-folders", uuid] : null,
+    getServerFolders,
+  );
 
   const {
     data: servers,
@@ -49,12 +64,13 @@ export default () => {
     mutate,
     isValidating,
   } = useTanStackQuery<PaginatedResult<Server>>(
-    ["/api/client/servers", showOnlyAdmin && rootAdmin, page, query],
+    ["/api/client/servers", showOnlyAdmin && rootAdmin, page, query, folder],
     () =>
       getServers({
         page,
         query: query || undefined,
         type: showOnlyAdmin && rootAdmin ? "admin" : undefined,
+        folder: folder === "all" ? undefined : folder,
       }),
   );
 
@@ -80,18 +96,21 @@ export default () => {
     else params.delete("page");
     if (query) params.set("q", query);
     else params.delete("q");
+    if (folder !== "all") params.set("folder", folder);
+    else params.delete("folder");
     const suffix = params.toString();
     window.history.replaceState(
       null,
       document.title,
       "/" + (suffix ? "?" + suffix : ""),
     );
-  }, [page, query]);
+  }, [page, query, folder]);
 
   useEffect(() => {
-    if (error) clearAndAddHttpError({ key: "dashboard", error });
+    if (error || folderError)
+      clearAndAddHttpError({ key: "dashboard", error: error || folderError });
     else clearFlashes("dashboard");
-  }, [error]);
+  }, [error, folderError]);
 
   const changeScope = (otherServers: boolean) => {
     setShowOnlyAdmin(otherServers);
@@ -166,7 +185,14 @@ export default () => {
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
             aria-label={t("dashboard.search_servers", "Search servers")}
-            placeholder={t("dashboard.search_servers_2", "Search servers…")}
+            placeholder={
+              showOnlyAdmin && rootAdmin
+                ? t(
+                    "folders.owner_search",
+                    "Search servers, username or email…",
+                  )
+                : t("dashboard.search_servers_2", "Search servers…")
+            }
           />
           {searchText && (
             <button
@@ -199,6 +225,20 @@ export default () => {
           />
         </button>
       </div>
+      {foldersEnabled && (
+        <ServerFolderBar
+          folders={folders ?? []}
+          active={folder}
+          onSelect={(value) => {
+            setFolder(value);
+            setPage(1);
+          }}
+          onChange={async () => {
+            await refreshFolders();
+            await mutate();
+          }}
+        />
+      )}
       <div className={"server-results"} aria-busy={isValidating}>
         {error && !servers ? (
           <div className={"server-empty"}>
@@ -231,7 +271,11 @@ export default () => {
               items.length > 0 ? (
                 <div className={"server-list"}>
                   {items.map((server) => (
-                    <ServerRow key={server.uuid} server={server} />
+                    <ServerRow
+                      key={server.uuid}
+                      server={server}
+                      folders={foldersEnabled ? folders : undefined}
+                    />
                   ))}
                 </div>
               ) : (
@@ -249,31 +293,43 @@ export default () => {
                           "dashboard.no_matching_servers",
                           "No matching servers",
                         )
-                      : showOnlyAdmin
-                        ? t("dashboard.no_other_servers", "No other servers")
-                        : t("dashboard.no_servers_yet", "No servers yet")}
+                      : folder !== "all"
+                        ? t("folders.empty", "No servers in this folder")
+                        : showOnlyAdmin
+                          ? t("dashboard.no_other_servers", "No other servers")
+                          : t("dashboard.no_servers_yet", "No servers yet")}
                   </h2>
                   <p>
                     {query
-                      ? t(
-                          "dashboard.no_search_matches",
-                          "We couldn’t find a server matching “{{query}}”. Try a different name or address.",
-                          { query },
-                        )
-                      : showOnlyAdmin
+                      ? showOnlyAdmin && rootAdmin
                         ? t(
-                            "dashboard.servers_belonging_to_other_users_will_appear_here",
-                            "Servers belonging to other users will appear here.",
+                            "folders.owner_no_matches",
+                            "No servers match this search. Try a server name, address, owner username or email.",
                           )
-                        : rootAdmin
+                        : t(
+                            "dashboard.no_search_matches",
+                            "We couldn’t find a server matching “{{query}}”. Try a different name or address.",
+                            { query },
+                          )
+                      : folder !== "all"
+                        ? t(
+                            "folders.empty_help",
+                            "Choose All servers, then use a server’s folder control to organise your list.",
+                          )
+                        : showOnlyAdmin
                           ? t(
-                              "dashboard.create_a_server_in_the_admin_panel_or_assign_an",
-                              "Create a server in the admin panel, or assign an existing server to your account.",
+                              "dashboard.servers_belonging_to_other_users_will_appear_here",
+                              "Servers belonging to other users will appear here.",
                             )
-                          : t(
-                              "dashboard.when_a_server_is_assigned_to_your_account_you_ll",
-                              "When a server is assigned to your account, you’ll find it here. Contact your administrator to get started.",
-                            )}
+                          : rootAdmin
+                            ? t(
+                                "dashboard.create_a_server_in_the_admin_panel_or_assign_an",
+                                "Create a server in the admin panel, or assign an existing server to your account.",
+                              )
+                            : t(
+                                "dashboard.when_a_server_is_assigned_to_your_account_you_ll",
+                                "When a server is assigned to your account, you’ll find it here. Contact your administrator to get started.",
+                              )}
                   </p>
                   {query ? (
                     <button

@@ -320,6 +320,18 @@ quick actions hides the shortcuts while leaving controls on server pages availab
 
 ## Server list and game queries
 
+Enable or disable **Server folders** under **Admin → Settings → General**.
+It is enabled by default. Disabling hides the controls and blocks folder API
+actions while preserving saved folders and assignments for when it is enabled again.
+Use **New folder** on the server list to create personal server categories.
+Choose a folder on a server card to move that server; choose **Unfiled** to remove
+its assignment. Folder tabs filter the full list, including across pages. Select
+a folder to rename or delete it. Deleting a folder preserves all servers and files.
+Folders belong to the signed-in account, including when organising shared servers
+or using the admin **Other servers** view. They sync across devices and do not
+change permissions or server ownership. In **Other servers**, the search field
+also matches owner usernames, emails and full names.
+
 Click anywhere on a server card to open its console. Individual shortcuts remain
 independently accessible, and server links support opening in a new tab.
 

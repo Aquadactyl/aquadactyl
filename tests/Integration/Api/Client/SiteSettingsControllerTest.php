@@ -8,7 +8,7 @@ use Pterodactyl\Providers\SettingsServiceProvider;
 use Pterodactyl\Services\Settings\SiteLogoService;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
 
-const FEATURES = ['player_counts', 'custom_profile_pictures', 'privacy_mode', 'server_quick_actions', 'registration', 'console_log_sharing', 'file_trash'];
+const FEATURES = ['player_counts', 'custom_profile_pictures', 'privacy_mode', 'server_quick_actions', 'server_folders', 'registration', 'console_log_sharing', 'file_trash'];
 
 beforeEach(function () {
     Storage::fake('public');
@@ -59,6 +59,7 @@ test('feature settings persist as booleans and reach the client', function () us
             ->assertSee('"customProfilePictures":' . $input, false)
             ->assertSee('"privacyMode":' . $input, false)
             ->assertSee('"serverQuickActions":' . $input, false)
+            ->assertSee('"serverFolders":' . $input, false)
             ->assertSee('"registration":' . $input, false)
             ->assertSee('"consoleLogSharing":' . $input, false)
             ->assertSee('"fileTrash":' . $input, false);

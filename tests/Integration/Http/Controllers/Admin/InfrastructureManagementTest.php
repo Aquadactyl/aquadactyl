@@ -23,7 +23,7 @@ test('node system information normalizes daemon values and supports older daemon
     $node = Node::factory()->for(Location::factory())->create();
     $this->mock(DaemonConfigurationRepository::class)->shouldReceive('setNode')->once()->with(Mockery::on(fn ($model) => $model->id === $node->id))->andReturnSelf()
         ->shouldReceive('getSystemInformation')->once()->andReturn($complete ? ['version' => '1.0.0', 'os' => 'linux', 'architecture' => 'amd64', 'kernel_version' => '6.0', 'cpu_count' => '4'] : []);
-    $this->getJson('/admin/nodes/view/' . $node->id . '/system-information')->assertOk()->assertExactJson($complete ? ['version' => '1.0.0', 'system' => ['type' => 'Linux', 'arch' => 'amd64', 'release' => '6.0', 'cpus' => 4]] : ['version' => '', 'system' => ['type' => 'Unknown', 'arch' => '--', 'release' => '--', 'cpus' => 0]]);
+    $this->getJson('/admin/nodes/view/' . $node->id . '/system-information')->assertOk()->assertExactJson($complete ? ['version' => '1.0.0', 'system' => ['type' => 'Linux', 'arch' => 'amd64', 'release' => '6.0', 'cpus' => 4, 'memory_bytes' => 0], 'docker' => ['version' => '--']] : ['version' => '', 'system' => ['type' => 'Unknown', 'arch' => '--', 'release' => '--', 'cpus' => 0, 'memory_bytes' => 0], 'docker' => ['version' => '--']]);
 })->with([true, false]);
 
 test('administrators can create edit and remove an unused location', function () {

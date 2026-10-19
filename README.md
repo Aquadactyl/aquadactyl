@@ -35,8 +35,14 @@ using server definitions from the Pterodactyl egg ecosystem.
   adapters for supported legacy Pterodactyl addons and themes.
 - **Server tools:** Guided schedules, an admin Egg Library, player counts, image
   previews, larger file uploads, optional file trash and redacted console sharing.
+- **Server organisation:** Personal folders with account sync and pagination-aware
+  filtering, with an admin toggle that preserves saved folders when disabled.
+  Admins can search Other servers by owner username, email or name.
 - **Administration:** Branding, SMTP/Mailgun/Postmark/SES delivery and optional
   features configured in the admin area. Unconfigured sign-in methods stay hidden.
+- **Server domains and operations:** Cloudflare-managed server subdomains, admin
+  Blueprint installation/removal, themed panel maintenance with an admin preview,
+  a lightweight log viewer and a daemon overview. See the [setup guide](docs/ADMIN-OPERATIONS.md).
 - **Deployment:** Locked Composer/pnpm dependencies, managed backups and updates,
   Redis, PHP OPcache, lazy frontend routes and cached assets.
 

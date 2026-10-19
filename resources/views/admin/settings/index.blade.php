@@ -58,6 +58,21 @@
                         </div>
                     </div>
                     <div class="box-body site-feature-settings">
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="maintenance-enabled">{{ __('admin/operations.maintenance') }}</label>
+                                <select id="maintenance-enabled" class="form-control" name="aquadactyl:maintenance:enabled">
+                                    <option value="false" @selected(!config('aquadactyl.maintenance.enabled'))>{{ __('admin/ui.disabled') }}</option>
+                                    <option value="true" @selected(config('aquadactyl.maintenance.enabled'))>{{ __('admin/ui.enabled') }}</option>
+                                </select>
+                                <p class="text-muted"><small>{{ __('admin/operations.maintenance_help') }}</small></p>
+                                <a class="btn btn-default btn-sm" id="maintenance-preview" href="{{ route('admin.settings.maintenance-preview', [], false) }}" target="_blank" rel="noopener"><i class="fa fa-eye" aria-hidden="true"></i> {{ __('admin/operations.preview_maintenance') }}</a>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="maintenance-message">{{ __('admin/operations.maintenance_message') }}</label>
+                                <textarea id="maintenance-message" class="form-control" name="aquadactyl:maintenance:message" rows="3" maxlength="1000">{{ old('aquadactyl:maintenance:message', config('aquadactyl.maintenance.message')) }}</textarea>
+                            </div>
+                        </div>
                         <h4>{{ __('admin/ui.site_wide_features') }}</h4>
                         <p class="text-muted">{{ __('admin/ui.these_controls_apply_to_all_users_changes_take_effect_when_a_page_is_reloaded') }}</p>
                         @php
@@ -66,6 +81,7 @@
                                 'custom_profile_pictures' => [__('admin/ui.feature_custom_profile_pictures'), __('admin/ui.feature_custom_profile_pictures_description')],
                                 'privacy_mode' => [__('admin/ui.feature_privacy_mode'), __('admin/ui.feature_privacy_mode_description')],
                                 'server_quick_actions' => [__('admin/ui.feature_server_quick_actions'), __('admin/ui.feature_server_quick_actions_description')],
+                                'server_folders' => [__('admin/custom.server_folders'), __('admin/custom.server_folders_help')],
                                 'registration' => [__('admin/ui.feature_registration'), __('admin/ui.feature_registration_description')],
                                 'console_log_sharing' => [__('admin/custom.console_log_sharing'), __('admin/custom.console_log_sharing_help')],
                                 'file_trash' => [__('admin/custom.file_trash'), __('admin/custom.file_trash_help')],
@@ -109,6 +125,12 @@
     @parent
     <script>
         (function () {
+            var preview = document.getElementById('maintenance-preview');
+            preview.addEventListener('click', function () {
+                var url = new URL(preview.href, window.location.origin);
+                url.searchParams.set('message', document.getElementById('maintenance-message').value);
+                preview.href = url.pathname + url.search;
+            });
             var feature = document.getElementById('feature-file_trash');
             var container = document.getElementById('trash-retention-settings');
             var input = document.getElementById('trash-retention-days');

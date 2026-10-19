@@ -19,8 +19,25 @@ vi.mock("@/api/getServers", () => ({
 }));
 
 vi.mock("@/components/dashboard/ServerRow", () => ({
-  default: ({ server }: any) => (
-    <div data-testid="server-row">{server.name}</div>
+  default: ({ server, folders }: any) => (
+    <div
+      data-testid="server-row"
+      data-folders={folders === undefined ? "hidden" : "visible"}
+    >
+      {server.name}
+    </div>
+  ),
+}));
+vi.mock("@/api/serverFolders", () => ({
+  getServerFolders: vi.fn().mockResolvedValue([]),
+}));
+vi.mock("./ServerFolderBar", () => ({
+  default: ({ onSelect, onChange }: any) => (
+    <>
+      <button onClick={() => onSelect("1")}>Filter folder</button>
+      <button onClick={() => onSelect("all")}>Filter all</button>
+      <button onClick={onChange}>Refresh folders</button>
+    </>
   ),
 }));
 
@@ -75,10 +92,26 @@ let mockServersData: any = {
 let mockIsLoading = false;
 let mockIsValidating = false;
 let mockError: any = null;
+let mockFolderError: any = null;
+let mockFoldersData: any = [];
+const mockRefreshFolders = vi.fn().mockResolvedValue(undefined);
 const mockMutate = vi.fn();
+const mockFolderQuery = vi.fn();
 
 vi.mock("@/lib/queryClient", () => ({
   useTanStackQuery: (_key: any, fetcher?: () => any) => {
+    if (_key === null) {
+      mockFolderQuery(null);
+      return { data: undefined, error: null, mutate: mockRefreshFolders };
+    }
+    if (_key[0] === "/api/client/server-folders") {
+      mockFolderQuery(_key);
+      return {
+        data: mockFoldersData,
+        error: mockFolderError,
+        mutate: mockRefreshFolders,
+      };
+    }
     if (fetcher) {
       fetcher();
     }
@@ -93,9 +126,11 @@ vi.mock("@/lib/queryClient", () => ({
 }));
 
 let mockRootAdmin = true;
+let mockSettings: any;
 vi.mock("@/state", () => ({
   useAppStore: (selector: any) =>
     selector({
+      settings: { data: mockSettings },
       user: {
         data: {
           uuid: "user-uuid-1",
@@ -126,10 +161,13 @@ describe("components/dashboard/DashboardContainer", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRootAdmin = true;
+    mockSettings = undefined;
     mockShowOnlyAdmin = false;
     mockIsLoading = false;
     mockIsValidating = false;
     mockError = null;
+    mockFolderError = null;
+    mockFoldersData = [];
     mockServersData = {
       items: [
         {
@@ -169,6 +207,38 @@ describe("components/dashboard/DashboardContainer", () => {
     expect(screen.getByText("Other servers")).toBeDefined();
     expect(screen.getByText("Manage servers")).toBeDefined();
     expect(getServers).toHaveBeenCalled();
+  });
+
+  it.each([
+    undefined,
+    {},
+    { features: {} },
+    { features: { serverFolders: true } },
+  ])("keeps folders available by default and when enabled (%j)", (settings) => {
+    mockSettings = settings;
+    renderComponent();
+    expect(screen.getByText("Filter folder")).toBeDefined();
+    expect(mockFolderQuery).toHaveBeenCalledWith([
+      "/api/client/server-folders",
+      "user-uuid-1",
+    ]);
+  });
+
+  it("hides folder controls and ignores saved folder links when disabled", () => {
+    mockSettings = { features: { serverFolders: false } };
+    mockFoldersData = [{ id: 1, name: "Existing" }];
+    renderComponent("?folder=1");
+    expect(mockFolderQuery).toHaveBeenCalledWith(null);
+    expect(screen.queryByText("Filter folder")).toBeNull();
+    expect(screen.getByTestId("server-row").getAttribute("data-folders")).toBe(
+      "hidden",
+    );
+    expect(getServers).toHaveBeenLastCalledWith(
+      expect.objectContaining({ folder: undefined }),
+    );
+    expect(new URLSearchParams(window.location.search).has("folder")).toBe(
+      false,
+    );
   });
 
   it("filters search input, triggers debounced search, and clears search text", () => {
@@ -343,5 +413,53 @@ describe("components/dashboard/DashboardContainer", () => {
 
     const refreshBtn = screen.getByLabelText("Refresh servers");
     expect(refreshBtn).toHaveProperty("disabled", true);
+  });
+
+  it("preserves folder links and resets pagination when changing folders", async () => {
+    renderComponent("?folder=2&page=3");
+    expect(getServers).toHaveBeenLastCalledWith(
+      expect.objectContaining({ folder: "2", page: 3 }),
+    );
+    fireEvent.click(screen.getByText("Filter folder"));
+    expect(getServers).toHaveBeenLastCalledWith(
+      expect.objectContaining({ folder: "1", page: 1 }),
+    );
+    expect(new URLSearchParams(window.location.search).get("folder")).toBe("1");
+    await act(async () => fireEvent.click(screen.getByText("Refresh folders")));
+    expect(mockRefreshFolders).toHaveBeenCalled();
+    expect(mockMutate).toHaveBeenCalled();
+    fireEvent.click(screen.getByText("Filter all"));
+    expect(getServers).toHaveBeenLastCalledWith(
+      expect.objectContaining({ folder: undefined }),
+    );
+  });
+
+  it("explains how to add servers to an empty folder", () => {
+    mockServersData.items = [];
+    renderComponent("?folder=1");
+    expect(screen.getByText("No servers in this folder")).toBeDefined();
+    expect(screen.getByText(/Choose All servers/)).toBeDefined();
+  });
+
+  it("reports folder loading failures", () => {
+    mockFoldersData = undefined;
+    mockFolderError = new Error("Folders unavailable");
+    renderComponent();
+    expect(mockClearAndAddHttpError).toHaveBeenCalledWith({
+      key: "dashboard",
+      error: mockFolderError,
+    });
+  });
+
+  it("advertises owner searches only in the admin view", () => {
+    mockShowOnlyAdmin = true;
+    mockServersData.items = [];
+    renderComponent("?q=nobody@example.test");
+    expect(screen.getByRole("searchbox").getAttribute("placeholder")).toContain(
+      "username or email",
+    );
+    expect(
+      screen.getByText(/Try a server name, address, owner username or email/),
+    ).toBeDefined();
   });
 });

@@ -315,6 +315,51 @@
     color: var(--aqua-heading);
 }
 
+.extension-tile {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.extension-tile .extension-card {
+    flex: 1;
+}
+
+.extension-tile-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 4px 0;
+}
+
+.extension-tile-footer code { overflow-wrap: anywhere; }
+
+.extension-remove-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    border-radius: 5px;
+    color: var(--aqua-danger) !important;
+    font-size: 12px;
+}
+
+.extension-remove-link:hover,
+.extension-remove-link:focus-visible {
+    background: color-mix(in srgb, var(--aqua-danger) 12%, transparent);
+    text-decoration: none;
+}
+
+.blueprint-removal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+}
+
 .extension-card-icon {
     flex: 0 0 48px;
     width: 48px;

@@ -1,4 +1,27 @@
 {
+  "folders": {
+    "add": "Ajouter à un dossier",
+    "choose": "Déplacer vers un dossier",
+    "title": "Dossiers des serveurs",
+    "folder": "Dossier",
+    "filter": "Filtrer par dossier",
+    "all": "Tous les serveurs",
+    "unfiled": "Sans dossier",
+    "create": "Nouveau dossier",
+    "rename": "Renommer le dossier",
+    "delete": "Supprimer le dossier",
+    "name": "Nom du dossier",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "move_server": "Dossier de :name",
+    "personal_help": "Les dossiers sont personnels et disponibles sur tous vos appareils.",
+    "delete_help": "Seul le dossier est supprimé. Vos serveurs et leurs fichiers sont conservés.",
+    "empty": "Aucun serveur dans ce dossier",
+    "empty_help": "Choisissez Tous les serveurs, puis utilisez le sélecteur de dossier d’un serveur pour organiser votre liste.",
+    "owner_search": "Rechercher un serveur, un utilisateur ou un e-mail…",
+    "owner_no_matches": "Aucun serveur ne correspond. Essayez un nom de serveur, une adresse, un nom d’utilisateur ou un e-mail."
+  },
   "language": {
     "title": "Langue",
     "description": "Choisissez la langue d’affichage du panel pour votre compte.",
@@ -457,5 +480,21 @@
     "purge_warning": "Supprimer définitivement {{name}} ? Cette action est irréversible.",
     "moving": "Déplacement des fichiers vers la corbeille...",
     "deleting": "Suppression des fichiers..."
+  },
+  "subdomains": {
+    "title": "Sous-domaine du serveur",
+    "help": "Choisissez une adresse pour ce serveur. Les changements DNS peuvent prendre quelques minutes.",
+    "address": "Adresse du serveur",
+    "name": "Nom",
+    "domain": "Domaine",
+    "srv": "Minecraft Java : connexion sans port (SRV)",
+    "port_help": "Les autres jeux, dont Bedrock, peuvent toujours nécessiter un port.",
+    "create": "Créer un sous-domaine",
+    "remove": "Supprimer le sous-domaine",
+    "dns_error": "La configuration DNS a échoué. Demandez à un administrateur de vérifier Cloudflare et l’adresse IP publique. Une nouvelle tentative sera effectuée automatiquement.",
+    "status_pending": "Configuration DNS en attente",
+    "status_active": "Actif",
+    "status_error": "Vérifier le DNS",
+    "status_deleting": "Suppression des enregistrements DNS"
   }
 }

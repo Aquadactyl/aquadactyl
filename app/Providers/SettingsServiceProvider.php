@@ -17,6 +17,8 @@ class SettingsServiceProvider extends ServiceProvider
      * if they exist.
      */
     protected array $keys = [
+        'aquadactyl:maintenance:enabled',
+        'aquadactyl:maintenance:message',
         'app:name',
         'app:locale',
         'aquadactyl:branding:logo_path',
@@ -35,6 +37,7 @@ class SettingsServiceProvider extends ServiceProvider
         'aquadactyl:features:custom_profile_pictures',
         'aquadactyl:features:privacy_mode',
         'aquadactyl:features:server_quick_actions',
+        'aquadactyl:features:server_folders',
         'aquadactyl:features:registration',
         'aquadactyl:features:console_log_sharing',
         'aquadactyl:features:file_trash',
@@ -188,7 +191,7 @@ class SettingsServiceProvider extends ServiceProvider
                 }
             }
 
-            if (is_string($value) && $key !== 'app:name' && !in_array($key, self::$encrypted, true)) {
+            if (is_string($value) && !in_array($key, ['app:name', 'aquadactyl:maintenance:message'], true) && !in_array($key, self::$encrypted, true)) {
                 switch (strtolower($value)) {
                     case 'true':
                     case '(true)':

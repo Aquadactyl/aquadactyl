@@ -29,6 +29,7 @@ describe("api/getServers and getSystemPermissions", () => {
                 internal_id: 1,
                 uuid: "srv-uuid-1",
                 name: "Server One",
+                folder_id: 7,
                 node: "Node 1",
                 user_permissions: [],
                 status: "running",
@@ -67,6 +68,7 @@ describe("api/getServers and getSystemPermissions", () => {
       });
       expect(result.items.length).toBe(1);
       expect(result.items[0].name).toBe("Server One");
+      expect(result.items[0].folderId).toBe(7);
       expect(result.pagination.total).toBe(1);
     });
 

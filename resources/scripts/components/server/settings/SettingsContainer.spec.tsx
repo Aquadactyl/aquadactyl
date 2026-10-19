@@ -37,6 +37,10 @@ vi.mock("@/components/server/settings/RenameServerBox", () => ({
   default: () => <div data-testid="rename-server-box">RenameBox</div>,
 }));
 
+vi.mock("@/components/server/settings/SubdomainBox", () => ({
+  default: () => <div data-testid="subdomain-box" />,
+}));
+
 vi.mock("@/components/server/settings/ReinstallServerBox", () => ({
   default: () => <div data-testid="reinstall-server-box">ReinstallBox</div>,
 }));

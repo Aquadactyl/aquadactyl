@@ -18,6 +18,7 @@ export interface SiteSettings {
     customProfilePictures: boolean;
     privacyMode: boolean;
     serverQuickActions: boolean;
+    serverFolders?: boolean;
     registration: boolean;
     consoleLogSharing?: boolean;
     fileTrash?: boolean;

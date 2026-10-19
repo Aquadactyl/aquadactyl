@@ -69,6 +69,7 @@
           <span class="extension-count">{{ $extensions->count() }}</span>
         </h3>
         <div class="box-tools">
+          <a class="btn btn-primary btn-sm" href="{{ route('admin.extensions.install', [], false) }}"><i class="fa fa-upload" aria-hidden="true"></i> {{ __('admin/operations.install_blueprint') }}</a>
           <a class="btn btn-default btn-sm extensions-browse" href="https://blueprint.zip/browse" target="_blank" rel="noopener noreferrer">
             <i class="fa fa-plus" aria-hidden="true"></i> {{ __('admin/ui.browse_extensions') }}
           </a>
@@ -92,7 +93,8 @@
             @php
               $info = $extension['info'];
             @endphp
-            @include('blueprint.admin.entry', [
+            <div class="extension-tile">
+              @include('blueprint.admin.entry', [
               'EXTENSION_ID' => $info['identifier'],
               'EXTENSION_NAME' => $info['name'],
               'EXTENSION_VERSION' => $info['version'],
@@ -100,7 +102,14 @@
               'EXTENSION_ICON' => !empty($info['icon'])
                 ? '/assets/extensions/'.$info['identifier'].'/icon.'.pathinfo($info['icon'], PATHINFO_EXTENSION)
                 : '/assets/extensions/'.$info['identifier'].'/icon.jpg',
-            ])
+              ])
+              @if(config('aquadactyl.blueprint.web_install_enabled'))
+                <div class="extension-tile-footer">
+                  <code>{{ $info['identifier'] }}</code>
+                  <a href="{{ route('admin.extensions.remove', ['identifier' => $info['identifier']], false) }}" class="extension-remove-link" aria-label="{{ __('admin/operations.remove_named_extension', ['name' => $info['name']]) }}"><i class="fa fa-trash-o" aria-hidden="true"></i> {{ __('admin/operations.remove') }}</a>
+                </div>
+              @endif
+            </div>
           @endforeach
         </div>
       </div>

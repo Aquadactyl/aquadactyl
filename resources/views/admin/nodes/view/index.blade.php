@@ -152,6 +152,10 @@
     }
 
     (function getInformation() {
+        if (document.hidden) {
+            setTimeout(getInformation, 10000);
+            return;
+        }
         $.ajax({
             method: 'GET',
             url: '/admin/nodes/view/{{ $node->id }}/system-information',
@@ -161,7 +165,8 @@
             $('[data-attr="info-system"]').html(escapeHtml(data.system.type) + ' (' + escapeHtml(data.system.arch) + ') <code>' + escapeHtml(data.system.release) + '</code>');
             $('[data-attr="info-cpus"]').html(data.system.cpus);
         }).fail(function (jqXHR) {
-
+            $('[data-attr="info-version"]').text(@json(__('admin/operations.unreachable')));
+            $('[data-attr="info-system"], [data-attr="info-cpus"]').text(@json(__('admin/operations.not_reported')));
         }).always(function() {
             setTimeout(getInformation, 10000);
         });

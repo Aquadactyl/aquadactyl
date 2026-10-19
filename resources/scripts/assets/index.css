@@ -715,6 +715,164 @@
   display: grid;
   gap: 12px;
 }
+.server-folders {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.server-folder-tabs {
+  display: flex;
+  flex: 1 1 240px;
+  gap: 6px;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.server-folder-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  max-width: 240px;
+  overflow-wrap: anywhere;
+  padding: 8px 12px;
+  border: 1px solid #303942;
+  border-radius: 6px;
+  color: var(--panel-muted);
+  background: #151b21;
+  font-size: 13px;
+}
+.server-folder-tabs button[aria-pressed="true"] {
+  border-color: var(--color-primary-400);
+  color: var(--color-primary-200);
+  background: color-mix(in srgb, var(--panel-accent) 12%, #151b21);
+}
+.server-folder-tabs svg {
+  flex-shrink: 0;
+}
+.server-folder-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.server-folder-control {
+  position: relative;
+  z-index: 3;
+  max-width: min(100%, 180px);
+  cursor: default;
+}
+.server-folder-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 3px 7px;
+  border: 1px dashed #39434d;
+  border-radius: 5px;
+  color: var(--panel-muted);
+  background: transparent;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: start;
+  transition:
+    background 150ms,
+    border-color 150ms,
+    color 150ms;
+}
+.server-folder-chip[data-assigned="true"] {
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--panel-accent) 22%, #303942);
+  background: color-mix(in srgb, var(--panel-accent) 6%, transparent);
+  color: var(--color-primary-200);
+}
+.server-folder-chip:hover,
+.server-folder-chip[aria-expanded="true"] {
+  background: #26323a;
+  border-color: var(--color-primary-400);
+  color: var(--color-primary-200);
+}
+.server-folder-chip:focus-visible {
+  outline: 2px solid var(--color-primary-300);
+  outline-offset: 3px;
+}
+.server-folder-chip:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+.server-folder-chip svg {
+  flex-shrink: 0;
+}
+.server-folder-chip > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.server-folder-chevron {
+  opacity: 0.65;
+}
+.server-folder-menu {
+  width: 230px;
+  max-width: calc(100vw - 24px);
+  max-height: min(320px, var(--available-height, 320px));
+  overflow-y: auto;
+  padding: 5px;
+  border: 1px solid #39434d;
+  border-radius: 8px;
+  background: #1c232a;
+  box-shadow: 0 12px 30px #0006;
+  outline: none;
+}
+.server-folder-menu-title {
+  padding: 7px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--panel-muted);
+}
+.server-folder-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 36px;
+  padding: 8px 9px;
+  border-radius: 4px;
+  color: #bbc2ca;
+  cursor: pointer;
+  outline: none;
+  font-size: 13px;
+}
+.server-folder-option > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.server-folder-option > svg {
+  flex-shrink: 0;
+}
+.server-folder-option[data-highlighted] {
+  background: #2a343e;
+  color: #f5f6f7;
+}
+.server-folder-option[data-checked] {
+  color: var(--color-primary-200);
+}
+.server-folder-option[data-disabled] {
+  opacity: 0.5;
+  cursor: wait;
+}
+.server-row-metadata {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 8px;
+}
+.server-row-metadata .server-metadata {
+  margin-top: 0;
+}
 .server-row {
   position: relative;
   cursor: pointer;
@@ -1985,7 +2143,10 @@
   font-weight: 600;
   line-height: 1.4;
   box-shadow: 0 1px 3px rgb(0 0 0 / 15%);
-  transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
 }
 
 .console-power-button svg {
@@ -2020,14 +2181,26 @@
 }
 
 .console-power-actions > .console-power-button--stop {
-  border-color: color-mix(in srgb, var(--color-red-400) 40%, var(--panel-border));
-  background: color-mix(in srgb, var(--color-red-500) 10%, var(--panel-surface));
+  border-color: color-mix(
+    in srgb,
+    var(--color-red-400) 40%,
+    var(--panel-border)
+  );
+  background: color-mix(
+    in srgb,
+    var(--color-red-500) 10%,
+    var(--panel-surface)
+  );
   color: var(--color-red-300);
 }
 
 .console-power-actions > .console-power-button--stop:hover:not(:disabled) {
   border-color: var(--color-red-400);
-  background: color-mix(in srgb, var(--color-red-500) 20%, var(--panel-surface));
+  background: color-mix(
+    in srgb,
+    var(--color-red-500) 20%,
+    var(--panel-surface)
+  );
   color: var(--color-red-200);
 }
 
@@ -2042,7 +2215,7 @@
   background: var(--color-neutral-800);
   color: var(--color-neutral-400);
   box-shadow: none;
-  opacity: .65;
+  opacity: 0.65;
 }
 
 .console-power-actions > .console-power-button:focus-visible {
@@ -2324,7 +2497,7 @@ code[data-sensitive] {
   @apply flex flex-wrap items-center gap-2.5;
 }
 .trash-status {
-  @apply inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-2xs leading-4 font-medium;
+  @apply text-2xs inline-flex items-center gap-1 rounded border px-1.5 py-0.5 leading-4 font-medium;
 }
 .trash-status--ready {
   @apply border-primary-500/20 bg-primary-500/10 text-primary-200;

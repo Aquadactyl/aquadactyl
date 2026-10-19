@@ -4,6 +4,7 @@ import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import { ServerContext } from "@/state/server";
 import { useAppStore } from "@/state";
 import RenameServerBox from "@/components/server/settings/RenameServerBox";
+import SubdomainBox from "@/components/server/settings/SubdomainBox";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import Can from "@/components/elements/Can";
 import ReinstallServerBox from "@/components/server/settings/ReinstallServerBox";
@@ -107,6 +108,7 @@ export default () => {
         </div>
         <div className={"mt-6 w-full md:mt-0 md:flex-1"}>
           <Can action={"settings.rename"}>
+            <SubdomainBox />
             <div className={"mb-6 md:mb-10"}>
               <RenameServerBox />
             </div>

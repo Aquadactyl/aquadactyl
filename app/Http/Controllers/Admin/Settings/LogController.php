@@ -24,7 +24,7 @@ class LogController extends Controller
     public function index(Request $request): View
     {
         $files = $this->logViewer->getLogFiles();
-        $selectedFile = $request->query('file');
+        $selectedFile = $request->validate(['file' => 'nullable|string|max:255'])['file'] ?? null;
 
         // Verify if selected file actually exists in the discovered list
         $matchedFile = null;
@@ -42,8 +42,8 @@ class LogController extends Controller
             $selectedFile = $matchedFile['name'];
         }
 
-        $content = $selectedFile !== null
-            ? $this->logViewer->getLogContent($selectedFile)
+        $content = $matchedFile !== null
+            ? $this->logViewer->getLogContent($matchedFile['name'], 262144)
             : '';
 
         return view('admin.settings.logs', [
@@ -51,6 +51,7 @@ class LogController extends Controller
             'currentFile' => $matchedFile,
             'content' => $content,
             'raw' => $content,
+            'truncated' => ($matchedFile['size_bytes'] ?? 0) > 262144,
         ]);
     }
 

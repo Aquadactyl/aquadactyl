@@ -1,6 +1,13 @@
 <?php
 
 return [
+    'maintenance' => [
+        'enabled' => false,
+        'message' => '',
+    ],
+    'blueprint' => [
+        'web_install_enabled' => env('AQUADACTYL_BLUEPRINT_WEB_INSTALL_ENABLED', false),
+    ],
     'branding' => [
         'logo_path' => null,
         'show_name' => false,
@@ -10,6 +17,7 @@ return [
         'custom_profile_pictures' => true,
         'privacy_mode' => true,
         'server_quick_actions' => true,
+        'server_folders' => true,
         'registration' => false,
         'console_log_sharing' => false,
         'file_trash' => false,
