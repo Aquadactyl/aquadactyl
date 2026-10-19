@@ -1,4 +1,18 @@
 /* AdminLTE's familiar layout, with Aquadactyl's shared appearance colours. */
+.aquadactyl-admin .integration-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.aquadactyl-admin .integration-component { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--aqua-border); margin-bottom: 16px; }
+.aquadactyl-admin .integration-component strong { overflow-wrap: anywhere; }
+.aquadactyl-admin .integration-component p { margin: 4px 0 0; }
+.aquadactyl-admin .integration-component form { flex-shrink: 0; }
+.aquadactyl-admin .integration-rule { border: 1px solid var(--aqua-border); border-radius: 8px; padding: 14px 16px; margin: 18px 0; }
+.aquadactyl-admin .integration-rule summary { cursor: pointer; overflow-wrap: anywhere; }
+.aquadactyl-admin .integration-rule summary span { display: block; margin-top: 5px; color: var(--aqua-muted); font-size: 12px; }
+.aquadactyl-admin .integration-rule[open] > form { margin-top: 18px; }
+.aquadactyl-admin .integration-rule .integration-remove-rule { border-top: 1px solid var(--aqua-border); padding-top: 16px; }
+.aquadactyl-admin .integration-summary { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 12px; font-size: 13px; }
+.aquadactyl-admin .integration-sync-error { border-left: 3px solid #dda970; padding: 12px; margin-top: 12px; overflow-wrap: anywhere; }
+.aquadactyl-admin .integration-sync-error small { display: block; margin-top: 5px; }
+@media (max-width: 480px) { .aquadactyl-admin .integration-component { align-items: flex-start; flex-direction: column; } }
 .aquadactyl-admin :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6),
 .aquadactyl-admin .main-header .logo,
 .aquadactyl-admin .tooltip,

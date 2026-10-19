@@ -22,6 +22,7 @@ export interface SiteSettings {
     registration: boolean;
     consoleLogSharing?: boolean;
     fileTrash?: boolean;
+    statusPage?: boolean;
   };
   trash?: { retentionDays: number };
   recaptcha: {

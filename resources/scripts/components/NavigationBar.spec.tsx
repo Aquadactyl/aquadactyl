@@ -81,6 +81,25 @@ vi.mock("@/state", () => ({
 }));
 
 describe("NavigationBar", () => {
+  it("shows the status link only when the feature is enabled", () => {
+    mockAppState.settings.data.features = { statusPage: true };
+    const { unmount } = render(
+      <MemoryRouter>
+        <NavigationBar />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole("link", { name: "Status" }).getAttribute("href"),
+    ).toBe("/status");
+    unmount();
+    mockAppState.settings.data.features.statusPage = false;
+    render(
+      <MemoryRouter>
+        <NavigationBar />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole("link", { name: "Status" })).toBeNull();
+  });
   beforeEach(() => {
     vi.clearAllMocks();
     mockAppState = {

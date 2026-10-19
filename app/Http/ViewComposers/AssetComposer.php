@@ -58,6 +58,7 @@ class AssetComposer
                 'registration' => (bool) config('aquadactyl.features.registration', false),
                 'consoleLogSharing' => (bool) config('aquadactyl.features.console_log_sharing', false),
                 'fileTrash' => (bool) config('aquadactyl.features.file_trash', false),
+                'statusPage' => app(\Pterodactyl\Services\Integrations\IntegrationSettings::class)->statusEnabled(),
             ],
             'trash' => ['retentionDays' => (int) config('aquadactyl.trash.retention_days', 7)],
             'recaptcha' => [

@@ -10,6 +10,81 @@ php artisan optimize:clear
 php artisan queue:restart
 ```
 
+## Integrated status page
+
+Open **Admin > Settings > Status page**. The feature starts disabled. Choose
+**Anyone (public)** or **Signed-in users only**, then publish individual nodes
+with a public service label. No nodes are published automatically. Visitors see
+those labels, daemon reachability and your service notices; addresses, tokens,
+node names and individual server details are omitted.
+
+The page is available at `/status` and appears in client navigation when enabled.
+It uses the panel branding, Inter font and primary colour. It remains accessible
+during the panel's UI maintenance mode, subject to its own visibility setting.
+It still requires this panel and its database to be running, so use an external
+monitor as well if you need independent detection of a complete panel outage.
+
+Keep the panel's minute scheduler running. `php artisan p:status:collect` performs
+the first check immediately; later checks run every minute with four concurrent
+daemon requests and short timeouts. Page visitors read stored results and a
+20-second cache, without probing the daemons. Checks older than three minutes
+show **Unknown**, rather than a cached healthy result.
+
+The availability figure uses the last 30 days of recorded up/down samples.
+Maintenance and missing samples do not count toward its denominator. It measures
+daemon reachability, not the health of every game server or a wall-clock SLA.
+Samples older than 30 days are pruned. Unpublishing a service also removes its
+samples. Post and edit plain-text service updates with Investigating, Identified,
+Monitoring or Resolved states; the public page shows active updates and the ten
+most recently resolved notices. Keep private information out of these messages.
+
+## Discord ownership roles
+
+1. Configure Discord under **Admin > Settings > OAuth** so users can link an
+   existing Discord account from their Account page.
+2. Invite a Discord bot to your Discord server with **Manage Roles** permission.
+   Place its highest role above the roles it will assign. Enable Discord's
+   Developer Mode to copy guild and role IDs. Users must join the Discord server
+   themselves; Aquadactyl does not auto-join or message them.
+3. Open **Admin > Settings > Discord roles**, enter the guild ID and bot token,
+   confirm your current panel password, and enable synchronization. The bot token
+   is distinct from the OAuth client secret, encrypted at rest and never returned
+   to clients, displayed, included in audit payloads or flashed after validation.
+4. Add rules for a role ID, optionally an egg and node, and a minimum number of
+   matching owned servers. Both filters must match. Different rules for the same
+   role combine with OR. Running and stopped servers count; suspended, installing
+   and failed servers do not. Missing/deleted egg or node filters never silently
+   become "any" filters.
+
+Changes to server ownership, egg, node, account suspension and Discord linking
+queue a check. The scheduler also reconciles all linked accounts and tracked
+grants every five minutes, covering bulk updates and daemon installation callbacks.
+Keep a queue worker consuming **low** alongside the normal **high,standard** queues.
+Use **Queue synchronization now** or `php artisan p:discord:sync-roles` to enqueue
+a reconciliation; Discord work stays off web requests.
+
+Aquadactyl tracks only roles it assigned, including a pending assignment whose
+HTTP result is uncertain. Roles already present before it grants them are not
+claimed or removed. Tracked roles are removed when no rule matches, a user is
+suspended or unlinks Discord, or a rule is disabled/deleted. Deleted users retain
+cleanup records until revocation succeeds. Restoration does not immediately
+regrant roles until the next queued check completes. This is eventual consistency,
+normally within five minutes while the scheduler, worker and Discord are available.
+
+Rate limits respect Discord's response headers and retry delays through the queue.
+Invalid credentials or permissions apply a shared cooldown, with sanitized errors
+shown on the settings page. Fix the token, guild membership, role IDs, permission
+or hierarchy, then save and retry. Role grant/revoke events appear in Audit logs.
+
+Disabling the integration pauses synchronization and retains current roles. For a
+clean shutdown or a guild change, disable/delete its rules while sync is still on,
+wait for managed grants to reach zero, then disable the bot or change the guild.
+Guild changes are rejected while tracked grants still need cleanup.
+
+The implementation uses Discord's documented
+[member role endpoints](https://discord.com/developers/docs/resources/guild#add-guild-member-role)
+and [rate-limit headers](https://discord.com/developers/docs/topics/rate-limits).
+
 ## Server subdomains with Cloudflare
 
 Open **Admin > Service Management > Server subdomains**. Add a domain such as

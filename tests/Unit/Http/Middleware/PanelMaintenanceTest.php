@@ -12,6 +12,7 @@ test('maintenance permits administrators disabled mode and sign in endpoints', f
 })->with([[false, null, '/'], [true, true, '/admin/settings'], [true, null, '/auth/login'], [true, false, '/auth/password/reset/secret'], [true, null, '/auth/oauth/discord/callback'], [true, null, '/locales/en/auth.json']]);
 
 test('maintenance blocks normal users with a retryable response and escaped message', function (bool $json, ?bool $admin) {
+    $this->mock(Pterodactyl\Services\Integrations\IntegrationSettings::class)->shouldReceive('statusEnabled')->andReturn(false);
     config()->set(['aquadactyl.maintenance.enabled' => true, 'aquadactyl.maintenance.message' => '<script>alert(1)</script>']);
     $request = Request::create('/');
     $request->setUserResolver(fn () => $admin === null ? null : (object) ['root_admin' => $admin]);

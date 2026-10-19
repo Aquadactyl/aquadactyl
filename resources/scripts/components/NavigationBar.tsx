@@ -1,7 +1,7 @@
 import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router";
-import { ArrowUpRight, LogOut, Server, Settings } from "lucide-react";
+import { Activity, ArrowUpRight, LogOut, Server, Settings } from "lucide-react";
 import { useAppStore } from "@/state";
 import SearchContainer from "@/components/dashboard/search/SearchContainer";
 import http from "@/api/http";
@@ -22,6 +22,9 @@ export default () => {
   );
   const pairedLogo = Boolean(logoUrl && showNameWithLogo);
   const user = useAppStore((state) => state.user.data!);
+  const statusPage = useAppStore(
+    (state) => state.settings.data?.features?.statusPage,
+  );
   const isAquadactyl = name.trim().toLowerCase() === "aquadactyl";
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -99,6 +102,12 @@ export default () => {
             </a>
           )}
           <AdditionalItems />
+          {statusPage && (
+            <a href={"/status"} id={"NavigationStatus"}>
+              <Activity size={17} aria-hidden />
+              <span>{t("navigation.status", "Status")}</span>
+            </a>
+          )}
           <SearchContainer />
           <NavLink
             to={"/account"}

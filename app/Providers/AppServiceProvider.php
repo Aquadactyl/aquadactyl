@@ -54,6 +54,9 @@ class AppServiceProvider extends ServiceProvider
             'database_host' => Models\DatabaseHost::class,
             'subdomain_domain' => Models\SubdomainDomain::class,
             'server_subdomain' => Models\ServerSubdomain::class,
+            'status_component' => Models\StatusComponent::class,
+            'status_incident' => Models\StatusIncident::class,
+            'discord_role_rule' => Models\DiscordRoleRule::class,
             'schedule' => Models\Schedule::class,
             'server' => Models\Server::class,
             'ssh_key' => Models\UserSSHKey::class,
@@ -68,6 +71,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(\Pterodactyl\Services\Users\LanguageService::class);
+        $this->app->scoped(\Pterodactyl\Services\Integrations\IntegrationSettings::class);
 
         // Merge Blueprint extension fs config with existing filesystem config.
         $this->app->register(ExtensionfsConfigProvider::class);

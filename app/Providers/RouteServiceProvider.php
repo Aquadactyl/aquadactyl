@@ -39,6 +39,8 @@ class RouteServiceProvider extends ServiceProvider
             Route::group([], base_path('routes/branding.php'));
 
             Route::middleware('web')->group(function () {
+                Route::get('/status', \Pterodactyl\Http\Controllers\Base\StatusPageController::class)
+                    ->middleware('auth.session')->withoutMiddleware(\Pterodactyl\Http\Middleware\PanelMaintenance::class)->name('status.index');
                 Route::middleware(['auth.session', RequireTwoFactorAuthentication::class])
                     ->group(base_path('routes/base.php'));
 

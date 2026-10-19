@@ -15,6 +15,7 @@ class AccountOAuthIdentity extends Model
 
     protected $casts = ['last_used_at' => 'datetime'];
 
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

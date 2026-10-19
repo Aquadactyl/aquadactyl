@@ -99,6 +99,18 @@ Route::group(['prefix' => 'settings'], function () {
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
     Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
     Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
+    Route::get('/status', [Admin\Settings\StatusPageController::class, 'index'])->name('admin.settings.status');
+    Route::patch('/status', [Admin\Settings\StatusPageController::class, 'update']);
+    Route::post('/status/components', [Admin\Settings\StatusPageController::class, 'component'])->name('admin.settings.status.components');
+    Route::delete('/status/components/{component}', [Admin\Settings\StatusPageController::class, 'removeComponent']);
+    Route::post('/status/incidents', [Admin\Settings\StatusPageController::class, 'incident'])->name('admin.settings.status.incidents');
+    Route::patch('/status/incidents/{incident}', [Admin\Settings\StatusPageController::class, 'incident']);
+    Route::get('/discord', [Admin\Settings\DiscordRolesController::class, 'index'])->name('admin.settings.discord');
+    Route::patch('/discord', [Admin\Settings\DiscordRolesController::class, 'update'])->middleware('throttle:5,1,discord-settings:');
+    Route::post('/discord/rules', [Admin\Settings\DiscordRolesController::class, 'rule'])->name('admin.settings.discord.rules');
+    Route::patch('/discord/rules/{rule}', [Admin\Settings\DiscordRolesController::class, 'rule']);
+    Route::delete('/discord/rules/{rule}', [Admin\Settings\DiscordRolesController::class, 'remove']);
+    Route::post('/discord/sync', [Admin\Settings\DiscordRolesController::class, 'sync'])->middleware('throttle:2,1,discord-sync:')->name('admin.settings.discord.sync');
 
     Route::get('/logs', [Admin\Settings\LogController::class, 'index'])->name('admin.settings.logs');
     Route::get('/logs/download/{file}', [Admin\Settings\LogController::class, 'download'])->name('admin.settings.logs.download');

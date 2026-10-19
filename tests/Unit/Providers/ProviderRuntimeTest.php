@@ -72,6 +72,7 @@ test('production provider registration includes saved settings when environment-
     config()->set('pterodactyl.load_environment_only', false);
     $application = Mockery::mock(Illuminate\Foundation\Application::class);
     $application->expects('scoped')->with(Pterodactyl\Services\Users\LanguageService::class);
+    $application->expects('scoped')->with(Pterodactyl\Services\Integrations\IntegrationSettings::class);
     $application->expects('environment')->andReturn('production');
     $application->expects('register')->with(Pterodactyl\Providers\Blueprint\ExtensionfsConfigProvider::class);
     $application->expects('register')->with(Pterodactyl\Providers\Blueprint\RouteServiceProvider::class);

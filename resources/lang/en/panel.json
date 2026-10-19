@@ -53,7 +53,8 @@
     "admin": "Admin",
     "account_settings": "Account settings",
     "sign_out": "Sign out",
-    "home": ":name home"
+    "home": ":name home",
+    "status": "Status"
   },
   "dashboard": {
     "servers": "Servers",

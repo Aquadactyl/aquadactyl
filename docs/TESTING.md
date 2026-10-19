@@ -2,13 +2,13 @@
 
 The panel has separate React/Vitest and PHP/Pest suites. Both coverage configurations count untested source files. A passing test count alone does not mean the whole application is covered.
 
-Latest verified PHP results: 19 October 2026; frontend: 18 October 2026. The separate API figures were
+Latest verified PHP and frontend results: 19 October 2026. The separate API figures were
 last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,552 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         2,005 | 100% executable lines; 27,900 assertions                       |
+| Panel frontend       |         1,553 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         2,052 | 100% executable lines; 28,962 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
 The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining

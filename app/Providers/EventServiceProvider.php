@@ -45,5 +45,8 @@ class EventServiceProvider extends ServiceProvider
         Server::observe(ServerObserver::class);
         Subuser::observe(SubuserObserver::class);
         EggVariable::observe(EggVariableObserver::class);
+        User::observe(\Pterodactyl\Observers\DiscordRoleObserver::class);
+        Server::observe(\Pterodactyl\Observers\DiscordRoleObserver::class);
+        \Pterodactyl\Models\AccountOAuthIdentity::observe(\Pterodactyl\Observers\DiscordRoleObserver::class);
     }
 }
