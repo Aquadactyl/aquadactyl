@@ -203,7 +203,7 @@
                     @endif
                 </div>
                 <div class="admin-footer-meta small text-gray">
-                    <span><strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}</span>
+                    <div class="admin-footer-version"><span><strong><i class="fa fa-fw {{ $appIsGit ? 'fa-git-square' : 'fa-code-fork' }}"></i></strong> {{ $appVersion }}</span>@include('admin.partials.update-notes', ['compactNotes' => true])</div>
                     <span><strong><i class="fa fa-fw fa-clock-o"></i></strong> {{ round(microtime(true) - (defined('LARAVEL_START') ? LARAVEL_START : microtime(true)), 3) }}s</span>
                 </div>
             </footer>

@@ -62,6 +62,8 @@ class Handler extends ExceptionHandler
         'token',
         'api_token',
         'bot_token',
+        'webhook_url',
+        'webhook_secret',
         'secret',
         'password',
         'password_confirmation',

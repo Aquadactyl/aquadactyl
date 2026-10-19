@@ -10,8 +10,9 @@ class BaseController extends Controller
     /**
      * Return the admin index view.
      */
-    public function index(): View
+    public function index(\Pterodactyl\Services\Updates\ReleaseNotes $notes): View
     {
-        return view('admin.index');
+        return view('admin.index', ['installedVersion' => $notes->installedVersion(), 'installedNotes' => $notes->installed(),
+            'panelUpdate' => \Pterodactyl\Models\SoftwareUpdate::where('component', 'panel')->first()]);
     }
 }

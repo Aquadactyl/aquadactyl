@@ -285,3 +285,73 @@ measurements never become zero usage. Requests use a shared 15-second cache and
 bounded timeouts; game-server configurations and credentials are not returned in
 the overview API. System version and platform details remain in each card's
 expandable section.
+
+## Webhooks and update notes
+
+Use **Admin > Settings > Webhooks** to add up to 20 Discord or generic JSON
+destinations. Choose event subscriptions, enter a URL, enable the destination and
+confirm your current password. URLs and JSON signing secrets are encrypted at rest
+and never redisplayed. Blank fields preserve saved credentials. **Test saved
+webhook** sends the saved configuration; save edits before testing. Removing a
+destination also removes its delivery history.
+
+Destinations must use public HTTPS on port 443. Each delivery resolves DNS again,
+rejects private/reserved addresses, pins the validated address while retaining TLS
+hostname verification, and refuses redirects and environment proxies. Discord
+webhooks use confirmed delivery and suppress mentions. Forum webhooks can include
+`thread_id`. JSON receivers require a shared random secret of at least 32 characters.
+
+Subscriptions cover system actions, health transitions for published status
+components, incident publication/changes/resolution/removal, available releases and
+detected installed version changes. System actions include administrator changes,
+server provisioning, power, backups, reinstallation, suspension and managed Discord
+roles. Payloads include internal action/actor/subject IDs and admin route templates;
+they exclude request bodies, credentials, commands, file paths, emails and IPs.
+Incident messages and published component names are included. Editing webhook
+settings does not recursively notify the same webhook.
+
+Run the normal panel scheduler every minute and ensure a worker consumes the
+`low` queue. The scheduler queues due retries, recovers interrupted deliveries and
+prunes completed history after 30 days. Network failures, HTTP 429 and HTTP 5xx
+retry with delays for at most five attempts within 24 hours. Other HTTP failures
+stop immediately. A failed delivery can be retried manually while its destination
+is enabled and unchanged. Changing delivery configuration cancels older pending
+deliveries. Deliveries are **at least once**: receivers should deduplicate the
+`X-Aquadactyl-Delivery` header, including manual retries.
+
+Generic JSON requests contain `schema`, `id`, `event`, `occurred_at` and `data`.
+`X-Aquadactyl-Event` identifies the event. Verify the signature against the exact
+raw request bytes before decoding JSON:
+
+```php
+$timestamp = $_SERVER['HTTP_X_AQUADACTYL_TIMESTAMP'] ?? '';
+$signature = $_SERVER['HTTP_X_AQUADACTYL_SIGNATURE'] ?? '';
+$body = file_get_contents('php://input');
+$expected = 'sha256=' . hash_hmac('sha256', $timestamp . '.' . $body, getenv('WEBHOOK_SECRET'));
+if (!ctype_digit($timestamp) || abs(time() - (int) $timestamp) > 300 || !hash_equals($expected, $signature)) {
+    http_response_code(401);
+    exit;
+}
+// Persist the delivery ID to reject duplicates, then process the verified event.
+```
+
+Use **Settings > Updates** to queue a check or opt into hourly checks. Checks fetch
+the latest stable release from `Aquadactyl/aquadactyl`, `Aquadactyl/manta` or
+`pterodactyl/wings` and read the authenticated daemon system endpoint. Select Manta
+explicitly for nodes whose version string does not identify the fork. Checks run
+in the background and never install software. GitHub metadata is cached for an
+hour; unavailable nodes retain their last known installed version with an error.
+
+The first successful observation establishes an installed-version baseline.
+Subsequent version changes can notify subscribed webhooks; a product selection
+change alone does not count as an installation. Available-update notices compare
+stable `X.Y.Z` versions only and are deduplicated per destination revision and
+installed/latest version pair while their delivery history is retained (30 days).
+Canary and custom builds cannot be ordered reliably.
+Docker builds carry a stable build fingerprint to detect a changed canary image.
+
+The administration overview and footer include an **Installed version notes**
+dropdown sourced from the bundled `CHANGELOG.md`. Release notes from GitHub appear
+after a successful background check. Both render Markdown with raw HTML and unsafe
+links removed. A repository without a published release shows that state without
+treating it as a failed check.

@@ -6,6 +6,11 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+### Added
+
+- Discord and signed JSON webhooks for system actions, status changes and panel or daemon updates, with event subscriptions, encrypted credentials, queued delivery and retry history.
+- Optional hourly release checks, detected installed version changes, and expandable installed-version notes in the administration overview and footer.
+
 ### Removed
 
 - Removed upstream Pterodactyl telemetry collection, its scheduled job, environment setting, and console command. Aquadactyl and Blueprint retain their separate opt-in controls.

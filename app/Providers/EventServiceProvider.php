@@ -24,6 +24,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
+        \Pterodactyl\Events\ActivityLogged::class => [\Pterodactyl\Listeners\Webhooks\SendSystemActionWebhook::class],
     ];
 
     protected $subscribe = [
@@ -48,5 +49,6 @@ class EventServiceProvider extends ServiceProvider
         User::observe(\Pterodactyl\Observers\DiscordRoleObserver::class);
         Server::observe(\Pterodactyl\Observers\DiscordRoleObserver::class);
         \Pterodactyl\Models\AccountOAuthIdentity::observe(\Pterodactyl\Observers\DiscordRoleObserver::class);
+        \Pterodactyl\Models\StatusIncident::observe(\Pterodactyl\Observers\StatusIncidentObserver::class);
     }
 }

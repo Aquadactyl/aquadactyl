@@ -57,6 +57,7 @@ class AppServiceProvider extends ServiceProvider
             'status_component' => Models\StatusComponent::class,
             'status_incident' => Models\StatusIncident::class,
             'discord_role_rule' => Models\DiscordRoleRule::class,
+            'webhook_endpoint' => Models\WebhookEndpoint::class,
             'schedule' => Models\Schedule::class,
             'server' => Models\Server::class,
             'ssh_key' => Models\UserSSHKey::class,

@@ -13,6 +13,8 @@
                     <li @if($activeTab === 'oauth')class="active"@endif><a href="{{ route('admin.settings.oauth', [], false) }}">OAuth</a></li>
                     <li @if($activeTab === 'status')class="active"@endif><a href="{{ route('admin.settings.status', [], false) }}">{{ __('integrations.status.heading') }}</a></li>
                     <li @if($activeTab === 'discord')class="active"@endif><a href="{{ route('admin.settings.discord', [], false) }}">{{ __('integrations.discord.heading') }}</a></li>
+                    <li @if($activeTab === 'webhooks')class="active"@endif><a href="{{ route('admin.settings.webhooks', [], false) }}">{{ __('webhooks.heading') }}</a></li>
+                    <li @if($activeTab === 'updates')class="active"@endif><a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }}</a></li>
                     <li @if($activeTab === 'logs')class="active"@endif><a href="{{ route('admin.settings.logs', [], false) }}">{{ __('admin/custom.logs') }}</a></li>
                 </ul>
             </div>

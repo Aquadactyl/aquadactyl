@@ -2,11 +2,13 @@
 
 namespace Pterodactyl\Services\Status;
 
+use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Promise\EachPromise;
 use Pterodactyl\Models\StatusCheck;
 use Illuminate\Support\Facades\Cache;
 use Pterodactyl\Models\StatusIncident;
 use Pterodactyl\Models\StatusComponent;
+use Pterodactyl\Services\Webhooks\WebhookEmitter;
 use Pterodactyl\Services\Integrations\IntegrationSettings;
 use Pterodactyl\Repositories\Wings\DaemonConfigurationRepository;
 
@@ -48,10 +50,17 @@ class StatusPageService
 
     private function record(int $id, string $status): void
     {
-        // A node can be unpublished while its request is in flight.
-        if (StatusComponent::whereKey($id)->exists()) {
+        DB::transaction(function () use ($id, $status) {
+            $component = StatusComponent::whereKey($id)->lockForUpdate()->first();
+            if (!$component) {
+                return;
+            }
+            $previous = StatusCheck::where('status_component_id', $id)->latest('id')->value('status');
             StatusCheck::create(['status_component_id' => $id, 'status' => $status, 'checked_at' => now()]);
-        }
+            if ($previous && $previous !== $status) {
+                app(WebhookEmitter::class)->emit('status.health.changed', ['component_id' => $id, 'name' => $component->name, 'previous' => $previous, 'status' => $status]);
+            }
+        });
     }
 
     public function snapshot(): array

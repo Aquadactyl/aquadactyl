@@ -52,3 +52,5 @@ public/extensions/blueprint
 public/assets/extensions/blueprint
 public/storage
 .build-cache.json
+# Generated Docker build identity used for update notifications.
+.aquadactyl-build

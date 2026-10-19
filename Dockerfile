@@ -78,6 +78,10 @@ COPY --from=frontend --chown=nginx:nginx /app/public/build ./public/build
 COPY --from=frontend --chown=nginx:nginx /app/node_modules ./node_modules
 COPY --from=frontend --chown=nginx:nginx /app/packages ./packages
 
+# A stable identity for this image build, unaffected by addon rebuilds at runtime.
+RUN find app routes config resources public/themes/pterodactyl -type f -exec sha256sum '{}' \; \
+    | LC_ALL=C sort | sha256sum | cut -d ' ' -f 1 > .aquadactyl-build
+
 RUN cp .env.example .env \
     && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
     && chmod 777 -R bootstrap storage \

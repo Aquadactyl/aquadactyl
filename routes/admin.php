@@ -99,6 +99,13 @@ Route::group(['prefix' => 'settings'], function () {
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
     Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
     Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
+    Route::get('/webhooks', [Admin\Settings\WebhooksController::class, 'index'])->name('admin.settings.webhooks');
+    Route::post('/webhooks', [Admin\Settings\WebhooksController::class, 'store'])->middleware('throttle:10,1,webhook-settings:')->name('admin.settings.webhooks.store');
+    Route::post('/webhooks/{endpoint}/action', [Admin\Settings\WebhooksController::class, 'action'])->middleware('throttle:10,1,webhook-actions:')->name('admin.settings.webhooks.action');
+    Route::post('/webhooks/deliveries/retry', [Admin\Settings\WebhooksController::class, 'retry'])->middleware('throttle:5,1,webhook-retry:')->name('admin.settings.webhooks.retry');
+    Route::get('/updates', [Admin\Settings\UpdatesController::class, 'index'])->name('admin.settings.updates');
+    Route::patch('/updates', [Admin\Settings\UpdatesController::class, 'update'])->name('admin.settings.updates.save');
+    Route::post('/updates/check', [Admin\Settings\UpdatesController::class, 'check'])->middleware('throttle:2,1,update-check:')->name('admin.settings.updates.check');
     Route::get('/status', [Admin\Settings\StatusPageController::class, 'index'])->name('admin.settings.status');
     Route::patch('/status', [Admin\Settings\StatusPageController::class, 'update']);
     Route::post('/status/components', [Admin\Settings\StatusPageController::class, 'component'])->name('admin.settings.status.components');

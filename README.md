@@ -45,6 +45,9 @@ using server definitions from the Pterodactyl egg ecosystem.
 - **Status and Discord:** An optional public or signed-in status page with published
   services and incident notices, plus automatic Discord roles based on owned
   servers, eggs and nodes. Configure both under **Admin > Settings**.
+- **Notifications and releases:** Discord or signed JSON webhooks for system actions,
+  status changes, available updates and detected version changes, with delivery history.
+  Optional background release checks and expandable version notes in the admin area.
 - **Server domains and operations:** Cloudflare-managed server subdomains, admin
   Blueprint installation/removal, themed panel maintenance with an admin preview,
   a lightweight log viewer and a daemon overview. See the [setup guide](docs/ADMIN-OPERATIONS.md).
