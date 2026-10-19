@@ -108,6 +108,7 @@
                             </a>
                         </li>
                         <li class="header">{{ __('admin/ui.management') }}</li>
+                        <li class="{{ request()->is('admin/audit-logs*') ? 'active' : '' }}"><a href="{{ route('admin.audit-logs', [], false) }}"><i class="fa fa-history" aria-hidden="true"></i> <span>{{ __('admin/management.audit_logs') }}</span></a></li>
                         @yield("blueprint.sidenav")
                         <li class="{{ ! starts_with(Route::currentRouteName(), 'admin.databases') ?: 'active' }}">
                             <a href="{{ route('admin.databases') }}">

@@ -24,7 +24,7 @@ class BlueprintInstaller
             $installation->update(['status' => 'running', 'message' => $removal ? 'Removing extension.' : 'Installing package.']);
             $staged = base_path('.blueprint-install-' . $installation->id);
             try {
-                if (!User::whereKey($installation->user_id)->where('root_admin', true)->exists()) {
+                if (!User::whereKey($installation->user_id)->where('root_admin', true)->whereNull('suspended_at')->exists()) {
                     throw new \RuntimeException('The requesting administrator no longer has permission.');
                 }
                 if ($removal) {

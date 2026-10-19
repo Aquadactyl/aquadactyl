@@ -166,6 +166,9 @@ class SftpAuthenticationController extends Controller
      */
     protected function validateSftpAccess(User $user, Server $server): void
     {
+        if ($user->suspended_at) {
+            throw new HttpForbiddenException('This account is suspended.');
+        }
         if (!$user->root_admin && $server->owner_id !== $user->id) {
             $permissions = $this->permissions->handle($server, $user);
 

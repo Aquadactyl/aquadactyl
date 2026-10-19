@@ -110,6 +110,27 @@
         </div>
     </form>
     <div class="col-xs-12">
+        <div class="box box-warning" id="account-suspension">
+            <div class="box-header with-border"><h3 class="box-title">{{ __('admin/management.account_access') }}</h3><span class="label {{ $user->suspended_at ? 'label-warning' : 'label-success' }}">{{ $user->suspended_at ? __('admin/management.suspended') : __('admin/management.active') }}</span></div>
+            <div class="box-body">
+                <p>{{ __('admin/management.suspension_help') }}</p>
+                @if($user->suspended_at)<p>{{ __('admin/management.suspended_since') }} <time datetime="{{ $user->suspended_at->toIso8601String() }}">{{ $user->suspended_at->toDayDateTimeString() }}</time></p>@if($user->suspension_reason)<p class="account-suspension-reason">{{ $user->suspension_reason }}</p>@endif @endif
+                @if($suspensionPending)<div class="alert alert-{{ $suspensionErrors ? 'warning' : 'info' }}" role="status">{{ __('admin/management.sync_pending', ['count' => $suspensionPending]) }} @if($suspensionErrors){{ __('admin/management.sync_retry_help') }}@endif</div>@endif
+                @if(auth()->id() === $user->id)
+                    <p class="text-muted">{{ __('admin/management.cannot_suspend_self') }}</p>
+                @else
+                    <form method="POST" action="{{ route('admin.users.suspension', $user->id, false) }}">
+                        @csrf
+                        <input type="hidden" name="suspend" value="{{ $user->suspended_at ? '0' : '1' }}">
+                        @unless($user->suspended_at)<div class="form-group"><label for="suspension-reason">{{ __('admin/management.reason') }}</label><textarea id="suspension-reason" name="reason" class="form-control" rows="2" maxlength="1000"></textarea></div>@endunless
+                        <div class="form-group"><label for="suspension-password">{{ __('admin/operations.current_password') }}</label><input id="suspension-password" class="form-control" type="password" name="current_password" autocomplete="current-password" required></div>
+                        <button class="btn {{ $user->suspended_at ? 'btn-success' : 'btn-warning' }}" type="submit">{{ $user->suspended_at ? __('admin/management.restore_user') : __('admin/management.suspend_user') }}</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-12">
         <div class="box">
             <div class="box-header with-border"><h3 class="box-title">{{ __('admin/custom.profile_picture') }}</h3></div>
             <div class="box-body">

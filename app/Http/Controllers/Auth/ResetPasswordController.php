@@ -86,11 +86,11 @@ class ResetPasswordController extends Controller
 
         // If the user is not using 2FA log them in, otherwise skip this step and force a
         // fresh login where they'll be prompted to enter a token.
-        if (!$user->use_totp) {
+        if (!$user->use_totp && !$user->suspended_at) {
             $this->guard()->login($user);
         }
 
-        $this->hasTwoFactor = $user->use_totp;
+        $this->hasTwoFactor = $user->use_totp || (bool) $user->suspended_at;
     }
 
     /**

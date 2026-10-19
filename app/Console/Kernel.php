@@ -33,6 +33,7 @@ class Kernel extends ConsoleKernel
         // https://laravel.com/docs/10.x/upgrade#redis-cache-tags
         $schedule->command('cache:prune-stale-tags')->hourly();
         $schedule->command('p:subdomains:sync')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('p:users:sync-suspensions')->everyMinute()->withoutOverlapping();
 
         // Execute scheduled commands for servers every minute, as if there was a normal cron running.
         $schedule->command(ProcessRunnableCommand::class)->everyMinute()->withoutOverlapping();

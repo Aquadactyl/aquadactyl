@@ -50,7 +50,7 @@
                                 <td><code>{{ $user->id }}</code></td>
                                 <td><a href="{{ route('admin.users.view', $user->id) }}"><span data-sensitive tabindex="0">{{ $user->email }}</span></a> @if($user->root_admin)<i class="fa fa-star text-yellow"></i>@endif</td>
                                 <td>{{ $user->name_last }}, {{ $user->name_first }}</td>
-                                <td>{{ $user->username }}</td>
+                                <td>{{ $user->username }} @if($user->suspended_at)<span class="label label-warning">{{ __('admin/management.suspended') }}</span>@endif</td>
                                 <td class="text-center">
                                     @if($user->use_totp)
                                         <i class="fa fa-lock text-green"></i>

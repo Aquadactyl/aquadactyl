@@ -53,6 +53,7 @@
                                 <option value="{{ $location->id }}" {{ $location->id != old('location_id') ?: 'selected' }}>{{ $location->short }}</option>
                             @endforeach
                         </select>
+                        <button class="btn btn-link quick-create-location" type="button" data-toggle="modal" data-target="#quickSetupModal"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('admin/management.create_location') }}</button>
                     </div>
                     <div class="form-group">
                         <label class="form-label">{{ __('admin/ui.node_visibility') }}</label>
@@ -197,6 +198,7 @@
         </div>
     </div>
 </form>
+@include('admin.partials.quick-setup', ['createNode' => false])
 @endsection
 
 @section('footer-scripts')

@@ -80,6 +80,8 @@ class UserController extends Controller
     {
         return view('admin.users.view', [
             'user' => $user,
+            'suspensionPending' => $user->servers()->where('account_suspension_pending', true)->count(),
+            'suspensionErrors' => $user->servers()->whereNotNull('account_suspension_error')->count(),
             'languages' => $this->getAvailableLanguages(true),
         ]);
     }

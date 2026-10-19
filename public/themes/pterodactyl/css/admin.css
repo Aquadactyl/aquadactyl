@@ -558,6 +558,35 @@
     }
 }
 
+.quick-create-node,
+.quick-create-location {
+    padding: 4px 0;
+    font-size: 12px;
+    white-space: normal;
+}
+.quick-create-node { display: block; }
+#quickSetupModal .modal-body { padding: 24px; }
+#quickSetupModal .form-group { margin-bottom: 20px; }
+#quickSetupModal form[hidden],
+.quick-setup-error[hidden],
+#quick-node-created[hidden] { display: none !important; }
+.audit-filter-actions { display: flex; justify-content: flex-end; gap: 10px; }
+.audit-entry { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 14px; padding: 20px; border-bottom: 1px solid var(--aqua-border); }
+.audit-entry:last-child { border-bottom: 0; }
+.audit-entry-main { display: flex; gap: 14px; min-width: 0; flex: 1 1 400px; }
+.audit-icon { display: grid; place-items: center; flex: 0 0 38px; height: 38px; border-radius: 8px; background: var(--aqua-raised); color: var(--aqua-accent); }
+.audit-entry-details { min-width: 0; overflow-wrap: anywhere; }
+.audit-entry-details > strong { font-size: 14px; color: var(--aqua-heading); }
+.audit-entry-details p { margin: 5px 0; font-size: 12px; }
+.audit-entry-details p > span { display: inline-block; margin-left: 10px; }
+.audit-entry-details code { white-space: normal; overflow-wrap: anywhere; }
+.audit-entry time { color: var(--aqua-muted); font-size: 12px; }
+.audit-subjects { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.audit-subjects > span { padding: 3px 8px; border: 1px solid var(--aqua-border); border-radius: 5px; color: var(--aqua-muted); font-size: 12px; }
+.audit-empty { padding: 44px 24px; text-align: center; }
+.audit-empty > i { font-size: 28px; color: var(--aqua-muted); }
+.account-suspension-reason { white-space: pre-wrap; overflow-wrap: anywhere; }
+
 @media (prefers-reduced-motion: reduce) {
     .aquadactyl-admin .sidebar-menu > li > a,
     .admin-extensions .extension-card {

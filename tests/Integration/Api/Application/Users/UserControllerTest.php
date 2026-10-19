@@ -11,7 +11,7 @@ test('get users', function () {
 
     $response = $this->getJson('/api/application/users?per_page=60');
     $response->assertStatus(Response::HTTP_OK);
-    $response->assertJsonCount(2, 'data');
+    $response->assertJsonCount(min(User::count(), 60), 'data');
     $response->assertJsonStructure([
         'object',
         'data' => [

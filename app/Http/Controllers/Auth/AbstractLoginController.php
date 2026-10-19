@@ -75,6 +75,9 @@ abstract class AbstractLoginController extends Controller
      */
     protected function sendLoginResponse(User $user, Request $request): JsonResponse
     {
+        if ($user->suspended_at) {
+            $this->sendFailedLoginResponse($request, $user);
+        }
         $request->session()->remove('auth_confirmation_token');
         $request->session()->regenerate();
 
@@ -96,6 +99,9 @@ abstract class AbstractLoginController extends Controller
     /** All sign-in methods must pass through the existing two-factor checkpoint. */
     protected function beginLogin(User $user, Request $request): JsonResponse
     {
+        if ($user->suspended_at) {
+            $this->sendFailedLoginResponse($request, $user);
+        }
         if (!$user->use_totp) {
             return $this->sendLoginResponse($user, $request);
         }

@@ -5,6 +5,9 @@ use Pterodactyl\Http\Controllers\Admin;
 use Pterodactyl\Http\Middleware\Admin\Servers\ServerInstalled;
 
 Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
+Route::get('/audit-logs', [Admin\AuditLogController::class, 'index'])->name('admin.audit-logs');
+Route::post('/setup/locations', [Admin\QuickSetupController::class, 'location'])->name('admin.setup.locations');
+Route::post('/setup/nodes', [Admin\QuickSetupController::class, 'node'])->name('admin.setup.nodes');
 Route::get('/extensions/install', [Admin\BlueprintInstallController::class, 'index'])->name('admin.extensions.install');
 Route::get('/extensions/install/status', [Admin\BlueprintInstallController::class, 'status']);
 Route::post('/extensions/install', [Admin\BlueprintInstallController::class, 'store'])->middleware('throttle:5,1,blueprint-install:');
@@ -127,6 +130,7 @@ Route::group(['prefix' => 'users'], function () {
     Route::patch('/view/{user:id}', [Admin\UserController::class, 'update']);
     Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete');
     Route::delete('/view/{user:id}/avatar', [Admin\UserController::class, 'removeAvatar'])->name('admin.users.avatar.delete');
+    Route::post('/view/{user:id}/suspension', [Admin\UserSuspensionController::class, 'update'])->middleware('throttle:5,1,user-suspension:')->name('admin.users.suspension');
 });
 
 /*

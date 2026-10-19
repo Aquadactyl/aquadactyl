@@ -67,6 +67,7 @@
                 <div class="box-body row">
                     <div class="form-group col-sm-4">
                         <label for="pNodeId">{{ __('admin/ui.node') }}</label>
+                        <button class="btn btn-link quick-create-node" type="button" data-toggle="modal" data-target="#quickSetupModal"><i class="fa fa-plus" aria-hidden="true"></i> {{ __('admin/ui.create_node') }}</button>
                         <select name="node_id" id="pNodeId" class="form-control">
                             @foreach($locations as $location)
                                 <optgroup label="{{ $location->long }} ({{ $location->short }})">
@@ -82,6 +83,7 @@
                         </select>
 
                         <p class="small text-muted no-margin">{{ __('admin/ui.the_node_which_this_server_will_be_deployed_to') }}</p>
+                        <p class="small text-info" id="quick-node-created" role="status" hidden>{{ __('admin/management.node_created_help') }} <a target="_blank" rel="noopener" href="#">{{ __('admin/management.configure_daemon') }}</a></p>
                     </div>
 
                     <div class="form-group col-sm-4">
@@ -310,6 +312,7 @@
         </div>
     </div>
 </form>
+@include('admin.partials.quick-setup', ['createNode' => true])
 @endsection
 
 @section('footer-scripts')

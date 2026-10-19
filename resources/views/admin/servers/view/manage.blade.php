@@ -57,7 +57,9 @@
             </div>
         </div>
 
-        @if(! $server->isSuspended())
+        @if($server->account_suspended)
+            <div class="col-sm-4"><div class="box box-warning"><div class="box-header with-border"><h3 class="box-title">{{ __('admin/management.account_suspended') }}</h3></div><div class="box-body"><p>{{ __('admin/management.restore_account_first') }}</p><a class="btn btn-default" href="{{ route('admin.users.view', $server->owner_id, false) }}#account-suspension">{{ __('admin/management.manage_owner') }}</a></div></div></div>
+        @elseif(! $server->isSuspended())
             <div class="col-sm-4">
                 <div class="box box-warning">
                     <div class="box-header with-border">

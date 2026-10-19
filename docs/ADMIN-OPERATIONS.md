@@ -45,6 +45,55 @@ If a record reports an error, check the zone ID, scoped token, available public 
 and conflicting DNS names. DNS propagation depends on cached resolver answers.
 The API behavior is based on [Cloudflare's DNS records API](https://developers.cloudflare.com/api/resources/dns/subresources/records/).
 
+## Create infrastructure while creating a server
+
+Use **Create node** beside the node selector in **Admin > Servers > Create**.
+The dialog creates the node and a first IP/port allocation, selects them, and keeps
+the server form intact. Its **Create location** step also keeps the node draft.
+The normal **Create node** page has the same location action, including when the
+panel has no locations yet.
+
+A new node still needs a running Wings or Manta daemon. Follow **Configure daemon**
+after creating it, then return to the preserved server form. Initial node limits
+use MiB, and the first allocation must use an IP on that host and an available
+game-server port. More allocations and advanced node settings remain available
+on the node's management pages.
+
+## Suspend and restore user accounts
+
+Open **Admin > Users > user > Account access**, enter your current administrator
+password, optionally record a private reason, and choose **Suspend user and owned
+servers**. Suspension blocks sign-in, existing authenticated requests, API calls
+and new SFTP authentication. Remember-me credentials are rotated, and existing
+daemon connections are revoked through the queue. An administrator cannot suspend
+their own account or submit the action after their administrator access is revoked.
+
+Owned servers receive a separate account suspension flag. **Restore user access**
+removes that flag and allows sign-in again, while preserving manual server
+suspensions and the server's install state. It does not start stopped servers.
+Servers created for or reassigned to a suspended owner inherit the restriction.
+Restoring an account also makes its existing API keys usable again.
+
+Keep the `high` queue and scheduler running. Daemon changes run in the background;
+the user page reports pending updates and connection failures. Offline or
+transferring nodes retain the desired panel state and are retried every minute
+with `p:users:sync-suspensions`. Ordinary server unsuspension cannot bypass an
+account suspension. Other users' servers are unaffected by the account flag.
+
+## Audit administrator and user activity
+
+Open **Admin > Management > Audit logs**. Search by actor username/email, action or
+route, IP, activity type and dates. Results are paginated and include existing
+user/server activity, new administrator web changes and application API writes.
+Administrator records identify the actor, route template, method, HTTP status,
+affected mapped records, timestamp and IP. Read-only administrator page views do
+not generate audit entries.
+
+The view omits arbitrary activity properties, and new administrator request
+records never copy request bodies, query strings, passwords or API credentials.
+Activity retention uses the existing `APP_ACTIVITY_PRUNE_DAYS` setting (90 days
+by default). The regular activity pruning task applies to these records too.
+
 ## Install and remove Blueprint addons from the admin area
 
 Open **Admin > Extensions > Install Blueprint addon**, upload a `.blueprint` ZIP

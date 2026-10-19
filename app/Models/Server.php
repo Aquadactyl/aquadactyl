@@ -25,6 +25,9 @@ use Pterodactyl\Exceptions\Http\Server\ServerStateConflictException;
  * @property string $name
  * @property string $description
  * @property string|null $status
+ * @property bool $account_suspended
+ * @property bool $account_suspension_pending
+ * @property string|null $account_suspension_error
  * @property bool $skip_scripts
  * @property int $owner_id
  * @property int $memory
@@ -135,6 +138,8 @@ class Server extends Model implements Identifiable
      * on server instances unless the user specifies otherwise in the request.
      */
     protected $attributes = [
+        'account_suspended' => false,
+        'account_suspension_pending' => false,
         'status' => self::STATUS_INSTALLING,
         'oom_disabled' => true,
         'installed_at' => null,
@@ -182,6 +187,8 @@ class Server extends Model implements Identifiable
      * Cast values to correct type.
      */
     protected $casts = [
+        'account_suspended' => 'boolean',
+        'account_suspension_pending' => 'boolean',
         'node_id' => 'integer',
         'skip_scripts' => 'boolean',
         'owner_id' => 'integer',
@@ -221,7 +228,7 @@ class Server extends Model implements Identifiable
 
     public function isSuspended(): bool
     {
-        return $this->status === self::STATUS_SUSPENDED;
+        return $this->status === self::STATUS_SUSPENDED || (bool) $this->account_suspended;
     }
 
     /**

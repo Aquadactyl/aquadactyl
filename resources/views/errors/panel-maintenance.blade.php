@@ -6,6 +6,7 @@
     $siteName = config('app.name', 'Aquadactyl');
     $defaultBrand = strtolower(trim($siteName)) === 'aquadactyl';
     $preview = $preview ?? false;
+    $accountSuspended = $accountSuspended ?? false;
 @endphp
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -15,7 +16,7 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="color-scheme" content="dark">
     <meta name="theme-color" content="#11161b">
-    <title>{{ __('admin/operations.maintenance') }} - {{ $siteName }}</title>
+    <title>{{ $accountSuspended ? __('admin/management.account_suspended') : __('admin/operations.maintenance') }} - {{ $siteName }}</title>
     @include('partials.favicons')
     @include('partials.fonts')
     <link rel="stylesheet" href="/themes/pterodactyl/css/maintenance.css?v={{ filemtime(public_path('themes/pterodactyl/css/maintenance.css')) }}">
@@ -46,15 +47,19 @@
         </header>
         <section class="maintenance-card" aria-labelledby="maintenance-title">
             <div class="maintenance-server" aria-hidden="true"><span><i></i><b></b></span><span><i></i><b></b></span><span><i></i><b></b></span></div>
-            <div class="maintenance-status"><span aria-hidden="true"></span>{{ __('admin/operations.maintenance_in_progress') }}</div>
-            <h1 id="maintenance-title">{{ __('admin/operations.back_shortly') }}</h1>
+            <div class="maintenance-status"><span aria-hidden="true"></span>{{ $accountSuspended ? __('admin/management.account_suspended') : __('admin/operations.maintenance_in_progress') }}</div>
+            <h1 id="maintenance-title">{{ $accountSuspended ? __('admin/management.account_suspended') : __('admin/operations.back_shortly') }}</h1>
             <p class="maintenance-message">{{ $message }}</p>
-            <p class="maintenance-reassurance">{{ __('admin/operations.servers_keep_running') }}</p>
+            @unless($accountSuspended)<p class="maintenance-reassurance">{{ __('admin/operations.servers_keep_running') }}</p>@endunless
             <div class="maintenance-actions">
+                @if($accountSuspended)
+                    <a class="maintenance-button maintenance-button-primary" href="/auth/login">{{ __('admin/management.back_to_login') }}</a>
+                @else
                 <a class="maintenance-button maintenance-button-primary" href="/">{{ __('admin/operations.try_again') }}</a>
                 <a class="maintenance-button maintenance-button-secondary" href="/auth/login">{{ __('admin/operations.admin_sign_in') }} <span aria-hidden="true">&rarr;</span></a>
+                @endif
             </div>
-            <p class="maintenance-admin-help">{{ __('admin/operations.admin_access_help') }}</p>
+            @unless($accountSuspended)<p class="maintenance-admin-help">{{ __('admin/operations.admin_access_help') }}</p>@endunless
         </section>
         <footer class="maintenance-footer">{{ __('admin/operations.powered_by') }} <a href="https://aquadactyl.uk" target="_blank" rel="noopener noreferrer">Aquadactyl</a></footer>
     </main>

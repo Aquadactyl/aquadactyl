@@ -4,7 +4,6 @@ namespace Pterodactyl\Http\Controllers\Admin\Servers;
 
 use Illuminate\View\View;
 use Pterodactyl\Models\Nest;
-use Pterodactyl\Models\Node;
 use Pterodactyl\Models\Location;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
@@ -34,13 +33,6 @@ class CreateServerController extends Controller
      */
     public function index(): View|RedirectResponse
     {
-        $nodes = Node::all();
-        if (count($nodes) < 1) {
-            $this->alert->warning(trans('admin/server.alerts.node_required'))->flash();
-
-            return redirect()->route('admin.nodes');
-        }
-
         $nests = $this->nestRepository->getWithEggs();
 
         \JavaScript::put([
@@ -53,7 +45,7 @@ class CreateServerController extends Controller
         ]);
 
         return view('admin.servers.new', [
-            'locations' => Location::all(),
+            'locations' => Location::with('nodes')->get(),
             'nests' => $nests,
         ]);
     }

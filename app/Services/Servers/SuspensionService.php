@@ -30,10 +30,13 @@ class SuspensionService
         Assert::oneOf($action, [self::ACTION_SUSPEND, self::ACTION_UNSUSPEND]);
 
         $isSuspending = $action === self::ACTION_SUSPEND;
+        if (!$isSuspending && $server->account_suspended) {
+            throw new ConflictHttpException(__('admin/management.restore_account_first'));
+        }
         // Nothing needs to happen if we're suspending the server, and it is already
         // suspended in the database. Additionally, nothing needs to happen if the server
         // is not suspended, and we try to un-suspend the instance.
-        if ($isSuspending === $server->isSuspended()) {
+        if ($isSuspending === ($server->status === Server::STATUS_SUSPENDED)) {
             return;
         }
 

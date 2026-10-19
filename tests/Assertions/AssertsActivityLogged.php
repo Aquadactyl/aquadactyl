@@ -41,13 +41,16 @@ trait AssertsActivityLogged
         }
 
         Event::assertDispatched(ActivityLogged::class, function (ActivityLogged $e) use ($event, $subjects) {
+            if (!$e->is($event)) {
+                return false;
+            }
             Assert::assertEquals($event, $e->model->event);
             Assert::assertNotEmpty($e->model->subjects);
 
             foreach ($subjects as $subject) {
                 $match = $e->model->subjects->first(function (ActivityLogSubject $model) use ($subject) {
                     return $model->subject_type === $subject->getMorphClass()
-                        && $model->subject_id = $subject->getKey();
+                        && $model->subject_id === $subject->getKey();
                 });
 
                 Assert::assertNotNull(
@@ -67,6 +70,9 @@ trait AssertsActivityLogged
     public function assertActivityActor(string $event, ?Model $actor = null): void
     {
         Event::assertDispatched(ActivityLogged::class, function (ActivityLogged $e) use ($event, $actor) {
+            if (!$e->is($event)) {
+                return false;
+            }
             Assert::assertEquals($event, $e->model->event);
 
             if (is_null($actor)) {

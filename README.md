@@ -40,6 +40,8 @@ using server definitions from the Pterodactyl egg ecosystem.
   Admins can search Other servers by owner username, email or name.
 - **Administration:** Branding, SMTP/Mailgun/Postmark/SES delivery and optional
   features configured in the admin area. Unconfigured sign-in methods stay hidden.
+  Create nodes and locations without leaving the server setup flow, temporarily
+  suspend user accounts and their servers, and review panel-wide audit logs.
 - **Server domains and operations:** Cloudflare-managed server subdomains, admin
   Blueprint installation/removal, themed panel maintenance with an admin preview,
   a lightweight log viewer and a daemon overview. See the [setup guide](docs/ADMIN-OPERATIONS.md).

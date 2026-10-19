@@ -14,12 +14,12 @@ beforeEach(function () { $this->actingAs(User::factory()->create(['root_admin' =
 test('server creation without a node guides administrators to node setup', function () {
     Server::query()->delete();
     Node::query()->delete();
-    $this->get('/admin/servers/new')->assertRedirect(route('admin.nodes'));
+    $this->get('/admin/servers/new')->assertOk()->assertSee('quickSetupModal');
 });
 
 test('node creation without locations guides administrators to location setup', function () {
     $this->mock(Pterodactyl\Repositories\Eloquent\LocationRepository::class)->expects('all')->andReturn(collect());
-    $this->get('/admin/nodes/new')->assertRedirect(route('admin.locations'));
+    $this->get('/admin/nodes/new')->assertOk()->assertSee('quick-location-form');
 });
 
 test('the administrative nest creation page renders its form', function () {
