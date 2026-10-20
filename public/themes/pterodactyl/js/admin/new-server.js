@@ -115,9 +115,9 @@ $('#pEggId').on('change', function (event) {
     });
 
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     const variableIds = {};
@@ -173,9 +173,9 @@ function updateAdditionalAllocations() {
 
 function initUserIdSelect(data) {
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     $('#pUserId').select2({

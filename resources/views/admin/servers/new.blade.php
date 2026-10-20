@@ -324,31 +324,34 @@
         function serviceVariablesUpdated(eggId, ids) {
             @if (old('egg_id'))
                 // Check if the egg id matches.
-                if (eggId != '{{ old('egg_id') }}') {
+                if (eggId != {{ \Illuminate\Support\Js::from(old('egg_id')) }}) {
                     return;
                 }
 
                 @if (old('environment'))
-                    @foreach (old('environment') as $key => $value)
-                        $('#' + ids['{{ $key }}']).val('{{ $value }}');
-                    @endforeach
+                    const previousEnvironment = {{ \Illuminate\Support\Js::from(old('environment')) }};
+                    Object.keys(previousEnvironment).forEach(function (key) {
+                        const input = Object.prototype.hasOwnProperty.call(ids, key) ? document.getElementById(ids[key]) : null;
+                        if (input) $(input).val(previousEnvironment[key]);
+                    });
                 @endif
             @endif
             @if(old('image'))
-                $('#pDefaultContainer').val('{{ old('image') }}').trigger('change.select2');
+                $('#pDefaultContainer').val({{ \Illuminate\Support\Js::from(old('image')) }}).trigger('change.select2');
             @endif
         }
         // END Persist 'Service Variables'
     </script>
 
-    {!! Theme::js('js/admin/new-server.js?v=20220530') !!}
+    {!! Theme::js('js/admin/new-server.js?v=' . filemtime(public_path('themes/pterodactyl/js/admin/new-server.js'))) !!}
 
     <script type="application/javascript">
         $(document).ready(function() {
             // Persist 'Server Owner' select2
             @if (old('owner_id'))
                 $.ajax({
-                    url: '/admin/users/accounts.json?user_id={{ old('owner_id') }}',
+                    url: '/admin/users/accounts.json',
+                    data: { user_id: {{ \Illuminate\Support\Js::from(old('owner_id')) }} },
                     dataType: 'json',
                 }).then(function (data) {
                     initUserIdSelect([ data ]);
@@ -360,21 +363,17 @@
 
             // Persist 'Node' select2
             @if (old('node_id'))
-                $('#pNodeId').val('{{ old('node_id') }}').change();
+                $('#pNodeId').val({{ \Illuminate\Support\Js::from(old('node_id')) }}).change();
 
                 // Persist 'Default Allocation' select2
                 @if (old('allocation_id'))
-                    $('#pAllocation').val('{{ old('allocation_id') }}').change();
+                    $('#pAllocation').val({{ \Illuminate\Support\Js::from(old('allocation_id')) }}).change();
                 @endif
                 // END Persist 'Default Allocation' select2
 
                 // Persist 'Additional Allocations' select2
                 @if (old('allocation_additional'))
-                    const additional_allocations = [];
-
-                    @for ($i = 0; $i < count(old('allocation_additional')); $i++)
-                        additional_allocations.push('{{ old('allocation_additional.'.$i)}}');
-                    @endfor
+                    const additional_allocations = {{ \Illuminate\Support\Js::from(old('allocation_additional')) }};
 
                     $('#pAllocationAdditional').val(additional_allocations).change();
                 @endif
@@ -384,11 +383,11 @@
 
             // Persist 'Nest' select2
             @if (old('nest_id'))
-                $('#pNestId').val('{{ old('nest_id') }}').change();
+                $('#pNestId').val({{ \Illuminate\Support\Js::from(old('nest_id')) }}).change();
 
                 // Persist 'Egg' select2
                 @if (old('egg_id'))
-                    $('#pEggId').val('{{ old('egg_id') }}').change();
+                    $('#pEggId').val({{ \Illuminate\Support\Js::from(old('egg_id')) }}).change();
                 @endif
                 // END Persist 'Egg' select2
             @endif

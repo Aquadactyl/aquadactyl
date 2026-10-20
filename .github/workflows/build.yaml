@@ -43,4 +43,5 @@ jobs:
           if-no-files-found: ignore
       - run: pnpm run test:game-query
       - run: pnpm run test:blueprint-compat
+      - run: pnpm run test:admin-security
       - run: pnpm run build

@@ -146,9 +146,9 @@
     @parent
     <script>
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     (function getInformation() {
@@ -163,7 +163,7 @@
         }).done(function (data) {
             $('[data-attr="info-version"]').html(escapeHtml(data.version));
             $('[data-attr="info-system"]').html(escapeHtml(data.system.type) + ' (' + escapeHtml(data.system.arch) + ') <code>' + escapeHtml(data.system.release) + '</code>');
-            $('[data-attr="info-cpus"]').html(data.system.cpus);
+            $('[data-attr="info-cpus"]').text(data.system.cpus);
         }).fail(function (jqXHR) {
             $('[data-attr="info-version"]').text(@json(__('admin/operations.unreachable')));
             $('[data-attr="info-system"], [data-attr="info-cpus"]').text(@json(__('admin/operations.not_reported')));

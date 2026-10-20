@@ -98,9 +98,9 @@
     @parent
     <script>
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     $('#pUserId').select2({
@@ -135,11 +135,11 @@
         templateSelection: function (data) {
             if (typeof data.name_first === 'undefined') {
                 data = {
-                    md5: '{{ md5(strtolower($server->user->email)) }}',
-                    name_first: '{{ $server->user->name_first }}',
-                    name_last: '{{ $server->user->name_last }}',
-                    email: '{{ $server->user->email }}',
-                    id: {{ $server->owner_id }}
+                    md5: {{ \Illuminate\Support\Js::from(md5(strtolower($server->user->email))) }},
+                    name_first: {{ \Illuminate\Support\Js::from($server->user->name_first) }},
+                    name_last: {{ \Illuminate\Support\Js::from($server->user->name_last) }},
+                    email: {{ \Illuminate\Support\Js::from($server->user->email) }},
+                    id: {{ \Illuminate\Support\Js::from($server->owner_id) }}
                 };
             }
 

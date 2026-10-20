@@ -102,11 +102,12 @@
             url: '{{ route('admin.nodes.view.configuration.token', $node->id) }}',
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
         }).done(function (data) {
-            var command = 'cd /etc/pterodactyl && sudo wings configure --panel-url {{ config('app.url') }} --token ' + data.token + ' --node ' + data.node + '{{ config('app.debug') ? ' --allow-insecure' : '' }}';
+            var command = 'cd /etc/pterodactyl && sudo wings configure --panel-url ' + {{ \Illuminate\Support\Js::from(config('app.url')) }} + ' --token ' + data.token + ' --node ' + data.node + {{ \Illuminate\Support\Js::from(config('app.debug') ? ' --allow-insecure' : '') }};
+            var commandBlock = $('<pre>').attr({ 'data-sensitive': '', tabindex: '0' }).css({ whiteSpace: 'pre-wrap', wordBreak: 'break-all', textAlign: 'left', marginTop: '10px' }).text(command);
             swal({
                 type: 'success',
                 title: @json(__('admin/ui.token_created')),
-                html: '<p>To auto-configure your node run the following command:<br /><small><pre data-sensitive tabindex="0" style="white-space: pre-wrap; word-break: break-all; text-align: left; margin-top: 10px;">' + command + '</pre></small></p>'
+                html: $('<div>').append($('<p>').text('To auto-configure your node run the following command:'), commandBlock)[0]
             });
         }).fail(function () {
             swal({

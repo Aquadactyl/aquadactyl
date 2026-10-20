@@ -33,12 +33,12 @@
             </script>
             @if(!is_null(Auth::user()))
                 <script>
-                    window.PterodactylUser = {!! json_encode(Auth::user()->toVueObject()) !!};
+                    window.PterodactylUser = {!! \Illuminate\Support\Js::encode(Auth::user()->toVueObject()) !!};
                 </script>
             @endif
             @if(!empty($siteConfiguration))
                 <script>
-                    window.SiteConfiguration = {!! json_encode($siteConfiguration) !!};
+                    window.SiteConfiguration = {!! \Illuminate\Support\Js::encode($siteConfiguration) !!};
                 </script>
             @endif
         @show

@@ -105,9 +105,9 @@
     {!! Theme::js('vendor/lodash/lodash.js') !!}
     <script>
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     $(document).ready(function () {

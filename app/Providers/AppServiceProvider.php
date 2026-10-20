@@ -74,6 +74,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->scoped(\Pterodactyl\Services\Users\LanguageService::class);
         $this->app->scoped(\Pterodactyl\Services\Integrations\IntegrationSettings::class);
 
+        $this->app->extend('JavaScript', fn ($transformer, $app) => new \Pterodactyl\Extensions\JavaScript\SafeJavascriptTransformer(
+            new \Laracasts\Utilities\JavaScript\LaravelViewBinder($app['events'], config('javascript.bind_js_vars_to_this_view')),
+            config('javascript.js_namespace'),
+        ));
+
         // Merge Blueprint extension fs config with existing filesystem config.
         $this->app->register(ExtensionfsConfigProvider::class);
 

@@ -6,6 +6,10 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+### Security
+
+- Encode account data, branding and restored form values for inline JavaScript contexts. Harden legacy Blueprint JavaScript injection and admin form HTML attributes against stored input being interpreted as code.
+
 ### Added
 
 - Discord and signed JSON webhooks for system actions, status changes and panel or daemon updates, with event subscriptions, encrypted credentials, queued delivery and retry history.
