@@ -6,9 +6,12 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
 use Pterodactyl\Models\BlueprintInstallation;
+use Pterodactyl\Tests\Fixtures\RuntimeFaults;
 use Pterodactyl\Services\Blueprint\BlueprintArchive;
 use Pterodactyl\Services\Blueprint\BlueprintInstaller;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+
+require_once __DIR__ . '/../../../../Fixtures/RuntimeFaults.php';
 
 uses(DatabaseTransactions::class);
 
@@ -27,6 +30,8 @@ function operationsBlueprintPackage(array $entries = ['conf.yml' => "info:\n  id
 }
 
 beforeEach(function () {
+    RuntimeFaults::$enabled['blueprint.posix_available'] = true;
+    RuntimeFaults::$enabled['blueprint.euid'] = 0;
     config()->set(['pterodactyl.auth.2fa_required' => 0, 'aquadactyl.blueprint.web_install_enabled' => true]);
     $this->admin = User::factory()->create(['root_admin' => true]);
     $this->actingAs($this->admin);
@@ -36,6 +41,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    unset(RuntimeFaults::$enabled['blueprint.posix_available'], RuntimeFaults::$enabled['blueprint.euid']);
     File::delete($this->package, base_path('coverageaddon.blueprint'));
     foreach (BlueprintInstallation::all() as $installation) {
         File::delete($installation->archivePath(), base_path('.blueprint-install-' . $installation->id));
@@ -123,10 +129,24 @@ test('explicitly confirmed updates can replace an existing package', function ()
     expect($installation->fresh()->status)->toBe('completed')->and(hash_file('sha256', base_path('coverageaddon.blueprint')))->toBe($installation->sha256);
 });
 
-test('the privileged worker is opt in and fails when disabled', function () {
-    config()->set('aquadactyl.blueprint.web_install_enabled', false);
-    $this->artisan('p:blueprint:work --once')->assertFailed();
-});
+test('the privileged worker rejects disabled non-root and missing-POSIX environments before processing work', function (bool $enabled, bool $posixAvailable, int $uid) {
+    config()->set('aquadactyl.blueprint.web_install_enabled', $enabled);
+    RuntimeFaults::$enabled['blueprint.posix_available'] = $posixAvailable;
+    RuntimeFaults::$enabled['blueprint.euid'] = $uid;
+    Cache::forget('blueprint-worker-heartbeat');
+    $this->mock(BlueprintInstaller::class)->shouldNotReceive('runNext');
+
+    $this->artisan('p:blueprint:work --once')
+        ->expectsOutput('Enable AQUADACTYL_BLUEPRINT_WEB_INSTALL_ENABLED and run this dedicated worker as root.')
+        ->assertFailed();
+
+    expect(Cache::has('blueprint-worker-heartbeat'))->toBeFalse();
+    Process::assertNothingRan();
+})->with([
+    'disabled' => [false, true, 0],
+    'non-root' => [true, true, 1001],
+    'POSIX unavailable' => [true, false, 0],
+]);
 
 test('idle workers finish single runs and interrupted jobs are marked for review', function () {
     $installation = BlueprintInstallation::create(['user_id' => $this->admin->id, 'identifier' => 'coverageaddon', 'sha256' => str_repeat('a', 64), 'status' => 'running', 'updated_at' => now()->subHour()]);

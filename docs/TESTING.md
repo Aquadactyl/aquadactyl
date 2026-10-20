@@ -8,11 +8,12 @@ were last verified on 13 October 2026.
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
 | Panel frontend       |         1,560 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         2,173 | 100% executable lines; 29,417 assertions                       |
+| Panel PHP            |         2,175 | 100% executable lines; 29,434 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
-The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining
-PHP/database combinations and database-free unit tests run in CI.
+The complete PHP suite was measured using PHP 8.5 and MariaDB 11 as unprivileged
+UID 1001; the remaining PHP/database combinations and database-free unit tests run
+in CI.
 
 ## Frontend
 
@@ -72,6 +73,12 @@ Keep the dependency volumes for the next run. This command does not stop the pan
 ## CI and test design
 
 The PHP matrix checks PHP 8.4/8.5 with MariaDB 10/11 and MySQL 8/9. Unit tests also run with `DB_HOST=UNIT_NO_DB` to detect accidental database access. The PHP 8.5/MariaDB 11 job collects whole-suite PCOV coverage, requires 100% and uploads `php-coverage`.
+
+Blueprint worker tests simulate POSIX availability and effective user IDs through
+test-only fixtures, so the suite can run without root. They verify that disabled
+workers, non-root users and missing POSIX support cannot process operations.
+Webhook JSON assertions check the exact subject fields and value types without
+depending on the database's object key order.
 
 CI, Composer test scripts and the isolated Docker runner enable PHP assertions with `zend.assertions=1`. This keeps invariant checks active during tests and makes coverage consistent across PHP installations. Set this before PHP starts; changing it from a production setting after source files have been compiled cannot reliably enable assertions.
 

@@ -15,6 +15,22 @@ namespace Pterodactyl\Services\Accounts\OAuth {
     }
 }
 
+namespace Pterodactyl\Console\Commands\Blueprint {
+    function function_exists(string $function): bool
+    {
+        if ($function === 'posix_geteuid' && array_key_exists('blueprint.posix_available', \Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled)) {
+            return \Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['blueprint.posix_available'];
+        }
+
+        return \function_exists($function);
+    }
+
+    function posix_geteuid(): int
+    {
+        return \Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled['blueprint.euid'] ?? \posix_geteuid();
+    }
+}
+
 namespace Pterodactyl\Services\Users {
     function random_int(int $minimum, int $maximum): int
     {

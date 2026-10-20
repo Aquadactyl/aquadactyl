@@ -256,7 +256,10 @@ test('system action payloads exclude arbitrary properties and wait for subjects 
     $listener->handle(new ActivityLogged(ActivityLog::create(['ip' => '127.0.0.1', 'event' => 'server:power.start', 'properties' => ['command' => 'secret']])));
     expect(WebhookDelivery::count())->toBe(2);
     $data = WebhookDelivery::first()->payload['data'];
-    expect($data)->toHaveKeys(['action', 'activity_id', 'actor_id', 'subjects', 'route', 'method', 'status'])->not->toHaveKeys(['password', 'secret', 'command'])->and($data['subjects'])->toBe([['type' => 'server', 'id' => 123]]);
+    expect($data)->toHaveKeys(['action', 'activity_id', 'actor_id', 'subjects', 'route', 'method', 'status'])->not->toHaveKeys(['password', 'secret', 'command']);
+    // MySQL normalizes JSON object key order; preserve strict values and shape.
+    expect($data['subjects'])->toHaveCount(1)->and($data['subjects'][0])->toHaveCount(2);
+    expect($data['subjects'][0]['type'])->toBe('server')->and($data['subjects'][0]['id'])->toBe(123);
     WebhookEndpoint::query()->update(['enabled' => false]);
     WebhookEmitter::clearSubscriptions();
     $listener->handle(new ActivityLogged($activity));

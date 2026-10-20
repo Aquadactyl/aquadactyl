@@ -5,13 +5,18 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Process;
 use Pterodactyl\Models\BlueprintInstallation;
+use Pterodactyl\Tests\Fixtures\RuntimeFaults;
 use Pterodactyl\Services\Blueprint\BlueprintInstaller;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Pterodactyl\Services\Blueprint\BlueprintExtensionRegistry;
 
+require_once __DIR__ . '/../../../../Fixtures/RuntimeFaults.php';
+
 uses(DatabaseTransactions::class);
 
 beforeEach(function () {
+    RuntimeFaults::$enabled['blueprint.posix_available'] = true;
+    RuntimeFaults::$enabled['blueprint.euid'] = 0;
     config()->set(['pterodactyl.auth.2fa_required' => 0, 'aquadactyl.blueprint.web_install_enabled' => true]);
     $this->admin = User::factory()->create(['root_admin' => true]);
     $this->actingAs($this->admin);
@@ -27,6 +32,7 @@ beforeEach(function () {
 });
 
 afterEach(function () {
+    unset(RuntimeFaults::$enabled['blueprint.posix_available'], RuntimeFaults::$enabled['blueprint.euid']);
     File::deleteDirectory($this->extension);
     if ($this->previousRegistry === null) {
         File::delete($this->registry);
