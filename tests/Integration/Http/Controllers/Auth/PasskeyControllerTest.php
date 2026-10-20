@@ -129,3 +129,41 @@ test('an existing passkey is excluded from enrollment and cannot be registered t
     $this->postJson('/account/security/passkeys', $this->authenticator->registration($options->json('publicKey.challenge')))->assertUnprocessable();
     expect(AccountPasskey::where('user_id', $this->user->id)->count())->toBe(1);
 });
+
+test('passkey enrollment rejects account changes even if verification holds an older user snapshot', function (string $change) {
+    $options = $this->actingAs($this->user)->postJson('/account/security/passkeys/options', ['current_password' => 'PasskeyTesting123!'])->assertOk();
+    $snapshot = $this->user->fresh();
+    $registration = $this->authenticator->registration($options->json('publicKey.challenge'));
+    User::whereKey($snapshot->id)->update($change === 'password'
+        ? ['password' => Hash::make('ChangedPassword123!')]
+        : ['suspended_at' => now()]);
+    $request = Illuminate\Http\Request::create('/account/security/passkeys', 'POST');
+    $request->setLaravelSession(app('session.store'));
+
+    expect(fn () => app(PasskeyService::class)->register($request, $snapshot, $registration))->toThrow(Illuminate\Validation\ValidationException::class);
+    $this->assertDatabaseMissing('account_passkeys', ['user_id' => $snapshot->id]);
+})->with(['password', 'suspension']);
+
+test('changing client IPs does not bypass the account security password attempt limit', function () {
+    $this->actingAs($this->user);
+    for ($attempt = 0; $attempt < 10; ++$attempt) {
+        $this->withServerVariables(['REMOTE_ADDR' => '192.0.2.' . ($attempt + 1)])
+            ->postJson('/account/security/passkeys/options', ['current_password' => 'wrong'])->assertUnprocessable();
+    }
+    $this->withServerVariables(['REMOTE_ADDR' => '198.51.100.1'])
+        ->postJson('/account/security/passkeys/options', ['current_password' => 'wrong'])->assertTooManyRequests()->assertHeader('Retry-After');
+    $this->assertDatabaseMissing('account_passkeys', ['user_id' => $this->user->id]);
+});
+
+test('password confirmation attempts share an account limit across client and administrator settings', function () {
+    $this->user->update(['root_admin' => true]);
+    $this->actingAs($this->user);
+    for ($attempt = 0; $attempt < 10; ++$attempt) {
+        $this->withServerVariables(['REMOTE_ADDR' => '192.0.2.' . ($attempt + 1)]);
+        ($attempt % 2 === 0
+            ? $this->postJson('/account/security/passkeys/options', ['current_password' => 'wrong'])
+            : $this->patchJson('/admin/settings/oauth', ['current_password' => 'wrong']))->assertUnprocessable();
+    }
+    $this->withServerVariables(['REMOTE_ADDR' => '198.51.100.1'])
+        ->patchJson('/admin/settings/oauth', ['current_password' => 'PasskeyTesting123!'])->assertTooManyRequests()->assertHeader('Retry-After');
+});

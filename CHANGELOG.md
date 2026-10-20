@@ -6,6 +6,19 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v0.2-beta
+
+### Security
+
+- Recheck OAuth provider configuration after external requests. Reject callbacks when a provider is disabled or reconfigured while its response is in flight.
+- Check the current account password and suspension status under a database lock before linking OAuth accounts or enrolling passkeys, preventing older authorized requests from storing new sign-in methods after an account security change.
+- Share password-confirmation limits across account and administrator actions, including Blueprint, OAuth, webhooks and integration settings. Changing IPs or action endpoints does not reset the account limit. Successful confirmation clears previous failures.
+
+### Validation
+
+- 2,188 PHP tests and 29,544 assertions pass with 100% executable line coverage on PHP 8.5 and MariaDB 11, running as an unprivileged user.
+- Added regression checks for concurrent account and provider changes, distributed password-confirmation attempts, cooldown expiry and independent account limits.
+
 ## v0.1-beta
 
 ### Security

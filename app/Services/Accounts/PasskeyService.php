@@ -115,16 +115,24 @@ class PasskeyService
         }
 
         $id = self::encode($result->credentialId);
-        if (AccountPasskey::query()->where('credential_id_hash', hash('sha256', $id))->exists()) {
-            throw ValidationException::withMessages(['credential' => 'This passkey has already been registered.']);
-        }
 
-        return AccountPasskey::query()->create([
-            'user_id' => $user->id, 'name' => $data['name'], 'credential_id' => $id,
-            'credential_id_hash' => hash('sha256', $id), 'public_key' => $result->credentialPublicKey,
-            'signature_counter' => $result->signatureCounter ?? 0,
-            'transports' => $data['response']['transports'] ?? [],
-        ]);
+        return DB::transaction(function () use ($user, $id, $result, $data) {
+            // A password reset or suspension can happen while attestation is verified.
+            $currentUser = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+            if ($currentUser->suspended_at || !hash_equals($user->password, $currentUser->password)) {
+                throw ValidationException::withMessages(['credential' => 'This passkey request has expired. Please try again.']);
+            }
+            if (AccountPasskey::query()->where('credential_id_hash', hash('sha256', $id))->exists()) {
+                throw ValidationException::withMessages(['credential' => 'This passkey has already been registered.']);
+            }
+
+            return AccountPasskey::query()->create([
+                'user_id' => $currentUser->id, 'name' => $data['name'], 'credential_id' => $id,
+                'credential_id_hash' => hash('sha256', $id), 'public_key' => $result->credentialPublicKey,
+                'signature_counter' => $result->signatureCounter ?? 0,
+                'transports' => $data['response']['transports'] ?? [],
+            ]);
+        });
     }
 
     public function authenticate(Request $request, array $data): User
@@ -135,6 +143,7 @@ class PasskeyService
 
         return DB::transaction(function () use ($data, $id, $webauthn, $challenge) {
             $key = AccountPasskey::query()->where('credential_id_hash', hash('sha256', $id))->lockForUpdate()->first();
+            /** @var User|null $user */
             $user = $key?->user;
             if (!$user || !hash_equals($user->uuid, self::decode($data['response']['userHandle']))) {
                 throw ValidationException::withMessages(['credential' => 'This passkey could not sign in to your account.']);

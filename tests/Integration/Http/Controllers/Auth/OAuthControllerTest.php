@@ -25,15 +25,19 @@ beforeEach(function () {
     $settings->set('oauth:google:client_secret', Crypt::encryptString('test-secret'));
 });
 
-function mockGoogleAccount($test, string $subject = 'provider-subject'): void
+function mockGoogleAccount($test, string $subject = 'provider-subject', ?Closure $duringProfile = null): void
 {
     $factory = new OAuthProviderFactory();
     $mock = Mockery::mock(OAuthProviderFactory::class);
     app()->instance(OAuthProviderFactory::class, $mock);
-    $mock->shouldReceive('make')->andReturnUsing(function ($config, $nonce) use ($factory, $test, $subject) {
+    $mock->shouldReceive('make')->andReturnUsing(function ($config, $nonce) use ($factory, $test, $subject, $duringProfile) {
         $handler = new MockHandler([
             new Response(200, ['Content-Type' => 'application/json'], json_encode(['access_token' => 'fake-access-token', 'token_type' => 'Bearer'])),
-            new Response(200, ['Content-Type' => 'application/json'], json_encode(['sub' => $subject, 'name' => 'Provider user', 'email' => $test->user->email, 'email_verified' => true])),
+            function () use ($test, $subject, $duringProfile) {
+                $duringProfile?->__invoke();
+
+                return new Response(200, ['Content-Type' => 'application/json'], json_encode(['sub' => $subject, 'name' => 'Provider user', 'email' => $test->user->email, 'email_verified' => true]));
+            },
         ]);
 
         return $factory->make($config, $nonce)->setHttpClient(new Client(['handler' => HandlerStack::create($handler)]));
@@ -231,3 +235,28 @@ test('malformed panel origins and undecryptable provider secrets fail closed', f
     config()->set('app.url', 'https://username:password@example.test');
     expect(fn () => $settings->origin())->toThrow(RuntimeException::class, 'absolute panel URL');
 });
+
+test('OAuth linking rejects security changes made while the provider response is in flight', function (string $change) {
+    mockGoogleAccount($this, duringProfile: function () use ($change) {
+        match ($change) {
+            'password' => User::whereKey($this->user->id)->update(['password' => Hash::make('ChangedPassword123!')]),
+            'suspension' => User::whereKey($this->user->id)->update(['suspended_at' => now()]),
+            'disabled' => app(AccountSecuritySettings::class)->set('oauth:google:enabled', '0'),
+            'configuration' => app(AccountSecuritySettings::class)->set('oauth:google:client_id', 'replacement-client'),
+        };
+    });
+    $this->actingAs($this->user)->postJson('/account/security/oauth/google', ['current_password' => 'OAuthTesting123!'])->assertOk();
+    completeGoogleCallback($this)->assertRedirect('/account')->assertSessionHas('oauth_error')->assertSessionMissing('oauth_notice');
+    $this->assertDatabaseMissing('account_oauth_identities', ['user_id' => $this->user->id]);
+})->with(['password', 'suspension', 'disabled', 'configuration']);
+
+test('OAuth sign in rejects provider changes made while the profile response is in flight', function (string $change) {
+    linkedGoogleAccount($this);
+    mockGoogleAccount($this, duringProfile: function () use ($change) {
+        app(AccountSecuritySettings::class)->set('oauth:google:' . ($change === 'disabled' ? 'enabled' : 'client_id'), $change === 'disabled' ? '0' : 'replacement-client');
+    });
+    $this->get('/auth/oauth/google')->assertRedirect();
+    completeGoogleCallback($this)->assertRedirect('/auth/login')->assertSessionHas('oauth_error');
+    $this->assertGuest();
+    expect(AccountOAuthIdentity::where('user_id', $this->user->id)->firstOrFail()->last_used_at)->toBeNull();
+})->with(['disabled', 'configuration']);

@@ -30,6 +30,13 @@ time step, including codes accepted for clock skew. Verification and configurati
 changes serialize against the user record. Account-based attempt limits apply
 across client IP addresses and sign-in methods, alongside the IP-based limits.
 
+OAuth callbacks recheck provider configuration after the provider's HTTP requests.
+OAuth linking and passkey enrollment verify the current password hash and
+suspension status under an account lock before storing a new sign-in method.
+Password confirmation shares a limit of ten failed attempts per minute across
+account settings and administrator actions, regardless of client IP. A successful
+confirmation clears failed attempts; existing route limits also apply.
+
 Daemon, Cloudflare DNS and CAPTCHA requests do not follow redirects with sensitive
 request bodies. Configure the final daemon URL and scheme directly; the panel
 does not follow an HTTP-to-HTTPS redirect to reach a node. CAPTCHA network failures

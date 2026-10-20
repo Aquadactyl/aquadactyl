@@ -31,6 +31,11 @@ class AccountSecuritySettings
         $this->values = null;
     }
 
+    public function refresh(): void
+    {
+        $this->values = null;
+    }
+
     public function origin(): string
     {
         $parts = parse_url(config('app.url'));

@@ -56,6 +56,13 @@ settings use `APP_ENVIRONMENT_ONLY=true`.
 Sign in using your existing password and open **Account settings → Passkeys and
 connected accounts**. Confirm your current password before changing sign-in methods.
 
+Password confirmation allows ten failed attempts per minute per account across
+account and administrator actions, in addition to existing route limits. Changing IPs does
+not reset this limit. Successful confirmation clears failed attempts. If the
+password changes or the account is suspended while a new sign-in method is being
+verified, enrollment is rejected and must be started again. OAuth callbacks also
+reject provider changes made while waiting for the provider's response.
+
 Account settings only shows methods enabled by the administrator. The connected
 accounts section appears when at least one OAuth provider is enabled and has its
 required credentials configured, including an issuer for OpenID Connect. Disabled
@@ -97,7 +104,8 @@ failure. These limits apply to discovery/JWKS documents.
 The integration tests use a software authenticator with real ES256 signatures and
 mock provider HTTP responses with real signed OIDC tokens. They cover origin,
 challenge, signature, user verification, replay, counters, session binding, state,
-PKCE, nonce, issuer, audience, account ownership, encrypted secrets, and the native
+PKCE, nonce, issuer, audience, account ownership, encrypted secrets, concurrent
+account/provider changes, shared password-confirmation limits, and the native
 two-factor checkpoint. External provider sign-in also needs real application
 credentials and a callback URL reachable from the user's browser.
 

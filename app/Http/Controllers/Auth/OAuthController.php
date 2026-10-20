@@ -4,6 +4,7 @@ namespace Pterodactyl\Http\Controllers\Auth;
 
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Pterodactyl\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -90,13 +91,24 @@ class OAuthController extends AbstractLoginController
             }
 
             $profile = $factory->make($config, $flow['nonce'])->user();
+            // Provider HTTP calls can outlive an administrator's configuration change.
+            $settings->refresh();
+            $currentConfig = $settings->provider($provider);
+            if (!$currentConfig['enabled'] || !hash_equals($flow['fingerprint'], $this->fingerprint($currentConfig))) {
+                throw new \RuntimeException('The sign-in provider configuration changed.');
+            }
             $subject = (string) $profile->getId();
             if ($subject === '' || strlen($subject) > 255) {
                 throw new \RuntimeException('Missing provider account ID.');
             }
             $hash = AccountOAuthIdentity::identityHash($provider, $config['issuer'], $subject);
             if ($flow['link']) {
-                DB::transaction(function () use ($user, $provider, $config, $subject, $hash, $profile) {
+                DB::transaction(function () use ($user, $flow, $provider, $config, $subject, $hash, $profile) {
+                    // Recheck under the account lock after all provider requests finish.
+                    $user = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+                    if ($user->suspended_at || !hash_equals($flow['password_hash'], $user->password)) {
+                        throw new \RuntimeException('Account linking authorization changed.');
+                    }
                     if (AccountOAuthIdentity::query()->where('identity_hash', $hash)->exists()
                         || AccountOAuthIdentity::query()->where('user_id', $user->id)->where('provider', $provider)->exists()) {
                         throw new \RuntimeException('The provider account is already linked.');
