@@ -51,7 +51,8 @@ jobs:
         env:
           REF: ${{ github.event.release.tag_name }}
         run: |
-          sed -i "s/    'version' => 'canary',/    'version' => '${REF:1}',/" config/app.php
+          VERSION="$(node scripts/helpers/release-version.mjs "$REF" --allow-canary)"
+          sed -i "s/    'version' => 'canary',/    'version' => '$VERSION',/" config/app.php
 
       - name: Build and Push
         uses: docker/build-push-action@v7

@@ -28,5 +28,6 @@ return [
     'installed' => 'Installed', 'latest' => 'Latest stable release', 'no_release' => 'No stable release published',
     'available' => 'Update available', 'checked' => 'Last checked', 'releases' => 'View releases', 'not_checked' => 'Not checked yet. Queue a check to retrieve this version.',
     'invalid_nodes' => 'Select only existing nodes.', 'updates_saved' => 'Update settings saved or check queued. Results appear after the queue processes the job.',
-    'installed_notes' => 'Installed version notes', 'latest_notes' => 'Latest release notes', 'no_notes' => 'No bundled notes are available for this version.',
+    'update_notes' => 'Update notes', 'latest_notes' => 'Latest release notes', 'no_notes' => 'No GitHub release description is available for this version.',
+    'notes_help' => 'Notes match your installed version: canary builds use the canary release; versioned builds use their matching release tag. Queue an update check to refresh them, or enable automatic hourly checks.',
 ];

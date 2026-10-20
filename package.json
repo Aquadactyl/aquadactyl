@@ -14,7 +14,8 @@
     "test:coverage": "vitest run --coverage",
     "test:game-query": "tsx --test scripts/game-query.test.ts",
     "test:blueprint-compat": "node --test tests/Deployment/blueprint-preflight.test.mjs",
-    "test:admin-security": "node --test tests/Deployment/admin-inputs.test.mjs"
+    "test:admin-security": "node --test tests/Deployment/admin-inputs.test.mjs",
+    "test:security": "node --test tests/Deployment/security-boundaries.test.mjs"
   },
   "dependencies": {
     "@aquadactyl/blueprint-compat": "workspace:*",

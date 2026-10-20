@@ -2,6 +2,8 @@
 
 use Mockery as m;
 use GuzzleHttp\Client;
+use GuzzleHttp\Middleware;
+use GuzzleHttp\HandlerStack;
 use Pterodactyl\Models\Node;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
@@ -32,3 +34,16 @@ test('Wings requests accept numeric timeouts stored as settings or environment s
     'integer values' => [15, 5, 15.0, 5.0],
     'disabled timeouts' => ['0', '0', 0.0, 0.0],
 ]);
+
+test('daemon redirects never forward server configuration bodies to another destination', function () {
+    $node = m::mock(Node::class);
+    $node->shouldReceive('getConnectionAddress')->andReturn('https://wings.example.test');
+    $node->shouldReceive('getDecryptedKey')->andReturn('test-node-key');
+    $options = (new DaemonServerRepository($this->app))->setNode($node)->getHttpClient()->getConfig();
+    $history = [];
+    $stack = HandlerStack::create(new MockHandler([new Response(307, ['Location' => 'https://attacker.example/collect']), new Response(200)]));
+    $stack->push(Middleware::history($history));
+    $client = new Client([...$options, 'handler' => $stack]);
+    $response = $client->post('/api/servers', ['json' => ['environment' => ['PASSWORD' => 'test-only-secret']]]);
+    expect($response->getStatusCode())->toBe(307)->and($history)->toHaveCount(1);
+});

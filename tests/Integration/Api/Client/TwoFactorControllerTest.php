@@ -7,6 +7,22 @@ use PragmaRX\Google2FA\Google2FA;
 use Pterodactyl\Models\RecoveryToken;
 use PHPUnit\Framework\ExpectationFailedException;
 
+test('a stale setup request cannot replace the secret after another request enabled two factor authentication', function () {
+    $stale = User::factory()->create(['use_totp' => false]);
+    $secret = encrypt('JBSWY3DPEHPK3PXP');
+    User::query()->whereKey($stale->id)->update(['use_totp' => true, 'totp_secret' => $secret]);
+    $this->actingAs($stale)->getJson('/api/client/account/two-factor')->assertBadRequest();
+    expect($stale->fresh()->totp_secret)->toBe($secret)->and($stale->fresh()->use_totp)->toBeTrue();
+});
+
+test('two factor activation verifies the current secret rather than a stale authenticated user snapshot', function () {
+    $oldSecret = 'JBSWY3DPEHPK3PXP';
+    $stale = User::factory()->create(['use_totp' => false, 'totp_secret' => encrypt($oldSecret)]);
+    User::query()->whereKey($stale->id)->update(['totp_secret' => encrypt('KRSXG5DSNFXGOIDB')]);
+    $this->actingAs($stale)->postJson('/api/client/account/two-factor', ['code' => app(Google2FA::class)->getCurrentOtp($oldSecret), 'password' => 'password'])->assertBadRequest();
+    expect($stale->fresh()->use_totp)->toBeFalse()->and($stale->recoveryTokens()->count())->toBe(0);
+});
+
 test('two factor image data is returned', function () {
     /** @var User $user */
     $user = User::factory()->create(['use_totp' => false]);

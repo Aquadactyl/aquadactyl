@@ -126,6 +126,59 @@ describe("HytaleOauthRequireFeature", () => {
     openSpy.mockRestore();
   });
 
+  it.each([
+    "Please visit %s to log in",
+    "javascript:window.injected=true;//%s",
+    "https://attacker.example/#%s",
+    "%s&redirect_uri=https://attacker.example/",
+  ])(
+    "opens only the official verification URL from a console line: %s",
+    async (line) => {
+      const socket = createMockSocket();
+      const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+      const official =
+        "https://oauth.accounts.hytale.com/oauth2/device/verify?user_code=ABCD-1234";
+      try {
+        render(
+          <Wrapper socketMock={socket}>
+            <HytaleOauthRequireFeature />
+          </Wrapper>,
+        );
+        act(() => {
+          socket.emit(SocketEvent.CONSOLE_OUTPUT, line.replace("%s", official));
+        });
+        fireEvent.click(await screen.findByRole("button", { name: "Log in" }));
+        expect(openSpy).toHaveBeenCalledExactlyOnceWith(
+          official,
+          "_blank",
+          "noopener,noreferrer",
+        );
+      } finally {
+        openSpy.mockRestore();
+      }
+    },
+  );
+
+  it.each(["", "<script>", "A".repeat(129)])(
+    "ignores invalid device codes: %s",
+    (code) => {
+      const socket = createMockSocket();
+      render(
+        <Wrapper socketMock={socket}>
+          <HytaleOauthRequireFeature />
+        </Wrapper>,
+      );
+      act(() => {
+        socket.emit(
+          SocketEvent.CONSOLE_OUTPUT,
+          "https://oauth.accounts.hytale.com/oauth2/device/verify?user_code=" +
+            code,
+        );
+      });
+      expect(screen.queryByText("Authentication Required")).toBeNull();
+    },
+  );
+
   it("closes modal when clicking Cancel button and onDismissed", async () => {
     const socket = createMockSocket();
 

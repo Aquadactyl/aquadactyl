@@ -12,7 +12,9 @@ class BaseController extends Controller
      */
     public function index(\Pterodactyl\Services\Updates\ReleaseNotes $notes): View
     {
-        return view('admin.index', ['installedVersion' => $notes->installedVersion(), 'installedNotes' => $notes->installed(),
-            'panelUpdate' => \Pterodactyl\Models\SoftwareUpdate::where('component', 'panel')->first()]);
+        $version = $notes->installedVersion();
+
+        return view('admin.index', ['installedVersion' => $version,
+            'panelUpdate' => \Pterodactyl\Models\SoftwareUpdate::where('component', 'panel')->where('installed_version', $version)->first()]);
     }
 }

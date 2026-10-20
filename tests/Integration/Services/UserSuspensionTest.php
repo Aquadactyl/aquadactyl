@@ -112,7 +112,7 @@ test('suspended password sign in does not create a session or a two factor check
 test('a checkpoint started before suspension cannot finish after suspension', function () {
     $secret = str_repeat('a', 16);
     $this->user->forceFill(['suspended_at' => now(), 'use_totp' => true, 'totp_secret' => encrypt($secret)])->save();
-    session()->put('auth_confirmation_token', ['user_id' => $this->user->id, 'token_value' => 'pending-token', 'expires_at' => now()->addMinutes(5)]);
+    session()->put('auth_confirmation_token', ['user_id' => $this->user->id, 'token_value' => 'pending-token', 'credential_fingerprint' => hash('sha256', $this->user->password . "\0" . $this->user->totp_secret), 'expires_at' => now()->addMinutes(5)]);
     $code = app(PragmaRX\Google2FA\Google2FA::class)->getCurrentOtp($secret);
     $this->postJson('/auth/login/checkpoint', ['confirmation_token' => 'pending-token', 'authentication_code' => $code])->assertBadRequest();
     $this->assertGuest();

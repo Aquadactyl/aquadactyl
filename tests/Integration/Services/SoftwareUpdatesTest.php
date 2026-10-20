@@ -81,6 +81,48 @@ test('release notes support nonstring bodies', function () {
     expect(app(ReleaseCatalog::class)->latest('manta')['notes'])->toBe('');
 });
 
+test('panel release notes match installed channels and exact tags instead of the latest stable release', function (string $version, string $tag) {
+    Http::fake(fn () => Http::response(['tag_name' => $tag, 'body' => '**Matching notes**', 'prerelease' => true, 'html_url' => 'https://evil.example.com'], 200));
+    $catalog = app(ReleaseCatalog::class);
+    $release = $catalog->forPanelVersion($version);
+    expect($release)->toBe(['tag' => $tag, 'notes' => '**Matching notes**', 'url' => 'https://github.com/Aquadactyl/aquadactyl/releases/tag/' . $tag, 'error' => null]);
+    expect($catalog->forPanelVersion($version))->toBe($release);
+    Http::assertSentCount(1);
+    Http::assertSent(fn ($request) => $request->url() === 'https://api.github.com/repos/Aquadactyl/aquadactyl/releases/tags/' . $tag);
+})->with([['canary', 'canary'], ['canary+abcdef012345', 'canary'], ['v1', 'v1'], ['1.2.3', '1.2.3'], ['v1.2.3-rc.1', 'v1.2.3-rc.1']]);
+
+test('version matching only tries the alternate leading v spelling when a release is absent', function (string $version, string $alternate) {
+    Http::fake(fn ($request) => Http::response(str_ends_with($request->url(), '/' . $alternate) ? ['tag_name' => $alternate, 'body' => 'Correct version'] : [], str_ends_with($request->url(), '/' . $alternate) ? 200 : 404));
+    expect(app(ReleaseCatalog::class)->forPanelVersion($version)['tag'])->toBe($alternate);
+    Http::assertSentCount(2);
+})->with([['v1.2.3', '1.2.3'], ['1.2.3', 'v1.2.3']]);
+
+test('custom versions and unsafe or oversized tags never become release request paths', function (string $version) {
+    expect(app(ReleaseCatalog::class)->forPanelVersion($version)['tag'])->toBeNull();
+    Http::assertNothingSent();
+})->with(['custom', '../../latest', 'canary+not-a-hash', 'v1?redirect=other', 'v' . str_repeat('1', 100)]);
+
+test('missing or invalid matching releases cannot substitute another channel or a draft', function ($body, int $status, bool $error, int $requests) {
+    Http::fake(fn ($request) => Http::response(($body['draft'] ?? false) ? array_replace($body, ['tag_name' => basename($request->url())]) : $body, $status));
+    $release = app(ReleaseCatalog::class)->forPanelVersion('v1.2.3');
+    expect($release['tag'])->toBeNull()->and($release['error'] !== null)->toBe($error);
+    Http::assertSentCount($requests);
+})->with([[[], 404, false, 2], [[], 500, true, 1], [['tag_name' => 'canary'], 200, true, 1], [['tag_name' => 'v1.2.3', 'draft' => true], 200, false, 2]]);
+
+test('matching canary descriptions refresh after the cache expires and remain bounded', function () {
+    $description = str_repeat('a', 17000);
+    Http::fake(function () use (&$description) {
+        return Http::response(['tag_name' => 'canary', 'body' => $description], 200);
+    });
+    $catalog = app(ReleaseCatalog::class);
+    expect($catalog->forPanelVersion('canary')['notes'])->toBe(str_repeat('a', 16000));
+    $description = 'Updated push description';
+    $this->travel(61)->minutes();
+    expect($catalog->forPanelVersion('canary')['notes'])->toBe($description);
+    Http::assertSentCount(2);
+    $this->travelBack();
+});
+
 test('stalled release streams and network failures are bounded and sanitized', function (string $failure) {
     if ($failure === 'network') {
         Http::fake(fn () => throw new RuntimeException('credential'));
@@ -105,6 +147,7 @@ test('available notifications deduplicate and installed notifications require an
     expect(SoftwareUpdate::where('component', 'panel')->value('release_notes'))->toBe('**Release**');
     $response = $this->actingAs(User::factory()->create(['root_admin' => true]))->get('/admin/settings/updates')->assertOk();
     $response->assertSee('<strong>Release</strong>', false);
+    config()->set('app.version', '1.2.3');
     $this->get('/admin')->assertOk()->assertSee('Latest stable release');
 });
 
@@ -148,7 +191,7 @@ test('disabled automatic checks do no work while forced checks probe nodes with 
     $this->artisan('p:updates:check', ['--force' => true])->assertSuccessful();
 });
 
-test('bundled notes identify canary builds select installed sections and strip unsafe HTML', function () {
+test('installed versions identify fingerprinted canary builds without reading bundled notes', function () {
     $path = sys_get_temp_dir() . '/aquadactyl-notes-' . bin2hex(random_bytes(6));
     mkdir($path);
     $original = app()->basePath();
@@ -157,17 +200,13 @@ test('bundled notes identify canary builds select installed sections and strip u
         $notes = app(ReleaseNotes::class);
         config()->set('app.version', 'canary');
         View::share('appVersion', 'unknown');
-        expect($notes->installed())->toBe('')->and($notes->installedVersion())->toBe('canary');
+        expect($notes->installedVersion())->toBe('canary');
         View::share('appVersion', str_repeat('a', 40));
         expect($notes->installedVersion())->toBe('canary+' . str_repeat('a', 12));
         file_put_contents($path . '/.aquadactyl-build', str_repeat('b', 64));
         expect($notes->installedVersion())->toBe('canary+' . str_repeat('b', 12));
-        file_put_contents($path . '/CHANGELOG.md', "# Changes\n## Unreleased (Aquadactyl)\nCanary notes\n## 1.2.3\nStable notes\n");
-        expect($notes->installed())->toBe('Canary notes');
         config()->set('app.version', 'v1.2.3');
-        expect($notes->installedVersion())->toBe('v1.2.3')->and($notes->installed())->toBe('Stable notes');
-        config()->set('app.version', '0.0.0');
-        expect($notes->installed())->toBe('');
+        expect($notes->installedVersion())->toBe('v1.2.3');
     } finally {
         app()->setBasePath($original);
         foreach (glob($path . '/*') as $file) {
@@ -178,6 +217,42 @@ test('bundled notes identify canary builds select installed sections and strip u
         }
         rmdir($path);
     }
-    $html = view('admin.partials.update-notes', ['installedNotes' => "<script>alert(1)</script>\n\n[bad](javascript:alert(1)) **Good**"])->render();
-    expect($html)->not->toContain('<script', 'href="javascript:')->toContain('<strong>Good</strong>');
+});
+
+test('background checks persist channel specific descriptions while admin views stay offline and render notes inline safely', function () {
+    config()->set('app.version', 'canary');
+    Http::fake(fn ($request) => Http::response(str_ends_with($request->url(), '/latest') ? ['tag_name' => 'v1.2.3', 'body' => 'Stable-only notes'] : ['tag_name' => 'canary', 'prerelease' => true, 'body' => "## Canary changes\n\n<script>window.executed=true</script>\n\n[bad](javascript:alert(1)) **Good**"], 200));
+    $version = app(ReleaseNotes::class)->installedVersion();
+    app(SoftwareMonitor::class)->observe('panel', 'panel', $version, null);
+    $state = SoftwareUpdate::where('component', 'panel')->firstOrFail();
+    expect($state->installed_release['tag'])->toBe('canary')->and($state->latest_version)->toBe('v1.2.3');
+    Http::assertSentCount(2);
+    Http::fake(fn () => throw new RuntimeException('Admin page must not contact GitHub'));
+    $this->actingAs(User::factory()->create(['root_admin' => true]));
+    foreach (['/admin', '/admin/settings/updates'] as $path) {
+        $response = $this->get($path)->assertOk()->assertSee('<strong>Good</strong>', false)->assertSee('Canary changes')->assertDontSee('Stable-only notes');
+        expect($response->getContent())->not->toContain('<details class="panel-update-notes', '<summary>', 'href="javascript:', '<script>window.executed');
+        $footer = explode('<footer', $response->getContent(), 2)[1];
+        expect($footer)->not->toContain('panel-update-notes', 'Installed version notes');
+    }
+    Http::assertNothingSent();
+    config()->set('app.version', 'v2.0.0');
+    $this->get('/admin')->assertOk()->assertDontSee('Canary changes')->assertSee('No GitHub release description');
+});
+
+test('a missing canary release does not display the latest stable description and release errors are recorded', function () {
+    $missing = true;
+    Http::fake(function ($request) use (&$missing) {
+        return Http::response(str_ends_with($request->url(), '/latest') ? ['tag_name' => 'v1.0.0', 'body' => 'Wrong channel notes'] : [], str_ends_with($request->url(), '/latest') ? 200 : ($missing ? 404 : 503));
+    });
+    config()->set('app.version', 'canary');
+    $version = app(ReleaseNotes::class)->installedVersion();
+    $monitor = app(SoftwareMonitor::class);
+    $monitor->observe('panel', 'panel', $version, null);
+    $this->actingAs(User::factory()->create(['root_admin' => true]))->get('/admin')->assertOk()->assertSee('No GitHub release description')->assertDontSee('Wrong channel notes');
+    Cache::flush();
+    $missing = false;
+    $monitor->observe('panel', 'panel', $version, null);
+    expect(SoftwareUpdate::where('component', 'panel')->firstOrFail()->last_error)->toBe('Release information is temporarily unavailable.');
+    $this->get('/admin')->assertOk()->assertSee('Release information is temporarily unavailable.');
 });

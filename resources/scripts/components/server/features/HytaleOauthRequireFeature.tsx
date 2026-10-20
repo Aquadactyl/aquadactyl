@@ -20,12 +20,15 @@ const HytaleOauthRequireFeature = () => {
     if (!connected || !instance || status === "running") return;
 
     const listener = (line: string) => {
-      if (
-        line.match(
-          /https:\/\/oauth\.accounts\.hytale\.com\/oauth2\/device\/verify\?user_code=(.*)/i,
-        )
-      ) {
-        setLink(line);
+      const match = line.match(
+        /https:\/\/oauth\.accounts\.hytale\.com\/oauth2\/device\/verify\?user_code=([a-z0-9_-]{1,128})(?![a-z0-9_-])/i,
+      );
+      if (match) {
+        // Console output is untrusted. Never navigate to the whole log line or its extra parameters.
+        setLink(
+          "https://oauth.accounts.hytale.com/oauth2/device/verify?user_code=" +
+            match[1],
+        );
         setVisible(true);
       }
     };

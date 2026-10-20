@@ -350,8 +350,22 @@ installed/latest version pair while their delivery history is retained (30 days)
 Canary and custom builds cannot be ordered reliably.
 Docker builds carry a stable build fingerprint to detect a changed canary image.
 
-The administration overview and footer include an **Installed version notes**
-dropdown sourced from the bundled `CHANGELOG.md`. Release notes from GitHub appear
-after a successful background check. Both render Markdown with raw HTML and unsafe
-links removed. A repository without a published release shows that state without
-treating it as a failed check.
+The administration overview displays **Update notes** directly in the system
+information container. The footer only shows the version. Notes come from the
+GitHub release description matching the installed panel version, rather than the
+bundled `CHANGELOG.md`. Canary builds (including fingerprinted Docker builds) use
+the `canary` release, including prereleases. Versioned builds use their exact tag,
+with or without a leading `v` (for example `v1`, `v1.2.3` or `1.2.3`). Notes never
+fall back to a different version or to the latest stable release.
+
+Publish or edit the description of the matching release in
+`Aquadactyl/aquadactyl` to update the displayed notes. Commit messages alone do not
+update a GitHub release description. Queue a check under **Settings > Updates**
+to retrieve notes, or enable hourly checks. GitHub responses are cached for an
+hour, and the last checked notes are stored in the database so loading admin
+pages never waits for GitHub. After installing a different version, the overview
+waits for a matching check rather than displaying notes for the previous version.
+
+The Updates settings page also displays notes inline. Markdown strips raw HTML
+and unsafe links. Missing releases show an empty state without treating them as
+failed checks; network failures show a generic error without exposing credentials.

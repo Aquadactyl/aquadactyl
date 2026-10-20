@@ -5,6 +5,7 @@ namespace Pterodactyl\Http\Middleware;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use GuzzleHttp\Exception\GuzzleException;
 use Pterodactyl\Events\Auth\FailedCaptcha;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -32,33 +33,38 @@ class VerifyReCaptcha
             ?? $request->input('h-captcha-response')
             ?? $request->input('cf-turnstile-response');
 
-        if (!empty($responseToken)) {
+        $result = null;
+        if (is_string($responseToken) && $responseToken !== '' && strlen($responseToken) <= 8192) {
             $provider = $this->config->get('recaptcha.provider', 'recaptcha');
             $endpoints = $this->config->get('recaptcha.endpoints', []);
             $endpoint = $endpoints[$provider] ?? $this->config->get('recaptcha.domain');
 
             $client = $this->client ?? new Client();
-            $res = $client->post($endpoint, [
-                'form_params' => [
-                    'secret' => $this->config->get('recaptcha.secret_key'),
-                    'response' => $responseToken,
-                    'remoteip' => $request->ip(),
-                ],
-            ]);
-
-            if ($res->getStatusCode() === 200) {
-                $result = json_decode($res->getBody());
-
-                if (!empty($result?->success) && (!$this->config->get('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
-                    return $next($request);
+            try {
+                $res = $client->post($endpoint, [
+                    'connect_timeout' => 3, 'timeout' => 8, 'allow_redirects' => false, 'http_errors' => false,
+                    'form_params' => [
+                        'secret' => $this->config->get('recaptcha.secret_key'),
+                        'response' => $responseToken,
+                        'remoteip' => $request->ip(),
+                    ],
+                ]);
+                if ($res->getStatusCode() === 200) {
+                    $result = json_decode($res->getBody());
                 }
+            } catch (GuzzleException) {
+                // Fail closed without logging provider request bodies containing the secret.
+            }
+            if ($result instanceof \stdClass && ($result->success ?? false) === true
+                && (!$this->config->get('recaptcha.verify_domain') || $this->isResponseVerified($result, $request))) {
+                return $next($request);
             }
         }
 
         $this->dispatcher->dispatch(
             new FailedCaptcha(
                 $request->ip(),
-                !empty($result) ? ($result->hostname ?? null) : null
+                is_string($result->hostname ?? null) ? $result->hostname : null
             )
         );
 
@@ -72,6 +78,6 @@ class VerifyReCaptcha
     {
         $url = parse_url($request->url());
 
-        return $result->hostname === array_get($url, 'host');
+        return ($result->hostname ?? null) === array_get($url, 'host');
     }
 }

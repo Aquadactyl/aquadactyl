@@ -10,7 +10,7 @@ class CloudflareDns
     public function request(SubdomainDomain $domain, string $method, string $path, array $data = []): array
     {
         $response = Http::baseUrl('https://api.cloudflare.com/client/v4/zones/' . $domain->zone_id)
-            ->withToken($domain->api_token)->acceptJson()->connectTimeout(3)->timeout(10)
+            ->withToken($domain->api_token)->acceptJson()->connectTimeout(3)->timeout(10)->withoutRedirecting()
             ->send($method, $path, [$method === 'GET' ? 'query' : 'json' => $data]);
         // A deletion retried after a lost response is already complete.
         if ($method === 'DELETE' && $response->status() === 404) {

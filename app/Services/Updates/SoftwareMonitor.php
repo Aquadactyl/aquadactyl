@@ -59,13 +59,15 @@ class SoftwareMonitor
     public function observe(string $component, string $product, string $version, ?int $nodeId): void
     {
         $release = $this->catalog->latest($product);
-        DB::transaction(function () use ($component, $product, $version, $nodeId, $release) {
+        $installedRelease = $product === 'panel' ? $this->catalog->forPanelVersion($version) : null;
+        DB::transaction(function () use ($component, $product, $version, $nodeId, $release, $installedRelease) {
             $state = SoftwareUpdate::where('component', $component)->lockForUpdate()->first();
             if ($state && $state->installed_version !== $version) {
                 $this->emitter->emit('updates.installed', ['component' => $component, 'product' => $product, 'previous' => $state->installed_version, 'installed' => $version]);
             }
             SoftwareUpdate::updateOrCreate(['component' => $component], ['node_id' => $nodeId, 'product' => $product, 'installed_version' => $version,
-                'latest_version' => $release['tag'], 'release_url' => $release['url'], 'release_notes' => $release['notes'], 'checked_at' => now(), 'last_error' => $release['error']]);
+                'latest_version' => $release['tag'], 'release_url' => $release['url'], 'release_notes' => $release['notes'], 'installed_release' => $installedRelease,
+                'checked_at' => now(), 'last_error' => $release['error'] ?? ($installedRelease['error'] ?? null)]);
             if ($release['tag'] && self::newer($version, $release['tag'])) {
                 $id = Uuid::uuid5(Uuid::NAMESPACE_URL, 'aquadactyl:update:' . $component . ':' . $product . ':' . $version . ':' . $release['tag'])->toString();
                 $this->emitter->emit('updates.available', ['component' => $component, 'product' => $product, 'installed' => $version, 'available' => $release['tag'], 'release_url' => $release['url']], $id);

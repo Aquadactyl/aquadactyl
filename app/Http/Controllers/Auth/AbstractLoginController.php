@@ -110,10 +110,16 @@ abstract class AbstractLoginController extends Controller
         $request->session()->put('auth_confirmation_token', [
             'user_id' => $user->id,
             'token_value' => $token = Str::random(64),
+            'credential_fingerprint' => $this->twoFactorFingerprint($user),
             'expires_at' => CarbonImmutable::now()->addMinutes(5),
         ]);
 
         return new JsonResponse(['data' => ['complete' => false, 'confirmation_token' => $token]]);
+    }
+
+    protected function twoFactorFingerprint(User $user): string
+    {
+        return hash('sha256', $user->password . "\0" . $user->totp_secret);
     }
 
     /**

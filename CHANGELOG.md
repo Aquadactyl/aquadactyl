@@ -9,11 +9,13 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 ### Security
 
 - Encode account data, branding and restored form values for inline JavaScript contexts. Harden legacy Blueprint JavaScript injection and admin form HTML attributes against stored input being interpreted as code.
+- Prevent concurrent recovery-code reuse and TOTP replay within the clock-skew window. Invalidate pending second-factor logins after credential changes, serialize 2FA setup and verification, and enforce account-based second-factor and password-reset request limits.
+- Restrict console-generated Hytale login links to the official verification URL. Block redirects carrying daemon configuration, DNS or CAPTCHA request bodies, bound CAPTCHA verification and reject malformed responses. Validate release tags before shell commands and generated PHP use them.
 
 ### Added
 
 - Discord and signed JSON webhooks for system actions, status changes and panel or daemon updates, with event subscriptions, encrypted credentials, queued delivery and retry history.
-- Optional hourly release checks, detected installed version changes, and expandable installed-version notes in the administration overview and footer.
+- Optional hourly release checks, detected installed version changes, and inline GitHub release descriptions matching the installed panel version in the administration overview. Canary builds use the `canary` release; versioned builds use their matching release tag. The footer shows the version without a notes dropdown.
 
 ### Removed
 

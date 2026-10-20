@@ -9,8 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      RELEASE_TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v7
+      - name: Validate release tag
+        run: node scripts/helpers/release-version.mjs "$RELEASE_TAG"
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
         with:
@@ -20,15 +24,14 @@ jobs:
       - run: pnpm run types
       - run: pnpm run build
       - name: create release branch and bump version
-        env:
-          VERSION: ${{ github.ref_name }}
         run: |
-          BRANCH=release/${{ env.VERSION }}
+          VERSION="$(node scripts/helpers/release-version.mjs "$RELEASE_TAG")"
+          BRANCH="release/$RELEASE_TAG"
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git config --local user.name 'Aquadactyl CI'
           git checkout -b "$BRANCH"
           git push -u origin "$BRANCH"
-          sed -i "s/'canary'/'${VERSION:1}'/" config/app.php
+          sed -i "s/'canary'/'$VERSION'/" config/app.php
           git add config/app.php
           git commit -m 'ci(release): bump version'
           git push
@@ -40,7 +43,7 @@ jobs:
           sha256sum panel.tar.gz > SHA256SUMS
       - name: write changelog
         run: |
-          sed -n "/^## ${{ github.ref_name }}/,/^## /{/^## /b;p}" CHANGELOG.md > ./RELEASE_CHANGELOG
+          sed -n "/^## $RELEASE_TAG/,/^## /{/^## /b;p}" CHANGELOG.md > ./RELEASE_CHANGELOG
       - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

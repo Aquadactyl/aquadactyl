@@ -22,10 +22,11 @@
             <div class="box-body">
                 {{ __('admin/ui.you_are_running_aquadactyl_panel_version') }} <code>{{ $installedVersion }}</code>{{ __('admin/ui.check') }} <a href="https://github.com/Aquadactyl/aquadactyl/releases" target="_blank" rel="noopener noreferrer">{{ __('admin/ui.aquadactyl_releases') }}</a>
                 {{ __('admin/ui.for_updates_and_follow_the') }} <a href="https://aquadactyl.uk/docs/updating">{{ __('admin/ui.update_guide') }}</a>.
-                @include('admin.partials.update-notes', ['compactNotes' => false])
+                @include('admin.partials.update-notes', ['notesHeading' => __('webhooks.update_notes'), 'notesText' => $panelUpdate?->installed_release['notes'] ?? '', 'notesTag' => $panelUpdate?->installed_release['tag'] ?? null, 'notesUrl' => ($panelUpdate?->installed_release['tag'] ?? null) ? $panelUpdate->installed_release['url'] : null])
+                <p class="text-muted small panel-update-notes-help">{{ __('webhooks.notes_help') }} <a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }} &rarr;</a></p>
+                @if($panelUpdate?->last_error)<p class="text-warning">{{ $panelUpdate->last_error }}</p>@endif
                 @if($panelUpdate?->latest_version)
                     <p class="text-muted small">{{ __('webhooks.latest') }} <strong>{{ $panelUpdate->latest_version }}</strong> &middot; {{ $panelUpdate->checked_at?->diffForHumans() }} <a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }} &rarr;</a></p>
-                    <details class="panel-update-notes"><summary>{{ __('webhooks.latest_notes') }}</summary><div class="panel-update-notes-body">{!! \Illuminate\Support\Str::markdown($panelUpdate->release_notes ?: __('webhooks.no_notes'), ['html_input' => 'strip', 'allow_unsafe_links' => false]) !!}</div></details>
                 @endif
             </div>
         </div>

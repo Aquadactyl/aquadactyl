@@ -53,6 +53,8 @@ abstract class DaemonRepository
         return new Client([
             'verify' => $this->app->environment('production'),
             'base_uri' => $this->node->getConnectionAddress(),
+            // A redirect can resend configuration bodies, including environment secrets.
+            'allow_redirects' => false,
             // Database settings and environment values may contain numeric strings.
             'timeout' => (float) config('pterodactyl.guzzle.timeout', 15),
             'connect_timeout' => (float) config('pterodactyl.guzzle.connect_timeout', 5),

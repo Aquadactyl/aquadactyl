@@ -2,13 +2,13 @@
 
 The panel has separate React/Vitest and PHP/Pest suites. Both coverage configurations count untested source files. A passing test count alone does not mean the whole application is covered.
 
-Latest verified PHP results: 20 October 2026. Frontend coverage was last verified on
-19 October 2026, and the separate API figures on 13 October 2026.
+Latest verified PHP and frontend results: 20 October 2026. The separate API figures
+were last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,553 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         2,133 | 100% executable lines; 29,273 assertions                       |
+| Panel frontend       |         1,560 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         2,173 | 100% executable lines; 29,417 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
 The complete PHP suite was measured using PHP 8.5 and MariaDB 11; the remaining
@@ -92,9 +92,20 @@ composer audit --locked --no-dev
 pnpm audit --prod
 composer audit --locked
 pnpm audit
+pnpm run test:security
 ```
 
 The first pair checks production dependencies; the second includes development
-and build tools. Review new advisories and dependency installation scripts as
+and build tools. The Docker image retains build dependencies for Blueprint, so
+review both audits. Review new advisories and dependency installation scripts as
 part of an update. A passing audit or coverage gate is not a complete security
 assessment. CI artifacts retain test and coverage reports for each revision.
+
+The full pnpm audit currently flags `braces` 3.0.3 for
+[CVE-2026-93687](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), which has no
+upstream fixed release as of 20 October 2026. The locked dependency has a local
+depth-limit patch in `patches/braces@3.0.3.patch`. `pnpm run test:security` exercises
+the installed dependency's parser, compiler and expansion functions with deeply
+nested input, and verifies normal expansion. It also tests the release-tag CLI
+against shell and PHP injection inputs. The advisory remains visible in the full
+audit; the local mitigation does not change the package's published version.

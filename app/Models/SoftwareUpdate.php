@@ -9,7 +9,7 @@ class SoftwareUpdate extends Model
 {
     protected $guarded = ['id'];
 
-    protected $casts = ['checked_at' => 'datetime'];
+    protected $casts = ['checked_at' => 'datetime', 'installed_release' => 'array'];
 
     /** @return BelongsTo<Node, $this> */
     public function node(): BelongsTo
