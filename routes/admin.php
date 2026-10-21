@@ -5,6 +5,13 @@ use Pterodactyl\Http\Controllers\Admin;
 use Pterodactyl\Http\Middleware\Admin\Servers\ServerInstalled;
 
 Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
+Route::get('/settings/pwa', [Admin\Settings\PwaController::class, 'index'])->name('admin.settings.pwa');
+Route::patch('/settings/pwa', [Admin\Settings\PwaController::class, 'update']);
+Route::get('/settings/setup', [Admin\Settings\SetupController::class, 'index'])->name('admin.settings.setup');
+Route::post('/settings/setup/branding', [Admin\Settings\SetupController::class, 'branding'])->name('admin.settings.setup.branding');
+Route::post('/settings/setup/admins', [Admin\Settings\SetupController::class, 'administrator'])->middleware('throttle:10,1,setup-admin:')->name('admin.settings.setup.admins');
+Route::post('/settings/setup/nodes/{node:id}/test', [Admin\Settings\SetupController::class, 'testNode'])->middleware('throttle:10,1,setup-node:')->name('admin.settings.setup.test-node');
+Route::post('/settings/setup/complete', [Admin\Settings\SetupController::class, 'complete'])->name('admin.settings.setup.complete');
 Route::get('/audit-logs', [Admin\AuditLogController::class, 'index'])->name('admin.audit-logs');
 Route::post('/setup/locations', [Admin\QuickSetupController::class, 'location'])->name('admin.setup.locations');
 Route::post('/setup/nodes', [Admin\QuickSetupController::class, 'node'])->name('admin.setup.nodes');
@@ -99,6 +106,8 @@ Route::group(['prefix' => 'settings'], function () {
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
     Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
     Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
+    Route::get('/notifications', [Admin\Settings\NotificationsController::class, 'index'])->name('admin.settings.notifications');
+    Route::post('/notifications', [Admin\Settings\NotificationsController::class, 'update'])->middleware('throttle:10,1,notification-settings:')->name('admin.settings.notifications.update');
     Route::get('/webhooks', [Admin\Settings\WebhooksController::class, 'index'])->name('admin.settings.webhooks');
     Route::post('/webhooks', [Admin\Settings\WebhooksController::class, 'store'])->middleware('throttle:10,1,webhook-settings:')->name('admin.settings.webhooks.store');
     Route::post('/webhooks/{endpoint}/action', [Admin\Settings\WebhooksController::class, 'action'])->middleware('throttle:10,1,webhook-actions:')->name('admin.settings.webhooks.action');

@@ -33,6 +33,9 @@ vi.mock("@/components/server/settings/SettingsContainer", () => ({
 vi.mock("@/components/dashboard/AccountOverviewContainer", () => ({
   default: () => <div>AccountOverview</div>,
 }));
+vi.mock("@/components/dashboard/AccountNotificationsContainer", () => ({
+  default: () => <div>AccountNotifications</div>,
+}));
 vi.mock("@/components/dashboard/AccountApiContainer", () => ({
   default: () => <div>AccountApi</div>,
 }));
@@ -57,7 +60,7 @@ vi.mock("@/components/server/files/TrashContainer", () => ({
 
 describe("routers/routes", () => {
   it("defines account and server routes and loads all lazy components", async () => {
-    expect(routes.account.length).toBe(4);
+    expect(routes.account.length).toBe(5);
     expect(routes.server.length).toBe(13);
 
     for (const route of [...routes.account, ...routes.server]) {

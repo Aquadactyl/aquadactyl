@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React, { useEffect } from "react";
+import ToastHost from "@/components/notifications/ToastHost";
 import { describe, expect, it, vi } from "vitest";
 import StartupContainer from "./StartupContainer";
 import { ServerContext } from "@/state/server";
@@ -95,7 +96,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   if (!isReady) return null;
-  return <>{children}</>;
+  return (
+    <>
+      <ToastHost />
+      {children}
+    </>
+  );
 };
 
 import { store } from "@/state";
@@ -251,7 +257,7 @@ describe("components/server/startup/StartupContainer", () => {
     );
 
     expect(screen.getByText("Failed to load startup")).toBeDefined();
-    const retryBtn = screen.getByRole("button");
+    const retryBtn = screen.getByRole("button", { name: "Retry" });
     fireEvent.click(retryBtn);
     expect(mockMutate).toHaveBeenCalled();
   });

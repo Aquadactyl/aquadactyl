@@ -1,5 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React, { useEffect } from "react";
+import ToastHost from "@/components/notifications/ToastHost";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import TaskDetailsModal from "./TaskDetailsModal";
 import { ServerContext } from "@/state/server";
@@ -74,7 +75,12 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   if (!isReady) return null;
-  return <>{children}</>;
+  return (
+    <>
+      <ToastHost />
+      {children}
+    </>
+  );
 };
 
 describe("components/server/schedules/TaskDetailsModal", () => {

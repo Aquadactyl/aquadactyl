@@ -1,0 +1,37 @@
+{
+  "heading": "Notifications",
+  "saved": "Préférences de notification enregistrées.",
+  "enabled": "Activer les notifications des comptes",
+  "enabled_help": "Les utilisateurs peuvent activer une boîte de réception et des alertes pour leurs serveurs. La désactivation masque les options et arrête les nouvelles notifications et livraisons. Les confirmations des actions restent visibles.",
+  "discord_enabled": "Autoriser les webhooks Discord personnels",
+  "discord_help": "Les utilisateurs choisissent leurs événements et leur webhook Discord. Les URL sont chiffrées et ne sont plus affichées. La désactivation arrête aussi les envois en attente.",
+  "retention": "Les notifications sont conservées 30 jours. Le planificateur et le worker de la file low doivent fonctionner.",
+  "crashes": "Les alertes de crash nécessitent server:crash ou server:crashed via l’API d’activité authentifiée. Wings standard ne les envoie pas. Les arrêts normaux ne sont pas considérés comme des crashes.",
+  "password": "Mot de passe actuel",
+  "save": "Enregistrer les paramètres",
+  "discord_disabled": "Les webhooks Discord personnels sont désactivés par l’administrateur.",
+  "invalid_webhook": "Saisissez une URL de webhook entrant Discord valide.",
+  "webhook_required": "Enregistrez un webhook avant de sélectionner des événements Discord.",
+  "events": {
+    "power": {
+      "start": "Démarrage demandé",
+      "stop": "Arrêt demandé",
+      "restart": "Redémarrage demandé"
+    },
+    "server": {
+      "crash": "Crash signalé par le daemon"
+    },
+    "schedule": {
+      "complete": "Planification terminée",
+      "fail": "Échec de la planification"
+    },
+    "backup": {
+      "complete": "Sauvegarde terminée",
+      "fail": "Échec de la sauvegarde"
+    },
+    "install": {
+      "complete": "Installation terminée",
+      "fail": "Échec de l’installation"
+    }
+  }
+}

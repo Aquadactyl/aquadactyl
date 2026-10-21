@@ -37,6 +37,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('p:status:collect')->everyMinute()->withoutOverlapping();
         $schedule->command('p:discord:sync-roles')->everyFiveMinutes()->withoutOverlapping();
         $schedule->command('p:webhooks:retry')->everyMinute()->withoutOverlapping();
+        $schedule->command('p:notifications:maintain')->everyMinute()->withoutOverlapping();
         $schedule->command('p:updates:check')->hourly()->withoutOverlapping();
 
         // Execute scheduled commands for servers every minute, as if there was a normal cron running.

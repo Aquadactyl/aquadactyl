@@ -2,6 +2,7 @@
 @import "../blueprint/css/extensions.css";
 @import "./appearance.css";
 @import "./forms.css";
+@import "./notifications.css";
 
 @source "../../../.blueprint/extensions/*/components/**/*";
 @source "../../../.blueprint/extensions/*/views/**/*";

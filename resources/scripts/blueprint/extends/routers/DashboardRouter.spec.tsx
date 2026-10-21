@@ -42,6 +42,11 @@ vi.mock("@/routers/routes", () => ({
         name: undefined,
         component: () => <div>Hidden Component</div>,
       },
+      {
+        path: "/notifications",
+        name: "Notifications",
+        component: () => <div>Notifications Component</div>,
+      },
     ],
   },
 }));
@@ -56,10 +61,12 @@ vi.mock("./routes", () => ({
 }));
 
 let mockRootAdmin = false;
+let mockNotifications = false;
 vi.mock("@/state", () => ({
   useAppStore: (selector: any) =>
     selector({
       user: { data: { rootAdmin: mockRootAdmin } },
+      settings: { data: { notifications: { enabled: mockNotifications } } },
     }),
 }));
 
@@ -79,6 +86,7 @@ describe("blueprint/extends/routers/DashboardRouter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockRootAdmin = false;
+    mockNotifications = false;
     mockBlueprintAccountRoutes = [];
   });
 
@@ -94,6 +102,24 @@ describe("blueprint/extends/routers/DashboardRouter", () => {
       screen.getByRole("link", { name: /API Credentials/i }),
     ).toBeDefined();
     expect(screen.queryByRole("link", { name: /Hidden/i })).toBeNull();
+  });
+
+  it("only exposes the notification tab when account notifications are enabled", () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <NavigationLinks />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole("link", { name: "Notifications" })).toBeNull();
+    mockNotifications = true;
+    rerender(
+      <MemoryRouter>
+        <NavigationLinks />
+      </MemoryRouter>,
+    );
+    expect(
+      screen.getByRole("link", { name: "Notifications" }).getAttribute("href"),
+    ).toBe("/account/notifications");
   });
 
   it("renders blueprint extension routes for normal user and admin", () => {

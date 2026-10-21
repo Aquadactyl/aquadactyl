@@ -49,6 +49,7 @@ class AssetComposer
             'logoUrl' => config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : null,
             'showNameWithLogo' => (bool) config('aquadactyl.branding.show_name', false),
             'appearance' => app(\Pterodactyl\Services\Settings\AppearanceService::class)->publicSettings(),
+            'notifications' => app(\Pterodactyl\Services\Notifications\NotificationSettings::class)->get(),
             'features' => [
                 'playerCounts' => (bool) config('aquadactyl.features.player_counts', true),
                 'customProfilePictures' => (bool) config('aquadactyl.features.custom_profile_pictures', true),

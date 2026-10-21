@@ -1,7 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Pterodactyl\Http\Controllers\Base\PwaController;
 use Pterodactyl\Http\Controllers\Base\SiteBrandingController;
+
+Route::get('/pwa/service-worker', [PwaController::class, 'worker']);
+Route::get('/pwa/offline', [PwaController::class, 'offline']);
 
 Route::prefix('/branding/site')->name('site-branding.')->group(function () {
     Route::get('/icons/{size}.png', [SiteBrandingController::class, 'icon'])->where('size', '16|32|48|70|150|180|192|256|310|512')->name('icon');

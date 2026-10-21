@@ -19,6 +19,7 @@ import "@/assets/index.css";
 import Spinner from "@/components/elements/Spinner";
 import PrivacyMode from "@/components/elements/PrivacyMode";
 import PanelBackground from "@/components/elements/PanelBackground";
+import ToastHost from "@/components/notifications/ToastHost";
 import type { InitialRouter } from "@/routers/initialRouter";
 
 const DashboardRouter = lazy(() => import("@/routers/DashboardRouter"));
@@ -81,6 +82,7 @@ const App = ({ initialRouter }: { initialRouter?: InitialRouter }) => {
       <StoreProvider store={store}>
         <PrivacyMode />
         <ProgressBar />
+        <ToastHost />
         <div className={"panel-app mx-auto w-auto"}>
           <HistoryRouter history={history} useTransitions>
             <PanelBackground />

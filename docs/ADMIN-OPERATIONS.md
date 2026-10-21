@@ -10,6 +10,69 @@ php artisan optimize:clear
 php artisan queue:restart
 ```
 
+## First-run setup
+
+New, empty installations prompt an administrator after sign-in. Run the normal
+installer and `php artisan p:user:make` first: the wizard is authenticated and does
+not expose a public account-creation endpoint. The prompt is panel-wide and ends
+when an administrator selects **Finish setup**. Upgrades with existing accounts
+or nodes keep working without a prompt. Revisit the wizard at **Admin > Settings >
+Panel setup** (`/admin/settings/setup`).
+
+1. Save the site name, primary colour and optional PNG/JPEG/WebP logo (up to 2 MiB).
+   Uploads use the same safe image re-encoding as Appearance. Leaving the upload
+   empty preserves the current logo.
+2. Optionally create a location and node, including its first allocation. Open the
+   node configuration in a new tab, install/configure Wings or Manta on that
+   machine, then use **Test connection**. The check authenticates using the saved
+   node credentials; failures give configuration, TLS and firewall guidance.
+   Creating a node does not install the daemon or check browser WebSocket access.
+3. Optionally add administrator accounts, one at a time, using separate passwords.
+   Creating a privileged account requires confirmation of your own password.
+4. Finish setup. Skipped infrastructure and account steps remain available later.
+
+Environment-only installations keep branding controlled by their environment and
+are not automatically redirected. The wizard's branding save is disabled there.
+The setup flag is an ordinary database setting, so retain the settings table with
+your panel backup. Existing accounts, servers and nodes are never reset by setup.
+
+## Installable app and offline page
+
+The client and admin areas share an app manifest, generated icons, site name and
+primary colour. Configure installation and the offline page independently under
+**Admin > Settings > PWA**. Optional app and short names override the site name
+only for the installed app. Empty names inherit your Appearance settings.
+Use the browser's **Install app** action in Chrome/Edge or
+**Share > Add to Home Screen** in Safari. The setup finish page also offers an
+install button when the browser supplies an installation prompt. HTTPS is
+required in deployments; browsers also permit localhost for development.
+
+The service worker at `/pwa/service-worker` covers this origin. It stores only
+three public offline pages (English, French and German), without session cookies.
+Navigation stays on the network; a failed navigation displays the appropriate
+offline page with a retry button. Authenticated pages, API data, console output,
+server files and mutations never enter the service worker cache. Server
+management still requires a connection. This does not add push notifications.
+
+Disabling PWA removes manifest links, installation controls and installable
+manifest responses. Returning clients unregister this panel's worker and clear
+only its `aquadactyl-offline-*` caches. The worker endpoint also serves a retiring
+worker so previously open clients can update. These changes require clients to
+reconnect; existing operating-system shortcuts cannot be uninstalled remotely.
+Disabling only the offline page preserves the manifest and app installation.
+Environment-only deployments use `AQUADACTYL_PWA_ENABLED`,
+`AQUADACTYL_PWA_OFFLINE_ENABLED`, `AQUADACTYL_PWA_APP_NAME` and
+`AQUADACTYL_PWA_SHORT_NAME`; the admin form is read-only in that mode.
+
+Keep `/pwa/service-worker`, `/pwa/offline` and `/branding/site/*` routed to Laravel.
+Do not override the worker's no-store or `Service-Worker-Allowed: /` headers with
+proxy caching. Changed branding, translations and offline assets update the
+worker revision; a waiting worker takes over after the previous app windows close.
+Other service workers already controlling `/` on the same origin must be removed
+or migrated before deploying this one. See the browser guidance on
+[PWA installation](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable)
+and [service workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers).
+
 ## Integrated status page
 
 Open **Admin > Settings > Status page**. The feature starts disabled. Choose
@@ -288,6 +351,60 @@ expandable section.
 
 ## Webhooks and update notes
 
+### Personal account notifications
+
+**Settings > Notifications** controls the personal inbox and whether users may save
+their own Discord webhook. Account notifications are available by default, with all
+events opt-in. Personal Discord webhooks are disabled by default. Users choose site
+and Discord events independently under **Account > Notifications**
+(`/account/notifications`); a bell shows their unread count. This is separate from
+the administrator's system webhooks below. Disabling account notifications hides
+the account tab and bell, rejects preference/inbox API access and stops new events
+and Discord deliveries. Action confirmation and error toasts remain available.
+
+Events cover start/stop/restart requests, completed or failed schedules, backups
+and installations, plus daemon-reported crashes. Power notifications confirm a
+request was accepted; they do not claim startup has finished. Schedules skipped
+because the server is offline do not generate a failure alert. A schedule that
+continues after a permitted task failure can still complete successfully.
+
+**Crash reporting requires daemon support.** A daemon must submit `server:crash`
+or `server:crashed` to the authenticated remote activity endpoint for that server.
+Stock Wings does not currently emit those events. Ordinary shutdowns and failed
+connections are not classified as crashes. Neither polling nor opening the
+server console is required for the other notification types.
+
+Only a server's owner and assigned subusers with the relevant permissions receive
+events: `websocket.connect` for power, installation and crash alerts,
+`schedule.read` for schedules and `backup.read` for backups. Permission checks run
+again when reading the inbox or delivering Discord messages. Suspended users do
+not receive new notifications. Administrator access alone does not subscribe an
+administrator to every server.
+
+Saving or removing a webhook requires the current password and a web session.
+URLs are encrypted at rest, omitted from responses and validation-session data,
+and restricted to Discord incoming webhooks. Delivery reuses the secure HTTPS
+transport: public DNS addresses, pinned connections, TLS verification, no redirects,
+bounded responses and suppressed mentions. Messages include event, server and
+schedule names and timestamps; console output, commands, environment variables,
+email addresses and IP addresses are excluded. A saved webhook is shown only as
+configured. Changing its URL cancels deliveries queued for the old revision.
+
+Run the existing scheduler and a worker consuming `low`. It retries failed
+deliveries up to five times over a maximum of one day and expires notification
+records after 30 days. `php artisan p:notifications:maintain` runs this maintenance
+manually. Discord errors and rate limits retry with delays; delivery is at least
+once if a receiver accepted a request before the connection failed. Site alerts
+poll every 15 seconds while the page is visible. Old inbox entries are not replayed
+as toasts when a page loads.
+
+Client and admin action feedback uses dismissible toasts. Errors stay until
+dismissed; other messages expire after seven seconds and pause during pointer or
+keyboard interaction. Blueprint's `useFlash` and keyed `FlashMessageRender` imports
+remain compatible, with messages displayed by the shared toast host.
+
+### System webhooks
+
 Use **Admin > Settings > Webhooks** to add up to 20 Discord or generic JSON
 destinations. Choose event subscriptions, enter a URL, enable the destination and
 confirm your current password. URLs and JSON signing secrets are encrypted at rest
@@ -350,8 +467,9 @@ installed/latest version pair while their delivery history is retained (30 days)
 Canary and custom builds cannot be ordered reliably.
 Docker builds carry a stable build fingerprint to detect a changed canary image.
 
-The administration overview displays **Update notes** directly in the system
-information container. The footer only shows the version. Notes come from the
+The administration overview displays **Update notes** in a collapsed section in
+the system information container. Expand its header to read the notes; the body
+scrolls within a bounded area. The footer only shows the version. Notes come from the
 GitHub release description matching the installed panel version, rather than the
 bundled `CHANGELOG.md`. Canary builds (including fingerprinted Docker builds) use
 the `canary` release, including prereleases. Versioned builds use their exact tag,
@@ -366,6 +484,6 @@ hour, and the last checked notes are stored in the database so loading admin
 pages never waits for GitHub. After installing a different version, the overview
 waits for a matching check rather than displaying notes for the previous version.
 
-The Updates settings page also displays notes inline. Markdown strips raw HTML
+The Updates settings page also uses collapsed notes. Markdown strips raw HTML
 and unsafe links. Missing releases show an empty state without treating them as
 failed checks; network failures show a generic error without exposing credentials.

@@ -1,6 +1,14 @@
 <?php
 
 return [
+    // The installation migration explicitly opts new panels into onboarding.
+    'setup' => ['completed' => true],
+    'pwa' => [
+        'enabled' => env('AQUADACTYL_PWA_ENABLED', true),
+        'offline_enabled' => env('AQUADACTYL_PWA_OFFLINE_ENABLED', true),
+        'app_name' => env('AQUADACTYL_PWA_APP_NAME', ''),
+        'short_name' => env('AQUADACTYL_PWA_SHORT_NAME', ''),
+    ],
     'maintenance' => [
         'enabled' => false,
         'message' => '',

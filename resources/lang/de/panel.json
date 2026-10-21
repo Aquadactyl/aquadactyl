@@ -54,7 +54,8 @@
     "account_settings": "Kontoeinstellungen",
     "sign_out": "Abmelden",
     "home": ":name-Startseite",
-    "status": "Status"
+    "status": "Status",
+    "notifications": "Benachrichtigungen"
   },
   "dashboard": {
     "servers": "Server",
@@ -497,5 +498,50 @@
     "status_active": "Aktiv",
     "status_error": "DNS prüfen",
     "status_deleting": "DNS-Einträge werden entfernt"
+  },
+  "notifications": {
+    "dismiss": "Benachrichtigung schließen",
+    "saved": "Benachrichtigungseinstellungen gespeichert.",
+    "disabled": "Kontobenachrichtigungen wurden vom Administrator deaktiviert.",
+    "description": "Wählen Sie Serverereignisse für Ihren Posteingang und Discord.",
+    "load_failed": "Benachrichtigungen konnten nicht geladen werden. Bitte erneut versuchen.",
+    "preferences": "Benachrichtigungseinstellungen",
+    "scope": "Für eigene und freigegebene Server mit den entsprechenden Berechtigungen. Alle Ereignisse sind optional.",
+    "event": "Ereignis",
+    "site": "Website",
+    "crash_help": "Absturzmeldungen erfordern eine Meldung des Daemons. Standard-Wings meldet dieses Ereignis nicht.",
+    "webhook": "Discord-Webhook-URL",
+    "webhook_saved": "Webhook gespeichert — zum Beibehalten leer lassen",
+    "webhook_help": "Nur Ereignisse, Servernamen, Zeitplannamen und Zeitstempel werden gesendet. Ihre Webhook-URL wird verschlüsselt und nicht erneut angezeigt.",
+    "remove_webhook": "Gespeicherten Webhook entfernen",
+    "password": "Aktuelles Passwort",
+    "save": "Einstellungen speichern",
+    "inbox": "Ihr Posteingang",
+    "mark_visible_read": "Angezeigte als gelesen markieren",
+    "mark_read": "Als gelesen markieren",
+    "load_older": "Ältere Benachrichtigungen laden",
+    "empty": "Alles gelesen. Ausgewählte Serverereignisse erscheinen hier.",
+    "events": {
+      "power": {
+        "start": "Start angefordert",
+        "stop": "Stopp angefordert",
+        "restart": "Neustart angefordert"
+      },
+      "server": {
+        "crash": "Vom Daemon gemeldeter Serverabsturz"
+      },
+      "schedule": {
+        "complete": "Zeitplan abgeschlossen",
+        "fail": "Zeitplan fehlgeschlagen"
+      },
+      "backup": {
+        "complete": "Backup abgeschlossen",
+        "fail": "Backup fehlgeschlagen"
+      },
+      "install": {
+        "complete": "Installation abgeschlossen",
+        "fail": "Installation fehlgeschlagen"
+      }
+    }
   }
 }

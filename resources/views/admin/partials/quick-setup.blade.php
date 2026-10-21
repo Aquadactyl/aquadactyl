@@ -1,4 +1,4 @@
-<div class="modal fade" id="quickSetupModal" tabindex="-1" role="dialog" aria-labelledby="quickSetupTitle" data-create-node="{{ $createNode ? '1' : '0' }}" data-node-title="{{ __('admin/ui.create_node') }}" data-location-title="{{ __('admin/management.create_location') }}" data-failed="{{ __('admin/management.request_failed') }}">
+<div class="modal fade" id="quickSetupModal" tabindex="-1" role="dialog" aria-labelledby="quickSetupTitle" data-wizard="{{ ($wizard ?? false) ? 'true' : 'false' }}" data-create-node="{{ $createNode ? '1' : '0' }}" data-node-title="{{ __('admin/ui.create_node') }}" data-location-title="{{ __('admin/management.create_location') }}" data-failed="{{ __('admin/management.request_failed') }}">
     <div class="modal-dialog modal-lg" role="document"><div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin/ui.close') }}"><span aria-hidden="true">&times;</span></button>

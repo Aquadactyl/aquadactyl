@@ -11,9 +11,11 @@ export interface FlashMessage {
 
 export interface FlashState {
   items: FlashMessage[];
+  toasts: FlashMessage[];
 }
 
 export interface FlashActions {
+  dismissToast: (id: string) => void;
   addFlash: (payload: FlashMessage) => void;
   addError: (payload: { message: string; key?: string }) => void;
   clearAndAddHttpError: (payload: {
@@ -25,16 +27,34 @@ export interface FlashActions {
 
 export type FlashStore = FlashState & FlashActions;
 
+let nextToastId = 0;
+const toast = (message: FlashMessage): FlashMessage => ({
+  ...message,
+  id: `toast-${++nextToastId}`,
+});
+
 export const createFlashesSlice = (
   set: (fn: (state: any) => any) => void,
 ): FlashStore => ({
   items: [],
+  toasts: [],
+
+  dismissToast: (id) =>
+    set((state) => ({
+      flashes: {
+        ...state.flashes,
+        toasts: state.flashes.toasts.filter(
+          (item: FlashMessage) => item.id !== id,
+        ),
+      },
+    })),
 
   addFlash: (payload) =>
     set((state) => ({
       flashes: {
         ...state.flashes,
         items: [...state.flashes.items, payload],
+        toasts: [...state.flashes.toasts, toast(payload)].slice(-5),
       },
     })),
 
@@ -46,6 +66,10 @@ export const createFlashesSlice = (
           ...state.flashes.items,
           { type: "error", title: "Error", ...payload },
         ],
+        toasts: [
+          ...state.flashes.toasts,
+          toast({ type: "error", title: "Error", ...payload }),
+        ].slice(-5),
       },
     })),
 
@@ -73,6 +97,14 @@ export const createFlashesSlice = (
               message: httpErrorToHuman(payload.error),
             },
           ],
+          toasts: [
+            ...state.flashes.toasts,
+            toast({
+              type: "error",
+              title: "Error",
+              message: httpErrorToHuman(payload.error),
+            }),
+          ].slice(-5),
         },
       };
     }),

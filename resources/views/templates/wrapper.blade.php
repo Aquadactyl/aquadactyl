@@ -15,7 +15,7 @@
             <meta name="csrf-token" content="{{ csrf_token() }}">
             <meta name="robots" content="noindex">
             @include('partials.favicons')
-            <meta name="theme-color" content="#11161b">
+            <meta name="theme-color" content="{{ app(\Pterodactyl\Services\Settings\AppearanceService::class)->primaryColor() }}">
             <meta name="color-scheme" content="dark">
             @include('partials.fonts')
             @include('partials.client-preloads')

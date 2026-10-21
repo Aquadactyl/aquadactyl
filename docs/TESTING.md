@@ -2,18 +2,18 @@
 
 The panel has separate React/Vitest and PHP/Pest suites. Both coverage configurations count untested source files. A passing test count alone does not mean the whole application is covered.
 
-Latest verified PHP and frontend results: 20 October 2026. The separate API figures
-were last verified on 13 October 2026.
+Latest verified PHP results: 21 October 2026; frontend: 20 October 2026. The separate
+API figures were last verified on 13 October 2026.
 
 | Suite                | Passing tests | Coverage                                                       |
 | -------------------- | ------------: | -------------------------------------------------------------- |
-| Panel frontend       |         1,560 | 100% statements, branches, functions and lines                 |
-| Panel PHP            |         2,188 | 100% executable lines; 29,544 assertions                       |
+| Panel frontend       |         1,574 | 100% statements, branches, functions and lines                 |
+| Panel PHP            |         2,266 | 100% executable lines; 30,511 assertions                       |
 | Separate API backend |           330 | 100% statements, branches, functions and lines across 32 files |
 
-The complete PHP suite was measured using PHP 8.5 and MariaDB 11 as unprivileged
-UID 1001; the remaining PHP/database combinations and database-free unit tests run
-in CI.
+The complete PHP suite was measured using PHP 8.5 and MariaDB 11 in the isolated
+Docker test stack; the remaining PHP/database combinations and database-free unit
+tests run in CI.
 
 ## Frontend
 
@@ -29,10 +29,13 @@ pnpm run test:admin-security
 
 The Vitest suite requires 100% statements, branches, functions and lines across `resources/scripts/**/*.{ts,tsx}`, the Blueprint compatibility Vite plugin and its TypeScript compiler. Open `coverage/index.html` for the report. The separate game-query and `pnpm run test:blueprint-compat` Node tests check standalone scripts and addon preflight builds; those Node suites are not included in the React coverage percentage. Vendor assets, Blueprint shell scripts and Blade markup are also outside the React denominator.
 
-`pnpm run test:admin-security` runs 25 additional Node tests against the actual admin
-HTML encoders, including quoted attributes, script tags and international names.
-PHP regression tests cover account registration, saved malicious names, restored
-form values and the legacy Blueprint JavaScript binding.
+`pnpm run test:admin-security` runs 40 additional Node tests against the actual admin
+HTML encoders, toasts, setup controls and PWA scripts. They cover quoted attributes,
+script tags, international names, safe notification text, polling after access is
+disabled, connection checks, install prompts and offline caching boundaries. PHP
+regression tests cover account registration, saved malicious names, restored form
+values, the legacy Blueprint JavaScript binding, onboarding permissions, branding
+uploads, administrator creation and session-free public PWA responses.
 
 GitHub Actions runs the 100% gate and uploads the report as `frontend-coverage`. Add a behavior test for every new branch, including permission failures, disabled features and transport errors.
 

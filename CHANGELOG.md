@@ -1,10 +1,36 @@
 # Changelog
 
-This file is a running track of new features and fixes to each version of the panel released starting with `v0.4.0`.
+Aquadactyl release notes, followed by the inherited Pterodactyl changelog.
 
 This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
+
+## v0.3-beta
+
+### Added
+
+- First-run administrator setup for site name, logo and primary colour, with optional location/node creation, authenticated daemon connection checks and additional administrator accounts. Existing installations can revisit setup without resetting their configuration.
+- Installable PWA with branded icons, English/French/German offline connection pages, and an admin Settings > PWA tab for installation, offline support and app names. Offline caches contain public connection pages only.
+- Toast notifications, an account notification inbox, and opt-in preferences for server power actions, schedules, backups, installations and supported crash events. Administrators control availability and optional personal Discord webhooks.
+
+### Changed
+
+- Update notes are collapsed by default in the administration overview and Updates settings. Expanded notes scroll within a bounded area and continue to match the installed GitHub release.
+- Disabling PWA or offline support retires the panel's worker and offline caches while preserving unrelated addon workers and caches. Existing device shortcuts cannot be removed remotely.
+- Schedule notifications distinguish skipped offline runs from failed runs. Notification delivery checks current permissions and admin policy, encrypts webhook URLs, and uses queued retries and retention cleanup.
+
+### Updating
+
+- Apply database migrations, rebuild frontend assets and restart queue workers. Keep the minute scheduler and workers for the high, standard and low queues running.
+- Admin-managed PWA settings require database-backed settings (`APP_ENVIRONMENT_ONLY=false`). Environment-only deployments can use the documented `AQUADACTYL_PWA_*` variables.
+- Crash alerts require the daemon to emit the supported authenticated crash event; stock Wings currently does not emit it. PWA support does not add background push notifications.
+
+### Validation
+
+- 2,266 PHP tests and 30,511 assertions pass with 100% executable line coverage on PHP 8.5 and MariaDB 11.
+- The frontend retains 1,574 passing tests with 100% statement, branch, function and line coverage. Forty standalone admin/PWA checks cover safe rendering, worker retirement, cache isolation and install controls.
+- Browser checks cover mobile layout, daemon connectivity, offline recovery, PWA enable/disable and independent offline settings, custom names and collapsed release notes. Locked Composer and production pnpm audits report no advisories.
 
 ## v0.2-beta
 

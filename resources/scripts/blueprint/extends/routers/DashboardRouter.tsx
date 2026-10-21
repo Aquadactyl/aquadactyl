@@ -15,10 +15,14 @@ export const NavigationLinks = () => {
   const { t } = usePanelTranslation();
   const { pathname } = useLocation();
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
+  const notifications = useAppStore(
+    (state) => state.settings?.data?.notifications?.enabled,
+  );
   return (
     <>
       {/* Aquadactyl routes */}
       {routes.account
+        .filter((route) => route.path !== "/notifications" || notifications)
         .filter(
           (route): route is typeof route & { name: string } => !!route.name,
         )

@@ -35,6 +35,17 @@ test('Wings activity accepts events without a user or IP address', function () {
     expect($log->actor_id)->toBeNull()->and($log->ip)->toBe('127.0.0.1');
 });
 
+test('daemon crash reports preserve their server subject for account notification processing', function () {
+    $this->datum['event'] = 'server:crash';
+    unset($this->datum['user']);
+    $this->postJson('/api/remote/activity', ['data' => [$this->datum]])->assertSuccessful();
+    $activity = ActivityLog::where('event', 'server:crash')->firstOrFail();
+    expect($activity->subjects->first()->subject_id)->toBe($this->server->id);
+    Pterodactyl\Models\AccountNotificationPreference::create(['user_id' => $this->server->owner_id, 'site_events' => ['server.crash'], 'discord_events' => []]);
+    (new Pterodactyl\Jobs\RecordServerNotifications($activity->id))->handle(app(Pterodactyl\Services\Notifications\ServerNotificationService::class));
+    expect(Pterodactyl\Models\AccountNotification::where('user_id', $this->server->owner_id)->firstOrFail()->event)->toBe('server.crash');
+});
+
 test('invalid Wings activity timestamps retain their original value without discarding the batch', function () {
     $this->datum['timestamp'] = 'invalid-timestamp';
     $this->datum['user'] = null;

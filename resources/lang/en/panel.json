@@ -54,7 +54,8 @@
     "account_settings": "Account settings",
     "sign_out": "Sign out",
     "home": ":name home",
-    "status": "Status"
+    "status": "Status",
+    "notifications": "Notifications"
   },
   "dashboard": {
     "servers": "Servers",
@@ -497,5 +498,50 @@
     "status_active": "Active",
     "status_error": "DNS needs attention",
     "status_deleting": "Removing DNS records"
+  },
+  "notifications": {
+    "dismiss": "Dismiss notification",
+    "saved": "Notification settings saved.",
+    "disabled": "Account notifications are disabled by the administrator.",
+    "description": "Choose which server events reach your inbox and Discord.",
+    "load_failed": "Notifications could not be loaded. Please try again.",
+    "preferences": "Notification preferences",
+    "scope": "Applies to servers you own and shared servers where you have the relevant permissions. All events are opt-in.",
+    "event": "Event",
+    "site": "Site",
+    "crash_help": "Crash alerts require crash reporting from your daemon. Stock Wings does not report this event.",
+    "webhook": "Discord webhook URL",
+    "webhook_saved": "Webhook saved — leave blank to keep it",
+    "webhook_help": "Only event names, server names, schedule names and timestamps are sent. Your webhook URL is encrypted and never displayed again.",
+    "remove_webhook": "Remove saved webhook",
+    "password": "Current password",
+    "save": "Save preferences",
+    "inbox": "Your inbox",
+    "mark_visible_read": "Mark shown as read",
+    "mark_read": "Mark read",
+    "load_older": "Load older notifications",
+    "empty": "You're all caught up. Selected server events will appear here.",
+    "events": {
+      "power": {
+        "start": "Start requested",
+        "stop": "Stop requested",
+        "restart": "Restart requested"
+      },
+      "server": {
+        "crash": "Server crash reported by daemon"
+      },
+      "schedule": {
+        "complete": "Schedule completed",
+        "fail": "Schedule failed"
+      },
+      "backup": {
+        "complete": "Backup completed",
+        "fail": "Backup failed"
+      },
+      "install": {
+        "complete": "Installation completed",
+        "fail": "Installation failed"
+      }
+    }
   }
 }

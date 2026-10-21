@@ -6,13 +6,16 @@
         <div class="col-xs-12">
             <div class="nav-tabs-custom nav-tabs-floating">
                 <ul class="nav nav-tabs">
+                    <li @if($activeTab === 'setup')class="active"@endif><a href="{{ route('admin.settings.setup', [], false) }}">{{ __('setup.title') }}</a></li>
                     <li @if($activeTab === 'basic')class="active"@endif><a href="{{ route('admin.settings', [], false) }}">{{ __('admin/ui.general') }}</a></li>
                     <li @if($activeTab === 'mail')class="active"@endif><a href="{{ route('admin.settings.mail', [], false) }}">{{ __('admin/ui.mail') }}</a></li>
                     <li @if($activeTab === 'appearance')class="active"@endif><a href="{{ route('admin.settings.appearance', [], false) }}">{{ __('admin/custom.appearance') }}</a></li>
+                    <li @if($activeTab === 'pwa')class="active"@endif><a href="{{ route('admin.settings.pwa', [], false) }}">PWA</a></li>
                     <li @if($activeTab === 'advanced')class="active"@endif><a href="{{ route('admin.settings.advanced', [], false) }}">{{ __('admin/ui.advanced_9f088d') }}</a></li>
                     <li @if($activeTab === 'oauth')class="active"@endif><a href="{{ route('admin.settings.oauth', [], false) }}">OAuth</a></li>
                     <li @if($activeTab === 'status')class="active"@endif><a href="{{ route('admin.settings.status', [], false) }}">{{ __('integrations.status.heading') }}</a></li>
                     <li @if($activeTab === 'discord')class="active"@endif><a href="{{ route('admin.settings.discord', [], false) }}">{{ __('integrations.discord.heading') }}</a></li>
+                    <li @if($activeTab === 'notifications')class="active"@endif><a href="{{ route('admin.settings.notifications', [], false) }}">{{ __('notifications.heading') }}</a></li>
                     <li @if($activeTab === 'webhooks')class="active"@endif><a href="{{ route('admin.settings.webhooks', [], false) }}">{{ __('webhooks.heading') }}</a></li>
                     <li @if($activeTab === 'updates')class="active"@endif><a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }}</a></li>
                     <li @if($activeTab === 'logs')class="active"@endif><a href="{{ route('admin.settings.logs', [], false) }}">{{ __('admin/custom.logs') }}</a></li>

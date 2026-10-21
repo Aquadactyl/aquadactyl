@@ -43,6 +43,10 @@
           if (nodeForm) switchPanel(false);
           else $(modal).modal("hide");
         } else {
+          if (modal.dataset.wizard === "true") {
+            window.location.reload();
+            return;
+          }
           Pterodactyl.nodeData.push(data);
           const select = document.getElementById("pNodeId");
           select.add(new Option(data.text, data.id, true, true));

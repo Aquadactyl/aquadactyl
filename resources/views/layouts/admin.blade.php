@@ -11,7 +11,7 @@
         <meta name="_token" content="{{ csrf_token() }}">
 
         @include('partials.favicons')
-        <meta name="theme-color" content="#11161b">
+        <meta name="theme-color" content="{{ app(\Pterodactyl\Services\Settings\AppearanceService::class)->primaryColor() }}">
         <meta name="color-scheme" content="dark">
         @include('partials.fonts')
 
@@ -37,6 +37,7 @@
 
         @yield("blueprint.import")
         {!! Theme::css('css/admin.css?v=' . filemtime(public_path('themes/pterodactyl/css/admin.css'))) !!}
+        {!! Theme::css('css/toasts.css?v=' . filemtime(public_path('themes/pterodactyl/css/toasts.css'))) !!}
         @include('partials.appearance')
     </head>
     <body class="hold-transition skin-blue fixed sidebar-mini aquadactyl-admin">
@@ -169,27 +170,18 @@
                     @if(config('aquadactyl.maintenance.enabled'))
                         <div class="alert alert-warning" role="status"><strong>{{ __('admin/operations.maintenance') }}</strong> &middot; <a href="/admin/settings">{{ __('admin/ui.settings') }}</a></div>
                     @endif
-                    <div class="row">
-                        <div class="col-xs-12">
-                            @if (count($errors) > 0)
-                                <div class="alert alert-danger">
-                                    {{ __('admin/ui.there_was_an_error_validating_the_data_provided') }}<br><br>
-                                    <ul>
-                                        @foreach ($errors->all() as $error)
-                                            <li>{{ $error }}</li>
-                                        @endforeach
-                                    </ul>
-                                </div>
-                            @endif
-                            @foreach (Alert::getMessages() as $type => $messages)
-                                @foreach ($messages as $message)
-                                    <div class="alert alert-{{ $type }} alert-dismissable" role="alert">
-                                        {{ $message }}
-                                    </div>
-                                @endforeach
-                            @endforeach
-                        </div>
-                    </div>
+                    @php
+                        $adminToasts = [];
+                        if ($errors->any()) {
+                            $adminToasts[] = ['type' => 'error', 'message' => implode("\n", $errors->all())];
+                        }
+                        foreach (Alert::getMessages() as $type => $messages) {
+                            foreach ($messages as $message) {
+                                $adminToasts[] = ['type' => $type, 'message' => $message];
+                            }
+                        }
+                    @endphp
+                    <noscript>@foreach($adminToasts as $toast)<div class="alert alert-info">{{ $toast['message'] }}</div>@endforeach</noscript>
                     @yield('content')
                 </section>
             </div>
@@ -218,6 +210,11 @@
             {!! Theme::js('vendor/slimscroll/jquery.slimscroll.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/adminlte/app.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/bootstrap-notify/bootstrap-notify.min.js?t={cache-version}') !!}
+            <script>
+                window.AquadactylInitialToasts = {{ Illuminate\Support\Js::from($adminToasts) }};
+                window.AquadactylNotificationOptions = {{ Illuminate\Support\Js::from(['enabled' => app(\Pterodactyl\Services\Notifications\NotificationSettings::class)->get()['enabled'], 'labels' => __('notifications.events')]) }};
+            </script>
+            {!! Theme::js('js/admin/toasts.js?v=' . filemtime(public_path('themes/pterodactyl/js/admin/toasts.js'))) !!}
             {!! Theme::js('vendor/select2/select2.full.min.js?t={cache-version}') !!}
             @include('partials.admin.translations')
             {!! Theme::js('js/admin/functions.js?t={cache-version}') !!}

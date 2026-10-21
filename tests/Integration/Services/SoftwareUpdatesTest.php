@@ -219,7 +219,7 @@ test('installed versions identify fingerprinted canary builds without reading bu
     }
 });
 
-test('background checks persist channel specific descriptions while admin views stay offline and render notes inline safely', function () {
+test('background checks persist channel specific descriptions while admin views render safe collapsed notes without contacting GitHub', function () {
     config()->set('app.version', 'canary');
     Http::fake(fn ($request) => Http::response(str_ends_with($request->url(), '/latest') ? ['tag_name' => 'v1.2.3', 'body' => 'Stable-only notes'] : ['tag_name' => 'canary', 'prerelease' => true, 'body' => "## Canary changes\n\n<script>window.executed=true</script>\n\n[bad](javascript:alert(1)) **Good**"], 200));
     $version = app(ReleaseNotes::class)->installedVersion();
@@ -231,7 +231,8 @@ test('background checks persist channel specific descriptions while admin views 
     $this->actingAs(User::factory()->create(['root_admin' => true]));
     foreach (['/admin', '/admin/settings/updates'] as $path) {
         $response = $this->get($path)->assertOk()->assertSee('<strong>Good</strong>', false)->assertSee('Canary changes')->assertDontSee('Stable-only notes');
-        expect($response->getContent())->not->toContain('<details class="panel-update-notes', '<summary>', 'href="javascript:', '<script>window.executed');
+        expect($response->getContent())->toContain('<details class="panel-update-notes">', '<summary class="panel-update-notes-header">')
+            ->not->toContain('<details class="panel-update-notes" open', 'href="javascript:', '<script>window.executed');
         $footer = explode('<footer', $response->getContent(), 2)[1];
         expect($footer)->not->toContain('panel-update-notes', 'Installed version notes');
     }

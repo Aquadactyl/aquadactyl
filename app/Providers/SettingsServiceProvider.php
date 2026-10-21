@@ -17,6 +17,11 @@ class SettingsServiceProvider extends ServiceProvider
      * if they exist.
      */
     protected array $keys = [
+        'aquadactyl:setup:completed',
+        'aquadactyl:pwa:enabled',
+        'aquadactyl:pwa:offline_enabled',
+        'aquadactyl:pwa:app_name',
+        'aquadactyl:pwa:short_name',
         'aquadactyl:maintenance:enabled',
         'aquadactyl:maintenance:message',
         'app:name',
@@ -191,7 +196,7 @@ class SettingsServiceProvider extends ServiceProvider
                 }
             }
 
-            if (is_string($value) && !in_array($key, ['app:name', 'aquadactyl:maintenance:message'], true) && !in_array($key, self::$encrypted, true)) {
+            if (is_string($value) && !in_array($key, ['app:name', 'aquadactyl:maintenance:message', 'aquadactyl:pwa:app_name', 'aquadactyl:pwa:short_name'], true) && !in_array($key, self::$encrypted, true)) {
                 switch (strtolower($value)) {
                     case 'true':
                     case '(true)':

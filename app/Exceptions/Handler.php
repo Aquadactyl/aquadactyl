@@ -63,6 +63,7 @@ class Handler extends ExceptionHandler
         'api_token',
         'bot_token',
         'webhook_url',
+        'discord_webhook',
         'webhook_secret',
         'secret',
         'password',

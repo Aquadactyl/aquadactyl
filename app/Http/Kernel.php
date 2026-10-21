@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
             LanguageMiddleware::class,
             Middleware\RejectSuspendedUser::class,
             Middleware\PanelMaintenance::class,
+            Middleware\FirstRunSetup::class,
         ],
         'api' => [
             EnsureStatefulRequests::class,

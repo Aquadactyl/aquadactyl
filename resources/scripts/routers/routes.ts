@@ -35,6 +35,9 @@ const SettingsContainer = lazy(
 const AccountOverviewContainer = lazy(
   () => import("@/components/dashboard/AccountOverviewContainer"),
 );
+const AccountNotificationsContainer = lazy(
+  () => import("@/components/dashboard/AccountNotificationsContainer"),
+);
 const AccountApiContainer = lazy(
   () => import("@/components/dashboard/AccountApiContainer"),
 );
@@ -96,6 +99,11 @@ export default {
       path: "/activity",
       name: "Activity",
       component: ActivityLogContainer,
+    },
+    {
+      path: "/notifications",
+      name: "Notifications",
+      component: AccountNotificationsContainer,
     },
   ],
   server: [

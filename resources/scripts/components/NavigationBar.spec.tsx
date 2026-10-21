@@ -20,6 +20,9 @@ vi.mock("@/plugins/usePanelTranslation", () => ({
 }));
 
 vi.mock("@/api/http");
+vi.mock("@/components/notifications/NotificationBell", () => ({
+  default: () => null,
+}));
 
 vi.mock("@/components/dashboard/search/SearchContainer", () => ({
   default: () => <div data-testid="search-container" />,

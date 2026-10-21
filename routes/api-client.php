@@ -21,6 +21,10 @@ Route::get('/', [Client\ClientController::class, 'index'])->name('api:client.ind
 Route::get('/permissions', [Client\ClientController::class, 'permissions']);
 
 Route::prefix('/account')->middleware(AccountSubject::class)->group(function () {
+    Route::get('/notifications/preferences', [Client\AccountNotificationController::class, 'preferences']);
+    Route::put('/notifications/preferences', [Client\AccountNotificationController::class, 'update'])->middleware('throttle:20,1,notification-preferences:');
+    Route::get('/notifications', [Client\AccountNotificationController::class, 'index']);
+    Route::post('/notifications/read', [Client\AccountNotificationController::class, 'read']);
     Route::get('/server-folders', [Client\ServerFolderController::class, 'index']);
     Route::post('/server-folders', [Client\ServerFolderController::class, 'store']);
     Route::put('/server-folders/{folder}', [Client\ServerFolderController::class, 'update'])->whereNumber('folder');

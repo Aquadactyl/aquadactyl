@@ -54,7 +54,8 @@
     "account_settings": "Paramètres du compte",
     "sign_out": "Se déconnecter",
     "home": "Accueil :name",
-    "status": "Statut"
+    "status": "Statut",
+    "notifications": "Notifications"
   },
   "dashboard": {
     "servers": "Serveurs",
@@ -497,5 +498,50 @@
     "status_active": "Actif",
     "status_error": "Vérifier le DNS",
     "status_deleting": "Suppression des enregistrements DNS"
+  },
+  "notifications": {
+    "dismiss": "Fermer la notification",
+    "saved": "Préférences de notification enregistrées.",
+    "disabled": "Les notifications sont désactivées par l’administrateur.",
+    "description": "Choisissez les événements reçus dans votre boîte de réception et sur Discord.",
+    "load_failed": "Impossible de charger les notifications. Veuillez réessayer.",
+    "preferences": "Préférences de notification",
+    "scope": "Pour vos serveurs et les serveurs partagés avec les autorisations nécessaires. Tous les événements sont facultatifs.",
+    "event": "Événement",
+    "site": "Site",
+    "crash_help": "Les alertes de crash nécessitent un signalement du daemon. Wings standard ne signale pas cet événement.",
+    "webhook": "URL du webhook Discord",
+    "webhook_saved": "Webhook enregistré — laissez vide pour le conserver",
+    "webhook_help": "Seuls les événements, noms des serveurs et planifications, et horodatages sont envoyés. L’URL est chiffrée et ne sera plus affichée.",
+    "remove_webhook": "Supprimer le webhook enregistré",
+    "password": "Mot de passe actuel",
+    "save": "Enregistrer les préférences",
+    "inbox": "Votre boîte de réception",
+    "mark_visible_read": "Marquer les notifications affichées comme lues",
+    "mark_read": "Marquer comme lue",
+    "load_older": "Charger les anciennes notifications",
+    "empty": "Vous êtes à jour. Les événements sélectionnés apparaîtront ici.",
+    "events": {
+      "power": {
+        "start": "Démarrage demandé",
+        "stop": "Arrêt demandé",
+        "restart": "Redémarrage demandé"
+      },
+      "server": {
+        "crash": "Crash signalé par le daemon"
+      },
+      "schedule": {
+        "complete": "Planification terminée",
+        "fail": "Échec de la planification"
+      },
+      "backup": {
+        "complete": "Sauvegarde terminée",
+        "fail": "Échec de la sauvegarde"
+      },
+      "install": {
+        "complete": "Installation terminée",
+        "fail": "Échec de l’installation"
+      }
+    }
   }
 }

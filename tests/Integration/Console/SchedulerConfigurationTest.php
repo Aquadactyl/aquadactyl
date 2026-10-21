@@ -32,7 +32,9 @@ test('a fresh installation schedules essential maintenance without requiring Blu
     }
     config()->set(['backups.prune_age' => 0, 'activity.prune_days' => null, 'aquadactyl.telemetry.enabled' => false]);
     $events = app(Kernel::class)->resolveConsoleSchedule()->events();
-    expect($events)->toHaveCount(10);
+    expect($events)->toHaveCount(11);
+    $notificationMaintenance = array_values(array_filter($events, fn ($event) => $event->command === Application::formatCommandString('p:notifications:maintain')))[0];
+    expect($notificationMaintenance->withoutOverlapping)->toBeTrue()->and($notificationMaintenance->expression)->toBe('* * * * *');
     expect(array_column($events, 'command'))->toContain(Application::formatCommandString('p:webhooks:retry'), Application::formatCommandString('p:updates:check'));
     expect(array_column($events, 'command'))->toContain(Application::formatCommandString('p:status:collect'));
     expect(array_column($events, 'command'))->toContain(Application::formatCommandString('p:discord:sync-roles'));

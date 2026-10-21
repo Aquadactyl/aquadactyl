@@ -5,6 +5,7 @@ namespace Pterodactyl\Http\Controllers\Base;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Pterodactyl\Http\Controllers\Controller;
+use Pterodactyl\Services\Settings\PwaService;
 use Pterodactyl\Services\Settings\SiteBrandingService;
 
 class SiteBrandingController extends Controller
@@ -30,6 +31,10 @@ class SiteBrandingController extends Controller
 
     public function manifest(Request $request): Response
     {
+        if (!app(PwaService::class)->enabled()) {
+            return response('{}', 404, ['Content-Type' => 'application/manifest+json', 'Cache-Control' => 'no-store']);
+        }
+
         return $this->respond($request, json_encode($this->branding->manifest(), JSON_THROW_ON_ERROR), 'application/manifest+json');
     }
 

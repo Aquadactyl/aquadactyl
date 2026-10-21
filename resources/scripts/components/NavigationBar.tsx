@@ -8,6 +8,7 @@ import http from "@/api/http";
 import SpinnerOverlay from "@/components/elements/SpinnerOverlay";
 import Tooltip from "@/components/elements/tooltip/Tooltip";
 import Avatar from "@/components/Avatar";
+import NotificationBell from "@/components/notifications/NotificationBell";
 
 import BeforeNavigation from "@blueprint/components/Navigation/NavigationBar/BeforeNavigation";
 import AdditionalItems from "@blueprint/components/Navigation/NavigationBar/AdditionalItems";
@@ -109,6 +110,7 @@ export default () => {
             </a>
           )}
           <SearchContainer />
+          <NotificationBell />
           <NavLink
             to={"/account"}
             id={"NavigationAccount"}

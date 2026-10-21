@@ -25,6 +25,10 @@ using server definitions from the Pterodactyl egg ecosystem.
 
 ## Features
 
+- **First-run setup and PWA:** Guided branding, optional location/node creation with
+  connectivity checks and additional administrator accounts. Install the panel as
+  an app with a safe offline connection page; admins configure installation,
+  offline support and app names under Settings > PWA.
 - **Appearance:** Charcoal theme, Inter font, custom logos, primary colours,
   backgrounds and login layouts, with desktop and mobile previews.
 - **Account security:** Passkeys, two-factor authentication and connected Discord,
@@ -45,9 +49,11 @@ using server definitions from the Pterodactyl egg ecosystem.
 - **Status and Discord:** An optional public or signed-in status page with published
   services and incident notices, plus automatic Discord roles based on owned
   servers, eggs and nodes. Configure both under **Admin > Settings**.
-- **Notifications and releases:** Discord or signed JSON webhooks for system actions,
+- **Notifications and releases:** Toast notifications, an opt-in account inbox and
+  personal Discord alerts for power actions, schedules, backups and installations.
+  Administrators control availability and personal webhooks. Discord or signed JSON webhooks for system actions,
   status changes, available updates and detected version changes, with delivery history.
-  Optional background release checks and inline GitHub release notes matching the installed panel version.
+  Optional background release checks and collapsible GitHub release notes matching the installed panel version.
 - **Server domains and operations:** Cloudflare-managed server subdomains, admin
   Blueprint installation/removal, themed panel maintenance with an admin preview,
   a lightweight log viewer and a daemon overview. See the [setup guide](docs/ADMIN-OPERATIONS.md).
@@ -96,6 +102,8 @@ sudo -u www-data php artisan p:user:make
 
 Complete the guide's Nginx/TLS, queue and scheduler setup, and configure
 [Wings](https://pterodactyl.io/wings/1.0/installing.html) to host game servers.
+Sign in as your administrator to complete the first-run wizard. Existing panels
+can open it under **Admin > Settings > Panel setup**.
 Existing installations can retain `/var/www/pterodactyl`; match service paths to
 your installation. See the [deployment reference](docs/DEPLOYMENT.md) for details.
 

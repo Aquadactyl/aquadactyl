@@ -336,9 +336,7 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
                 side={"bottom"}
                 align={"start"}
                 sideOffset={6}
-                className={
-                  "z-50 w-(--anchor-width) max-w-(--available-width)"
-                }
+                className={"z-50 w-(--anchor-width) max-w-(--available-width)"}
                 style={{
                   width: "var(--anchor-width)",
                   maxWidth: "var(--available-width)",

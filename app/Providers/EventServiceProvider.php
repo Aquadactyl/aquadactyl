@@ -24,7 +24,7 @@ class EventServiceProvider extends ServiceProvider
      */
     protected $listen = [
         ServerInstalledEvent::class => [ServerInstalledNotification::class],
-        \Pterodactyl\Events\ActivityLogged::class => [\Pterodactyl\Listeners\Webhooks\SendSystemActionWebhook::class],
+        \Pterodactyl\Events\ActivityLogged::class => [\Pterodactyl\Listeners\Webhooks\SendSystemActionWebhook::class, \Pterodactyl\Listeners\Notifications\QueueServerNotification::class],
     ];
 
     protected $subscribe = [
