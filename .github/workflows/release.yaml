@@ -3,16 +3,49 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to release (e.g. v1.2.3 or 1.2.3)"
+        required: true
+        type: string
+      prerelease:
+        description: "Mark as prerelease"
+        required: false
+        type: boolean
+        default: false
 jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    env:
-      RELEASE_TAG: ${{ github.ref_name }}
     steps:
       - uses: actions/checkout@v7
+      - name: Resolve release configuration
+        id: resolve-release
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_PRERELEASE: ${{ inputs.prerelease }}
+        run: |
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$(echo "$INPUT_VERSION" | xargs)"
+            if [[ "$TAG" != v* ]]; then
+              TAG="v$TAG"
+            fi
+            IS_PRERELEASE="$INPUT_PRERELEASE"
+          else
+            TAG="$GITHUB_REF_NAME"
+            if [[ "$TAG" =~ (rc|beta|alpha) ]]; then
+              IS_PRERELEASE="true"
+            else
+              IS_PRERELEASE="false"
+            fi
+          fi
+          echo "RELEASE_TAG=$TAG" >> "$GITHUB_ENV"
+          echo "IS_PRERELEASE=$IS_PRERELEASE" >> "$GITHUB_ENV"
+          echo "release_tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "is_prerelease=$IS_PRERELEASE" >> "$GITHUB_OUTPUT"
       - name: Validate release tag
         run: node scripts/helpers/release-version.mjs "$RELEASE_TAG"
       - uses: pnpm/action-setup@v6
@@ -48,8 +81,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          tag_name: ${{ steps.resolve-release.outputs.release_tag }}
+          target_commitish: release/${{ steps.resolve-release.outputs.release_tag }}
           draft: true
-          prerelease: ${{ contains(github.ref_name, 'rc') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'alpha') }}
+          prerelease: ${{ steps.resolve-release.outputs.is_prerelease == 'true' }}
           body_path: ./RELEASE_CHANGELOG
           files: |
             panel.tar.gz
