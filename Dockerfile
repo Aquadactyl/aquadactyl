@@ -73,7 +73,6 @@ RUN --mount=type=cache,id=aquadactyl-composer,target=/tmp/composer-cache \
     composer install --no-dev --no-interaction --no-scripts --no-autoloader --prefer-dist --no-progress
 
 COPY --chown=nginx:nginx . ./
-COPY --from=frontend --chown=nginx:nginx /app/public/assets ./public/assets
 COPY --from=frontend --chown=nginx:nginx /app/public/build ./public/build
 COPY --from=frontend --chown=nginx:nginx /app/node_modules ./node_modules
 COPY --from=frontend --chown=nginx:nginx /app/packages ./packages
@@ -83,7 +82,7 @@ RUN find app routes config resources public/themes/pterodactyl -type f -exec sha
     | LC_ALL=C sort | sha256sum | cut -d ' ' -f 1 > .aquadactyl-build
 
 RUN cp .env.example .env \
-    && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache \
+    && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache public/extensions public/assets/extensions \
     && chmod 777 -R bootstrap storage \
     && export CACHE_STORE=array CACHE_DRIVER=array SESSION_DRIVER=array QUEUE_CONNECTION=sync \
     && composer dump-autoload --no-dev --no-interaction --optimize \
