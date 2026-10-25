@@ -61,7 +61,7 @@
                         </h3>
                     </div>
                     <div class="box-body no-padding">
-                        <div style="padding:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><a class="btn btn-default btn-sm" href="{{ route('admin.settings.logs.download', ['file' => $currentFile['name']], false) }}">{{ __('admin/operations.download_log') }}</a><label style="margin:0"><input type="checkbox" id="log-wrap" checked> {{ __('admin/operations.wrap_lines') }}</label>@if($truncated)<span class="text-muted">{{ __('admin/operations.log_tail') }}</span>@endif</div><pre id="log_editor" tabindex="0" style="margin:0;max-height:65vh;min-height:250px;overflow:auto;padding:16px;border:0;border-radius:0;background:var(--aqua-chrome,#11161b);color:var(--aqua-text,#d7dce1);font:12px/1.65 Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere">{{ $content }}</pre>
+                        <div style="padding:12px;display:flex;gap:12px;align-items:center;flex-wrap:wrap"><a class="btn btn-default btn-sm" href="{{ route('admin.settings.logs.download', ['file' => $currentFile['name']], false) }}">{{ __('admin/operations.download_log') }}</a><label style="margin:0"><input type="checkbox" id="log-wrap" checked> {{ __('admin/operations.wrap_lines') }}</label>@if($truncated)<span class="text-muted">{{ __('admin/operations.log_tail') }}</span>@endif</div><pre id="log_editor" tabindex="0" style="margin:0;height:65vh;min-height:350px;border:0;border-radius:0;">{{ $content }}</pre>
                     </div>
                 </div>
             </div>
@@ -71,13 +71,33 @@
 
 @section('footer-scripts')
     @parent
+    {!! Theme::js('vendor/ace/ace.js') !!}
+    {!! Theme::js('vendor/ace/ext-searchbox.js') !!}
     <script>
     $(function () {
         $('#select-log-file').select2().on('change', function () { $('#log-file-form').submit(); });
         const log = document.getElementById('log_editor');
+        if (!log) return;
+
+        const editor = ace.edit('log_editor');
+        editor.setTheme('ace/theme/chrome');
+        editor.getSession().setMode('ace/mode/plain_text');
+        editor.setReadOnly(true);
+        editor.setShowPrintMargin(false);
+        editor.getSession().setUseWrapMode(true);
+        editor.renderer.setShowGutter(true);
+        editor.setFontSize(12);
+
+        // Scroll to the end of the log
+        const lastRow = editor.session.getLength();
+        editor.gotoLine(lastRow, 0);
+
         const wrap = document.getElementById('log-wrap');
-        if (log) log.scrollTop = log.scrollHeight;
-        if (wrap) wrap.addEventListener('change', function () { log.style.whiteSpace = this.checked ? 'pre-wrap' : 'pre'; log.style.overflowWrap = this.checked ? 'anywhere' : 'normal'; });
+        if (wrap) {
+            wrap.addEventListener('change', function () {
+                editor.getSession().setUseWrapMode(this.checked);
+            });
+        }
     });
     </script>
 @endsection

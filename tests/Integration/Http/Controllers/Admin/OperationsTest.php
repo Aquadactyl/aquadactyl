@@ -46,13 +46,13 @@ test('daemon probes normalize modern responses and cache successful and failed r
     ['{}', 200, false], ['invalid json', 200, false], ['unavailable', 503, false],
 ]);
 
-test('log viewer preserves whitespace and escapes executable markup without editor assets', function () {
+test('log viewer preserves whitespace and escapes executable markup with Ace editor', function () {
     $name = 'operations-test.log';
     File::put(storage_path('logs/' . $name), "line one\n    indented\n<script>alert(1)</script>");
     try {
         $this->actingAs($this->admin)->get('/admin/settings/logs?file=' . $name)->assertOk()
             ->assertSee('<pre id="log_editor"', false)->assertSee("line one\n    indented", false)
-            ->assertSee('&lt;script&gt;alert(1)&lt;/script&gt;', false)->assertDontSee('ace.edit', false);
+            ->assertSee('&lt;script&gt;alert(1)&lt;/script&gt;', false)->assertSee('ace.edit', false);
         $this->getJson('/admin/settings/logs?file[]=invalid')->assertUnprocessable();
     } finally {
         File::delete(storage_path('logs/' . $name));
