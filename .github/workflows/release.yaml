@@ -63,11 +63,16 @@ jobs:
           git config --local user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git config --local user.name 'Aquadactyl CI'
           git checkout -b "$BRANCH"
-          git push -u origin "$BRANCH"
           sed -i "s/'canary'/'$VERSION'/" config/app.php
           git add config/app.php
           git commit -m 'ci(release): bump version'
-          git push
+          git push -u origin "$BRANCH"
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            if [ -z "$(git ls-remote --tags origin "refs/tags/$RELEASE_TAG")" ]; then
+              git tag -a "$RELEASE_TAG" -m "Release $RELEASE_TAG"
+              git push origin "$RELEASE_TAG"
+            fi
+          fi
       - name: create release archive
         run: |
           rm -rf node_modules tests CONTRIBUTING.md flake.lock flake.nix phpunit.xml shell.nix
@@ -81,9 +86,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: ${{ steps.resolve-release.outputs.release_tag }}
           tag_name: ${{ steps.resolve-release.outputs.release_tag }}
           target_commitish: release/${{ steps.resolve-release.outputs.release_tag }}
-          draft: true
+          draft: false
           prerelease: ${{ steps.resolve-release.outputs.is_prerelease == 'true' }}
           body_path: ./RELEASE_CHANGELOG
           files: |
