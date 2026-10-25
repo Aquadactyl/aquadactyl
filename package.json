@@ -105,8 +105,8 @@
     "not dead"
   ],
   "engines": {
-    "node": ">=24.11.0",
-    "pnpm": "12.10.1"
+    "node": ">=24.22.1",
+    "pnpm": "12.15.0"
   },
-  "packageManager": "pnpm@12.10.1"
+  "packageManager": "pnpm@12.15.0"
 }
