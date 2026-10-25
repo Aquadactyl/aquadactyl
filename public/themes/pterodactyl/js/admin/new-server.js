@@ -17,7 +17,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-$(document).ready(function() {
+$(document).ready(function () {
     $('#pNestId').select2({
         placeholder: window.AquadactylAdmin.translate('select_a_nest', 'Select a Nest'),
     }).change();
@@ -58,20 +58,20 @@ $(document).on('click', function (event) {
 });
 
 $('#pNodeId').on('change', function () {
-    currentNode = $(this).val();
-    $.each(Pterodactyl.nodeData, function (i, v) {
-        if (v.id == currentNode) {
-            $('#pAllocation').html('').select2({
-                data: v.allocations,
-                placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
-            });
+    const currentNode = $(this).val();
+    const node = (Pterodactyl.nodeData || []).find((v) => String(v.id) === String(currentNode));
 
-            updateAdditionalAllocations();
-        }
-    });
+    if (node) {
+        $('#pAllocation').html('').select2({
+            data: node.allocations,
+            placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
+        });
+
+        updateAdditionalAllocations();
+    }
 });
 
-$('#pNestId').on('change', function (event) {
+$('#pNestId').on('change', function () {
     $('#pEggId').html('').select2({
         data: $.map(_.get(Pterodactyl.nests, $(this).val() + '.eggs', []), function (item) {
             return {
@@ -82,20 +82,16 @@ $('#pNestId').on('change', function (event) {
     }).change();
 });
 
-$('#pEggId').on('change', function (event) {
-    let parentChain = _.get(Pterodactyl.nests, $('#pNestId').val(), null);
-    let objectChain = _.get(parentChain, 'eggs.' + $(this).val(), null);
+$('#pEggId').on('change', function () {
+    const parentChain = _.get(Pterodactyl.nests, $('#pNestId').val(), null);
+    const objectChain = _.get(parentChain, 'eggs.' + $(this).val(), null);
 
-    const images = _.get(objectChain, 'docker_images', {})
-    $('#pDefaultContainer').html('');
-    const keys = Object.keys(images);
-    for (let i = 0; i < keys.length; i++) {
-        let opt = document.createElement('option');
-        opt.value = images[keys[i]];
-        opt.innerText = keys[i] + " (" + images[keys[i]] + ")";
-        $('#pDefaultContainer').append(opt);
-    }
-    $('#pDefaultContainer').trigger('change.select2');
+    const images = _.get(objectChain, 'docker_images', {});
+    const $container = $('#pDefaultContainer').empty();
+    Object.entries(images).forEach(([label, value]) => {
+        $container.append(new Option(`${label} (${value})`, value));
+    });
+    $container.trigger('change.select2');
 
     if (!_.get(objectChain, 'startup', false)) {
         $('#pStartup').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
@@ -105,7 +101,7 @@ $('#pEggId').on('change', function (event) {
 
     $('#pPackId').html('').select2({
         data: [{ id: 0, text: window.AquadactylAdmin.translate('no_service_pack', 'No Service Pack') }].concat(
-            $.map(_.get(objectChain, 'packs', []), function (item, i) {
+            $.map(_.get(objectChain, 'packs', []), function (item) {
                 return {
                     id: item.id,
                     text: item.name + ' (' + item.version + ')',
@@ -121,12 +117,12 @@ $('#pEggId').on('change', function (event) {
     }
 
     const variableIds = {};
-    $('#appendVariablesTo').html('');
+    const $variables = $('#appendVariablesTo').empty();
     $.each(_.get(objectChain, 'variables', []), function (i, item) {
         variableIds[item.env_variable] = 'var_ref_' + item.id;
 
-        let isRequired = (item.required === 1) ? '<span class="label label-danger">Required</span> ' : '';
-        let dataAppend = ' \
+        const isRequired = (item.required === 1) ? '<span class="label label-danger">Required</span> ' : '';
+        const dataAppend = ' \
             <div class="form-group col-sm-6"> \
                 <label for="var_ref_' + escapeHtml(item.id) + '" class="control-label">' + isRequired + escapeHtml(item.name) + '</label> \
                 <input type="text" id="var_ref_' + escapeHtml(item.id) + '" autocomplete="off" name="environment[' + escapeHtml(item.env_variable) + ']" class="form-control" value="' + escapeHtml(item.default_value) + '" /> \
@@ -135,7 +131,7 @@ $('#pEggId').on('change', function (event) {
                 <strong>Validation Rules:</strong> <code>' + escapeHtml(item.rules) + '</code></small></p> \
             </div> \
         ';
-        $('#appendVariablesTo').append(dataAppend);
+        $variables.append(dataAppend);
     });
 
     // If you receive a warning on this line, it should be fine to ignore. this function is
@@ -148,27 +144,20 @@ $('#pAllocation').on('change', function () {
 });
 
 function updateAdditionalAllocations() {
-    let currentAllocation = $('#pAllocation').val();
-    let currentNode = $('#pNodeId').val();
+    const currentAllocation = $('#pAllocation').val();
+    const currentNode = $('#pNodeId').val();
 
-    $.each(Pterodactyl.nodeData, function (i, v) {
-        if (v.id == currentNode) {
-            let allocations = [];
+    const node = (Pterodactyl.nodeData || []).find((v) => String(v.id) === String(currentNode));
+    if (node) {
+        const allocations = (node.allocations || []).filter(
+            (a) => String(a.id) !== String(currentAllocation)
+        );
 
-            for (let i = 0; i < v.allocations.length; i++) {
-                const allocation = v.allocations[i];
-
-                if (allocation.id != currentAllocation) {
-                    allocations.push(allocation);
-                }
-            }
-
-            $('#pAllocationAdditional').html('').select2({
-                data: allocations,
-                placeholder: 'Select Additional Allocations',
-            });
-        }
-    });
+        $('#pAllocationAdditional').html('').select2({
+            data: allocations,
+            placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
+        });
+    }
 }
 
 function initUserIdSelect(data) {
@@ -191,7 +180,7 @@ function initUserIdSelect(data) {
                 };
             },
 
-            processResults: function (data, params) {
+            processResults: function (data) {
                 return { results: data };
             },
 
@@ -222,6 +211,5 @@ function initUserIdSelect(data) {
                 </span> \
             </div>';
         }
-
     });
 }

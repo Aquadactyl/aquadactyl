@@ -1,65 +1,58 @@
-$(document).ready(function () {
-    const $modal = $('#transferServerModal');
+(function ($) {
+    'use strict';
 
-    $('#pNodeId').select2({
-        placeholder: window.AquadactylAdmin.translate('select_node', 'Select a Node'),
-        dropdownParent: $modal,
-    }).change();
+    $(function () {
+        const $modal = $('#transferServerModal');
+        const $node = $('#pNodeId');
+        const $allocation = $('#pAllocation');
+        const $additional = $('#pAllocationAdditional');
 
-    $('#pAllocation').select2({
-        placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
-        dropdownParent: $modal,
-    });
+        function updateAdditionalAllocations() {
+            const currentAllocation = $allocation.val();
+            const currentNode = $node.val();
 
-    $('#pAllocationAdditional').select2({
-        placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
-        dropdownParent: $modal,
-    });
-});
+            const node = (window.Pterodactyl?.nodeData || []).find((v) => String(v.id) === String(currentNode));
+            if (node) {
+                const allocations = (node.allocations || []).filter(
+                    (a) => String(a.id) !== String(currentAllocation)
+                );
 
-$('#pNodeId').on('change', function () {
-    let currentNode = $(this).val();
-    const $modal = $('#transferServerModal');
-
-    $.each(Pterodactyl.nodeData, function (i, v) {
-        if (v.id == currentNode) {
-            $('#pAllocation').html('').select2({
-                data: v.allocations,
-                placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
-                dropdownParent: $modal,
-            });
-
-            updateAdditionalAllocations();
-        }
-    });
-});
-
-$('#pAllocation').on('change', function () {
-    updateAdditionalAllocations();
-});
-
-function updateAdditionalAllocations() {
-    let currentAllocation = $('#pAllocation').val();
-    let currentNode = $('#pNodeId').val();
-    const $modal = $('#transferServerModal');
-
-    $.each(Pterodactyl.nodeData, function (i, v) {
-        if (v.id == currentNode) {
-            let allocations = [];
-
-            for (let i = 0; i < v.allocations.length; i++) {
-                const allocation = v.allocations[i];
-
-                if (allocation.id != currentAllocation) {
-                    allocations.push(allocation);
-                }
+                $additional.html('').select2({
+                    data: allocations,
+                    placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
+                    dropdownParent: $modal,
+                });
             }
-
-            $('#pAllocationAdditional').html('').select2({
-                data: allocations,
-                placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
-                dropdownParent: $modal,
-            });
         }
+
+        $node.select2({
+            placeholder: window.AquadactylAdmin.translate('select_node', 'Select a Node'),
+            dropdownParent: $modal,
+        }).on('change', function () {
+            const currentNode = $(this).val();
+            const node = (window.Pterodactyl?.nodeData || []).find((v) => String(v.id) === String(currentNode));
+
+            if (node) {
+                $allocation.html('').select2({
+                    data: node.allocations,
+                    placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
+                    dropdownParent: $modal,
+                });
+
+                updateAdditionalAllocations();
+            }
+        });
+
+        $allocation.select2({
+            placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
+            dropdownParent: $modal,
+        }).on('change', updateAdditionalAllocations);
+
+        $additional.select2({
+            placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
+            dropdownParent: $modal,
+        });
+
+        $node.trigger('change');
     });
-}
+})(window.jQuery);

@@ -1,10 +1,16 @@
-(function () {
+(() => {
     'use strict';
 
-    window.jQuery(function ($) {
+    window.jQuery?.(($) => {
         $('.egg-library-select').select2({ width: '100%' });
+
         const source = document.getElementById('egg-source');
-        if (source) $(source).on('change', function () { $('#egg-category').val('').trigger('change'); });
+        if (source) {
+            $(source).on('change', () => {
+                $('#egg-category').val('').trigger('change');
+            });
+        }
+
         const form = document.getElementById('egg-import-form');
         if (!form) return;
 
@@ -16,21 +22,27 @@
         const existingNote = document.getElementById('egg-existing-note');
         const existing = JSON.parse(form.dataset.existingEggs || '{}');
 
-        const update = function () {
+        const update = () => {
             const createNew = nest.value === 'new';
             newNest.hidden = !createNew;
             name.disabled = !createNew;
             name.required = createNew;
+
             const eggId = existing[nest.value];
-            importButton.hidden = !!eggId;
-            importButton.disabled = !!eggId || !nest.value;
+            importButton.hidden = Boolean(eggId);
+            importButton.disabled = Boolean(eggId) || !nest.value;
             existingLink.hidden = !eggId;
             existingNote.hidden = !eggId;
-            if (eggId) existingLink.href = form.dataset.eggViewUrl + '/' + eggId;
+
+            if (eggId) {
+                existingLink.href = `${form.dataset.eggViewUrl}/${eggId}`;
+            }
         };
+
         $(nest).on('change', update);
         update();
-        form.addEventListener('submit', function () {
+
+        form.addEventListener('submit', () => {
             importButton.disabled = true;
             importButton.textContent = 'Importing…';
         });

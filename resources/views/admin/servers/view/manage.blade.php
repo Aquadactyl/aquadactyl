@@ -195,8 +195,6 @@
 
 @section('footer-scripts')
     @parent
-    {!! Theme::js('vendor/lodash/lodash.js') !!}
-
     @if($canTransfer)
         {!! Theme::js('js/admin/server/transfer.js') !!}
     @endif
