@@ -7,16 +7,30 @@
   });
   const logo = document.getElementById("setup-logo");
   const image = document.getElementById("setup-logo-preview");
-  const initialLogo = image?.src;
+  function safeImageUrl(url) {
+    if (typeof url !== "string") return "";
+    if (/^blob:[a-zA-Z0-9\-.:/]+$/.test(url)) {
+      return encodeURI(url);
+    }
+    if (/^(?:https?:\/\/[a-zA-Z0-9.\-:]+)?\/[a-zA-Z0-9_\-./~%]+$/.test(url)) {
+      return encodeURI(url);
+    }
+    return "";
+  }
+  const initialLogo = safeImageUrl(image?.getAttribute("src") || image?.src) || "/branding/aquadactyl-wordmark.png";
   let preview;
   logo?.addEventListener("change", () => {
-    if (preview) URL.revokeObjectURL(preview);
-    image.src = initialLogo;
-    const file = logo.files[0];
-    if (!file || !["image/png", "image/jpeg", "image/webp"].includes(file.type)) return;
-    preview = URL.createObjectURL(file);
-    if (preview.startsWith("blob:")) {
-      image.src = preview;
+    if (preview) {
+      URL.revokeObjectURL(preview);
+      preview = undefined;
+    }
+    const file = logo.files?.[0];
+    if (file && ["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      preview = URL.createObjectURL(file);
+    }
+    const nextSrc = preview ? safeImageUrl(preview) : initialLogo;
+    if (nextSrc && image) {
+      image.src = nextSrc;
     }
   });
   // Keep validation errors visible when returning to the additional-admin form.
