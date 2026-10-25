@@ -5,64 +5,9 @@ use Pterodactyl\Models\User;
 use Pterodactyl\Models\ApiKey;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Services\Acl\Api\AdminAcl;
-use Pterodactyl\Transformers\Api\Application\BaseTransformer;
-use Pterodactyl\Transformers\Api\Client\BaseClientTransformer;
-
-class DummyHandledTransformer extends BaseTransformer
-{
-    public bool $handled = false;
-
-    public function handle(): void
-    {
-        $this->handled = true;
-    }
-
-    public function getResourceName(): string
-    {
-        return 'dummy_handled';
-    }
-}
-
-class DummyApplicationTransformer extends BaseTransformer
-{
-    public function getResourceName(): string
-    {
-        return 'dummy';
-    }
-
-    public function testAuthorize(string $resource): bool
-    {
-        return $this->authorize($resource);
-    }
-
-    public function testFormatTimestamp(string $timestamp): string
-    {
-        return $this->formatTimestamp($timestamp);
-    }
-
-    public function testMakeTransformer(string $class)
-    {
-        return $this->makeTransformer($class);
-    }
-}
-
-class DummyClientTransformer extends BaseClientTransformer
-{
-    public function getResourceName(): string
-    {
-        return 'dummy_client';
-    }
-
-    public function testAuthorize(string $ability, ?Server $server = null): bool
-    {
-        return $this->authorize($ability, $server);
-    }
-
-    public function testMakeTransformer(string $class)
-    {
-        return $this->makeTransformer($class);
-    }
-}
+use Pterodactyl\Tests\Fixtures\Transformers\DummyClientTransformer;
+use Pterodactyl\Tests\Fixtures\Transformers\DummyHandledTransformer;
+use Pterodactyl\Tests\Fixtures\Transformers\DummyApplicationTransformer;
 
 test('base transformer returns false when user has no token or non-api-key token', function () {
     $transformer = new DummyApplicationTransformer();
