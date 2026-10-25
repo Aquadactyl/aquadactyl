@@ -97,6 +97,7 @@
     @parent
     {!! Theme::js('vendor/ace/ace.js') !!}
     {!! Theme::js('vendor/ace/ext-modelist.js') !!}
+    {!! Theme::js('vendor/ace/theme-tomorrow_night.js') !!}
     <script>
     $(document).ready(function () {
         $('#pCopyScriptFrom').select2();
@@ -104,7 +105,7 @@
         const InstallEditor = ace.edit('editor_install');
         const Modelist = ace.require('ace/ext/modelist')
 
-        InstallEditor.setTheme('ace/theme/chrome');
+        InstallEditor.setTheme('ace/theme/tomorrow_night');
         InstallEditor.getSession().setMode('ace/mode/sh');
         InstallEditor.getSession().setUseWrapMode(true);
         InstallEditor.setShowPrintMargin(false);

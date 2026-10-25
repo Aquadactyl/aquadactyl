@@ -73,6 +73,7 @@
     @parent
     {!! Theme::js('vendor/ace/ace.js') !!}
     {!! Theme::js('vendor/ace/ext-searchbox.js') !!}
+    {!! Theme::js('vendor/ace/theme-tomorrow_night.js') !!}
     <script>
     $(function () {
         $('#select-log-file').select2().on('change', function () { $('#log-file-form').submit(); });
@@ -80,7 +81,7 @@
         if (!log) return;
 
         const editor = ace.edit('log_editor');
-        editor.setTheme('ace/theme/chrome');
+        editor.setTheme('ace/theme/tomorrow_night');
         editor.getSession().setMode('ace/mode/plain_text');
         editor.setReadOnly(true);
         editor.setShowPrintMargin(false);
