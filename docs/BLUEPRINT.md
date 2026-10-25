@@ -43,7 +43,7 @@ managed installer's permissions automatically. Set `PHP_FPM_SERVICE` in
 `.blueprintrc` if the service name differs from `php8.5-fpm` (or `php8.4-fpm`
 when using PHP 8.4).
 
-Aquadactyl uses pnpm 12.10.1 for framework installation, extension rebuilds and
+Aquadactyl uses pnpm 12.15.0 for framework installation, extension rebuilds and
 development commands. See [addon development](ADDONS.md) for the shared dependency
 catalogue and examples. Extension scripts that invoke Yarn should be updated to
 use pnpm before installation on this fork.

@@ -13,5 +13,5 @@ COPY --from=composer /usr/bin/composer /usr/local/bin/composer
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm \
-    && npm install --global pnpm@12.10.1
+    && npm install --global pnpm@12.15.0
 WORKDIR /app

@@ -6,7 +6,7 @@
 FROM --platform=$BUILDPLATFORM node:24-alpine AS frontend
 WORKDIR /app
 RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
-    npm install --global pnpm@12.10.1
+    npm install --global pnpm@12.15.0
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY packages ./packages
 COPY patches ./patches
@@ -55,7 +55,7 @@ RUN --mount=type=cache,id=aquadactyl-npm,target=/root/.npm \
         tar \
         unzip \
         zip \
-    && npm install --global pnpm@12.10.1 \
+    && npm install --global pnpm@12.15.0 \
     && cp /usr/lib/php85/modules/igbinary.so \
           /usr/lib/php85/modules/msgpack.so \
           /usr/lib/php85/modules/redis.so \

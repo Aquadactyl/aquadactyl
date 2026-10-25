@@ -154,14 +154,14 @@ containers are managed by Wings rather than Compose.
 ## Requirements
 
 - Node.js 24.11 or later.
-- pnpm 12.10.1, pinned in `package.json`.
+- pnpm 12.15.0, pinned in `package.json`.
 - PHP 8.4 or 8.5 and Composer 2 for backend work. Deployment defaults to PHP 8.5.
   GD must support PNG, JPEG and WebP for profile-picture uploads.
 
 Install the pinned package manager, then the locked dependencies:
 
 ```bash
-npm install --global pnpm@12.10.1
+npm install --global pnpm@12.15.0
 pnpm install --frozen-lockfile
 composer install
 ```
