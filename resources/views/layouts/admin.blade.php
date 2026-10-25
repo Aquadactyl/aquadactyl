@@ -201,9 +201,6 @@
             </footer>
         </div>
         @section('footer-scripts')
-            <script src="/js/keyboard.polyfill.js" type="application/javascript"></script>
-            <script>keyboardeventKeyPolyfill.polyfill();</script>
-
             {!! Theme::js('vendor/jquery/jquery.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/sweetalert/sweetalert.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/bootstrap/bootstrap.min.js?t={cache-version}') !!}
@@ -219,7 +216,6 @@
             @include('partials.admin.translations')
             {!! Theme::js('js/admin/functions.js?t={cache-version}') !!}
             {!! Theme::js('js/admin/selects.js?v=' . filemtime(public_path('themes/pterodactyl/js/admin/selects.js'))) !!}
-            <script src="/js/autocomplete.js" type="application/javascript"></script>
 
             @if(Auth::user()->root_admin)
                 <script>

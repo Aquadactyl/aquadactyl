@@ -31,25 +31,25 @@
                     <div class="form-group">
                         <label for="email" class="control-label">{{ __('admin/ui.email') }}</label>
                         <div>
-                            <input type="email" name="email" value="{{ $user->email }}" class="form-control form-autocomplete-stop">
+                            <input type="email" name="email" value="{{ $user->email }}" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="registered" class="control-label">{{ __('admin/ui.username') }}</label>
                         <div>
-                            <input type="text" name="username" value="{{ $user->username }}" class="form-control form-autocomplete-stop">
+                            <input type="text" name="username" value="{{ $user->username }}" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="registered" class="control-label">{{ __('admin/ui.client_first_name') }}</label>
                         <div>
-                            <input type="text" name="name_first" value="{{ $user->name_first }}" class="form-control form-autocomplete-stop">
+                            <input type="text" name="name_first" value="{{ $user->name_first }}" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="registered" class="control-label">{{ __('admin/ui.client_last_name') }}</label>
                         <div>
-                            <input type="text" name="name_last" value="{{ $user->name_last }}" class="form-control form-autocomplete-stop">
+                            <input type="text" name="name_last" value="{{ $user->name_last }}" class="form-control" autocomplete="off">
                         </div>
                     </div>
                     <div class="form-group">
@@ -82,7 +82,7 @@
                     <div class="form-group no-margin-bottom">
                         <label for="password" class="control-label">{{ __('admin/ui.password') }} <span class="field-optional" data-label="{{ __('admin/ui.optional') }}"></span></label>
                         <div>
-                            <input type="password" id="password" name="password" class="form-control form-autocomplete-stop">
+                            <input type="password" id="password" name="password" class="form-control" autocomplete="new-password">
                             <p class="text-muted small">{{ __('admin/ui.leave_blank_to_keep_this_user_s_password_the_same_user_will_not_receive_any_notificat') }}</p>
                         </div>
                     </div>
