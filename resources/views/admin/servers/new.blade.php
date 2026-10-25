@@ -317,8 +317,6 @@
 
 @section('footer-scripts')
     @parent
-    {!! Theme::js('vendor/lodash/lodash.js') !!}
-
     <script type="application/javascript">
         // Persist 'Service Variables'
         function serviceVariablesUpdated(eggId, ids) {

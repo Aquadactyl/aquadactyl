@@ -23,7 +23,6 @@
             {!! Theme::css('vendor/adminlte/admin.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/adminlte/colors/skin-blue.min.css?t={cache-version}') !!}
             {!! Theme::css('vendor/sweetalert/sweetalert.min.css?t={cache-version}') !!}
-            {!! Theme::css('vendor/animate/animate.min.css?t={cache-version}') !!}
             {!! Theme::css('css/index.css?v=' . filemtime(public_path('themes/pterodactyl/css/index.css'))) !!}
             {!! Theme::css('css/appearance.css?v=' . filemtime(public_path('themes/pterodactyl/css/appearance.css'))) !!}
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -204,9 +203,7 @@
             {!! Theme::js('vendor/jquery/jquery.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/sweetalert/sweetalert.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/bootstrap/bootstrap.min.js?t={cache-version}') !!}
-            {!! Theme::js('vendor/slimscroll/jquery.slimscroll.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/adminlte/app.min.js?t={cache-version}') !!}
-            {!! Theme::js('vendor/bootstrap-notify/bootstrap-notify.min.js?t={cache-version}') !!}
             <script>
                 window.AquadactylInitialToasts = {{ Illuminate\Support\Js::from($adminToasts) }};
                 window.AquadactylNotificationOptions = {{ Illuminate\Support\Js::from(['enabled' => app(\Pterodactyl\Services\Notifications\NotificationSettings::class)->get()['enabled'], 'labels' => __('notifications.events')]) }};

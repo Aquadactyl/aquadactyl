@@ -102,7 +102,6 @@
 
 @section('footer-scripts')
     @parent
-    {!! Theme::js('vendor/lodash/lodash.js') !!}
     <script>
     function escapeHtml(str) {
         return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
@@ -112,41 +111,41 @@
 
     $(document).ready(function () {
         $('#pEggId').select2({placeholder: @json(__('admin/ui.select_a_nest_egg'))}).on('change', function () {
-            var selectedEgg = _.isNull($(this).val()) ? $(this).find('option').first().val() : $(this).val();
-            var parentChain = _.get(Pterodactyl.nests, $("#pNestId").val());
-            var objectChain = _.get(parentChain, 'eggs.' + selectedEgg);
+            var selectedEgg = $(this).val() == null ? $(this).find('option').first().val() : $(this).val();
+            var parentChain = Pterodactyl.nests?.[$("#pNestId").val()];
+            var objectChain = parentChain?.eggs?.[selectedEgg];
 
-            const images = _.get(objectChain, 'docker_images', [])
+            const images = objectChain?.docker_images || [];
             $('#pDockerImage').html('');
             const keys = Object.keys(images);
             for (let i = 0; i < keys.length; i++) {
                 let opt = document.createElement('option');
                 opt.value = images[keys[i]];
                 opt.innerText = keys[i] + " (" + images[keys[i]] + ")";
-                if (objectChain.id === parseInt(Pterodactyl.server.egg_id) && Pterodactyl.server.image == opt.value) {
-                    opt.selected = true
+                if (objectChain && objectChain.id === parseInt(Pterodactyl.server.egg_id) && Pterodactyl.server.image == opt.value) {
+                    opt.selected = true;
                 }
                 $('#pDockerImage').append(opt);
             }
             $('#pDockerImage').on('change', function () {
                 $('#pDockerImageCustom').val('');
-            })
+            });
 
-            if (objectChain.id === parseInt(Pterodactyl.server.egg_id)) {
+            if (objectChain && objectChain.id === parseInt(Pterodactyl.server.egg_id)) {
                 if ($('#pDockerImage').val() != Pterodactyl.server.image) {
                     $('#pDockerImageCustom').val(Pterodactyl.server.image);
                 }
             }
 
-            if (!_.get(objectChain, 'startup', false)) {
-                $('#pDefaultStartupCommand').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
+            if (!objectChain?.startup) {
+                $('#pDefaultStartupCommand').val(parentChain?.startup ?? 'ERROR: Startup Not Defined!');
             } else {
-                $('#pDefaultStartupCommand').val(_.get(objectChain, 'startup'));
+                $('#pDefaultStartupCommand').val(objectChain.startup);
             }
 
             $('#appendVariablesTo').html('');
-            $.each(_.get(objectChain, 'variables', []), function (i, item) {
-                var setValue = _.get(Pterodactyl.server_variables, item.env_variable, item.default_value);
+            $.each(objectChain?.variables || [], function (i, item) {
+                var setValue = Pterodactyl.server_variables?.[item.env_variable] ?? item.default_value;
                 var isRequired = (item.required === 1) ? '<span class="label label-danger">Required</span> ' : '';
                 var dataAppend = ' \
                     <div class="col-xs-12"> \
@@ -169,8 +168,9 @@
         });
 
         $('#pNestId').select2({placeholder: @json(__('admin/ui.select_a_nest'))}).on('change', function () {
+            var eggs = Pterodactyl.nests?.[$(this).val()]?.eggs || [];
             $('#pEggId').html('').select2({
-                data: $.map(_.get(Pterodactyl.nests, $(this).val() + '.eggs', []), function (item) {
+                data: $.map(eggs, function (item) {
                     return {
                         id: item.id,
                         text: item.name,
@@ -178,7 +178,8 @@
                 }),
             });
 
-            if (_.isObject(_.get(Pterodactyl.nests, $(this).val() + '.eggs.' + Pterodactyl.server.egg_id))) {
+            var nestEgg = Pterodactyl.nests?.[$(this).val()]?.eggs?.[Pterodactyl.server.egg_id];
+            if (typeof nestEgg === 'object' && nestEgg !== null) {
                 $('#pEggId').val(Pterodactyl.server.egg_id);
             }
 

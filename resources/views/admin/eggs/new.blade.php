@@ -140,15 +140,15 @@
 
 @section('footer-scripts')
     @parent
-    {!! Theme::js('vendor/lodash/lodash.js') !!}
     <script>
     $(document).ready(function() {
         $('#pNestId').select2().change();
         $('#pConfigFrom').select2();
     });
     $('#pNestId').on('change', function (event) {
+        var eggs = Pterodactyl.nests?.[$(this).val()]?.eggs || [];
         $('#pConfigFrom').html('<option value="">None</option>').select2({
-            data: $.map(_.get(Pterodactyl.nests, $(this).val() + '.eggs', []), function (item) {
+            data: $.map(eggs, function (item) {
                 return {
                     id: item.id,
                     text: item.name + ' <' + item.author + '>',

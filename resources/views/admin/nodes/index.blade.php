@@ -4,11 +4,6 @@
     {{ __('admin/ui.list_nodes') }}
 @endsection
 
-@section('scripts')
-    @parent
-    {!! Theme::css('vendor/fontawesome/animation.min.css') !!}
-@endsection
-
 @section('content-header')
     <h1>{{ __('admin/ui.nodes') }}<small>{{ __('admin/ui.all_nodes_available_on_the_system') }}</small></h1>
     <ol class="breadcrumb">

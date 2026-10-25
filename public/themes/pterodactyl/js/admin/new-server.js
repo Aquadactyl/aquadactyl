@@ -72,8 +72,9 @@ $('#pNodeId').on('change', function () {
 });
 
 $('#pNestId').on('change', function () {
+    const eggs = Pterodactyl.nests?.[$(this).val()]?.eggs || [];
     $('#pEggId').html('').select2({
-        data: $.map(_.get(Pterodactyl.nests, $(this).val() + '.eggs', []), function (item) {
+        data: $.map(eggs, function (item) {
             return {
                 id: item.id,
                 text: item.name,
@@ -83,25 +84,26 @@ $('#pNestId').on('change', function () {
 });
 
 $('#pEggId').on('change', function () {
-    const parentChain = _.get(Pterodactyl.nests, $('#pNestId').val(), null);
-    const objectChain = _.get(parentChain, 'eggs.' + $(this).val(), null);
+    const parentChain = Pterodactyl.nests?.[$('#pNestId').val()] || null;
+    const objectChain = parentChain?.eggs?.[$(this).val()] || null;
 
-    const images = _.get(objectChain, 'docker_images', {});
+    const images = objectChain?.docker_images || {};
     const $container = $('#pDefaultContainer').empty();
     Object.entries(images).forEach(([label, value]) => {
         $container.append(new Option(`${label} (${value})`, value));
     });
     $container.trigger('change.select2');
 
-    if (!_.get(objectChain, 'startup', false)) {
-        $('#pStartup').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
+    if (!objectChain?.startup) {
+        $('#pStartup').val(parentChain?.startup ?? 'ERROR: Startup Not Defined!');
     } else {
-        $('#pStartup').val(_.get(objectChain, 'startup'));
+        $('#pStartup').val(objectChain.startup);
     }
 
+    const packs = objectChain?.packs || [];
     $('#pPackId').html('').select2({
         data: [{ id: 0, text: window.AquadactylAdmin.translate('no_service_pack', 'No Service Pack') }].concat(
-            $.map(_.get(objectChain, 'packs', []), function (item) {
+            $.map(packs, function (item) {
                 return {
                     id: item.id,
                     text: item.name + ' (' + item.version + ')',
@@ -118,7 +120,8 @@ $('#pEggId').on('change', function () {
 
     const variableIds = {};
     const $variables = $('#appendVariablesTo').empty();
-    $.each(_.get(objectChain, 'variables', []), function (i, item) {
+    const variables = objectChain?.variables || [];
+    $.each(variables, function (i, item) {
         variableIds[item.env_variable] = 'var_ref_' + item.id;
 
         const isRequired = (item.required === 1) ? '<span class="label label-danger">Required</span> ' : '';
