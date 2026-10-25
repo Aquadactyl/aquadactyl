@@ -24,12 +24,6 @@
         return new URLSearchParams(window.location.search).get(name);
     };
 
-    window.getPageName = function (url) {
-        if (!url) return '';
-        var parts = url.split('/');
-        return parts[parts.length - 1].split('.')[0];
-    };
-
     // Remember active tab and navigate to it on reload
     $(function () {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {

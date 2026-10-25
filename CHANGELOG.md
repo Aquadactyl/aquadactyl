@@ -8,6 +8,8 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v0.4-beta
+
 ### Added
 
 - Manual GitHub release workflow dispatch (`workflow_dispatch`) with inputs for version tags and prerelease status, automatically normalising release tags and creating matching release branch targets.
@@ -22,8 +24,11 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ### Removed
 
-- Pruned 41 unused syntax modes, worker scripts, and extensions from the Ace editor vendor bundle, reducing directory size by over 80%.
+- Pruned unused syntax modes (`ini`, `json`, `properties`, `yaml`), extensions (`ext-whitespace`), and legacy light theme (`theme-chrome`) from the Ace editor vendor bundle, alongside 41 previously pruned Ace files.
+- Removed unused and obsolete vendor assets including unminified `jquery.js`, `bootstrap-theme.min.css`, orphaned pre-Vite SVGs in `public/assets/svgs/`, and an archived favicon generator zip.
 - Removed legacy `jquery.slimscroll.min.js` and `bootstrap-notify.min.js` vendor libraries from the administration layout in favour of native browser APIs and built-in toast notifications.
+- Removed obsolete `config/compile.php` (Laravel 5 class compiler) and `config/trustedproxy.php` (abandoned Fideloper proxy package) configurations.
+- Removed dead Pterodactyl v0.7 schedule task chain Blade template (`resources/views/partials/schedules/task-template.blade.php`) and unused `window.getPageName` function.
 - Removed all legacy pre-Aquadactyl changelog entries prior to `v0.1-beta`.
 
 ### Validation
