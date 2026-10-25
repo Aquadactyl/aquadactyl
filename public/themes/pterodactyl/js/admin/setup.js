@@ -15,7 +15,9 @@
     const file = logo.files[0];
     if (!file || !["image/png", "image/jpeg", "image/webp"].includes(file.type)) return;
     preview = URL.createObjectURL(file);
-    image.src = preview;
+    if (preview.startsWith("blob:")) {
+      image.src = preview;
+    }
   });
   // Keep validation errors visible when returning to the additional-admin form.
   if (document.querySelector('.panel-toast[data-type="danger"]')) {
