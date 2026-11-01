@@ -53,6 +53,7 @@ describe("schedule timing", () => {
     const timing = timingFromCron(original);
     expect(timing.frequency).toBe("custom");
     expect(cronFromTiming(timing, original)).toEqual(original);
+    expect(describeCron(original)).toBe("Custom timing (advanced cron)");
   });
 
   it("treats both supported Sunday representations as Sunday", () => {
@@ -91,6 +92,14 @@ describe("schedule timing", () => {
     expect(() => cronFromTiming(timing, cron("0 3 * * *"))).toThrow(
       Object.values(timingErrors(timing))[0],
     );
+  });
+
+  it("returns error for unknown frequency", () => {
+    expect(
+      timingErrors({ ...defaultTiming, frequency: "unknown" as any }),
+    ).toEqual({
+      frequency: "Choose how often this schedule should run.",
+    });
   });
 
   it("formats next runs in the panel timezone, including daylight saving", () => {
@@ -146,7 +155,19 @@ describe("schedule steps", () => {
   it("allows the maximum wait and describes mixed units clearly", () => {
     expect(delayToSeconds("15", "minutes")).toBe(900);
     expect(describeDelay(90)).toBe("Wait 1 minute 30 seconds");
+    expect(describeDelay(61)).toBe("Wait 1 minute 1 second");
+    expect(describeDelay(122)).toBe("Wait 2 minutes 2 seconds");
+    expect(describeDelay(1)).toBe("Wait 1 second");
+    expect(describeDelay(15)).toBe("Wait 15 seconds");
+    expect(describeDelay(60)).toBe("Wait 1 minute");
+    expect(describeDelay(120)).toBe("Wait 2 minutes");
     expect(describeDelay(0)).toBe("No wait");
+  });
+
+  it("handles undefined task in taskKind", () => {
+    expect(taskKind(undefined)).toBe("command");
+    expect(taskKind({ action: "backup", payload: "" })).toBe("backup");
+    expect(taskKind({ action: "command", payload: "echo 1" })).toBe("command");
   });
 
   it.each(["", "-1", "1.5", "1e2", "901", "not a number"])(

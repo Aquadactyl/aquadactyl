@@ -5,6 +5,7 @@ interface QueryParams {
   query?: string;
   page?: number;
   type?: string;
+  folder?: string;
 }
 
 export default ({

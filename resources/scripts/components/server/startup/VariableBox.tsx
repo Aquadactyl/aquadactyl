@@ -1,17 +1,17 @@
 import React, { memo, useState } from "react";
-import { ServerEggVariable } from "@/api/server/types";
+import { ServerEggVariable } from "@/globals";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
 import { usePermissions } from "@/plugins/usePermissions";
 import InputSpinner from "@/components/elements/InputSpinner";
 import Input from "@/components/elements/Input";
 import Switch from "@/components/elements/Switch";
-import debounce from "debounce";
+import { debounce } from "es-toolkit";
 import updateStartupVariable from "@/api/server/updateStartupVariable";
 import useFlash from "@/plugins/useFlash";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import getServerStartup from "@/api/server/startup/getServerStartup";
 import Select from "@/components/elements/Select";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import { ServerContext } from "@/state/server";
 
 interface Props {
@@ -89,14 +89,12 @@ const VariableBox = ({ variable }: Props) => {
                   : variable.serverValue === "1"
               }
               onChange={() => {
-                if (canEdit && variable.isEditable) {
-                  if (isStringSwitch) {
-                    setVariableValue(
-                      variable.serverValue === "true" ? "false" : "true",
-                    );
-                  } else {
-                    setVariableValue(variable.serverValue === "1" ? "0" : "1");
-                  }
+                if (isStringSwitch) {
+                  setVariableValue(
+                    variable.serverValue === "true" ? "false" : "true",
+                  );
+                } else {
+                  setVariableValue(variable.serverValue === "1" ? "0" : "1");
                 }
               }}
             />

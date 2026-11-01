@@ -2,14 +2,18 @@
 
 use Illuminate\Http\Response;
 use Pterodactyl\Models\Permission;
+use Illuminate\Support\Facades\Cache;
 use Pterodactyl\Repositories\Wings\DaemonPowerRepository;
 
 test('subuser without permissions receives error', function (string $action, array $permissions) {
     [$user, $server] = $this->generateTestAccount($permissions);
+    Cache::put("resources:$server->uuid", ['state' => 'running'], 20);
 
     $this->actingAs($user)
         ->postJson("/api/client/servers/$server->uuid/power", ['signal' => $action])
         ->assertStatus(Response::HTTP_FORBIDDEN);
+    expect(Cache::get("resources:$server->uuid"))->toBe(['state' => 'running'])
+        ->and(Cache::has("resources:power:$server->uuid"))->toBeFalse();
 })->with([
     ['start', [Permission::ACTION_CONTROL_STOP, Permission::ACTION_CONTROL_RESTART]],
     ['stop', [Permission::ACTION_CONTROL_START]],
@@ -35,6 +39,8 @@ test('action can be sent to server', function (string $action, string $permissio
     $this->app->instance(DaemonPowerRepository::class, $service);
 
     [$user, $server] = $this->generateTestAccount([$permission]);
+    Cache::put("resources:$server->uuid", ['state' => 'offline'], 20);
+    Cache::put("resources:$server->uuid:power", ['state' => 'offline'], 2);
 
     $service->expects('setServer')
         ->with(Mockery::on(function ($value) use ($server) {
@@ -48,6 +54,9 @@ test('action can be sent to server', function (string $action, string $permissio
     $this->actingAs($user)
         ->postJson("/api/client/servers/$server->uuid/power", ['signal' => $action])
         ->assertStatus(Response::HTTP_NO_CONTENT);
+    expect(Cache::has("resources:$server->uuid"))->toBeFalse()
+        ->and(Cache::has("resources:$server->uuid:power"))->toBeFalse()
+        ->and(Cache::has("resources:power:$server->uuid"))->toBeTrue();
 })->with([
     ['start', Permission::ACTION_CONTROL_START],
     ['stop', Permission::ACTION_CONTROL_STOP],

@@ -25,8 +25,9 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        View::share('appVersion', $this->versionData()['version'] ?? 'undefined');
-        View::share('appIsGit', $this->versionData()['is_git'] ?? false);
+        $version = $this->versionData();
+        View::share('appVersion', $version['version'] ?? 'undefined');
+        View::share('appIsGit', $version['is_git'] ?? false);
 
         Paginator::useBootstrap();
 
@@ -46,6 +47,17 @@ class AppServiceProvider extends ServiceProvider
             'database' => Models\Database::class,
             'egg' => Models\Egg::class,
             'egg_variable' => Models\EggVariable::class,
+            'location' => Models\Location::class,
+            'node' => Models\Node::class,
+            'nest' => Models\Nest::class,
+            'mount' => Models\Mount::class,
+            'database_host' => Models\DatabaseHost::class,
+            'subdomain_domain' => Models\SubdomainDomain::class,
+            'server_subdomain' => Models\ServerSubdomain::class,
+            'status_component' => Models\StatusComponent::class,
+            'status_incident' => Models\StatusIncident::class,
+            'discord_role_rule' => Models\DiscordRoleRule::class,
+            'webhook_endpoint' => Models\WebhookEndpoint::class,
             'schedule' => Models\Schedule::class,
             'server' => Models\Server::class,
             'ssh_key' => Models\UserSSHKey::class,
@@ -59,6 +71,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->scoped(\Pterodactyl\Services\Users\LanguageService::class);
+        $this->app->scoped(\Pterodactyl\Services\Integrations\IntegrationSettings::class);
+
+        $this->app->extend('JavaScript', fn ($transformer, $app) => new \Pterodactyl\Extensions\JavaScript\SafeJavascriptTransformer(
+            new \Laracasts\Utilities\JavaScript\LaravelViewBinder($app['events'], config('javascript.bind_js_vars_to_this_view')),
+            config('javascript.js_namespace'),
+        ));
+
         // Merge Blueprint extension fs config with existing filesystem config.
         $this->app->register(ExtensionfsConfigProvider::class);
 

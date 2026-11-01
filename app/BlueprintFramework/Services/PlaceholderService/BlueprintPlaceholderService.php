@@ -4,9 +4,11 @@ namespace Pterodactyl\BlueprintFramework\Services\PlaceholderService;
 
 class BlueprintPlaceholderService
 {
+    protected const VERSION = 'beta-2026-08';
+
     public function version(): string
     {
-        $ver = 'beta-2026-08';
+        $ver = static::VERSION;
         // Keep this check intact when the installer replaces the version token.
         if (str_starts_with($ver, '::')) {
             return 'unknown';

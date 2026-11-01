@@ -9,9 +9,12 @@ import { ServerContext } from "@/state/server";
 import deleteFiles from "@/api/server/files/deleteFiles";
 import RenameFileModal from "@/components/server/files/RenameFileModal";
 import Portal from "@/components/elements/Portal";
-import { Dialog } from "@/components/elements/dialog";
+import DeleteFilesDialog from "./DeleteFilesDialog";
+import { moveFilesToTrash } from "@/api/server/files/trash";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 
 const MassActionsBar = () => {
+  const { t } = usePanelTranslation();
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
 
   const { mutate } = useFileManagerQuery();
@@ -47,13 +50,17 @@ const MassActionsBar = () => {
       .then(() => setLoading(false));
   };
 
-  const onClickConfirmDeletion = () => {
+  const onClickConfirmDeletion = (trash = false) => {
     setLoading(true);
     setShowConfirm(false);
     clearFlashes("files");
-    setLoadingMessage("Deleting files...");
+    setLoadingMessage(
+      trash
+        ? t("trash.moving", "Moving files to trash...")
+        : t("trash.deleting", "Deleting files..."),
+    );
 
-    deleteFiles(uuid, directory, selectedFiles)
+    (trash ? moveFilesToTrash : deleteFiles)(uuid, directory, selectedFiles)
       .then(() => {
         mutate(
           (files) => files.filter((f) => selectedFiles.indexOf(f.name) < 0),
@@ -78,27 +85,14 @@ const MassActionsBar = () => {
         <SpinnerOverlay visible={loading} size={"large"} fixed>
           {loadingMessage}
         </SpinnerOverlay>
-        <Dialog.Confirm
+        <DeleteFilesDialog
           title={"Delete Files"}
           open={showConfirm}
-          confirm={"Delete"}
           onClose={() => setShowConfirm(false)}
-          onConfirmed={onClickConfirmDeletion}
-        >
-          <p className={"mb-2"}>
-            Are you sure you want to delete&nbsp;
-            <span className={"font-semibold text-gray-50"}>
-              {selectedFiles.length} files
-            </span>
-            ? This is a permanent action and the files cannot be recovered.
-          </p>
-          {selectedFiles.slice(0, 15).map((file) => (
-            <li key={file}>{file}</li>
-          ))}
-          {selectedFiles.length > 15 && (
-            <li>and {selectedFiles.length - 15} others</li>
-          )}
-        </Dialog.Confirm>
+          files={selectedFiles}
+          onDelete={() => onClickConfirmDeletion()}
+          onTrash={() => onClickConfirmDeletion(true)}
+        />
         {showMove && (
           <RenameFileModal
             files={selectedFiles}

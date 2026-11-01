@@ -26,13 +26,21 @@ class BlueprintTelemetryCollectionService
      */
     public function __invoke(): void
     {
+        if (!filter_var($this->blueprint->dbGet('blueprint', 'flags:telemetry_enabled', false), FILTER_VALIDATE_BOOLEAN)) {
+            return;
+        }
+
         try {
             $data = $this->collect();
         } catch (\Exception) {
             return;
         }
 
-        Http::connectTimeout(5)->timeout(15)->post($this->placeholderService->api_url() . '/api/telemetry', $data);
+        try {
+            Http::connectTimeout(5)->timeout(15)->post($this->placeholderService->api_url() . '/api/telemetry', $data)->throw();
+        } catch (\Exception $exception) {
+            report($exception);
+        }
     }
 
     /**

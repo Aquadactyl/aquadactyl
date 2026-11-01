@@ -91,12 +91,7 @@ class ActivityLog extends Model implements Identifiable
      */
     public function actor(): MorphTo
     {
-        $morph = $this->morphTo();
-        if (method_exists($morph, 'withTrashed')) { // @phpstan-ignore function.alreadyNarrowedType
-            return $morph->withTrashed();
-        }
-
-        return $morph;
+        return $this->morphTo()->withTrashed();
     }
 
     /**

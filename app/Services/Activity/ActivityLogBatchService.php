@@ -51,9 +51,10 @@ class ActivityLogBatchService
     public function transaction(\Closure $callback): mixed
     {
         $this->start();
-        $result = $callback($this->uuid());
-        $this->end();
-
-        return $result;
+        try {
+            return $callback($this->uuid());
+        } finally {
+            $this->end();
+        }
     }
 }

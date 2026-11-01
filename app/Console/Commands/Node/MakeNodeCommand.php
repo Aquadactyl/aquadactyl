@@ -2,6 +2,7 @@
 
 namespace Pterodactyl\Console\Commands\Node;
 
+use Pterodactyl\Models\Node;
 use Illuminate\Console\Command;
 use Pterodactyl\Services\Nodes\NodeCreationService;
 
@@ -59,7 +60,7 @@ class MakeNodeCommand extends Command
         $data['memory_overallocate'] = $this->option('overallocateMemory') ?? $this->ask('Enter the amount of memory to over allocate by, -1 will disable checking and 0 will prevent creating new servers');
         $data['disk'] = $this->option('maxDisk') ?? $this->ask('Enter the maximum amount of disk space');
         $data['disk_overallocate'] = $this->option('overallocateDisk') ?? $this->ask('Enter the amount of memory to over allocate by, -1 will disable checking and 0 will prevent creating new server');
-        $data['upload_size'] = $this->option('uploadSize') ?? $this->ask('Enter the maximum filesize upload', '100');
+        $data['upload_size'] = $this->option('uploadSize') ?? $this->ask('Enter the maximum upload filesize in MiB', (string) Node::DEFAULT_UPLOAD_SIZE);
         $data['daemonListen'] = $this->option('daemonListeningPort') ?? $this->ask('Enter the wings listening port', '8080');
         $data['daemonSFTP'] = $this->option('daemonSFTPPort') ?? $this->ask('Enter the wings SFTP listening port', '2022');
         $data['daemonBase'] = $this->option('daemonBase') ?? $this->ask('Enter the base folder', '/var/lib/pterodactyl/volumes');

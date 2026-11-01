@@ -2,10 +2,13 @@
 
 namespace Pterodactyl\Http\Controllers\Auth;
 
+use Carbon\CarbonImmutable;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Http\JsonResponse;
+use Pterodactyl\Facades\Activity;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Event;
@@ -72,6 +75,9 @@ abstract class AbstractLoginController extends Controller
      */
     protected function sendLoginResponse(User $user, Request $request): JsonResponse
     {
+        if ($user->suspended_at) {
+            $this->sendFailedLoginResponse($request, $user);
+        }
         $request->session()->remove('auth_confirmation_token');
         $request->session()->regenerate();
 
@@ -88,6 +94,32 @@ abstract class AbstractLoginController extends Controller
                 'user' => $user->toVueObject(),
             ],
         ]);
+    }
+
+    /** All sign-in methods must pass through the existing two-factor checkpoint. */
+    protected function beginLogin(User $user, Request $request): JsonResponse
+    {
+        if ($user->suspended_at) {
+            $this->sendFailedLoginResponse($request, $user);
+        }
+        if (!$user->use_totp) {
+            return $this->sendLoginResponse($user, $request);
+        }
+
+        Activity::event('auth:checkpoint')->withRequestMetadata()->subject($user)->log();
+        $request->session()->put('auth_confirmation_token', [
+            'user_id' => $user->id,
+            'token_value' => $token = Str::random(64),
+            'credential_fingerprint' => $this->twoFactorFingerprint($user),
+            'expires_at' => CarbonImmutable::now()->addMinutes(5),
+        ]);
+
+        return new JsonResponse(['data' => ['complete' => false, 'confirmation_token' => $token]]);
+    }
+
+    protected function twoFactorFingerprint(User $user): string
+    {
+        return hash('sha256', $user->password . "\0" . $user->totp_secret);
     }
 
     /**

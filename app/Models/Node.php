@@ -63,6 +63,7 @@ class Node extends Model implements Identifiable
 
     public const DAEMON_TOKEN_ID_LENGTH = 16;
     public const DAEMON_TOKEN_LENGTH = 64;
+    public const DEFAULT_UPLOAD_SIZE = 2048;
 
     /**
      * The table associated with the model.
@@ -137,6 +138,7 @@ class Node extends Model implements Identifiable
         'daemonSFTP' => 2022,
         'daemonListen' => 8080,
         'maintenance_mode' => false,
+        'upload_size' => self::DEFAULT_UPLOAD_SIZE,
     ];
 
     /**

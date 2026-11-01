@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import { usePermissions } from "@/plugins/usePermissions";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 
 interface Props {
   action: string | string[];
@@ -22,4 +22,11 @@ const Can = ({ action, matchAny = false, renderOnError, children }: Props) => {
   );
 };
 
-export default memo(Can, isEqual);
+export default memo(Can, (prevProps, nextProps) => {
+  return (
+    prevProps.matchAny === nextProps.matchAny &&
+    prevProps.children === nextProps.children &&
+    prevProps.renderOnError === nextProps.renderOnError &&
+    isEqual(prevProps.action, nextProps.action)
+  );
+});

@@ -5,6 +5,8 @@ namespace Pterodactyl\Jobs\Schedule;
 use Carbon\CarbonImmutable;
 use Pterodactyl\Models\Task;
 use Illuminate\Bus\Queueable;
+use Pterodactyl\Facades\Activity;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\DispatchesJobs;
@@ -61,6 +63,7 @@ class RunTaskJob implements ShouldQueue
             switch ($this->task->action) {
                 case Task::ACTION_POWER:
                     $powerRepository->setServer($server)->send($this->task->payload);
+                    Activity::event('server:power.' . $this->task->payload)->subject($server)->log();
                     break;
                 case Task::ACTION_COMMAND:
                     $commandRepository->setServer($server)->send($this->task->payload);
@@ -89,6 +92,12 @@ class RunTaskJob implements ShouldQueue
     public function failed(?\Exception $exception = null)
     {
         $this->markTaskNotQueued();
+        $this->markScheduleComplete('server:schedule.fail');
+    }
+
+    public function skipped(): void
+    {
+        $this->markTaskNotQueued();
         $this->markScheduleComplete();
     }
 
@@ -104,7 +113,7 @@ class RunTaskJob implements ShouldQueue
             ->first();
 
         if (is_null($nextTask)) {
-            $this->markScheduleComplete();
+            $this->markScheduleComplete('server:schedule.complete');
 
             return;
         }
@@ -117,12 +126,16 @@ class RunTaskJob implements ShouldQueue
     /**
      * Marks the parent schedule as being complete.
      */
-    private function markScheduleComplete()
+    private function markScheduleComplete(?string $event = null)
     {
-        $this->task->schedule()->update([
-            'is_processing' => false,
-            'last_run_at' => CarbonImmutable::now()->toDateTimeString(),
-        ]);
+        DB::transaction(function () use ($event) {
+            $schedule = $this->task->schedule()->lockForUpdate()->firstOrFail();
+            $wasProcessing = $schedule->is_processing;
+            $schedule->update(['is_processing' => false, 'last_run_at' => CarbonImmutable::now()->toDateTimeString()]);
+            if ($event && $wasProcessing) {
+                Activity::event($event)->subject($schedule, $this->task->server)->property('name', $schedule->name)->log();
+            }
+        });
     }
 
     /**

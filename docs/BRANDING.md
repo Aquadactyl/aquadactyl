@@ -36,7 +36,7 @@ upstream assets; see [brand assets](THEME.md#brand-assets) for the files and gen
 This review establishes software-license permissions; it does not establish
 trademark clearance for the name Aquadactyl.
 
-Blueprint's code has a separate [MIT license](../deploy/BLUEPRINT-LICENSE.md),
+Blueprint's code has a separate [MIT license](../licenses/BLUEPRINT-LICENSE.md),
 which must also accompany distributions of that code. Its artwork has different terms:
 
 - [.blueprint/assets/LICENSE](../.blueprint/assets/LICENSE) reserves rights and

@@ -39,10 +39,12 @@ class RouteServiceProvider extends ServiceProvider
             Route::group([], base_path('routes/branding.php'));
 
             Route::middleware('web')->group(function () {
+                Route::get('/status', \Pterodactyl\Http\Controllers\Base\StatusPageController::class)
+                    ->middleware('auth.session')->withoutMiddleware(\Pterodactyl\Http\Middleware\PanelMaintenance::class)->name('status.index');
                 Route::middleware(['auth.session', RequireTwoFactorAuthentication::class])
                     ->group(base_path('routes/base.php'));
 
-                Route::middleware(['auth.session', RequireTwoFactorAuthentication::class, AdminAuthenticate::class])
+                Route::middleware(['auth.session', RequireTwoFactorAuthentication::class, AdminAuthenticate::class, \Pterodactyl\Http\Middleware\Activity\LogAdminActions::class])
                     ->prefix('/admin')
                     ->group(base_path('routes/admin.php'));
 
@@ -50,7 +52,7 @@ class RouteServiceProvider extends ServiceProvider
             });
 
             Route::middleware(['api', RequireTwoFactorAuthentication::class])->group(function () {
-                Route::middleware(['application-api', 'throttle:api.application'])
+                Route::middleware(['application-api', 'throttle:api.application', \Pterodactyl\Http\Middleware\Activity\LogAdminActions::class])
                     ->prefix('/api/application')
                     ->scopeBindings()
                     ->group(base_path('routes/api-application.php'));

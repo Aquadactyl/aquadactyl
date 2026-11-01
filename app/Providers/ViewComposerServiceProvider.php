@@ -7,6 +7,13 @@ use Pterodactyl\Http\ViewComposers\AssetComposer;
 
 class ViewComposerServiceProvider extends ServiceProvider
 {
+    public function register(): void
+    {
+        // Blade invokes the wildcard composer for every included partial.
+        // Reuse its dependencies within a request, never between requests.
+        $this->app->scoped(AssetComposer::class);
+    }
+
     /**
      * Register bindings in the container.
      */

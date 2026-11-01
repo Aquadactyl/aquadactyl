@@ -12,8 +12,8 @@ updates so that the panel and Blueprint stay compatible.
 
 ## Requirements
 
-Use PHP 8.5 with FPM (PHP 8.4 is also supported), Composer 2, Node.js 22.13 or later,
-pnpm 12.10.1, Nginx, MariaDB/MySQL, Redis, and systemd. The panel's Composer extensions include bcmath,
+Use PHP 8.5 with FPM (PHP 8.4 is also supported), Composer 2, Node.js 24.11 or later,
+pnpm 12.15.0, Nginx, MariaDB/MySQL, Redis, and systemd. The panel's Composer extensions include bcmath,
 curl, gd, mbstring, PDO MySQL, posix, XML and zip. Deployment also uses bash, curl,
 git, zip, unzip, rsync, flock, runuser and mariadb-dump (or mysqldump). On Debian or
 Ubuntu, the last tools are supplied by packages including `rsync`, `util-linux`,
@@ -25,7 +25,7 @@ existing Linux host; it does not provision operating-system packages or TLS cert
 Install the package manager version pinned in `package.json`:
 
 ```bash
-sudo npm install --global pnpm@12.10.1
+sudo npm install --global pnpm@12.15.0
 ```
 
 When migrating an existing host, install the PHP 8.5 CLI, FPM and required
@@ -60,6 +60,19 @@ The installer creates an application key and Hashids salt when they are missing.
 Preserve both across every update and backup; the application key encrypts stored credentials. For local HTTP
 development, explicitly set `SESSION_SECURE_COOKIE=false`.
 
+When HTTPS is terminated by Nginx, Traefik or Dokploy, keep `APP_URL` set to the
+public HTTPS address and configure `TRUSTED_PROXIES` with the IP addresses or
+CIDRs of your reverse proxies. Those proxies must pass the original protocol,
+host and port. A backend served over HTTP otherwise generates HTTP URLs, which
+can interrupt settings saves and OAuth flows. The Docker image can serve HTTP
+behind a TLS proxy without `LE_EMAIL`; see the [Docker configuration guide](../.github/docker/README.md).
+
+After editing a native installation's `.env`, run `php artisan config:cache` and
+`php artisan queue:restart`. For Docker, recreate the panel after changing its
+environment so the entrypoint regenerates the cache. Use the public domain
+without the container's internal port. Admin settings forms and successful-save
+redirects use relative paths to preserve the browser's HTTPS origin.
+
 For a **new, empty panel**, seed the default nests and create your administrator:
 
 ```bash
@@ -93,6 +106,69 @@ The defaults use Redis for cache, sessions and queues. FPM uses OPcache; the
 deployment commands cache configuration, routes and views and reload FPM. The
 Nginx template compresses text assets, caches hashed assets and executes only
 `index.php`. It also denies hidden files and suppresses PHP version headers.
+
+The web file editor and image previews accept files up to 32 MiB by default.
+Set `PTERODACTYL_FILES_MAX_EDIT_SIZE` in `.env` to change this limit in bytes, then
+run `php artisan config:cache`. The bundled Nginx and PHP configuration accepts
+100 MiB request bodies; a separate reverse proxy must also allow the size you
+intend to save. Files above the editor limit can still be uploaded, downloaded,
+or accessed through SFTP. This editor limit is separate from browser uploads.
+Files over 1 MiB open without syntax highlighting or line wrapping to keep the
+editor responsive. PNG, JPEG, GIF, WebP, AVIF, BMP and ICO images can be previewed
+from their filename or the file actions menu, using the existing content-read
+permission. SVG files remain available in the text editor or as downloads.
+
+### Larger browser uploads
+
+New nodes default to **2048 MiB (2 GiB) per file**. For existing nodes, go to
+**Admin > Nodes > your node > Settings > Maximum Web Upload Filesize**, enter
+the size in MiB, and save. This sends the new limit to the running Wings
+instance. Existing node limits are preserved during panel updates. If Wings
+is unavailable or configured to ignore panel updates, apply `api.upload_limit`
+in its `config.yml` and restart Wings when convenient.
+
+The file manager shows the limit in the Upload menu and checks files and folders
+before transferring them. Large batches use at most two simultaneous transfers;
+uploads have no fixed browser request timeout. Keep the tab open until the upload
+finishes. Uploads still respect file creation permissions and server disk quotas.
+
+Files travel directly from the browser to **Wings**, so increasing the panel's
+PHP upload settings will not raise the server file upload limit. Any reverse
+proxy in front of Wings must allow the full file plus the multipart envelope.
+For a 2 GiB per-file limit, an Nginx Wings proxy can use:
+
+```nginx
+location = /upload/file {
+    client_max_body_size 2080m;
+    client_body_timeout 300s;
+    proxy_pass http://127.0.0.1:8080;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_request_buffering off;
+    proxy_send_timeout 900s;
+    proxy_read_timeout 900s;
+}
+```
+
+Use your actual Wings upstream and retain any forwarding headers your proxy
+requires. Set the proxy body limit above your node's upload limit if increasing it
+further. On Traefik/Dokploy, check any buffering middleware's
+`maxRequestBodyBytes` and request timeouts. If a CDN imposes a smaller body limit,
+use a directly reachable HTTPS Wings hostname for browser uploads.
+
+The local Docker setup defaults new nodes to 2 GiB and includes a streaming upload
+location in its Wings relay. It preserves limits on existing nodes; adjust those
+in Admin settings. The local test daemon deliberately ignores panel configuration
+updates to preserve Docker-specific paths, so rerun its setup service after
+changing a node's limit and restart only Wings:
+
+```sh
+docker compose run --rm wings-setup
+docker compose restart wings
+```
+
+Profile picture, logo, background, and file editor limits
+continue to use their own settings.
 
 Source code is owned by root and readable by the web group. Only `storage/` and
 `bootstrap/cache/` are writable by the web user after deployment. Never use `777`.
@@ -162,8 +238,9 @@ also have vulnerabilities; do not treat a passing runtime audit as a complete
 security assessment. CI runs the panel's existing PHP and frontend checks and
 additional deployment guard tests.
 
-The tested versions, results and remaining build dependency advisories are recorded
-in [VALIDATION.md](VALIDATION.md).
+See [TESTING.md](TESTING.md#dependency-audits) for audit commands. Use current audit
+results when reviewing a release; historical advisory counts become stale as
+dependencies and vulnerability databases change.
 
 `php artisan p:upgrade` displays the managed update instructions and exits without
 changing the installation. Use `scripts/panel-update.sh`; upstream Panel archives
@@ -173,3 +250,57 @@ For local PHP verification on Windows, build `tests/runtime/Dockerfile`; it prov
 PHP 8.5, pnpm, Composer, a dump client and ShellCheck. Pass
 `--build-arg PHP_VERSION=8.4` to test the other supported PHP version. Production
 deployment remains a Linux Nginx/PHP installation.
+
+## Telemetry and troubleshooting
+
+Aquadactyl and Blueprint telemetry are disabled by default on new installations.
+Upstream Pterodactyl telemetry has been removed. Existing explicit opt-ins are
+preserved during updates; the collectors check consent when they run.
+
+With `APP_ENVIRONMENT_ONLY=false`, manage Aquadactyl's opt-in under **Admin →
+Settings → Advanced Settings → Aquadactyl Telemetry**. The saved toggle overrides
+the environment's initial default. Environment-only deployments can explicitly
+opt in with `AQUADACTYL_TELEMETRY_ENABLED=true`. The default endpoint is:
+
+```dotenv
+AQUADACTYL_TELEMETRY_ENDPOINT=https://api.euphoriadevelopment.uk/telemetry/panel
+```
+
+Public panel installations do not need a telemetry token. When enabled, one daily
+aggregate report contains an anonymous installation UUID, panel/PHP versions,
+driver names, Docker availability and counts of users, servers and nodes. The
+payload excludes names, emails, IP addresses, domains, server names, credentials,
+tokens and request contents. The receiver can still observe the connection's
+source IP. No request is made while telemetry is disabled or the endpoint is
+unset. Blueprint uses its separate `telemetry_enabled` flag.
+
+### Debug logs
+
+Normal logging uses `LOG_LEVEL=warning`, daily files and seven days of retention.
+For temporary troubleshooting, set `LOG_LEVEL=debug`, run
+`php artisan config:clear` and `php artisan queue:restart`. Keep `APP_DEBUG=false`
+on public deployments. Restore `LOG_LEVEL=warning` and repeat those commands when
+finished.
+
+Preview the redacted log locally before uploading:
+
+```bash
+php artisan p:debug --dry-run
+```
+
+To upload explicitly and receive a temporary share URL:
+
+```bash
+php artisan p:debug
+```
+
+The command sends a bounded tail of the configured single log or latest daily
+log (256 KiB by default) to
+[debug.euphoriadevelopment.uk](https://debug.euphoriadevelopment.uk). It redacts
+common passwords, tokens, API keys, cookies and authorization credentials.
+Redaction cannot guarantee that all sensitive data is removed; review the
+preview before uploading and sharing its URL.
+
+Pastes expire after 24 hours by default. Use `--file=/path/to/log` for another file
+or `--expires=3600` for an hour. Supported expiration values are `3600`, `86400`,
+`172800`, `604800` and `2592000` seconds; `0` disables automatic expiration.

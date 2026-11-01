@@ -55,11 +55,6 @@ class NodesController extends Controller
     public function create(): View|RedirectResponse
     {
         $locations = $this->locationRepository->all();
-        if (count($locations) < 1) {
-            $this->alert->warning(trans('admin/node.notices.location_required'))->flash();
-
-            return redirect()->route('admin.locations');
-        }
 
         return view('admin.nodes.new', ['locations' => $locations]);
     }

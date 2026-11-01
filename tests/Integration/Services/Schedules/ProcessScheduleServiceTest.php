@@ -112,3 +112,30 @@ test('task dispatched now is reset properly if error is encountered', function (
 
     $this->assertDatabaseHas('tasks', ['id' => $task->id, 'is_queued' => false]);
 });
+
+test('online-only schedules dispatch only while a server is running or starting', function (string $state) {
+    Bus::fake();
+    $server = $this->createServerModel();
+    $schedule = Schedule::factory()->create(['server_id' => $server->id, 'only_when_online' => true]);
+    $task = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1]);
+    $this->mock(Pterodactyl\Repositories\Wings\DaemonServerRepository::class)->shouldReceive('setServer')->once()->andReturnSelf()->shouldReceive('getDetails')->once()->andReturn($state === 'unknown' ? [] : ['state' => $state]);
+    app(ProcessScheduleService::class)->handle($schedule);
+    if (in_array($state, ['running', 'starting'])) {
+        Bus::assertDispatched(RunTaskJob::class);
+    } else {
+        Bus::assertNothingDispatched();
+        expect($task->fresh()->is_queued)->toBeFalse()->and($schedule->fresh()->is_processing)->toBeFalse();
+    }
+})->with(['running', 'starting', 'offline', 'stopping', 'unknown']);
+
+test('online-only schedules reset queued work when Wings cannot provide its state', function (bool $connectionFailure) {
+    Bus::fake();
+    $server = $this->createServerModel();
+    $schedule = Schedule::factory()->create(['server_id' => $server->id, 'only_when_online' => true]);
+    $task = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1]);
+    $exception = $connectionFailure ? new Pterodactyl\Exceptions\Http\Connection\DaemonConnectionException(new GuzzleHttp\Exception\ConnectException('offline', new GuzzleHttp\Psr7\Request('GET', 'http://wings.invalid'))) : new RuntimeException('invalid daemon state');
+    $this->mock(Pterodactyl\Repositories\Wings\DaemonServerRepository::class)->shouldReceive('setServer')->once()->andReturnSelf()->shouldReceive('getDetails')->once()->andThrow($exception);
+    app(ProcessScheduleService::class)->handle($schedule);
+    Bus::assertNothingDispatched();
+    expect($task->fresh()->is_queued)->toBeFalse()->and($schedule->fresh()->is_processing)->toBeFalse();
+})->with([true, false]);

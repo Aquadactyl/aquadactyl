@@ -127,10 +127,25 @@ test('empty results keep choices and pagination is stable', function () use ($re
         ->assertJsonPath('meta.available_events', ['auth:success']);
 });
 
+test('date filter returns activity entries on that specific calendar date', function () use ($record) {
+    [$user, $server] = $this->generateTestAccount();
+    $targetDate = now()->subDays(5);
+    $otherDate = now()->subDays(2);
+    foreach ([$user, $server] as $subject) {
+        $record($subject, 'server:file.read', $user, ['timestamp' => $targetDate->copy()->hour(10)]);
+        $record($subject, 'server:file.write', $user, ['timestamp' => $otherDate->copy()->hour(14)]);
+    }
+    $dateString = $targetDate->format('Y-m-d');
+    foreach (['/api/client/account/activity', $this->link($server, 'activity')] as $endpoint) {
+        $this->actingAs($user)->getJson($endpoint . '?filter[date]=' . $dateString)
+            ->assertOk()->assertJsonCount(1, 'data')->assertJsonPath('data.0.attributes.event', 'server:file.read');
+    }
+});
+
 test('invalid filters are rejected for both endpoints', function () {
     [$user, $server] = $this->generateTestAccount();
     foreach (['/api/client/account/activity', $this->link($server, 'activity')] as $endpoint) {
-        foreach (['filter[period]=yesterday', 'filter[source]=other', 'filter[ip]=not-an-ip', 'per_page=0', 'per_page=101', 'page=0'] as $query) {
+        foreach (['filter[period]=yesterday', 'filter[date]=not-a-date', 'filter[date]=13-10-2026', 'filter[source]=other', 'filter[ip]=not-an-ip', 'per_page=0', 'per_page=101', 'page=0'] as $query) {
             $this->actingAs($user)->getJson($endpoint . '?' . $query)->assertUnprocessable();
         }
     }

@@ -59,7 +59,7 @@ class ActivityProcessingController extends Controller
                 'timestamp' => $when->setTimezone($tz),
             ];
 
-            if ($user = $users->get($datum['user'])) {
+            if ($user = $users->get($datum['user'] ?? null)) {
                 $log['actor_id'] = $user->id;
                 $log['actor_type'] = $user->getMorphClass();
             }
@@ -75,8 +75,12 @@ class ActivityProcessingController extends Controller
             Assert::isInstanceOf($server = $servers->get($key), Server::class);
 
             $batch = [];
+            $notifications = [];
             foreach ($data as $datum) {
                 $id = ActivityLog::insertGetId($datum);
+                if (\Pterodactyl\Services\Notifications\ServerNotificationService::event($datum['event'])) {
+                    $notifications[] = $id;
+                }
                 $batch[] = [
                     'activity_log_id' => $id,
                     'subject_id' => $server->id,
@@ -85,6 +89,9 @@ class ActivityProcessingController extends Controller
             }
 
             ActivityLogSubject::insert($batch);
+            foreach ($notifications as $id) {
+                app(\Pterodactyl\Listeners\Notifications\QueueServerNotification::class)->handle(new \Pterodactyl\Events\ActivityLogged(ActivityLog::findOrFail($id)));
+            }
         }
     }
 }

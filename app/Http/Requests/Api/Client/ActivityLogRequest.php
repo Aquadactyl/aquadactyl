@@ -15,6 +15,7 @@ class ActivityLogRequest extends ClientApiRequest
             'filter.event_exact' => ['sometimes', 'nullable', 'string', 'max:255'],
             'filter.ip' => ['sometimes', 'nullable', 'ip'],
             'filter.period' => ['sometimes', Rule::in(['24h', '7d', '30d', '90d'])],
+            'filter.date' => ['sometimes', 'nullable', 'date_format:Y-m-d'],
             'filter.source' => ['sometimes', Rule::in(['web', 'api', 'sftp', 'system'])],
         ];
     }

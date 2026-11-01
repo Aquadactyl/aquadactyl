@@ -66,7 +66,7 @@ class ApiController extends Controller
             'user_id' => $request->user()->id,
         ], $request->getKeyPermissions());
 
-        $this->alert->success('A new application API key has been generated for your account.')->flash();
+        $this->alert->success(__('admin/ui.api_key_created'))->flash();
 
         return redirect()->route('admin.api.index');
     }

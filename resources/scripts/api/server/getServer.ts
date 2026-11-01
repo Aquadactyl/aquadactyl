@@ -3,8 +3,7 @@ import {
   rawDataToServerAllocation,
   rawDataToServerEggVariable,
 } from "@/api/transformers";
-import { ServerEggVariable, ServerStatus } from "@/api/server/types";
-import { Identifier } from "@/api/definitions";
+import { Identifier, ServerEggVariable, ServerStatus } from "@/globals";
 
 export interface Allocation {
   id: number;
@@ -21,9 +20,11 @@ export interface Server {
   internalId: number | string;
   uuid: string;
   name: string;
+  folderId?: number | null;
   node: string;
   nodeCountry?: string | null;
   nodeCountryName?: string | null;
+  uploadLimit?: number;
   userPermissions?: string[];
   gameQueryType?: string | null;
   isNodeUnderMaintenance: boolean;
@@ -64,9 +65,11 @@ export const rawDataToServerObject = ({
   internalId: data.internal_id,
   uuid: data.uuid,
   name: data.name,
+  folderId: data.folder_id ?? null,
   node: data.node,
   nodeCountry: data.node_country ?? null,
   nodeCountryName: data.node_country_name ?? null,
+  uploadLimit: data.upload_limit,
   userPermissions: data.user_permissions || [],
   gameQueryType: data.game_query_type ?? null,
   isNodeUnderMaintenance: data.is_node_under_maintenance,
@@ -77,11 +80,7 @@ export const rawDataToServerObject = ({
     ip: data.sftp_details.ip,
     port: data.sftp_details.port,
   },
-  description: data.description
-    ? data.description.length > 0
-      ? data.description
-      : null
-    : null,
+  description: data.description || null,
   limits: { ...data.limits },
   eggFeatures: data.egg_features || [],
   featureLimits: { ...data.feature_limits },

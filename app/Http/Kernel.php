@@ -59,8 +59,8 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         /* Blueprint middleware */
-        'blueprint' => [EncryptCookies::class, AddQueuedCookiesToResponse::class, StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class, SubstituteBindings::class, LanguageMiddleware::class],
-        'blueprint/api' => [EnsureStatefulRequests::class, 'auth:sanctum', IsValidJson::class, TrackAPIKey::class, RequireTwoFactorAuthentication::class, AuthenticateIPAccess::class],
+        'blueprint' => [EncryptCookies::class, AddQueuedCookiesToResponse::class, StartSession::class, ShareErrorsFromSession::class, VerifyCsrfToken::class, SubstituteBindings::class, LanguageMiddleware::class, Middleware\RejectSuspendedUser::class, Middleware\PanelMaintenance::class],
+        'blueprint/api' => [EnsureStatefulRequests::class, 'auth:sanctum', LanguageMiddleware::class, Middleware\RejectSuspendedUser::class, IsValidJson::class, TrackAPIKey::class, RequireTwoFactorAuthentication::class, AuthenticateIPAccess::class, Middleware\PanelMaintenance::class],
         'blueprint/application-api' => [SubstituteBindings::class, AuthenticateApplicationUser::class],
         'blueprint/client-api' => [SubstituteClientBindings::class, RequireClientApiKey::class],
 
@@ -73,14 +73,20 @@ class Kernel extends HttpKernel
             VerifyCsrfToken::class,
             SubstituteBindings::class,
             LanguageMiddleware::class,
+            Middleware\RejectSuspendedUser::class,
+            Middleware\PanelMaintenance::class,
+            Middleware\FirstRunSetup::class,
         ],
         'api' => [
             EnsureStatefulRequests::class,
             'auth:sanctum',
+            LanguageMiddleware::class,
+            Middleware\RejectSuspendedUser::class,
             IsValidJson::class,
             TrackAPIKey::class,
             RequireTwoFactorAuthentication::class,
             AuthenticateIPAccess::class,
+            Middleware\PanelMaintenance::class,
         ],
         'application-api' => [
             SubstituteBindings::class,

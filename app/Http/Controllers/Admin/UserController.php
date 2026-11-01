@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
 use Pterodactyl\Models\Model;
+use Pterodactyl\Facades\Activity;
 use Illuminate\Support\Collection;
 use Illuminate\Http\RedirectResponse;
 use Prologue\Alerts\AlertsMessageBag;
@@ -19,6 +20,7 @@ use Pterodactyl\Traits\Helpers\AvailableLanguages;
 use Pterodactyl\Services\Users\UserCreationService;
 use Pterodactyl\Services\Users\UserDeletionService;
 use Pterodactyl\Http\Requests\Admin\UserFormRequest;
+use Pterodactyl\Services\Users\ProfilePictureService;
 use Pterodactyl\Http\Requests\Admin\NewUserFormRequest;
 use Pterodactyl\Contracts\Repository\UserRepositoryInterface;
 
@@ -78,8 +80,19 @@ class UserController extends Controller
     {
         return view('admin.users.view', [
             'user' => $user,
+            'suspensionPending' => $user->servers()->where('account_suspension_pending', true)->count(),
+            'suspensionErrors' => $user->servers()->whereNotNull('account_suspension_error')->count(),
             'languages' => $this->getAvailableLanguages(true),
         ]);
+    }
+
+    public function removeAvatar(User $user, ProfilePictureService $pictures): RedirectResponse
+    {
+        $pictures->remove($user);
+        Activity::event('admin:user.avatar-removed')->subject($user)->log();
+        $this->alert->success(__('admin/custom.avatar_removed'))->flash();
+
+        return redirect()->route('admin.users.view', $user->id);
     }
 
     /**

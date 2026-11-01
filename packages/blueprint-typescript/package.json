@@ -1,0 +1,15 @@
+{
+  "name": "@aquadactyl/blueprint-typescript",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": "./index.mjs",
+  "dependencies": {
+    "@babel/core": "^8.0.7",
+    "@babel/plugin-syntax-jsx": "^8.0.1",
+    "@babel/preset-typescript": "^8.0.7"
+  },
+  "engines": {
+    "node": ">=24.11.0"
+  }
+}

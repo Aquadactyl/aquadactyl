@@ -2,6 +2,9 @@ name: Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - "main"
   pull_request:
     branches:
       - "main"
@@ -33,6 +36,12 @@ jobs:
           - 3306
     steps:
       - uses: actions/checkout@v7
+      - name: Install MariaDB dump client
+        if: startsWith(matrix.database, 'mariadb:')
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes --no-install-recommends mariadb-client
+          mariadb-dump --version
       - id: composer-cache
         run: |
           echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
@@ -45,9 +54,10 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: bcmath, cli, curl, gd, mbstring, mysql, openssl, pdo, tokenizer, xml, zip
+          ini-values: zend.assertions=1
+          extensions: bcmath, cli, curl, gd, intl, mbstring, mysql, openssl, pdo, redis, tokenizer, xml, zip
           tools: composer:v2
-          coverage: none
+          coverage: ${{ matrix.php == '8.5' && matrix.database == 'mariadb:11' && 'pcov' || 'none' }}
       - run: cp .env.ci .env
       - run: composer install --no-interaction --no-progress --no-suggest --prefer-dist
       - run: composer audit --locked --no-dev
@@ -66,3 +76,16 @@ jobs:
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root
+      - name: Measure complete PHP coverage
+        if: matrix.php == '8.5' && matrix.database == 'mariadb:11'
+        run: vendor/bin/pest --coverage --min=100 --coverage-clover=coverage-php/clover.xml --coverage-html=coverage-php/html --fail-on-warning --fail-on-deprecation
+        env:
+          DB_PORT: ${{ job.services.database.ports[3306] }}
+          DB_USERNAME: root
+      - name: Upload PHP coverage
+        if: always() && matrix.php == '8.5' && matrix.database == 'mariadb:11'
+        uses: actions/upload-artifact@v7
+        with:
+          name: php-coverage
+          path: coverage-php/
+          if-no-files-found: ignore

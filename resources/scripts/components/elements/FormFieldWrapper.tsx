@@ -1,6 +1,7 @@
 import React, { useId } from "react";
 import Label from "@/components/elements/Label";
 import { FieldError } from "react-hook-form";
+import clsx from "clsx";
 
 interface FormFieldWrapperProps {
   id?: string;
@@ -24,7 +25,7 @@ const FormFieldWrapper = ({
   const errorMessage = typeof error === "string" ? error : error?.message;
 
   return (
-    <div className={className}>
+    <div className={clsx("panel-form-field", className)}>
       {label && <Label htmlFor={fieldId}>{label}</Label>}
       {children}
       {errorMessage ? (

@@ -49,17 +49,17 @@ class BlueprintBaseLibrary
      */
     public function dbGet(string $table, string $record, mixed $default = null): mixed
     {
-        $value = DB::table('settings')->where('key', $this->getRecordName($table, $record))->first();
+        try {
+            $value = DB::table('settings')->where('key', $this->getRecordName($table, $record))->first();
+        } catch (\Throwable) {
+            return $default;
+        }
 
         if (!$value) {
             return $default;
         }
 
-        try {
-            return $this->decodeValue($value->value);
-        } catch (\Exception $e) {
-            return $value->value;
-        }
+        return $this->decodeValue($value->value);
     }
 
     /**
@@ -75,14 +75,18 @@ class BlueprintBaseLibrary
      */
     public function dbGetMany(string $table, array $records = [], mixed $default = null): array
     {
-        if (empty($records)) {
-            $values = DB::table('settings')
-              ->where('key', 'like', "$table::%")
-              ->get();
-        } else {
-            $values = DB::table('settings')
-              ->whereIn('key', array_map(fn ($record) => $this->getRecordName($table, $record), $records))
-              ->get();
+        try {
+            if (empty($records)) {
+                $values = DB::table('settings')
+                  ->where('key', 'like', "$table::%")
+                  ->get();
+            } else {
+                $values = DB::table('settings')
+                  ->whereIn('key', array_map(fn ($record) => $this->getRecordName($table, $record), $records))
+                  ->get();
+            }
+        } catch (\Throwable) {
+            return array_fill_keys($records, $default);
         }
 
         if (empty($records)) {
@@ -98,11 +102,7 @@ class BlueprintBaseLibrary
                 continue;
             }
 
-            try {
-                $output[$record] = $this->decodeValue($value->value);
-            } catch (\Exception $e) {
-                $output[$record] = $value->value;
-            }
+            $output[$record] = $this->decodeValue($value->value);
         }
 
         return $output;

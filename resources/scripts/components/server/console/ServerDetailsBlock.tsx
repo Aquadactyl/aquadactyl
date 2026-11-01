@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import SensitiveValue from "@/components/elements/SensitiveValue";
 import React, { useEffect, useMemo, useState } from "react";
 import {
@@ -15,7 +16,7 @@ import { SocketEvent, SocketRequest } from "@/components/server/events";
 import UptimeDuration from "@/components/server/UptimeDuration";
 import StatBlock from "@/components/server/console/StatBlock";
 import useWebsocketEvent from "@/plugins/useWebsocketEvent";
-import classNames from "classnames";
+import clsx from "clsx";
 import { capitalize } from "@/lib/strings";
 
 import BeforeInformation from "@blueprint/components/Server/Terminal/BeforeInformation";
@@ -55,6 +56,7 @@ const Limit = ({
 );
 
 const ServerDetailsBlock = ({ className }: { className?: string }) => {
+  const { t } = usePanelTranslation();
   const [stats, setStats] = useState<Stats>({
     memory: 0,
     cpu: 0,
@@ -119,14 +121,18 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
   });
 
   return (
-    <div className={classNames("grid grid-cols-6 gap-2 md:gap-4", className)}>
+    <div className={clsx("grid grid-cols-6 gap-2 md:gap-4", className)}>
       <BeforeInformation />
-      <StatBlock icon={Wifi} title={"Address"} copyOnClick={allocation}>
+      <StatBlock
+        icon={Wifi}
+        title={t("server_details.address", "Address")}
+        copyOnClick={allocation}
+      >
         <SensitiveValue>{allocation}</SensitiveValue>
       </StatBlock>
       <StatBlock
         icon={Clock}
-        title={"Uptime"}
+        title={t("server_details.uptime", "Uptime")}
         color={getBackgroundColor(
           status === "running" ? 0 : status !== "offline" ? 9 : 10,
           10,
@@ -142,43 +148,57 @@ const ServerDetailsBlock = ({ className }: { className?: string }) => {
       </StatBlock>
       <StatBlock
         icon={Cpu}
-        title={"CPU Load"}
+        title={t("server_details.cpu_load", "CPU Load")}
         color={getBackgroundColor(stats.cpu, limits.cpu)}
       >
         {status === "offline" ? (
-          <span className={"text-gray-400"}>Offline</span>
+          <span className={"text-gray-400"}>
+            {t("server_details.offline", "Offline")}
+          </span>
         ) : (
           <Limit limit={textLimits.cpu}>{stats.cpu.toFixed(2)}%</Limit>
         )}
       </StatBlock>
       <StatBlock
         icon={MemoryStick}
-        title={"Memory"}
+        title={t("server_details.memory", "Memory")}
         color={getBackgroundColor(stats.memory / 1024, limits.memory * 1024)}
       >
         {status === "offline" ? (
-          <span className={"text-gray-400"}>Offline</span>
+          <span className={"text-gray-400"}>
+            {t("server_details.offline", "Offline")}
+          </span>
         ) : (
           <Limit limit={textLimits.memory}>{bytesToString(stats.memory)}</Limit>
         )}
       </StatBlock>
       <StatBlock
         icon={HardDrive}
-        title={"Disk"}
+        title={t("server_details.disk", "Disk")}
         color={getBackgroundColor(stats.disk / 1024, limits.disk * 1024)}
       >
         <Limit limit={textLimits.disk}>{bytesToString(stats.disk)}</Limit>
       </StatBlock>
-      <StatBlock icon={CloudDownload} title={"Network (Inbound)"}>
+      <StatBlock
+        icon={CloudDownload}
+        title={t("server_details.network_inbound", "Network (Inbound)")}
+      >
         {status === "offline" ? (
-          <span className={"text-gray-400"}>Offline</span>
+          <span className={"text-gray-400"}>
+            {t("server_details.offline", "Offline")}
+          </span>
         ) : (
           bytesToString(stats.rx)
         )}
       </StatBlock>
-      <StatBlock icon={CloudUpload} title={"Network (Outbound)"}>
+      <StatBlock
+        icon={CloudUpload}
+        title={t("server_details.network_outbound", "Network (Outbound)")}
+      >
         {status === "offline" ? (
-          <span className={"text-gray-400"}>Offline</span>
+          <span className={"text-gray-400"}>
+            {t("server_details.offline", "Offline")}
+          </span>
         ) : (
           bytesToString(stats.tx)
         )}

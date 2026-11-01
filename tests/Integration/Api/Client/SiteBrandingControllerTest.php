@@ -18,6 +18,13 @@ beforeEach(function () {
     }
 });
 
+test('corrupted stored logos use a valid bundled icon instead of crashing public branding routes', function () {
+    config()->set('aquadactyl.branding.logo_path', 'branding/01234567-abcd.png');
+    Storage::disk('public')->put('branding/01234567-abcd.png', 'corrupted image');
+    $image = getimagesizefromstring(app(SiteBrandingService::class)->icon(32));
+    expect([$image[0], $image[1], $image[2]])->toBe([32, 32, IMAGETYPE_PNG]);
+});
+
 afterEach(function () {
     foreach (['app:name', 'app:locale', 'pterodactyl:auth:2fa_required', 'aquadactyl:branding:logo_path'] as $key) {
         app(SettingsRepositoryInterface::class)->forget('settings::' . $key);

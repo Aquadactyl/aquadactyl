@@ -35,18 +35,41 @@ class DaemonFileRepository extends DaemonRepository
                 sprintf('/api/servers/%s/files/contents', $this->server->uuid),
                 [
                     'query' => ['file' => $path],
+                    'stream' => true,
                 ]
             );
         } catch (ClientException|TransferException $exception) {
             throw new DaemonConnectionException($exception);
         }
 
-        $length = (int) Arr::get($response->getHeader('Content-Length'), 0, 0);
-        if ($notLargerThan && $length > $notLargerThan) {
-            throw new FileSizeTooLargeException();
-        }
+        $body = $response->getBody();
+        try {
+            $length = (int) Arr::get($response->getHeader('Content-Length'), 0, 0);
+            if ($notLargerThan && $length > $notLargerThan) {
+                throw new FileSizeTooLargeException();
+            }
 
-        return $response->getBody()->__toString();
+            if (!$notLargerThan) {
+                return $body->__toString();
+            }
+
+            // Check the bytes read as well: streamed replies may omit Content-Length.
+            $content = '';
+            while (!$body->eof()) {
+                $chunk = $body->read(min(8192, $notLargerThan + 1 - strlen($content)));
+                if ($chunk === '' && !$body->eof()) {
+                    throw new \RuntimeException('The file stream stopped before reaching the end.');
+                }
+                $content .= $chunk;
+                if (strlen($content) > $notLargerThan) {
+                    throw new FileSizeTooLargeException();
+                }
+            }
+
+            return $content;
+        } finally {
+            $body->close();
+        }
     }
 
     /**

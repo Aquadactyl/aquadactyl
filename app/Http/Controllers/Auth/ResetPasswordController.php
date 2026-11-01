@@ -79,18 +79,18 @@ class ResetPasswordController extends Controller
         $user = $this->userRepository->update($user->id, [
             'password' => $this->hasher->make($password),
             $user->getRememberTokenName() => Str::random(60),
-        ]);
+        ], true, true);
 
         $this->dispatcher->dispatch(new PasswordReset($user));
         PasswordChanged::dispatch($user);
 
         // If the user is not using 2FA log them in, otherwise skip this step and force a
         // fresh login where they'll be prompted to enter a token.
-        if (!$user->use_totp) {
+        if (!$user->use_totp && !$user->suspended_at) {
             $this->guard()->login($user);
         }
 
-        $this->hasTwoFactor = $user->use_totp;
+        $this->hasTwoFactor = $user->use_totp || (bool) $user->suspended_at;
     }
 
     /**

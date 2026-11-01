@@ -17,7 +17,7 @@ class GameQuerySettingsController extends Controller
     public function update(UpdateGameQueryRequest $request, Server $server): RedirectResponse
     {
         $server->forceFill($request->validated())->save();
-        $this->alert->success('Game query settings saved.')->flash();
+        $this->alert->success(__('admin/ui.game_query_saved'))->flash();
 
         return redirect()->route('admin.servers.view.details', $server->id);
     }

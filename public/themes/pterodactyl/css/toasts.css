@@ -1,0 +1,9 @@
+.aquadactyl-admin .panel-toasts { position: fixed; top: 1rem; right: 1rem; width: min(400px, calc(100vw - 2rem)); z-index: 10050; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+.aquadactyl-admin .panel-toast { display: flex; align-items: flex-start; gap: 12px; padding: 16px; background: #171c21; color: #e9ecef; border: 1px solid #39424b; border-radius: 12px; box-shadow: 0 8px 30px #0005; pointer-events: auto; font-size: 14px; line-height: 1.5; }
+.aquadactyl-admin .panel-toast-icon { flex: 0 0 auto; margin-top: 3px; color: var(--color-primary-400, #55c0b7); font-size: 18px; }
+.aquadactyl-admin .panel-toast[data-type="error"] .panel-toast-icon { color: #f87171; }
+.aquadactyl-admin .panel-toast[data-type="success"] .panel-toast-icon { color: #4ade80; }
+.aquadactyl-admin .panel-toast[data-type="warning"] .panel-toast-icon { color: #fbbf24; }
+.aquadactyl-admin .panel-toast p { min-width: 0; flex: 1; overflow-wrap: anywhere; white-space: pre-line; margin: 0; }
+.aquadactyl-admin .panel-toast button { background: transparent; border: 0; padding: 2px; color: inherit; cursor: pointer; flex-shrink: 0; }
+.aquadactyl-admin .panel-toast button:focus-visible { outline: 2px solid var(--color-primary-400, #55c0b7); outline-offset: 3px; }

@@ -21,11 +21,22 @@ Route::get('/', [Client\ClientController::class, 'index'])->name('api:client.ind
 Route::get('/permissions', [Client\ClientController::class, 'permissions']);
 
 Route::prefix('/account')->middleware(AccountSubject::class)->group(function () {
+    Route::get('/notifications/preferences', [Client\AccountNotificationController::class, 'preferences']);
+    Route::put('/notifications/preferences', [Client\AccountNotificationController::class, 'update'])->middleware('throttle:20,1,notification-preferences:');
+    Route::get('/notifications', [Client\AccountNotificationController::class, 'index']);
+    Route::post('/notifications/read', [Client\AccountNotificationController::class, 'read']);
+    Route::get('/server-folders', [Client\ServerFolderController::class, 'index']);
+    Route::post('/server-folders', [Client\ServerFolderController::class, 'store']);
+    Route::put('/server-folders/{folder}', [Client\ServerFolderController::class, 'update'])->whereNumber('folder');
+    Route::delete('/server-folders/{folder}', [Client\ServerFolderController::class, 'destroy'])->whereNumber('folder');
+    Route::put('/server-folders/servers/{server}', [Client\ServerFolderController::class, 'assign']);
+
     Route::prefix('/')->withoutMiddleware(RequireTwoFactorAuthentication::class)->group(function () {
         Route::get('/', [Client\AccountController::class, 'index'])->name('api:client.account');
         Route::get('/two-factor', [Client\TwoFactorController::class, 'index']);
         Route::post('/two-factor', [Client\TwoFactorController::class, 'store']);
         Route::post('/two-factor/disable', [Client\TwoFactorController::class, 'delete']);
+        Route::post('/two-factor/regenerate-tokens', [Client\TwoFactorController::class, 'regenerateTokens']);
     });
 
     Route::put('/email', [Client\AccountController::class, 'updateEmail'])
@@ -36,6 +47,7 @@ Route::prefix('/account')->middleware(AccountSubject::class)->group(function () 
     Route::post('/avatar', [Client\AccountAvatarController::class, 'store'])->name('api:client.account.update-avatar');
     Route::delete('/avatar', [Client\AccountAvatarController::class, 'destroy'])->name('api:client.account.remove-avatar');
     Route::put('/privacy', [Client\AccountPrivacyController::class, 'update'])->name('api:client.account.update-privacy');
+    Route::put('/language', [Client\AccountLanguageController::class, 'update'])->name('api:client.account.update-language');
 
     Route::get('/activity', Client\ActivityLogController::class)->name('api:client.account.activity');
 
@@ -75,6 +87,7 @@ Route::group([
     Route::get('/activity', Client\Servers\ActivityLogController::class)->name('api:client:server.activity');
 
     Route::post('/command', [Client\Servers\CommandController::class, 'index']);
+    Route::post('/console/share', Client\Servers\ConsoleLogShareController::class)->middleware('throttle:3,1,console-share:');
     Route::post('/power', [Client\Servers\PowerController::class, 'index']);
 
     Route::group(['prefix' => '/databases'], function () {
@@ -85,7 +98,14 @@ Route::group([
         Route::delete('/{database}', [Client\Servers\DatabaseController::class, 'delete']);
     });
 
-    Route::group(['prefix' => '/files'], function () {
+    Route::group(['prefix' => '/trash'], function () {
+        Route::get('/', [Client\Servers\FileTrashController::class, 'index']);
+        Route::post('/', [Client\Servers\FileTrashController::class, 'store'])->middleware('throttle:20,1,file-trash:');
+        Route::post('/{item}/restore', [Client\Servers\FileTrashController::class, 'restore'])->name('api:client:server.trash.restore');
+        Route::delete('/{item}', [Client\Servers\FileTrashController::class, 'destroy']);
+    });
+
+    Route::group(['prefix' => '/files', 'middleware' => [Pterodactyl\Http\Middleware\Api\Client\Server\ProtectTrashDirectory::class]], function () {
         Route::get('/list', [Client\Servers\FileController::class, 'directory']);
         Route::get('/contents', [Client\Servers\FileController::class, 'contents']);
         Route::get('/download', [Client\Servers\FileController::class, 'download']);
@@ -151,6 +171,9 @@ Route::group([
     });
 
     Route::group(['prefix' => '/settings'], function () {
+        Route::get('/subdomain', [Client\Servers\SubdomainController::class, 'index']);
+        Route::post('/subdomain', [Client\Servers\SubdomainController::class, 'store'])->middleware('throttle:10,1,subdomains:');
+        Route::delete('/subdomain', [Client\Servers\SubdomainController::class, 'destroy'])->middleware('throttle:10,1,subdomains:');
         Route::post('/rename', [Client\Servers\SettingsController::class, 'rename']);
         Route::post('/reinstall', [Client\Servers\SettingsController::class, 'reinstall']);
         Route::put('/docker-image', [Client\Servers\SettingsController::class, 'dockerImage']);

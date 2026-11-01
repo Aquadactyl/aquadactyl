@@ -38,9 +38,12 @@ return [
             'host' => env('MAIL_HOST', '127.0.0.1'),
             'port' => env('MAIL_PORT', 2525),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'scheme' => env('MAIL_ENCRYPTION', 'tls') === 'ssl' ? 'smtps' : 'smtp',
+            'require_tls' => env('MAIL_ENCRYPTION', 'tls') === 'tls',
+            'auto_tls' => !empty(env('MAIL_ENCRYPTION', 'tls')),
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
-            'timeout' => null,
+            'timeout' => 15,
             'local_domain' => env('MAIL_EHLO_DOMAIN', env('SERVER_NAME')),
         ],
 
@@ -50,10 +53,13 @@ return [
 
         'mailgun' => [
             'transport' => 'mailgun',
+            'client' => ['timeout' => 15],
         ],
 
         'postmark' => [
             'transport' => 'postmark',
+            'message_stream_id' => env('POSTMARK_MESSAGE_STREAM_ID', 'outbound'),
+            'client' => ['timeout' => 15],
         ],
 
         'sendmail' => [

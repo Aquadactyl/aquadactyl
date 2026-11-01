@@ -32,6 +32,12 @@ const yellow = {
 };
 
 const themeValues: Record<string, string> = {
+  ...Object.fromEntries(
+    Object.entries(aqua).map(([shade, value]) => [
+      `colors.primary.${shade}`,
+      value,
+    ]),
+  ),
   "colors.black": gray[950],
   "colors.gray.200": gray[200],
   "colors.gray.500": gray[500],
@@ -53,6 +59,14 @@ const themeValues: Record<string, string> = {
 };
 
 export const theme = (path: string): string => {
+  const color = /^colors\.(primary|cyan|blue)\.(\d+)$/.exec(path);
+  if (color && typeof window !== "undefined") {
+    const value = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue(`--color-${color[1]}-${color[2]}`)
+      .trim();
+    if (value) return value;
+  }
   return themeValues[path] || "";
 };
 

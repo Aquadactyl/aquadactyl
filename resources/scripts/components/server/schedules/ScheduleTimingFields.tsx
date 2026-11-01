@@ -29,17 +29,20 @@ export const ScheduleSelect = ({
   onChange?: React.ChangeEventHandler<HTMLSelectElement>;
 }) => {
   const {
+    watch,
     register,
     formState: { errors },
   } = useFormContext();
   const registration = register(name);
   const error = (errors as Record<string, any>)[name];
+  const value = watch(name);
 
   return (
     <FormFieldWrapper id={`schedule-${name}`} label={label} error={error}>
       <Select
         id={`schedule-${name}`}
         {...registration}
+        value={value}
         onChange={(e) => {
           registration.onChange(e);
           onChange?.(e);

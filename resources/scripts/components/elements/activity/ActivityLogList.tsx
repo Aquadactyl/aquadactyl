@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { ActivityLog } from "@definitions/user";
 import { ActivityLogResult } from "@/api/activity";
 import { Clock, RefreshCw } from "lucide-react";
-import classNames from "classnames";
+import clsx from "clsx";
 import Spinner from "@/components/elements/Spinner";
 import PaginationFooter from "@/components/elements/table/PaginationFooter";
 import ActivityLogEntry from "./ActivityLogEntry";
@@ -50,7 +50,7 @@ export default ({
           onClick={onRefresh}
         >
           <RefreshCw
-            className={classNames("h-4 w-4", {
+            className={clsx("h-4 w-4", {
               "is-refreshing": isValidating,
             })}
           />{" "}

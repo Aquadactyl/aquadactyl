@@ -4,7 +4,15 @@ import { Users } from "lucide-react";
 import getGameQuery from "@/api/server/getGameQuery";
 import { Server } from "@/api/server/getServer";
 
-export default ({ server, state }: { server: Server; state: string }) => {
+export default ({
+  server,
+  state,
+  active = true,
+}: {
+  server: Server;
+  state: string;
+  active?: boolean;
+}) => {
   const running = state === "running";
   const pendingPolls = useRef(0);
   const [refreshInterval, setRefreshInterval] = useState(30000);
@@ -16,6 +24,7 @@ export default ({ server, state }: { server: Server; state: string }) => {
     {
       refetchInterval: refreshInterval,
       refetchOnWindowFocus: false,
+      enabled: active,
     },
   );
 

@@ -1,4 +1,5 @@
 import React from "react";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import { useTanStackQuery } from "@/lib/queryClient";
 import http from "@/api/http";
 import { NavLink, Route, Routes, useLocation, useParams } from "react-router";
@@ -14,14 +15,11 @@ import routes from "@/routers/routes";
 import blueprintRoutes from "./routes";
 import { UiBadge } from "@blueprint/ui";
 
-const blueprintExtensions = [
-  ...new Set(blueprintRoutes.server.map((route) => route.identifier)),
-];
-
-/**
- * Get the route egg IDs for each extension with server routes.
- */
 const useExtensionEggs = () => {
+  const blueprintExtensions = [
+    ...new Set(blueprintRoutes.server.map((route) => route.identifier)),
+  ];
+
   const { data } = useTanStackQuery<{ [x: string]: string[] }>(
     blueprintExtensions.length
       ? ["blueprint:extension-eggs", blueprintExtensions.join(",")]
@@ -52,6 +50,7 @@ const useExtensionEggs = () => {
 };
 
 export const NavigationLinks = () => {
+  const { t } = usePanelTranslation();
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
   const serverEgg = ServerContext.useStoreState(
     (state) => state.server.data?.BlueprintFramework.eggId,
@@ -69,17 +68,25 @@ export const NavigationLinks = () => {
     <>
       {/* Aquadactyl routes */}
       {routes.server
-        .filter((route) => !!route.name)
+        .filter(
+          (route): route is typeof route & { name: string } => !!route.name,
+        )
         .map((route) =>
           route.permission ? (
             <Can key={route.path} action={route.permission} matchAny>
               <NavLink to={to(route.path)} end={route.exact}>
-                {route.name}
+                {t(
+                  `navigation.${route.name.toLowerCase().replaceAll(" ", "_")}`,
+                  route.name,
+                )}
               </NavLink>
             </Can>
           ) : (
             <NavLink key={route.path} to={to(route.path)} end={route.exact}>
-              {route.name}
+              {t(
+                `navigation.${route.name.toLowerCase().replaceAll(" ", "_")}`,
+                route.name,
+              )}
             </NavLink>
           ),
         )}

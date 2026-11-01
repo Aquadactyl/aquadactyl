@@ -60,9 +60,21 @@ class Handler extends ExceptionHandler
      */
     protected $dontFlash = [
         'token',
+        'api_token',
+        'bot_token',
+        'webhook_url',
+        'discord_webhook',
+        'webhook_secret',
         'secret',
         'password',
         'password_confirmation',
+        'current_password',
+        'providers', // Includes nested OAuth client secrets in the admin form.
+        'mail:mailers:smtp:password',
+        'services:mailgun:secret',
+        'services:postmark:token',
+        'services:ses:key',
+        'services:ses:secret',
     ];
 
     /**
@@ -262,9 +274,6 @@ class Handler extends ExceptionHandler
     {
         $previous = [];
         while ($value = $e->getPrevious()) {
-            if (!$value instanceof \Throwable) { // @phpstan-ignore instanceof.alwaysTrue
-                break;
-            }
             $previous[] = $value;
             $e = $value;
         }

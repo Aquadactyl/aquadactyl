@@ -1,9 +1,13 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { ServerContext } from "@/state/server";
 import { SocketEvent } from "@/components/server/events";
 import useWebsocketEvent from "@/plugins/useWebsocketEvent";
-import { Line } from "react-chartjs-2";
-import { useChart, useChartTickLabel } from "@/components/server/console/chart";
+import {
+  UPlotChart,
+  primaryChartStyle,
+  useChart,
+  useChartTickLabel,
+} from "@/components/server/console/chart";
 import { hexToRgba } from "@/lib/helpers";
 import { bytesToString } from "@/lib/formatters";
 import { CloudDownload, CloudUpload } from "lucide-react";
@@ -20,35 +24,25 @@ export default () => {
 
   const cpu = useChartTickLabel("CPU", limits.cpu, "%", 2);
   const memory = useChartTickLabel("Memory", limits.memory, "MiB");
-  const network = useChart("Network", {
-    sets: 2,
-    options: {
-      scales: {
-        y: {
-          ticks: {
-            callback(value) {
-              return bytesToString(
-                typeof value === "string" ? parseInt(value, 10) : value,
-              );
-            },
-          },
+  const networkOptions = useMemo(
+    () => ({
+      sets: 2,
+      formatTick: (value: number) => bytesToString(value),
+      series: [
+        {
+          label: "Network Out",
+          ...primaryChartStyle,
         },
-      },
-    },
-    callback(opts, index) {
-      return {
-        ...opts,
-        label: !index ? "Network In" : "Network Out",
-        borderColor: !index
-          ? theme("colors.cyan.400")
-          : theme("colors.yellow.400"),
-        backgroundColor: hexToRgba(
-          !index ? theme("colors.cyan.700") : theme("colors.yellow.700"),
-          0.5,
-        ),
-      };
-    },
-  });
+        {
+          label: "Network In",
+          stroke: theme("colors.yellow.400"),
+          fill: hexToRgba(theme("colors.yellow.700"), 0.5),
+        },
+      ],
+    }),
+    [],
+  );
+  const network = useChart("Network", networkOptions);
 
   useEffect(() => {
     if (status === "offline") {
@@ -85,10 +79,10 @@ export default () => {
   return (
     <>
       <ChartBlock title={"CPU Load"}>
-        <Line {...cpu.props} />
+        <UPlotChart {...cpu.props} />
       </ChartBlock>
       <ChartBlock title={"Memory"}>
-        <Line {...memory.props} />
+        <UPlotChart {...memory.props} />
       </ChartBlock>
       <ChartBlock
         title={"Network"}
@@ -98,12 +92,12 @@ export default () => {
               <CloudDownload className={"mr-2 h-4 w-4 text-yellow-400"} />
             </Tooltip>
             <Tooltip arrow content={"Outbound"}>
-              <CloudUpload className={"h-4 w-4 text-cyan-400"} />
+              <CloudUpload className={"text-primary-400 h-4 w-4"} />
             </Tooltip>
           </>
         }
       >
-        <Line {...network.props} />
+        <UPlotChart {...network.props} />
       </ChartBlock>
     </>
   );

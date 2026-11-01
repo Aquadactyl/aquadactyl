@@ -53,8 +53,11 @@ abstract class DaemonRepository
         return new Client([
             'verify' => $this->app->environment('production'),
             'base_uri' => $this->node->getConnectionAddress(),
-            'timeout' => config('pterodactyl.guzzle.timeout'),
-            'connect_timeout' => config('pterodactyl.guzzle.connect_timeout'),
+            // A redirect can resend configuration bodies, including environment secrets.
+            'allow_redirects' => false,
+            // Database settings and environment values may contain numeric strings.
+            'timeout' => (float) config('pterodactyl.guzzle.timeout', 15),
+            'connect_timeout' => (float) config('pterodactyl.guzzle.connect_timeout', 5),
             'headers' => array_merge($headers, [
                 'Authorization' => 'Bearer ' . $this->node->getDecryptedKey(),
                 'Accept' => 'application/json',

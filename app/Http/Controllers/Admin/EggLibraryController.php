@@ -101,27 +101,27 @@ class EggLibraryController extends Controller
     {
         $document = $this->downloads->detail($slug);
         if (!$this->downloads->compatible($document['egg'])) {
-            throw ValidationException::withMessages(['egg' => 'This egg uses an unsupported format. Choose a PTDL_v1 or PTDL_v2 egg.']);
+            throw ValidationException::withMessages(['egg' => __('admin/ui.unsupported_egg')]);
         }
         $json = $this->downloads->encode($document['egg']);
         if (!hash_equals(hash('sha256', $json), $request->string('egg_hash')->toString())) {
-            throw ValidationException::withMessages(['egg' => 'This egg changed since you opened the preview. Review the current version and import again.']);
+            throw ValidationException::withMessages(['egg' => __('admin/ui.egg_changed')]);
         }
         $file = tmpfile();
         if ($file === false) {
-            throw new DisplayException('Could not prepare the egg file. Please try again.');
+            throw new DisplayException(__('admin/ui.egg_prepare_error'));
         }
 
         try {
             if (fwrite($file, $json) !== strlen($json)) {
-                throw new DisplayException('Could not write the egg file. Please try again.');
+                throw new DisplayException(__('admin/ui.egg_write_error'));
             }
             $upload = new UploadedFile(stream_get_meta_data($file)['uri'], 'egg-' . $slug . '.json', 'application/json', null, true);
             $egg = DB::transaction(function () use ($request, $document, $upload) {
                 if ($request->input('nest_id') === 'new') {
                     $name = trim($request->string('new_nest_name')->toString());
                     if ($name === '') {
-                        throw ValidationException::withMessages(['new_nest_name' => 'Give the new nest a name.']);
+                        throw ValidationException::withMessages(['new_nest_name' => __('admin/ui.new_nest_name_required')]);
                     }
                     $nest = Nest::query()->where('name', $name)->first()
                         ?? $this->nestCreator->handle(['name' => $name, 'description' => 'Eggs imported from eggs.download.']);
@@ -136,14 +136,14 @@ class EggLibraryController extends Controller
                 return $existing ?? $this->importer->handle($upload, $nest->id);
             });
         } catch (DataValidationException $exception) {
-            throw ValidationException::withMessages(['egg' => 'The downloaded egg has invalid settings: ' . implode(' ', $exception->getMessageBag()->all())]);
+            throw ValidationException::withMessages(['egg' => __('admin/ui.egg_invalid_settings', ['errors' => implode(' ', $exception->getMessageBag()->all())])]);
         } catch (InvalidFileUploadException|\JsonException $exception) {
-            throw new DisplayException('The downloaded egg file could not be imported. Choose another egg or try again later.', $exception);
+            throw new DisplayException(__('admin/ui.egg_import_error'), $exception);
         } finally {
             fclose($file);
         }
 
-        $this->alerts->success('The egg is available in ' . $egg->nest->name . '.')->flash();
+        $this->alerts->success(__('admin/ui.egg_available', ['nest' => $egg->nest->name]))->flash();
 
         return redirect()->route('admin.nests.egg.view', ['egg' => $egg->id]);
     }

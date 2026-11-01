@@ -1,4 +1,13 @@
 .git
+.idea
+.vscode
+.php-cs-fixer.cache
+.phpunit.cache
+.phpunit.result.cache
+coverage
+coverage-*/
+coverage.xml
+*.log
 node_modules
 vendor
 .pnpm-store
@@ -13,8 +22,6 @@ vendor
 .blueprint/extensions/blueprint/private/db/is_installed
 .blueprint/extensions/blueprint/private/db/version
 public/assets/*
-!public/assets/svgs/
-!public/assets/svgs/**
 public/build
 public/hot
 storage/logs/*

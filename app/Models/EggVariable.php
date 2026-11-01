@@ -2,8 +2,8 @@
 
 namespace Pterodactyl\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
@@ -85,11 +85,11 @@ class EggVariable extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne<\Pterodactyl\Models\Egg, $this>
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\Pterodactyl\Models\Egg, $this>
      */
-    public function egg(): HasOne
+    public function egg(): BelongsTo
     {
-        return $this->hasOne(Egg::class);
+        return $this->belongsTo(Egg::class);
     }
 
     /**

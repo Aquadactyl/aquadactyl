@@ -2,13 +2,11 @@
 
 namespace Pterodactyl\Http\Controllers\Auth;
 
-use Carbon\CarbonImmutable;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Pterodactyl\Models\User;
 use Illuminate\Http\JsonResponse;
-use Pterodactyl\Facades\Activity;
 use Illuminate\Contracts\View\View;
+use Pterodactyl\Http\Requests\Auth\LoginRequest;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LoginController extends AbstractLoginController
@@ -31,6 +29,7 @@ class LoginController extends AbstractLoginController
      */
     public function login(Request $request): JsonResponse
     {
+        $request->validate((new LoginRequest())->rules());
         if ($this->hasTooManyLoginAttempts($request)) {
             $this->fireLockoutEvent($request);
             $this->sendLockoutResponse($request);
@@ -53,23 +52,6 @@ class LoginController extends AbstractLoginController
             $this->sendFailedLoginResponse($request, $user);
         }
 
-        if (!$user->use_totp) {
-            return $this->sendLoginResponse($user, $request);
-        }
-
-        Activity::event('auth:checkpoint')->withRequestMetadata()->subject($user)->log();
-
-        $request->session()->put('auth_confirmation_token', [
-            'user_id' => $user->id,
-            'token_value' => $token = Str::random(64),
-            'expires_at' => CarbonImmutable::now()->addMinutes(5),
-        ]);
-
-        return new JsonResponse([
-            'data' => [
-                'complete' => false,
-                'confirmation_token' => $token,
-            ],
-        ]);
+        return $this->beginLogin($user, $request);
     }
 }

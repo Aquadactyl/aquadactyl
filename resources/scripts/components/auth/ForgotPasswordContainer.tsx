@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import requestPasswordResetEmail from "@/api/auth/requestPasswordResetEmail";
@@ -22,8 +23,11 @@ const schema = z.object({
 type Values = z.infer<typeof schema>;
 
 export default () => {
+  const { t } = usePanelTranslation();
   const ref = useRef<CaptchaRef>(null);
   const [token, setToken] = useState("");
+  const tokenRef = useRef("");
+  tokenRef.current = token;
 
   const { clearFlashes, addFlash } = useFlash();
   const recaptchaEnabled = useAppStore(
@@ -52,10 +56,11 @@ export default () => {
 
   const handleSubmission = async ({ email }: Values) => {
     clearFlashes();
+    const currentToken = tokenRef.current || token;
 
     // If there is no token in the state yet, request the token and then abort this submit request
     // since it will be re-submitted when the recaptcha data is returned by the component.
-    if (recaptchaEnabled && !token) {
+    if (recaptchaEnabled && !currentToken) {
       try {
         await ref.current!.execute();
       } catch (error) {
@@ -70,7 +75,7 @@ export default () => {
     }
 
     try {
-      const response = await requestPasswordResetEmail(email, token);
+      const response = await requestPasswordResetEmail(email, currentToken);
       reset();
       addFlash({
         type: "success",
@@ -85,6 +90,7 @@ export default () => {
         message: httpErrorToHuman(error),
       });
     } finally {
+      tokenRef.current = "";
       setToken("");
       if (ref.current) ref.current.reset();
     }
@@ -92,15 +98,19 @@ export default () => {
 
   return (
     <LoginFormContainer
-      title={"Request Password Reset"}
+      title={t(
+        "forgot_password.request_password_reset",
+        "Request Password Reset",
+      )}
       className={"flex w-full"}
       onSubmit={handleSubmit(handleSubmission)}
     >
       <FormField
-        label={"Email"}
-        description={
-          "Enter your account email address to receive instructions on resetting your password."
-        }
+        label={t("forgot_password.email", "Email")}
+        description={t(
+          "forgot_password.enter_your_account_email_address_to_receive_instructions_on_resetting",
+          "Enter your account email address to receive instructions on resetting your password.",
+        )}
         type={"email"}
         disabled={isSubmitting}
         error={errors.email}
@@ -113,7 +123,7 @@ export default () => {
           disabled={isSubmitting}
           isLoading={isSubmitting}
         >
-          Send Email
+          {t("forgot_password.send_email", "Send Email")}
         </Button>
       </div>
       {recaptchaEnabled && (
@@ -122,10 +132,12 @@ export default () => {
           provider={provider}
           sitekey={siteKey || "_invalid_key"}
           onVerify={(response) => {
+            tokenRef.current = response;
             setToken(response);
             void handleSubmit(handleSubmission)();
           }}
           onExpire={() => {
+            tokenRef.current = "";
             setToken("");
           }}
         />
@@ -137,7 +149,7 @@ export default () => {
             "text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200"
           }
         >
-          Return to Login
+          {t("forgot_password.return_to_login", "Return to Login")}
         </Link>
       </div>
     </LoginFormContainer>

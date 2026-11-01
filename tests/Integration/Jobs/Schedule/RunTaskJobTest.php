@@ -148,3 +148,21 @@ test('task is not run if server is suspended', function () {
         ->and($schedule->is_processing)->toBeFalse()
         ->and(Carbon::now()->isSameAs(DateTimeInterface::ATOM, $schedule->last_run_at))->toBeTrue();
 });
+
+test('command and backup tasks execute the matching operation then queue the next task with its delay', function (string $action) {
+    $server = $this->createServerModel();
+    $schedule = Schedule::factory()->create(['server_id' => $server->id, 'is_active' => true, 'is_processing' => true]);
+    $first = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 1, 'action' => $action, 'payload' => "ignored\nfiles", 'is_queued' => true]);
+    $next = Task::factory()->create(['schedule_id' => $schedule->id, 'sequence_id' => 2, 'time_offset' => 15, 'is_queued' => false]);
+    Bus::fake();
+    if ($action === Task::ACTION_COMMAND) {
+        $this->mock(Pterodactyl\Repositories\Wings\DaemonCommandRepository::class)->expects('setServer->send')->with("ignored\nfiles");
+    } else {
+        $service = $this->mock(Pterodactyl\Services\Backups\InitiateBackupService::class);
+        $service->expects('setIgnoredFiles')->with(['ignored', 'files'])->andReturnSelf();
+        $service->expects('handle')->with(Mockery::on(fn ($model) => $model->id === $server->id), null, true)->andReturn(Pterodactyl\Models\Backup::factory()->make());
+    }
+    app()->call([new RunTaskJob($first, true), 'handle']);
+    expect($first->fresh()->is_queued)->toBeFalse()->and($next->fresh()->is_queued)->toBeTrue()->and($schedule->fresh()->is_processing)->toBeTrue();
+    Bus::assertDispatched(RunTaskJob::class, fn ($job) => $job->task->id === $next->id && $job->delay === 15 && $job->manualRun);
+})->with([Task::ACTION_COMMAND, Task::ACTION_BACKUP]);

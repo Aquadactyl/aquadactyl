@@ -3,7 +3,9 @@
 namespace Pterodactyl\Observers;
 
 use Pterodactyl\Events;
+use Pterodactyl\Models\User;
 use Pterodactyl\Models\Server;
+use Pterodactyl\Jobs\SyncAccountSuspension;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class ServerObserver
@@ -15,6 +17,7 @@ class ServerObserver
      */
     public function creating(Server $server): void
     {
+        $this->inheritAccountSuspension($server);
         event(new Events\Server\Creating($server));
     }
 
@@ -63,6 +66,7 @@ class ServerObserver
      */
     public function updating(Server $server): void
     {
+        $this->inheritAccountSuspension($server);
         event(new Events\Server\Updating($server));
     }
 
@@ -71,6 +75,19 @@ class ServerObserver
      */
     public function updated(Server $server): void
     {
+        if ($server->wasChanged('account_suspended')) {
+            SyncAccountSuspension::dispatch($server->id)->afterCommit();
+        }
         event(new Events\Server\Updated($server));
+    }
+
+    private function inheritAccountSuspension(Server $server): void
+    {
+        if ($server->owner_id && (!$server->exists || $server->isDirty('owner_id'))) {
+            $suspended = User::whereKey($server->owner_id)->lockForUpdate()->value('suspended_at') !== null;
+            if ((bool) $server->account_suspended !== $suspended) {
+                $server->forceFill(['account_suspended' => $suspended, 'account_suspension_pending' => $server->exists, 'account_suspension_error' => null]);
+            }
+        }
     }
 }

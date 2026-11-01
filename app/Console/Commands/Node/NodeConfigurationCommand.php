@@ -18,11 +18,12 @@ class NodeConfigurationCommand extends Command
         $column = ctype_digit((string) $this->argument('node')) ? 'id' : 'uuid';
 
         /** @var Node $node */
-        $node = Node::query()->where($column, $this->argument('node'))->firstOr(function () {
+        $node = Node::query()->where($column, $this->argument('node'))->first();
+        if ($node === null) {
             $this->error('The selected node does not exist.');
 
-            exit(1);
-        });
+            return self::FAILURE;
+        }
 
         $format = $this->option('format');
         if (!in_array($format, ['yaml', 'yml', 'json'])) {

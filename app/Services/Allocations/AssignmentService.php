@@ -2,7 +2,7 @@
 
 namespace Pterodactyl\Services\Allocations;
 
-use IPTools\Network;
+use IPLib\Factory;
 use Pterodactyl\Models\Node;
 use Illuminate\Database\ConnectionInterface;
 use Pterodactyl\Exceptions\DisplayException;
@@ -62,57 +62,67 @@ class AssignmentService
                 }
                 $underlying = count($explode) > 1 ? "{$resolved}/{$explode[1]}" : $resolved;
             }
-            $parsed = Network::parse($underlying);
+            $range = Factory::parseRangeString($underlying);
+            if ($range === null) {
+                throw new \InvalidArgumentException('Invalid IP address or CIDR range.');
+            }
         } catch (\Exception $exception) {
             throw new DisplayException('Could not parse provided allocation IP address (' . ($underlying ?? $rawIp) . "): {$exception->getMessage()}", $exception);
         }
 
-        $this->connection->beginTransaction();
-        foreach ($parsed as $ip) {
-            foreach ($data['allocation_ports'] as $port) {
-                if (!is_digit($port) && !preg_match(self::PORT_RANGE_REGEX, $port)) {
-                    throw new InvalidPortMappingException($port);
-                }
-
-                $insertData = [];
-                if (preg_match(self::PORT_RANGE_REGEX, $port, $matches)) {
-                    $block = range($matches[1], $matches[2]);
-
-                    if (count($block) > self::PORT_RANGE_LIMIT) {
-                        throw new TooManyPortsInRangeException();
+        $this->connection->transaction(function () use ($range, $data, $node) {
+            $current = $range->getStartAddress();
+            $endStr = $range->getEndAddress()->toString();
+            while ($current !== null) {
+                $ipStr = $current->toString();
+                foreach ($data['allocation_ports'] as $port) {
+                    if (!is_digit($port) && !preg_match(self::PORT_RANGE_REGEX, $port)) {
+                        throw new InvalidPortMappingException($port);
                     }
 
-                    if ((int) $matches[1] <= self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
-                        throw new PortOutOfRangeException();
-                    }
+                    $insertData = [];
+                    if (preg_match(self::PORT_RANGE_REGEX, $port, $matches)) {
+                        $block = range($matches[1], $matches[2]);
 
-                    foreach ($block as $unit) {
+                        if (count($block) > self::PORT_RANGE_LIMIT) {
+                            throw new TooManyPortsInRangeException();
+                        }
+
+                        if ((int) $matches[1] <= self::PORT_FLOOR || (int) $matches[2] > self::PORT_CEIL) {
+                            throw new PortOutOfRangeException();
+                        }
+
+                        foreach ($block as $unit) {
+                            $insertData[] = [
+                                'node_id' => $node->id,
+                                'ip' => $ipStr,
+                                'port' => (int) $unit,
+                                'ip_alias' => array_get($data, 'allocation_alias'),
+                                'server_id' => null,
+                            ];
+                        }
+                    } else {
+                        if ((int) $port <= self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
+                            throw new PortOutOfRangeException();
+                        }
+
                         $insertData[] = [
                             'node_id' => $node->id,
-                            'ip' => $ip->__toString(),
-                            'port' => (int) $unit,
+                            'ip' => $ipStr,
+                            'port' => (int) $port,
                             'ip_alias' => array_get($data, 'allocation_alias'),
                             'server_id' => null,
                         ];
                     }
-                } else {
-                    if ((int) $port <= self::PORT_FLOOR || (int) $port > self::PORT_CEIL) {
-                        throw new PortOutOfRangeException();
-                    }
 
-                    $insertData[] = [
-                        'node_id' => $node->id,
-                        'ip' => $ip->__toString(),
-                        'port' => (int) $port,
-                        'ip_alias' => array_get($data, 'allocation_alias'),
-                        'server_id' => null,
-                    ];
+                    $this->repository->insertIgnore($insertData);
                 }
 
-                $this->repository->insertIgnore($insertData);
+                if ($ipStr === $endStr) {
+                    break;
+                }
+                $current = $current->getNextAddress();
             }
-        }
-
-        $this->connection->commit();
+        });
     }
 }

@@ -1,0 +1,129 @@
+.panel-app {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+}
+.panel-background {
+  position: fixed;
+  z-index: -1;
+  pointer-events: none;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.authentication-page[data-layout="split-left"],
+.authentication-page[data-layout="split-right"] {
+  padding: 0;
+  align-items: stretch;
+}
+.authentication-page[data-layout^="split"] .authentication-container {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  align-items: stretch;
+}
+.authentication-form-panel {
+  width: 100%;
+  max-width: 440px;
+  justify-self: center;
+  min-width: 0;
+}
+.authentication-page[data-layout^="split"] .authentication-form-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: none;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: clamp(40px, 5vw, 80px) clamp(24px, 5vw, 80px);
+  background: var(--login-box-background, #1c232a);
+  backdrop-filter: var(--login-box-backdrop-filter, none);
+  -webkit-backdrop-filter: var(--login-box-backdrop-filter, none);
+}
+.authentication-page[data-layout^="split"] .authentication-form-panel > * {
+  width: 100%;
+  max-width: 440px;
+}
+.authentication-page[data-layout^="split"] .authentication-card {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.authentication-page[data-layout="split-left"] .authentication-form-panel {
+  grid-column: 1;
+  grid-row: 1;
+  border-right: 1px solid #303942;
+}
+.authentication-page[data-layout="split-right"] .authentication-form-panel {
+  grid-column: 2;
+  grid-row: 1;
+  border-left: 1px solid #303942;
+}
+.authentication-side-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  grid-row: 1;
+  min-width: 0;
+  padding: 40px;
+}
+.authentication-side-brand .authentication-brand {
+  margin: 0;
+}
+.authentication-mobile-brand {
+  display: none;
+}
+.authentication-page[data-layout="split-left"] .authentication-side-brand {
+  grid-column: 2;
+}
+.authentication-page[data-layout="split-right"] .authentication-side-brand {
+  grid-column: 1;
+}
+.authentication-side-brand .authentication-brand img {
+  width: min(85%, 340px);
+}
+.authentication-card .authentication-brand {
+  margin-bottom: 24px;
+}
+.panel-app .bg-primary-500,
+.panel-app .bg-primary-600,
+.panel-app .btn-primary:not(.btn-danger):not(.btn-text):not(.btn-secondary),
+.panel-app
+  .btn-primary.btn-secondary:not(.btn-danger):not(.btn-text):not(
+    :disabled
+  ):hover,
+.panel-app .panel-link-primary,
+.panel-app .panel-link-primary:hover,
+.panel-app .schedule-setup-toggle[aria-pressed="true"] {
+  color: var(--color-primary-contrast, #fff);
+}
+@media (max-width: 800px) {
+  .authentication-page[data-layout^="split"] .authentication-container {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    max-width: none;
+  }
+  .authentication-page[data-layout^="split"] .authentication-form-panel {
+    grid-column: 1;
+    border: 0;
+    padding: 40px 24px;
+  }
+  .authentication-side-brand {
+    display: none;
+  }
+  .authentication-mobile-brand {
+    display: block;
+    width: 100%;
+  }
+  .authentication-mobile-brand .authentication-brand img {
+    width: 224px;
+  }
+}

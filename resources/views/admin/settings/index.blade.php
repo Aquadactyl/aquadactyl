@@ -2,14 +2,14 @@
 @include('partials/admin.settings.nav', ['activeTab' => 'basic'])
 
 @section('title')
-    Settings
+    {{ __('admin/ui.settings') }}
 @endsection
 
 @section('content-header')
-    <h1>Site Settings<small>Configure your branding and the features available to users.</small></h1>
+    <h1>{{ __('admin/ui.site_settings') }}<small>{{ __('admin/ui.configure_your_branding_and_the_features_available_to_users') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li class="active">Settings</li>
+        <li><a href="{{ route('admin.index', [], false) }}">{{ __('admin/ui.admin') }}</a></li>
+        <li class="active">{{ __('admin/ui.settings') }}</li>
     </ol>
 @endsection
 
@@ -19,82 +19,86 @@
         <div class="col-xs-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Site Configuration</h3>
+                    <h3 class="box-title">{{ __('admin/ui.site_configuration') }}</h3>
                 </div>
-                <form action="{{ route('admin.settings') }}" method="POST">
+                <form action="{{ route('admin.settings', [], false) }}" method="POST">
                     <div class="box-body">
                         <div class="row">
-                            <div class="form-group col-lg-4">
-                                <label class="control-label" for="site-name">Site Name</label>
-                                <div>
-                                    <input id="site-name" type="text" class="form-control" name="app:name" value="{{ old('app:name', config('app.name')) }}" required maxlength="191" />
-                                    <p class="text-muted"><small>This is the name that is used throughout the panel and in emails sent to clients.</small></p>
-                                    <label class="control-label" for="show-site-name">Show Site Name Beside Logo</label>
-                                    @php
-                                        $showName = in_array(old('aquadactyl:branding:show_name', config('aquadactyl.branding.show_name', false)), [true, 'true', 1, '1'], true);
-                                    @endphp
-                                    <select id="show-site-name" class="form-control" name="aquadactyl:branding:show_name">
-                                        <option value="false" @if(!$showName) selected @endif>Logo only</option>
-                                        <option value="true" @if($showName) selected @endif>Logo and site name</option>
-                                    </select>
-                                    <p class="text-muted"><small>Show the site name alongside an uploaded logo in navigation, sign-in and admin headers.</small></p>
-                                </div>
-                            </div>
-                            <div class="form-group col-lg-4">
-                                <label class="control-label">Require 2-Factor Authentication</label>
+                            <div class="form-group col-lg-6">
+                                <label class="control-label">{{ __('admin/ui.require_2_factor_authentication') }}</label>
                                 <div>
                                     <div class="btn-group" data-toggle="buttons">
                                         @php
                                             $level = old('pterodactyl:auth:2fa_required', config('pterodactyl.auth.2fa_required'));
                                         @endphp
                                         <label class="btn btn-primary @if ($level == 0) active @endif">
-                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="0" @if ($level == 0) checked @endif> Not Required
+                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="0" @if ($level == 0) checked @endif> {{ __('admin/ui.not_required') }}
                                         </label>
                                         <label class="btn btn-primary @if ($level == 1) active @endif">
-                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="1" @if ($level == 1) checked @endif> Admin Only
+                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="1" @if ($level == 1) checked @endif> {{ __('admin/ui.admin_only') }}
                                         </label>
                                         <label class="btn btn-primary @if ($level == 2) active @endif">
-                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="2" @if ($level == 2) checked @endif> All Users
+                                            <input type="radio" name="pterodactyl:auth:2fa_required" autocomplete="off" value="2" @if ($level == 2) checked @endif> {{ __('admin/ui.all_users') }}
                                         </label>
                                     </div>
-                                    <p class="text-muted"><small>If enabled, any account falling into the selected grouping will be required to have 2-Factor authentication enabled to use the Panel.</small></p>
+                                    <p class="text-muted"><small>{{ __('admin/ui.if_enabled_any_account_falling_into_the_selected_grouping_will_be_required_to_have_2') }}</small></p>
                                 </div>
                             </div>
-                            <div class="form-group col-lg-4">
-                                <label class="control-label">Default Language</label>
+                            <div class="form-group col-lg-6">
+                                <label class="control-label">{{ __('admin/ui.default_language') }}</label>
                                 <div>
                                     <select name="app:locale" class="form-control">
                                         @foreach($languages as $key => $value)
-                                            <option value="{{ $key }}" @if(old('app:locale', config('app.locale')) === $key) selected @endif>{{ $value }}</option>
+                                            <option value="{{ $key }}" @if(old('app:locale', $defaultLanguage) === $key) selected @endif>{{ $value }}</option>
                                         @endforeach
                                     </select>
-                                    <p class="text-muted"><small>The default language to use when rendering UI components.</small></p>
+                                    <p class="text-muted"><small>{{ __('admin/ui.the_default_language_to_use_when_rendering_ui_components') }}</small></p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="box-body site-feature-settings">
-                        <h4>Site-wide Features</h4>
-                        <p class="text-muted">These controls apply to all users. Changes take effect when a page is reloaded.</p>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <label for="maintenance-enabled">{{ __('admin/operations.maintenance') }}</label>
+                                <select id="maintenance-enabled" class="form-control" name="aquadactyl:maintenance:enabled">
+                                    <option value="false" @selected(!config('aquadactyl.maintenance.enabled'))>{{ __('admin/ui.disabled') }}</option>
+                                    <option value="true" @selected(config('aquadactyl.maintenance.enabled'))>{{ __('admin/ui.enabled') }}</option>
+                                </select>
+                                <p class="text-muted"><small>{{ __('admin/operations.maintenance_help') }}</small></p>
+                                <a class="btn btn-default btn-sm" id="maintenance-preview" href="{{ route('admin.settings.maintenance-preview', [], false) }}" target="_blank" rel="noopener"><i class="fa fa-eye" aria-hidden="true"></i> {{ __('admin/operations.preview_maintenance') }}</a>
+                            </div>
+                            <div class="form-group col-md-8">
+                                <label for="maintenance-message">{{ __('admin/operations.maintenance_message') }}</label>
+                                <textarea id="maintenance-message" class="form-control" name="aquadactyl:maintenance:message" rows="3" maxlength="1000">{{ old('aquadactyl:maintenance:message', config('aquadactyl.maintenance.message')) }}</textarea>
+                            </div>
+                        </div>
+                        <h4>{{ __('admin/ui.site_wide_features') }}</h4>
+                        <p class="text-muted">{{ __('admin/ui.these_controls_apply_to_all_users_changes_take_effect_when_a_page_is_reloaded') }}</p>
                         @php
                             $features = [
-                                'player_counts' => ['Player Counts', 'Show game player counts on server cards. Disabling this also stops game server queries.'],
-                                'custom_profile_pictures' => ['Custom Profile Pictures', 'Allow users to upload and display their own profile pictures. Saved pictures are retained while disabled.'],
-                                'privacy_mode' => ['Sensitive Data Blur', 'Allow users to blur sensitive text until hovered or focused. Saved preferences are retained while disabled.'],
-                                'server_quick_actions' => ['Server Quick Actions', 'Show console, files and power shortcuts on server cards. Users can still manage servers from their server pages.'],
+                                'player_counts' => [__('admin/ui.feature_player_counts'), __('admin/ui.feature_player_counts_description')],
+                                'custom_profile_pictures' => [__('admin/ui.feature_custom_profile_pictures'), __('admin/ui.feature_custom_profile_pictures_description')],
+                                'privacy_mode' => [__('admin/ui.feature_privacy_mode'), __('admin/ui.feature_privacy_mode_description')],
+                                'server_quick_actions' => [__('admin/ui.feature_server_quick_actions'), __('admin/ui.feature_server_quick_actions_description')],
+                                'server_folders' => [__('admin/custom.server_folders'), __('admin/custom.server_folders_help')],
+                                'registration' => [__('admin/ui.feature_registration'), __('admin/ui.feature_registration_description')],
+                                'console_log_sharing' => [__('admin/custom.console_log_sharing'), __('admin/custom.console_log_sharing_help')],
+                                'file_trash' => [__('admin/custom.file_trash'), __('admin/custom.file_trash_help')],
                             ];
                         @endphp
                         <div class="row">
                             @foreach($features as $key => [$label, $description])
                                 @php
                                     $field = 'aquadactyl:features:' . $key;
-                                    $enabled = in_array(old($field, config('aquadactyl.features.' . $key, true)), [true, 'true', 1, '1'], true);
+                                    $default = !in_array($key, ['registration', 'console_log_sharing', 'file_trash'], true);
+                                    $enabled = in_array(old($field, config('aquadactyl.features.' . $key, $default)), [true, 'true', 1, '1'], true);
                                 @endphp
                                 <div class="form-group col-md-6">
                                     <label class="control-label" for="feature-{{ $key }}">{{ $label }}</label>
                                     <select class="form-control" id="feature-{{ $key }}" name="{{ $field }}">
-                                        <option value="true" @if($enabled) selected @endif>Enabled</option>
-                                        <option value="false" @if(!$enabled) selected @endif>Disabled</option>
+                                        <option value="true" @if($enabled) selected @endif>{{ __('admin/ui.enabled') }}</option>
+                                        <option value="false" @if(!$enabled) selected @endif>{{ __('admin/ui.disabled') }}</option>
                                     </select>
                                     <p class="text-muted"><small>{{ $description }}</small></p>
                                 </div>
@@ -102,39 +106,41 @@
                         </div>
                     </div>
                     <div class="box-footer">
+                        <div class="form-group" id="trash-retention-settings">
+                            <label class="control-label" for="trash-retention-days">{{ __('admin/custom.trash_retention') }}</label>
+                            <input type="number" class="form-control" id="trash-retention-days" name="aquadactyl:trash:retention_days" min="1" max="365" value="{{ old('aquadactyl:trash:retention_days', config('aquadactyl.trash.retention_days', 7)) }}" />
+                            <p class="text-muted"><small>{{ __('admin/custom.trash_retention_help') }}</small></p>
+                        </div>
                         {!! csrf_field() !!}
-                        <button type="submit" name="_method" value="PATCH" class="btn btn-sm btn-primary pull-right">Save Site Settings</button>
+                        <button type="submit" name="_method" value="PATCH" class="btn btn-sm btn-primary pull-right">{{ __('admin/ui.save_site_settings') }}</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="box">
-                <div class="box-header with-border"><h3 class="box-title">Site Logo</h3></div>
-                <div class="box-body">
-                    <p class="text-muted">Use your logo on the sign-in page, navigation bar, admin area, browser tabs and home-screen shortcuts. Upload a PNG, JPEG or WebP up to 2 MB and 4096 pixels per side. Proportions and transparency are preserved; square logos work best for icons.</p>
-                    <div class="site-logo-preview">
-                        <img src="{{ config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : '/branding/aquadactyl-wordmark.png' }}" alt="Current site logo">
-                    </div>
-                    <form action="{{ route('admin.settings.logo') }}" method="POST" enctype="multipart/form-data">
-                        {!! csrf_field() !!}
-                        <div class="form-group">
-                            <label for="site-logo">Logo File</label>
-                            <input id="site-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp" required>
-                        </div>
-                        <button type="submit" class="btn btn-sm btn-primary">Upload Logo</button>
-                    </form>
-                    @if(config('aquadactyl.branding.logo_path'))
-                        <form action="{{ route('admin.settings.logo') }}" method="POST" style="margin-top:12px;">
-                            {!! csrf_field() !!}
-                            {!! method_field('DELETE') !!}
-                            <button type="submit" class="btn btn-sm btn-default">Restore Default Logo</button>
-                        </form>
-                    @endif
-                </div>
-            </div>
-        </div>
-    </div>
+    <p class="text-muted">{{ __('admin/custom.branding_moved') }} <a href="{{ route('admin.settings.appearance', [], false) }}">{{ __('admin/custom.appearance') }}</a></p>
+@endsection
+
+@section('footer-scripts')
+    @parent
+    <script>
+        (function () {
+            var preview = document.getElementById('maintenance-preview');
+            preview.addEventListener('click', function () {
+                var url = new URL(preview.href, window.location.origin);
+                url.searchParams.set('message', document.getElementById('maintenance-message').value);
+                preview.href = url.pathname + url.search;
+            });
+            var feature = document.getElementById('feature-file_trash');
+            var container = document.getElementById('trash-retention-settings');
+            var input = document.getElementById('trash-retention-days');
+            function updateTrashRetention() {
+                var enabled = feature.value === 'true';
+                container.hidden = !enabled;
+                input.disabled = !enabled;
+            }
+            $(feature).on('change', updateTrashRetention);
+            updateTrashRetention();
+        })();
+    </script>
 @endsection

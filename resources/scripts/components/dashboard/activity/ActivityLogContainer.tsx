@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect } from "react";
 import { useActivityLogs } from "@/api/account/activity";
 import { useFlashKey } from "@/plugins/useFlash";
@@ -9,6 +10,7 @@ import ActivityLogList from "@/components/elements/activity/ActivityLogList";
 import useActivityLogFilters from "@/components/elements/activity/useActivityLogFilters";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const controls = useActivityLogFilters();
   const { clearAndAddHttpError } = useFlashKey("account:activity");
   const { data, isValidating, error, mutate } = useActivityLogs(
@@ -24,13 +26,16 @@ export default () => {
   }, [error]);
 
   return (
-    <PageContentBlock title={"Account activity"}>
+    <PageContentBlock
+      title={t("account_activity.account_activity", "Account activity")}
+    >
       <FlashMessageRender byKey={"account:activity"} />
       <ActivityLogList
-        title={"Account activity"}
-        description={
-          "Review sign-ins, security changes, and other actions on your account."
-        }
+        title={t("account_activity.account_activity", "Account activity")}
+        description={t(
+          "account_activity.review_sign_ins_security_changes_and_other_actions_on_your",
+          "Review sign-ins, security changes, and other actions on your account.",
+        )}
         scope={"Your account"}
         data={data}
         isValidating={isValidating}
@@ -41,7 +46,13 @@ export default () => {
         {(activity) =>
           typeof activity.properties.useragent === "string" && (
             <Tooltip content={activity.properties.useragent} placement={"top"}>
-              <span tabIndex={0} aria-label={"Browser details"}>
+              <span
+                tabIndex={0}
+                aria-label={t(
+                  "account_activity.browser_details",
+                  "Browser details",
+                )}
+              >
                 <Monitor />
               </span>
             </Tooltip>

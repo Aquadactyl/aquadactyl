@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
 @section('title')
-    Application API
+    {{ __('admin/ui.application_api') }}
 @endsection
 
 @section('content-header')
-    <h1>Application API<small>Control access credentials for managing this Panel via the API.</small></h1>
+    <h1>{{ __('admin/ui.application_api') }}<small>{{ __('admin/ui.control_access_credentials_for_managing_this_panel_via_the_api') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li class="active">Application API</li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li class="active">{{ __('admin/ui.application_api') }}</li>
     </ol>
 @endsection
 
@@ -17,19 +17,19 @@
         <div class="col-xs-12">
             <div class="box box-primary">
                 <div class="box-header with-border">
-                    <h3 class="box-title">Credentials List</h3>
+                    <h3 class="box-title">{{ __('admin/ui.credentials_list') }}</h3>
                     <div class="box-tools">
-                        <a href="{{ route('admin.api.new') }}" class="btn btn-sm btn-primary">Create New</a>
+                        <a href="{{ route('admin.api.new') }}" class="btn btn-sm btn-primary">{{ __('admin/ui.create_new') }}</a>
                     </div>
                 </div>
                 <div class="box-body table-responsive no-padding">
                     <table class="table table-hover">
                         <tr>
-                            <th>Key</th>
-                            <th>Memo</th>
-                            <th>Last Used</th>
-                            <th>Created</th>
-                            <th>Created by</th>
+                            <th>{{ __('admin/ui.key') }}</th>
+                            <th>{{ __('admin/ui.memo') }}</th>
+                            <th>{{ __('admin/ui.last_used') }}</th>
+                            <th>{{ __('admin/ui.created') }}</th>
+                            <th>{{ __('admin/ui.created_by') }}</th>
                             <th></th>
                         </tr>
                         @foreach($keys as $key)
@@ -76,12 +76,12 @@
                 event.preventDefault();
                 swal({
                     type: 'error',
-                    title: 'Revoke API Key',
-                    text: 'Once this API key is revoked any applications currently using it will stop working.',
+                    title: @json(__('admin/ui.revoke_api_key')),
+                    text: @json(__('admin/ui.once_this_api_key_is_revoked_any_applications_currently_using_it_will_stop_working')),
                     showCancelButton: true,
                     allowOutsideClick: true,
                     closeOnConfirm: false,
-                    confirmButtonText: 'Revoke',
+                    confirmButtonText: @json(__('admin/ui.revoke')),
                     confirmButtonColor: '#d9534f',
                     showLoaderOnConfirm: true
                 }, function () {
@@ -95,15 +95,15 @@
                         swal({
                             type: 'success',
                             title: '',
-                            text: 'API Key has been revoked.'
+                            text: @json(__('admin/ui.api_key_has_been_revoked'))
                         });
                         self.parent().parent().slideUp();
                     }).fail(function (jqXHR) {
                         console.error(jqXHR);
                         swal({
                             type: 'error',
-                            title: 'Whoops!',
-                            text: 'An error occurred while attempting to revoke this key.'
+                            title: @json(__('admin/ui.whoops')),
+                            text: @json(__('admin/ui.an_error_occurred_while_attempting_to_revoke_this_key'))
                         });
                     });
                 });

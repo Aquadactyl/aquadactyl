@@ -10,7 +10,7 @@ The framework source comes from
 Its release ZIP was verified against SHA256
 `38bcee33b19abcbb3460578236ead74668ec39a7861200bbc6902a9152ac118d`.
 The provenance is recorded in `deploy/blueprint-release.json`; the upstream MIT
-license is included in `deploy/BLUEPRINT-LICENSE.md`. Artwork retains its upstream
+license is included in `licenses/BLUEPRINT-LICENSE.md`. Artwork retains its upstream
 license files under `.blueprint/assets/`. Those artwork terms prohibit general
 redistribution; the code's MIT license does not override them. See the
 [licensing review](BRANDING.md#names-and-artwork) for the separate permission issue.
@@ -43,10 +43,14 @@ managed installer's permissions automatically. Set `PHP_FPM_SERVICE` in
 `.blueprintrc` if the service name differs from `php8.5-fpm` (or `php8.4-fpm`
 when using PHP 8.4).
 
-Aquadactyl uses pnpm 12.10.1 for framework installation, extension rebuilds and
+Aquadactyl uses pnpm 12.15.0 for framework installation, extension rebuilds and
 development commands. See [addon development](ADDONS.md) for the shared dependency
 catalogue and examples. Extension scripts that invoke Yarn should be updated to
 use pnpm before installation on this fork.
+
+Older Pterodactyl addons can use the automatic [compatibility layer](BLUEPRINT-COMPATIBILITY.md)
+for legacy styling, store hooks, routing, forms and icons. Run `blueprint -check mytheme`
+to compile a package without installing it; the install command performs this check too.
 
 Keep the original `identifier.blueprint` package in the panel root for future
 panel updates. Install

@@ -30,6 +30,8 @@ class PowerController extends ClientApiController
             $request->input('signal')
         );
         Cache::forget("resources:$server->uuid");
+        Cache::forget("resources:$server->uuid:power");
+        Cache::put("resources:power:$server->uuid", true, 60);
         if ($target = $queries->target($server)) {
             Cache::forget($queries->key($server, $target));
         }

@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class MultiFieldServerFilter implements Filter
 {
+    public function __construct(private bool $searchOwners = false)
+    {
+    }
+
     /**
      * If we detect that the value matches an IPv4 address we will use a different type of filtering
      * to look at the allocations.
@@ -66,6 +70,14 @@ class MultiFieldServerFilter implements Filter
 
                 if (str_starts_with($value, 'serv_')) {
                     $builder->orWhere(fn (Builder $b) => $b->whereIdentifier($value));
+                }
+                if ($this->searchOwners) {
+                    $builder->orWhereHas('user', function (Builder $owner) use ($value) {
+                        $pattern = '%' . mb_strtolower($value) . '%';
+                        $owner->whereRaw('LOWER(users.username) LIKE ?', [$pattern])
+                            ->orWhereRaw('LOWER(users.email) LIKE ?', [$pattern])
+                            ->orWhereRaw("LOWER(CONCAT(users.name_first, ' ', users.name_last)) LIKE ?", [$pattern]);
+                    });
                 }
             });
     }

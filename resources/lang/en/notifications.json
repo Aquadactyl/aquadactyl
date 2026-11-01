@@ -1,0 +1,37 @@
+{
+  "heading": "Notifications",
+  "saved": "Notification settings saved.",
+  "enabled": "Enable account notifications",
+  "enabled_help": "Users can opt in to a personal notification inbox and site alerts for their servers. Disabling this hides notification controls and stops new notifications and deliveries. Action confirmation toasts remain available.",
+  "discord_enabled": "Allow personal Discord webhooks",
+  "discord_help": "Users can choose events and save their own Discord incoming webhook. Webhook URLs are encrypted and never shown back to users. Disabling this also stops queued Discord deliveries.",
+  "retention": "Notifications are kept for 30 days. The standard scheduler and low-priority queue worker must be running.",
+  "crashes": "Crash alerts require the daemon to report server:crash or server:crashed through the authenticated activity API. Stock Wings does not send this event. Normal stops are never assumed to be crashes.",
+  "password": "Current password",
+  "save": "Save settings",
+  "discord_disabled": "Personal Discord webhooks are disabled by the administrator.",
+  "invalid_webhook": "Enter a valid Discord incoming webhook URL.",
+  "webhook_required": "Save a Discord webhook before selecting Discord events.",
+  "events": {
+    "power": {
+      "start": "Start requested",
+      "stop": "Stop requested",
+      "restart": "Restart requested"
+    },
+    "server": {
+      "crash": "Server crash reported by daemon"
+    },
+    "schedule": {
+      "complete": "Schedule completed",
+      "fail": "Schedule failed"
+    },
+    "backup": {
+      "complete": "Backup completed",
+      "fail": "Backup failed"
+    },
+    "install": {
+      "complete": "Installation completed",
+      "fail": "Installation failed"
+    }
+  }
+}

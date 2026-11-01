@@ -1,6 +1,6 @@
 import React from "react";
 import { PaginatedResult } from "@/api/http";
-import classNames from "classnames";
+import clsx from "clsx";
 import Button from "@/components/elements/Button";
 import { ChevronsLeft, ChevronsRight } from "lucide-react";
 
@@ -23,7 +23,7 @@ const Block: React.FC<React.ComponentProps<typeof Button>> = ({
   ...props
 }) => (
   <Button
-    className={classNames("h-10 w-10 p-0! not-last-of-type:mr-2", className)}
+    className={clsx("h-10 w-10 p-0! not-last-of-type:mr-2", className)}
     {...props}
   />
 );

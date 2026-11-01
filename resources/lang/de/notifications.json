@@ -1,0 +1,37 @@
+{
+  "heading": "Benachrichtigungen",
+  "saved": "Benachrichtigungseinstellungen gespeichert.",
+  "enabled": "Kontobenachrichtigungen aktivieren",
+  "enabled_help": "Benutzer können einen Posteingang und Meldungen für ihre Server aktivieren. Deaktivieren blendet die Optionen aus und stoppt neue Benachrichtigungen und Zustellungen. Aktionsbestätigungen bleiben verfügbar.",
+  "discord_enabled": "Persönliche Discord-Webhooks erlauben",
+  "discord_help": "Benutzer wählen Ereignisse und speichern ihren Discord-Webhook. URLs werden verschlüsselt und nicht erneut angezeigt. Deaktivieren stoppt auch ausstehende Zustellungen.",
+  "retention": "Benachrichtigungen werden 30 Tage gespeichert. Scheduler und Worker der low-Warteschlange müssen laufen.",
+  "crashes": "Absturzmeldungen benötigen server:crash oder server:crashed über die authentifizierte Aktivitäts-API. Standard-Wings sendet diese nicht. Normale Stopps gelten nicht als Abstürze.",
+  "password": "Aktuelles Passwort",
+  "save": "Einstellungen speichern",
+  "discord_disabled": "Persönliche Discord-Webhooks wurden vom Administrator deaktiviert.",
+  "invalid_webhook": "Geben Sie eine gültige eingehende Discord-Webhook-URL ein.",
+  "webhook_required": "Speichern Sie einen Webhook, bevor Sie Discord-Ereignisse auswählen.",
+  "events": {
+    "power": {
+      "start": "Start angefordert",
+      "stop": "Stopp angefordert",
+      "restart": "Neustart angefordert"
+    },
+    "server": {
+      "crash": "Vom Daemon gemeldeter Serverabsturz"
+    },
+    "schedule": {
+      "complete": "Zeitplan abgeschlossen",
+      "fail": "Zeitplan fehlgeschlagen"
+    },
+    "backup": {
+      "complete": "Backup abgeschlossen",
+      "fail": "Backup fehlgeschlagen"
+    },
+    "install": {
+      "complete": "Installation abgeschlossen",
+      "fail": "Installation fehlgeschlagen"
+    }
+  }
+}

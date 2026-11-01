@@ -33,12 +33,12 @@ class SubuserRepository extends EloquentRepository implements SubuserRepositoryI
     }
 
     /**
-     * Return a subuser with the associated permissions relationship.
+     * Return a subuser with its JSON permissions and associated user.
      */
     public function getWithPermissions(Subuser $subuser, bool $refresh = false): Subuser
     {
-        if (!$subuser->relationLoaded('permissions') || $refresh) {
-            $subuser->load('permissions');
+        if ($refresh) {
+            $subuser->refresh();
         }
 
         if (!$subuser->relationLoaded('user') || $refresh) {
@@ -55,7 +55,7 @@ class SubuserRepository extends EloquentRepository implements SubuserRepositoryI
      */
     public function getWithPermissionsUsingUserAndServer(int $user, int $server): Subuser
     {
-        $instance = $this->getBuilder()->with('permissions')->where([
+        $instance = $this->getBuilder()->where([
             ['user_id', '=', $user],
             ['server_id', '=', $server],
         ])->first();

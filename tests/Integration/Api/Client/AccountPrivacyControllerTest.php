@@ -54,7 +54,7 @@ test('both layouts apply the viewers preference before rendering', function () {
     $admin = User::factory()->create(['root_admin' => true]);
     $admin->forceFill(['blur_sensitive_data' => true])->save();
     $other = User::factory()->create();
-    $this->actingAs($admin)->get('/account')->assertOk()->assertSee('<html class="privacy-mode">', false);
-    $this->get('/admin/users')->assertOk()->assertSee('<html class="privacy-mode">', false);
-    $this->actingAs($other)->get('/account')->assertOk()->assertSee('<html class="">', false);
+    $this->actingAs($admin)->get('/account')->assertOk()->assertSee('<html class="privacy-mode" lang="en" dir="ltr">', false);
+    $this->get('/admin/users')->assertOk()->assertSee('<html class="privacy-mode" lang="en" dir="ltr">', false);
+    $this->actingAs($other)->get('/account')->assertOk()->assertSee('<html class="" lang="en" dir="ltr">', false);
 });

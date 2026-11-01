@@ -1,8 +1,9 @@
 import React, { memo, useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import TitledGreyBox from "@/components/elements/TitledGreyBox";
-import Input from "@/components/elements/Input";
-import isEqual from "react-fast-compare";
+import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox";
+import { Check, Minus } from "lucide-react";
+import { dequal as isEqual } from "dequal";
 
 interface Props {
   isEditable: boolean;
@@ -17,9 +18,14 @@ const PermissionTitleBox: React.FC<Props> = memo(
     const { watch, setValue } = useFormContext<{ permissions: string[] }>();
     const value = watch("permissions") || [];
 
-    const onCheckboxClicked = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.currentTarget.checked) {
+    const isAllChecked =
+      permissions.length > 0 && permissions.every((p) => value.includes(p));
+    const isSomeChecked = permissions.some((p) => value.includes(p));
+    const isIndeterminate = isSomeChecked && !isAllChecked;
+
+    const onCheckedChange = useCallback(
+      (checked: boolean) => {
+        if (checked) {
           setValue(
             "permissions",
             [...value, ...permissions.filter((p) => !value.includes(p))],
@@ -42,14 +48,20 @@ const PermissionTitleBox: React.FC<Props> = memo(
           <div className={"flex items-center"}>
             <p className={"flex-1 text-sm uppercase"}>{title}</p>
             {isEditable && (
-              <Input
-                type={"checkbox"}
-                checked={
-                  permissions.length > 0 &&
-                  permissions.every((p) => value.includes(p))
-                }
-                onChange={onCheckboxClicked}
-              />
+              <BaseCheckbox.Root
+                checked={isAllChecked}
+                indeterminate={isIndeterminate}
+                onCheckedChange={onCheckedChange}
+                className="focus-visible:outline-primary-300 data-checked:bg-primary-500 data-indeterminate:bg-primary-500 inline-flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded-xs border border-neutral-500 bg-neutral-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 data-checked:border-transparent data-indeterminate:border-transparent"
+              >
+                <BaseCheckbox.Indicator className="flex items-center justify-center text-[var(--color-primary-contrast)]">
+                  {isIndeterminate ? (
+                    <Minus className="h-3.5 w-3.5 stroke-3" />
+                  ) : (
+                    <Check className="h-3.5 w-3.5 stroke-3" />
+                  )}
+                </BaseCheckbox.Indicator>
+              </BaseCheckbox.Root>
             )}
           </div>
         }
@@ -61,5 +73,7 @@ const PermissionTitleBox: React.FC<Props> = memo(
   },
   isEqual,
 );
+
+PermissionTitleBox.displayName = "PermissionTitleBox";
 
 export default PermissionTitleBox;

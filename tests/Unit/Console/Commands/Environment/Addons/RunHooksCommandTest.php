@@ -38,6 +38,13 @@ test('hooks are skipped when disabled', function () {
     Process::assertNothingRan();
 });
 
+test('an enabled lifecycle event with no installed hook scripts succeeds without spawning a process', function () {
+    config()->set('addons.hooks_enabled', true);
+    Process::fake();
+    runAddonHooks($this, 'coverage-empty')->assertExitCode(Command::SUCCESS);
+    Process::assertNothingRan();
+});
+
 test('executable hooks run for event', function () {
     config(['addons.hooks_enabled' => true]);
     Process::fake();

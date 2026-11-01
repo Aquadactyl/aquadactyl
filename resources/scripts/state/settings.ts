@@ -3,14 +3,29 @@ export interface SiteSettings {
   appUrl?: string;
   locale: string;
   timezone?: string;
+  notifications?: { enabled: boolean; discord_enabled: boolean };
   logoUrl?: string | null;
   showNameWithLogo?: boolean;
+  appearance?: {
+    primaryColor: string;
+    loginLayout: "center" | "split-left" | "split-right";
+    loginLogoPosition: "above" | "inside" | "opposite";
+    loginTranslucency?: number;
+    loginBackground: { url: string | null; blur: number; overlay: number };
+    clientBackground: { url: string | null; blur: number; overlay: number };
+  };
   features?: {
     playerCounts: boolean;
     customProfilePictures: boolean;
     privacyMode: boolean;
     serverQuickActions: boolean;
+    serverFolders?: boolean;
+    registration: boolean;
+    consoleLogSharing?: boolean;
+    fileTrash?: boolean;
+    statusPage?: boolean;
   };
+  trash?: { retentionDays: number };
   recaptcha: {
     enabled: boolean;
     provider?: "recaptcha" | "hcaptcha" | "turnstile";

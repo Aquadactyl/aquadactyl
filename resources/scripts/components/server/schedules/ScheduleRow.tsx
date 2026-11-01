@@ -1,7 +1,7 @@
 import React from "react";
 import { Schedule } from "@/api/server/schedules/getServerSchedules";
 import { Calendar } from "lucide-react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { useAppStore } from "@/state";
 import { describeCron, formatScheduleDate } from "./scheduleHelpers";
 
@@ -36,7 +36,7 @@ export default ({ schedule }: { schedule: Schedule }) => {
         </p>
       </div>
       <span
-        className={classNames(
+        className={clsx(
           "ml-3 rounded px-3 py-1 text-xs",
           schedule.isProcessing
             ? "bg-primary-600 text-white"

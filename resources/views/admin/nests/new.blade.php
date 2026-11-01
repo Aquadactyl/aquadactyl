@@ -1,15 +1,15 @@
 @extends('layouts.admin')
 
 @section('title')
-    New Nest
+    {{ __('admin/ui.new_nest') }}
 @endsection
 
 @section('content-header')
-    <h1>New Nest<small>Configure a new nest to deploy to all nodes.</small></h1>
+    <h1>{{ __('admin/ui.new_nest') }}<small>{{ __('admin/ui.configure_a_new_nest_to_deploy_to_all_nodes') }}</small></h1>
     <ol class="breadcrumb">
-        <li><a href="{{ route('admin.index') }}">Admin</a></li>
-        <li><a href="{{ route('admin.nests') }}">Nests</a></li>
-        <li class="active">New</li>
+        <li><a href="{{ route('admin.index') }}">{{ __('admin/ui.admin') }}</a></li>
+        <li><a href="{{ route('admin.nests') }}">{{ __('admin/ui.nests') }}</a></li>
+        <li class="active">{{ __('admin/ui.new') }}</li>
     </ol>
 @endsection
 
@@ -19,18 +19,18 @@
         <div class="col-md-12">
             <div class="box">
                 <div class="box-header with-border">
-                    <h3 class="box-title">New Nest</h3>
+                    <h3 class="box-title">{{ __('admin/ui.new_nest') }}</h3>
                 </div>
                 <div class="box-body">
                     <div class="form-group">
-                        <label class="control-label">Name</label>
+                        <label class="control-label">{{ __('admin/ui.name') }}</label>
                         <div>
                             <input type="text" name="name" class="form-control" value="{{ old('name') }}" />
-                            <p class="text-muted"><small>This should be a descriptive category name that encompasses all of the eggs within the nest.</small></p>
+                            <p class="text-muted"><small>{{ __('admin/ui.this_should_be_a_descriptive_category_name_that_encompasses_all_of_the_eggs_within_th') }}</small></p>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label">Description</label>
+                        <label class="control-label">{{ __('admin/ui.description') }}</label>
                         <div>
                             <textarea name="description" class="form-control" rows="6">{{ old('description') }}</textarea>
                         </div>
@@ -38,7 +38,7 @@
                 </div>
                 <div class="box-footer">
                     {!! csrf_field() !!}
-                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                    <button type="submit" class="btn btn-primary pull-right">{{ __('admin/ui.save') }}</button>
                 </div>
             </div>
         </div>

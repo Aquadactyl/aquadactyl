@@ -16,9 +16,46 @@ beforeEach(function () {
     $this->withHeader('Authorization', 'Bearer ' . $server->node->daemon_token_id . '.' . decrypt($server->node->daemon_token));
 });
 
+test('SFTP requests without a server identifier are rejected before password lookup', function () {
+    $request = Pterodactyl\Http\Requests\Api\Remote\SftpAuthenticationFormRequest::create('/', 'POST', ['username' => $this->user->username . '.', 'password' => 'foobar']);
+    $request->attributes->set('node', $this->server->node);
+    expect(fn () => app(Pterodactyl\Http\Controllers\Api\Remote\SftpAuthenticationController::class)($request))->toThrow(Symfony\Component\HttpKernel\Exception\BadRequestHttpException::class);
+});
+
+test('invalid supported public key material fails SFTP authentication safely', function () {
+    $this->postJson('/api/remote/sftp/auth', ['username' => $this->user->username . '.' . $this->server->identifier, 'password' => 'ssh-ed25519 AAAAinvalid', 'type' => 'public_key', 'ip' => '192.0.2.1'])->assertForbidden();
+});
+
 $getUsername = function ($user, $server, bool $long = false): string {
     return $user->username . '.' . ($long ? $server->uuid : $server->identifier);
 };
+
+test('legacy Wings short UUID usernames are supported', function () {
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $this->user->username . '.' . substr($this->server->uuid, 0, 8),
+        'password' => 'foobar',
+    ])->assertOk()->assertJsonPath('server', $this->server->uuid);
+});
+
+test('legacy Wings short UUID usernames cannot cross nodes', function () {
+    $node = $this->createServerModel()->node;
+    $this->withHeader('Authorization', 'Bearer ' . $node->daemon_token_id . '.' . decrypt($node->daemon_token));
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $this->user->username . '.' . substr($this->server->uuid, 0, 8),
+        'password' => 'foobar',
+    ])->assertForbidden();
+});
+
+test('ambiguous legacy Wings short UUID usernames are rejected', function () {
+    $this->createServerModel([
+        'node_id' => $this->server->node_id,
+        'uuid' => substr($this->server->uuid, 0, 8) . '-1111-4111-8111-111111111111',
+    ]);
+    $this->postJson('/api/remote/sftp/auth', [
+        'username' => $this->user->username . '.' . substr($this->server->uuid, 0, 8),
+        'password' => 'foobar',
+    ])->assertForbidden();
+});
 
 $makeCertificate = function (): string {
     return <<<'PEM'

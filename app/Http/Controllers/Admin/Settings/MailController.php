@@ -5,6 +5,8 @@ namespace Pterodactyl\Http\Controllers\Admin\Settings;
 use Illuminate\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Contracts\Console\Kernel;
 use Pterodactyl\Notifications\MailTested;
 use Illuminate\Support\Facades\Notification;
@@ -30,13 +32,13 @@ class MailController extends Controller
     }
 
     /**
-     * Render UI for editing mail settings. This UI should only display if
-     * the server is configured to send mail using SMTP.
+     * Render SMTP and supported API mail services without exposing credentials.
      */
     public function index(): View
     {
         return view('admin.settings.mail', [
-            'disabled' => $this->config->get('mail.default') !== 'smtp',
+            'disabled' => (bool) $this->config->get('pterodactyl.load_environment_only', false),
+            'drivers' => ['smtp' => 'SMTP', 'mailgun' => 'Mailgun', 'postmark' => 'Postmark', 'ses' => 'Amazon SES', 'log' => __('admin/custom.mail_log')],
         ]);
     }
 
@@ -49,8 +51,8 @@ class MailController extends Controller
      */
     public function update(MailSettingsFormRequest $request): Response
     {
-        if ($this->config->get('mail.default') !== 'smtp') {
-            throw new DisplayException('This feature is only available if SMTP is the selected email driver for the Panel.');
+        if ($this->config->get('pterodactyl.load_environment_only', false)) {
+            throw new DisplayException(__('admin/custom.environment_only'));
         }
 
         $values = $request->normalize();
@@ -58,13 +60,15 @@ class MailController extends Controller
             $values['mail:mailers:smtp:password'] = '';
         }
 
-        foreach ($values as $key => $value) {
-            if (in_array($key, SettingsServiceProvider::getEncryptedKeys()) && !empty($value)) {
-                $value = $this->encrypter->encrypt($value);
-            }
+        DB::transaction(function () use ($values) {
+            foreach ($values as $key => $value) {
+                if (in_array($key, SettingsServiceProvider::getEncryptedKeys()) && $value !== null && $value !== '') {
+                    $value = $this->encrypter->encrypt($value);
+                }
 
-            $this->settings->set('settings::' . $key, $value);
-        }
+                $this->settings->set('settings::' . $key, $value);
+            }
+        });
 
         $this->kernel->call('queue:restart');
 
@@ -80,7 +84,10 @@ class MailController extends Controller
             Notification::route('mail', $request->user()->email)
                 ->notify(new MailTested($request->user()));
         } catch (\Exception $exception) {
-            return response($exception->getMessage(), 500);
+            // Provider errors can contain API tokens, URLs or SMTP credentials.
+            Log::warning('The administrator mail test failed.', ['exception_type' => get_class($exception)]);
+
+            return response()->json(['error' => __('admin/custom.mail_test_failed')], 500);
         }
 
         return response('', 204);

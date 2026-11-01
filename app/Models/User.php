@@ -37,6 +37,8 @@ use Pterodactyl\Notifications\SendPasswordReset as ResetPasswordNotification;
  * @property string|null $remember_token
  * @property string $language
  * @property bool $root_admin
+ * @property \Illuminate\Support\Carbon|null $suspended_at
+ * @property string|null $suspension_reason
  * @property bool $use_totp
  * @property string|null $totp_secret
  * @property \Illuminate\Support\Carbon|null $totp_authenticated_at
@@ -139,6 +141,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * Cast values to correct type.
      */
     protected $casts = [
+        'suspended_at' => 'datetime',
         'root_admin' => 'boolean',
         'use_totp' => 'boolean',
         'gravatar' => 'boolean',
@@ -149,7 +152,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     /**
      * The attributes excluded from the model's JSON form.
      */
-    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'avatar'];
+    protected $hidden = ['password', 'remember_token', 'totp_secret', 'totp_authenticated_at', 'avatar', 'suspension_reason'];
 
     protected $appends = ['avatar_url'];
 
@@ -159,7 +162,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     protected $attributes = [
         'external_id' => null,
         'root_admin' => false,
-        'language' => 'en',
+        'language' => 'auto',
         'use_totp' => false,
         'totp_secret' => null,
         'blur_sensitive_data' => false,
@@ -192,7 +195,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $rules = parent::getRules();
 
-        $rules['language'][] = new In(array_keys((new self())->getAvailableLanguages()));
+        $rules['language'][] = new In(['auto', ...array_keys((new self())->getAvailableLanguages())]);
         $rules['username'][] = new Username();
 
         return $rules;

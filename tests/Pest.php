@@ -16,8 +16,10 @@ pest()->extend(Pterodactyl\Tests\Integration\Api\Application\ApplicationApiInteg
 pest()->extend(Pterodactyl\Tests\Integration\Api\Client\ClientApiIntegrationTestCase::class)->in('Integration/Api/Client');
 pest()->extend(Pterodactyl\Tests\Integration\IntegrationTestCase::class)->in(
     'Integration/Blueprint',
+    'Integration/Console',
     'Integration/Http',
     'Integration/Jobs',
+    'Integration/Providers',
     'Integration/Services',
     'Integration/Api/Remote'
 );

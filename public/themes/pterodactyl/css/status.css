@@ -1,0 +1,285 @@
+:root {
+  color-scheme: dark;
+  --status-background: #14191f;
+  --status-surface: #1d242c;
+  --status-border: #333e49;
+  --status-muted: #a3afbd;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--status-background);
+  color: #edf1f5;
+  font-family: var(--panel-font-ui, "Inter", system-ui, sans-serif);
+  font-size: 15px;
+  line-height: 1.6;
+}
+a {
+  color: var(--aqua-accent, #51b8bc);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 5px;
+}
+.status-navigation {
+  min-height: 84px;
+  padding: 20px max(24px, calc((100% - 1060px) / 2));
+  background: #10151a;
+  border-bottom: 1px solid var(--status-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.status-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #edf1f5;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.status-brand img {
+  max-width: 120px;
+  height: 36px;
+  object-fit: contain;
+}
+.status-navigation > a:last-child {
+  flex-shrink: 0;
+  font-size: 13px;
+  color: #c5ced9;
+}
+.status-shell {
+  max-width: 950px;
+  margin: 56px auto 0;
+  padding: 0 24px;
+}
+.status-eyebrow {
+  color: var(--aqua-accent, #51b8bc);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+h1 {
+  font-size: clamp(26px, 5vw, 38px);
+  line-height: 1.25;
+  margin: 0 0 14px;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+.status-description {
+  color: var(--status-muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 680px;
+}
+.status-overall {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  border: 1px solid var(--status-border);
+  border-left: 4px solid var(--status-colour);
+  padding: 24px;
+  background: var(--status-surface);
+  border-radius: 10px;
+  margin: 30px 0;
+}
+.status-overall h2 {
+  margin: 0;
+  font-size: 19px;
+}
+.status-overall p {
+  margin: 4px 0 0;
+  color: var(--status-muted);
+  font-size: 12px;
+}
+.status-dot {
+  background: var(--status-colour, #a3afbd);
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.status-overall > .status-dot {
+  width: 12px;
+  height: 12px;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--status-colour) 12%, transparent);
+}
+.status-up {
+  --status-colour: #69c99c;
+}
+.status-down,
+.status-disruption {
+  --status-colour: #ee9999;
+}
+.status-unknown {
+  --status-colour: #a3afbd;
+}
+.status-maintenance {
+  --status-colour: #e2bf80;
+}
+.status-refresh {
+  margin-left: auto;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #c5ced9;
+}
+.status-section-title {
+  font-size: 17px;
+  margin: 30px 0 14px;
+}
+.status-components {
+  display: grid;
+  gap: 12px;
+}
+.status-component,
+.status-incident,
+.status-empty,
+.status-notice {
+  border: 1px solid var(--status-border);
+  padding: 22px 24px;
+  border-radius: 9px;
+  background: var(--status-surface);
+  min-width: 0;
+}
+.status-component-heading,
+.status-incident-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.status-component h3,
+.status-incident h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--status-colour, #b7b0ed);
+  border: 1px solid color-mix(in srgb, var(--status-colour, #b7b0ed) 25%, transparent);
+  background: color-mix(in srgb, var(--status-colour, #b7b0ed) 7%, transparent);
+  border-radius: 5px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.status-component-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 14px;
+  font-size: 12px;
+  color: var(--status-muted);
+  margin-top: 22px;
+  flex-wrap: wrap;
+}
+.status-component-details strong {
+  font-size: 22px;
+  color: #edf1f5;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+.status-sampling {
+  color: var(--status-muted);
+  text-align: right;
+  margin: 0;
+  font-size: 10px;
+}
+.status-footnote {
+  font-size: 11px;
+  color: var(--status-muted);
+}
+.status-incident {
+  margin-bottom: 12px;
+}
+.status-incident-message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #c5ced9;
+  font-size: 13px;
+}
+.status-incident time {
+  color: var(--status-muted);
+  font-size: 11px;
+}
+.status-empty {
+  font-size: 13px;
+  color: var(--status-muted);
+}
+.status-notice {
+  border-left: 3px solid #e2bf80;
+  margin: 20px 0;
+}
+.status-notice p {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: #c5ced9;
+}
+.status-footer {
+  margin: 45px 0 25px;
+  color: var(--status-muted);
+  text-align: center;
+  font-size: 11px;
+}
+@media (max-width: 520px) {
+  .status-navigation {
+    padding: 16px;
+    gap: 12px;
+  }
+  .status-brand {
+    font-size: 16px;
+    gap: 8px;
+  }
+  .status-brand img {
+    height: 28px;
+    max-width: 76px;
+  }
+  .status-shell {
+    padding: 0 16px;
+    margin-top: 30px;
+  }
+  .status-overall {
+    display: grid;
+    grid-template-columns: 12px minmax(0, 1fr);
+    align-items: start;
+    padding: 20px 16px;
+    gap: 14px;
+  }
+  .status-overall > .status-dot {
+    margin-top: 7px;
+  }
+  .status-overall h2 {
+    font-size: 16px;
+  }
+  .status-refresh {
+    grid-column: 2;
+    margin-left: 0;
+  }
+  .status-sampling {
+    text-align: left;
+  }
+  .status-component,
+  .status-incident {
+    padding: 18px 16px;
+  }
+}

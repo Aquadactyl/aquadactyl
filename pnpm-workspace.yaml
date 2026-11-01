@@ -1,3 +1,5 @@
+packages:
+  - packages/*
 packageImportMethod: clone-or-copy
 minimumReleaseAgeExclude:
   - framer-motion@14.1.0
@@ -7,3 +9,7 @@ minimumReleaseAgeExclude:
 allowBuilds:
   core-js: true
   esbuild: true
+overrides:
+  postcss-selector-parser: ^7.1.6
+patchedDependencies:
+  braces@3.0.3: patches/braces@3.0.3.patch

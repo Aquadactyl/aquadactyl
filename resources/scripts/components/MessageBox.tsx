@@ -1,5 +1,5 @@
 import * as React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 
 export type FlashMessageType = "success" | "info" | "warning" | "error";
 
@@ -41,7 +41,7 @@ const getBackground = (type?: FlashMessageType): string => {
 
 const MessageBox = ({ title, children, type }: Props) => (
   <div
-    className={classNames(
+    className={clsx(
       "flex w-full items-center rounded border p-2 text-sm leading-normal text-white lg:inline-flex",
       styling(type),
     )}
@@ -49,7 +49,7 @@ const MessageBox = ({ title, children, type }: Props) => (
   >
     {title && (
       <span
-        className={classNames(
+        className={clsx(
           "title mr-3 flex rounded-full px-2 py-1 text-xs leading-none font-bold uppercase",
           getBackground(type),
         )}

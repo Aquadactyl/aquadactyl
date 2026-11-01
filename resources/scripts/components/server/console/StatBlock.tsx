@@ -1,5 +1,5 @@
 import type { LucideIcon } from "lucide-react";
-import classNames from "classnames";
+import clsx from "clsx";
 import CopyOnClick from "@/components/elements/CopyOnClick";
 
 interface StatBlockProps {
@@ -21,11 +21,11 @@ export default ({
 }: StatBlockProps) => {
   return (
     <CopyOnClick text={copyOnClick}>
-      <div className={classNames("stat_block", "bg-gray-600", className)}>
-        <div className={classNames("status_bar", color || "bg-gray-700")} />
-        <div className={classNames("icon", color || "bg-gray-700")}>
+      <div className={clsx("stat_block", "bg-gray-600", className)}>
+        <div className={clsx("status_bar", color || "bg-gray-700")} />
+        <div className={clsx("icon", color || "bg-gray-700")}>
           <IconComponent
-            className={classNames({
+            className={clsx({
               "text-gray-100": !color || color === "bg-gray-700",
               "text-gray-50": color && color !== "bg-gray-700",
             })}

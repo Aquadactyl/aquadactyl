@@ -1,4 +1,5 @@
 import React from "react";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import { NavLink, Route, Routes, useLocation } from "react-router";
 import { NotFound } from "@/components/elements/ScreenBlock";
 import TransitionRouter from "@/TransitionRouter";
@@ -11,19 +12,31 @@ import blueprintRoutes from "./routes";
 import { UiBadge } from "@blueprint/ui";
 
 export const NavigationLinks = () => {
+  const { t } = usePanelTranslation();
+  const { pathname } = useLocation();
   const rootAdmin = useAppStore((state) => state.user.data!.rootAdmin);
+  const notifications = useAppStore(
+    (state) => state.settings?.data?.notifications?.enabled,
+  );
   return (
     <>
       {/* Aquadactyl routes */}
       {routes.account
-        .filter((route) => !!route.name)
+        .filter((route) => route.path !== "/notifications" || notifications)
+        .filter(
+          (route): route is typeof route & { name: string } => !!route.name,
+        )
         .map(({ path, name, exact = false }) => (
           <NavLink
             key={path}
-            to={`/account/${path}`.replace("//", "/")}
+            to={
+              path === "/" && pathname === "/account"
+                ? "/account"
+                : `/account/${path}`.replace("//", "/")
+            }
             end={exact}
           >
-            {name}
+            {t(`navigation.${name.toLowerCase().replaceAll(" ", "_")}`, name)}
           </NavLink>
         ))}
 
@@ -35,7 +48,11 @@ export const NavigationLinks = () => {
           .map(({ path, name, exact = false, adminOnly }) => (
             <NavLink
               key={path}
-              to={`/account/${path}`.replace("//", "/")}
+              to={
+                path === "/" && pathname === "/account"
+                  ? "/account"
+                  : `/account/${path}`.replace("//", "/")
+              }
               end={exact}
             >
               {name}

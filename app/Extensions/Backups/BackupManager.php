@@ -58,7 +58,7 @@ class BackupManager
      */
     protected function get(string $name): FilesystemAdapter
     {
-        return $this->adapters[$name] = $this->resolve($name);
+        return $this->adapters[$name] ??= $this->resolve($name);
     }
 
     /**
@@ -74,7 +74,7 @@ class BackupManager
 
         $adapter = $config['adapter'];
 
-        if (isset($this->customCreators[$name])) {
+        if (isset($this->customCreators[$adapter])) {
             return $this->callCustomCreator($config);
         }
 
@@ -115,6 +115,7 @@ class BackupManager
 
         if (!empty($config['key']) && !empty($config['secret'])) {
             $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
+            unset($config['key'], $config['secret'], $config['token']);
         }
 
         $client = new S3Client($config);

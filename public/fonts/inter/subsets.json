@@ -1,0 +1,114 @@
+[
+  {
+    "file": "inter-italic-cyrillic-ext-39689184132e.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L0UUMJng.woff2",
+    "sha256": "39689184132e9fba8fb1066f429125d14445352a566f47f4edcae7c3c90e486d",
+    "bytes": 27380,
+    "style": "italic",
+    "subset": "cyrillic-ext"
+  },
+  {
+    "file": "inter-italic-cyrillic-47d42151dff6.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L9UUMJng.woff2",
+    "sha256": "47d42151dff6d13f1c2b9a1f278290f625593c1f01c89612ee4ae7f063167f7a",
+    "bytes": 19980,
+    "style": "italic",
+    "subset": "cyrillic"
+  },
+  {
+    "file": "inter-italic-greek-ext-787fc783f35c.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L1UUMJng.woff2",
+    "sha256": "787fc783f35c913334445a7c4502bb272f94a8328426578776eac5e4ebd03ba1",
+    "bytes": 12096,
+    "style": "italic",
+    "subset": "greek-ext"
+  },
+  {
+    "file": "inter-italic-greek-29e273a42cac.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L6UUMJng.woff2",
+    "sha256": "29e273a42cac8240f37fbdd94c684f8a255e61c8076942d9b8f18a0e2c014991",
+    "bytes": 20484,
+    "style": "italic",
+    "subset": "greek"
+  },
+  {
+    "file": "inter-italic-vietnamese-1991ed5832eb.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L2UUMJng.woff2",
+    "sha256": "1991ed5832eb07f7523f22a843ca9a8aa83c51c8e87062ce77794855d2f5dee8",
+    "bytes": 10596,
+    "style": "italic",
+    "subset": "vietnamese"
+  },
+  {
+    "file": "inter-italic-latin-ext-71254244ccb1.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L3UUMJng.woff2",
+    "sha256": "71254244ccb1ec21e14db3480fef6f6826d1136dc4aca1c7d3ca7ce31294fcce",
+    "bytes": 91900,
+    "style": "italic",
+    "subset": "latin-ext"
+  },
+  {
+    "file": "inter-italic-latin-7291b5970da2.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC53FwrK3iLTcvneQg7Ca725JhhKnNqk6L5UUM.woff2",
+    "sha256": "7291b5970da2237441273c03b424a504b70b18f09791473fab99687dcc314720",
+    "bytes": 51832,
+    "style": "italic",
+    "subset": "latin"
+  },
+  {
+    "file": "inter-normal-cyrillic-ext-ca157063339a.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2JL7SUc.woff2",
+    "sha256": "ca157063339ac4ad418f214f3abfed119b0798ab4d377386ce5c9e5a7a435ebd",
+    "bytes": 25960,
+    "style": "normal",
+    "subset": "cyrillic-ext"
+  },
+  {
+    "file": "inter-normal-cyrillic-71d5ee93cc1e.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa0ZL7SUc.woff2",
+    "sha256": "71d5ee93cc1e9f1d520a3a8b66456de18c7879d8df09d57fcd2eaff75fef0075",
+    "bytes": 18748,
+    "style": "normal",
+    "subset": "cyrillic"
+  },
+  {
+    "file": "inter-normal-greek-ext-6e9e020a25f9.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2ZL7SUc.woff2",
+    "sha256": "6e9e020a25f9b56d418f2c085b1d3c09725a4da23fe693a5b463064606732190",
+    "bytes": 11232,
+    "style": "normal",
+    "subset": "greek-ext"
+  },
+  {
+    "file": "inter-normal-greek-1be3448e292f.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1pL7SUc.woff2",
+    "sha256": "1be3448e292fbf05ffe176fe1e43f135013d50b1e7d324ad1a558f623d3bb6f6",
+    "bytes": 18996,
+    "style": "normal",
+    "subset": "greek"
+  },
+  {
+    "file": "inter-normal-vietnamese-5c66f9e07e90.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa2pL7SUc.woff2",
+    "sha256": "5c66f9e07e90c6d4ac4922cc68d60de26c17b1858e677fb5e603fce3952b3ff2",
+    "bytes": 10252,
+    "style": "normal",
+    "subset": "vietnamese"
+  },
+  {
+    "file": "inter-normal-latin-ext-34b9c504cab7.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa25L7SUc.woff2",
+    "sha256": "34b9c504cab7a73e37b746343a449132e56cf7b5481af2cb81dc74dcff25c956",
+    "bytes": 85068,
+    "style": "normal",
+    "subset": "latin-ext"
+  },
+  {
+    "file": "inter-normal-latin-3100e775e861.woff2",
+    "source": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7.woff2",
+    "sha256": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
+    "bytes": 48256,
+    "style": "normal",
+    "subset": "latin"
+  }
+]

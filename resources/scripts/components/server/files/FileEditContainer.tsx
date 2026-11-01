@@ -18,6 +18,8 @@ import { ServerContext } from "@/state/server";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 import { encodePathSegments, hashToPath } from "@/helpers";
 import { dirname } from "pathe";
+import { LARGE_FILE_THRESHOLD } from "@/lib/filePreview";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 
 const CodemirrorEditor = React.lazy(
   () => import("@/components/elements/CodemirrorEditor"),
@@ -30,6 +32,7 @@ const getNewFileDraftKey = (uuid: string, directory: string) =>
   `pterodactyl:new-file:${uuid}:${directory}`;
 
 export default () => {
+  const { t } = usePanelTranslation();
   const [error, setError] = useState("");
   const { action } = useParams<{ action: "new" | string }>();
   const [loading, setLoading] = useState(action === "edit");
@@ -49,15 +52,17 @@ export default () => {
 
   const filePath = hashToPath(hash);
   const directory = action === "new" ? filePath : dirname(filePath);
-  const draftKey =
-    action === "new" ? getNewFileDraftKey(uuid, directory) : undefined;
+  const draftKey = getNewFileDraftKey(uuid, directory);
   const saveDraft = useCallback(
     (value: string) => {
-      if (!draftKey) return;
-
-      if (value.length > 0) {
-        sessionStorage.setItem(draftKey, value);
-      } else {
+      try {
+        if (value.length > 0) {
+          sessionStorage.setItem(draftKey, value);
+        } else {
+          sessionStorage.removeItem(draftKey);
+        }
+      } catch {
+        // A full draft store must not stop editing or saving a large new file.
         sessionStorage.removeItem(draftKey);
       }
     },
@@ -71,27 +76,38 @@ export default () => {
   }, [directory, setDirectory]);
 
   useEffect(() => {
-    if (!draftKey) return;
+    if (action !== "new") return;
 
     setContent(sessionStorage.getItem(draftKey) || "");
-  }, [draftKey]);
+  }, [action, draftKey]);
 
   useEffect(() => {
-    if (action === "new") return;
+    if (action === "new") {
+      setError("");
+      setLoading(false);
+      return;
+    }
 
+    const controller = new AbortController();
     setError("");
     setLoading(true);
-    getFileContents(uuid, filePath)
-      .then(setContent)
+    getFileContents(uuid, filePath, controller.signal)
+      .then((value) => {
+        if (!controller.signal.aborted) setContent(value);
+      })
       .catch((error) => {
+        if (controller.signal.aborted) return;
         console.error(error);
         setError(httpErrorToHuman(error));
       })
-      .then(() => setLoading(false));
+      .then(() => {
+        if (!controller.signal.aborted) setLoading(false);
+      });
+    return () => controller.abort();
   }, [action, uuid, filePath]);
 
   const save = async (name?: string) => {
-    if (!fetchFileContent) {
+    if (loading || !fetchFileContent) {
       return;
     }
 
@@ -106,9 +122,7 @@ export default () => {
       await saveFileContents(uuid, name || filePath, content);
 
       if (name) {
-        if (draftKey) {
-          sessionStorage.removeItem(draftKey);
-        }
+        sessionStorage.removeItem(draftKey!);
 
         navigate(`/server/${id}/files/edit#/${encodePathSegments(name)}`);
         redirecting = true;
@@ -140,6 +154,14 @@ export default () => {
         </div>
       </ErrorBoundary>
       <BeforeEdit />
+      {content.length > LARGE_FILE_THRESHOLD && (
+        <p className="mb-4 rounded-lg border border-neutral-700 bg-neutral-900 p-3 text-sm text-neutral-300">
+          {t(
+            "files.large_file_mode",
+            "Large file mode: syntax highlighting and line wrapping are paused to keep editing responsive.",
+          )}
+        </p>
+      )}
       {hash.replace(/^#/, "").endsWith(".pteroignore") && (
         <div
           className={
@@ -194,7 +216,11 @@ export default () => {
       </div>
       <div className={"mt-4 flex justify-end"}>
         <div className={"mr-4 flex-1 rounded bg-neutral-900 sm:flex-none"}>
-          <Select value={mode} onChange={(e) => setMode(e.currentTarget.value)}>
+          <Select
+            disabled={loading || content.length > LARGE_FILE_THRESHOLD}
+            value={mode}
+            onChange={(e) => setMode(e.currentTarget.value)}
+          >
             {modes.map((mode) => (
               <option key={`${mode.name}_${mode.mime}`} value={mode.mime}>
                 {mode.name}
@@ -204,13 +230,18 @@ export default () => {
         </div>
         {action === "edit" ? (
           <Can action={"file.update"}>
-            <Button className={"flex-1 sm:flex-none"} onClick={() => save()}>
+            <Button
+              disabled={loading}
+              className={"flex-1 sm:flex-none"}
+              onClick={() => save()}
+            >
               Save Content
             </Button>
           </Can>
         ) : (
           <Can action={"file.create"}>
             <Button
+              disabled={loading}
               className={"flex-1 sm:flex-none"}
               onClick={() => setModalVisible(true)}
             >

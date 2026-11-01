@@ -140,6 +140,14 @@ InstallExtension() {
 
   ((PROGRESS_NOW++))
 
+  # Validate frontend interfaces before update scripts or panel files can change.
+  PRINT INFO "Checking Aquadactyl addon compatibility.."
+  if ! node "$FOLDER/scripts/helpers/check-blueprint.mjs" "$FOLDER/.blueprint/tmp" "$dashboard_components" "$identifier"; then
+    postexit
+    PRINT FATAL "Addon compatibility check failed; installation was not started."
+    return 1
+  fi
+
   # Detect if extension is already installed and prepare the upgrading process.
   if [[ $(cat .blueprint/extensions/blueprint/private/db/installed_extensions) == *"|$identifier,"* ]]; then
     PRINT INFO "Switching to update process as extension has already been installed."
@@ -1144,9 +1152,8 @@ InstallExtension() {
     echo -e -n "@import url(./imported/$identifier.css);" >> "resources/scripts/blueprint/css/extensions.css"
 
     cp ".blueprint/tmp/$dashboard_css" ".blueprint/extensions/$identifier/dashboard.css"
-    if [[ $DUPLICATE != "y" ]]; then
-      ln -s -r -T ".blueprint/extensions/$identifier/dashboard.css" "$FOLDER/resources/scripts/blueprint/css/imported/$identifier.css"
-    fi
+    # Updates can introduce a dashboard stylesheet for the first time.
+    ln -s -r -f -T ".blueprint/extensions/$identifier/dashboard.css" "$FOLDER/resources/scripts/blueprint/css/imported/$identifier.css"
   fi
 
   ((PROGRESS_NOW++))

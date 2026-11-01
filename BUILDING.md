@@ -49,6 +49,9 @@ docker compose up -d --no-build --no-deps --wait --wait-timeout 180 panel
 The image compiles fresh Vite assets into `public/build/` and includes the Node
 dependencies needed for Blueprint rebuilds and game queries. Local build output
 and the Vite development server marker are excluded from the Docker build context.
+Docker reuses frontend layers after backend-only edits and retains dependency
+downloads in BuildKit caches. See [performance notes](docs/PERFORMANCE.md) for
+measurements and caching details.
 
 Blueprint addon installation and removal each use one command. Put the package
 in `/app` and, from a root shell inside the panel container, run:
@@ -69,6 +72,11 @@ Profile pictures are stored in `storage/app/public/avatars` inside the persisten
 storage volume. The `public/storage` link exposes them to the web server. Linux
 installations need `php artisan storage:link` and GD with PNG, JPEG and WebP support;
 retain these files alongside the database when backing up or moving the panel.
+
+Passkeys and connected Discord, GitHub, Google, and OpenID Connect accounts are
+managed in Account settings. Administrators configure providers and passkeys under
+**Settings → OAuth**. See the [account security guide](docs/ACCOUNT-SECURITY.md) for
+callback URLs, HTTPS requirements, and deployment steps.
 
 To choose a different port or initial credentials, set `AQUADACTYL_PORT`,
 `AQUADACTYL_ADMIN_EMAIL`, `AQUADACTYL_ADMIN_USERNAME` and/or
@@ -145,15 +153,15 @@ containers are managed by Wings rather than Compose.
 
 ## Requirements
 
-- Node.js 22.13 or later.
-- pnpm 12.10.1, pinned in `package.json`.
+- Node.js 24.11 or later.
+- pnpm 12.15.0, pinned in `package.json`.
 - PHP 8.4 or 8.5 and Composer 2 for backend work. Deployment defaults to PHP 8.5.
   GD must support PNG, JPEG and WebP for profile-picture uploads.
 
 Install the pinned package manager, then the locked dependencies:
 
 ```bash
-npm install --global pnpm@12.10.1
+npm install --global pnpm@12.15.0
 pnpm install --frozen-lockfile
 composer install
 ```
@@ -184,7 +192,7 @@ an extension and rebuilds those assets.
 
 See the [Blueprint guide](https://aquadactyl.uk/docs/blueprint) for installing
 extensions and [addon development](docs/ADDONS.md) for available libraries, imports
-and dependency conventions. Use the panel's React 16.14 runtime when building addons.
+and dependency conventions. Use the panel's React 19 runtime when building addons.
 
 ## Hot module reloading
 
@@ -221,14 +229,71 @@ their bootstrap resets and seeds that database. On Windows, the
 `tests/runtime/Dockerfile` provides the Linux verification tools. Its
 `PHP_VERSION` build argument defaults to `8.5` and also accepts `8.4`.
 
-The Nix development shell uses PHP 8.5, Node.js 22 and pnpm. Install the pinned
+The Nix development shell uses PHP 8.5, Node.js 24 and pnpm. Install the pinned
 pnpm version above if the version provided by your Nix package set differs.
 
 ## Site settings
 
-Use **Admin → Settings → General** to change the site name, upload a site logo,
-and enable or disable player counts, custom profile pictures, sensitive data blur,
-and server list quick actions for everyone. Database-backed settings require
+Use **Admin → Settings → Appearance** to change the site name, upload a logo,
+choose a primary colour and customise the login and client backgrounds. Desktop
+and mobile previews update as you edit. Image upload and removal buttons save
+images immediately while preserving other unsaved settings; **Save** applies
+the name, colour, layout and effects. **Discard changes** resets those settings
+to their values when the page opened.
+
+The left and right login layouts use a full-height pane covering half the page.
+On smaller screens the pane fills the width and an opposite-side logo moves
+above the form. The centred layout uses a separate card.
+
+The primary colour supplies buttons, navigation states, links, switches,
+checkboxes and focus highlights in both panel areas, plus CPU, memory and
+outbound network graphs. Button text contrast adapts
+to light and dark colours. Saved branding overrides initial container defaults
+such as `APP_NAME` when database settings are enabled.
+
+On the server Console page, click the UUID beneath the server name to copy it.
+The copy control also supports keyboard activation and confirms successful copies.
+
+To allow users to share console logs, enable **Console log sharing** under
+**Admin → Settings → General**. It is disabled by default. When enabled, the
+clipboard button at the right end of the command input uploads the visible
+console log tail (up to 128 KiB) to `debug.euphoriadevelopment.uk` and shows a
+link only to the requesting user, with a copy button. Pastes expire after 24
+hours. The panel redacts common credentials, known secret server variables,
+IP addresses, emails and UUIDs before uploading. Redaction is best effort;
+inspect the paste before sharing it. The endpoint requires console access,
+limits each user to three requests per minute, and rejects requests when the
+feature is disabled. Disabling sharing hides the button after a page reload;
+it does not delete existing pastes.
+
+Enable **Server file trash** under **Admin → Settings → General** to offer
+**Move to trash** and **Permanently delete** when deleting files or directories.
+Open **Trash** from a server's Files page to view original paths and expiry dates,
+restore items or permanently delete them. Trash is disabled by default; disabling
+it hides its buttons and blocks its API, including restore. Permanent file deletion
+remains available.
+
+Admins can set retention to 1–365 days, with a seven-day default. New deletions use
+the current retention; existing expiry dates are preserved. Cleanup runs every 15
+minutes through the panel scheduler, including while trash is disabled, and retries
+when Wings is unreachable. Linux deployments need the existing `artisan schedule:run`
+cron entry; the Docker image includes it.
+
+Trash moves files on the same Wings filesystem into the reserved
+`.aquadactyl-trash` directory. Contents remain on the server and count towards its
+disk limit; moving a directory includes its contents. The panel database keeps the
+original path and recovery location. Retain both panel database and Wings data in
+backups. SFTP and server programs can still modify these files, and server backups
+include them unless this directory is excluded. Do not manually change the reserved
+directory. Moves support up to 100 selected items per request.
+
+Listing trash requires `file.read`; moving and permanent deletion require
+`file.delete`. Restore also requires `file.create`, recreates missing parent
+directories and refuses to overwrite an existing file, directory or symlink.
+
+Use **Admin → Settings → General** to enable or disable player counts, custom
+profile pictures, sensitive data blur and server list quick actions for everyone,
+and configure the default language and required 2FA. Database-backed settings require
 `APP_ENVIRONMENT_ONLY=false`; both Compose examples enable this by default.
 Reload open pages after saving settings.
 
@@ -241,7 +306,7 @@ browser favicons, Apple touch icons, Safari pinned-tab masks and Windows tiles.
 Icons fit the logo into a square without cropping or stretching; square logos
 work best. Restoring the default also restores the default browser icons.
 The configured site name supplies browser titles and home-screen shortcut names.
-Enable **Show Site Name Beside Logo** in General settings when your uploaded logo
+Enable **Show Site Name Beside Logo** in Appearance settings when your uploaded logo
 does not include your provider's name. This displays the site name beside the
 logo in client navigation, sign-in and admin headers. The default is **Logo only**.
 Icon and manifest URLs change with either branding setting to refresh browser
@@ -254,6 +319,18 @@ Disabling player counts stops game queries as well as hiding counts. Disabling
 quick actions hides the shortcuts while leaving controls on server pages available.
 
 ## Server list and game queries
+
+Enable or disable **Server folders** under **Admin → Settings → General**.
+It is enabled by default. Disabling hides the controls and blocks folder API
+actions while preserving saved folders and assignments for when it is enabled again.
+Use **New folder** on the server list to create personal server categories.
+Choose a folder on a server card to move that server; choose **Unfiled** to remove
+its assignment. Folder tabs filter the full list, including across pages. Select
+a folder to rename or delete it. Deleting a folder preserves all servers and files.
+Folders belong to the signed-in account, including when organising shared servers
+or using the admin **Other servers** view. They sync across devices and do not
+change permissions or server ownership. In **Other servers**, the search field
+also matches owner usernames, emails and full names.
 
 Click anywhere on a server card to open its console. Individual shortcuts remain
 independently accessible, and server links support opening in a new tab.
@@ -290,6 +367,11 @@ The protocol fixtures can be checked without running game servers:
 ```bash
 pnpm test:game-query
 ```
+
+## Tests and coverage
+
+See the [testing guide](docs/TESTING.md) for the frontend's 100% coverage gate,
+the isolated Docker/Pest runner, HTML reports, and the PHP coverage target.
 
 ## Wings
 

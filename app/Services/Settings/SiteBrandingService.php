@@ -9,7 +9,7 @@ class SiteBrandingService
 {
     public function version(): string
     {
-        return substr(hash('sha256', json_encode([config('app.name'), config('aquadactyl.branding.logo_path')], JSON_THROW_ON_ERROR)), 0, 16);
+        return substr(hash('sha256', json_encode([config('app.name'), config('aquadactyl.branding.logo_path'), app(AppearanceService::class)->primaryColor(), config('aquadactyl.pwa')], JSON_THROW_ON_ERROR)), 0, 16);
     }
 
     public function url(string $file): string
@@ -101,17 +101,17 @@ class SiteBrandingService
 
     public function manifest(): array
     {
-        $name = config('app.name', 'Aquadactyl');
+        $pwa = app(PwaService::class);
 
         return [
             'id' => '/',
-            'name' => $name,
-            'short_name' => $name,
+            'name' => $pwa->appName(),
+            'short_name' => $pwa->shortName(),
             'start_url' => '/',
             'scope' => '/',
             'display' => 'standalone',
             'background_color' => '#11161b',
-            'theme_color' => '#11161b',
+            'theme_color' => app(AppearanceService::class)->primaryColor(),
             'icons' => array_map(fn ($size) => [
                 'src' => $this->iconUrl($size),
                 'sizes' => $size . 'x' . $size,

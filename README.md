@@ -1,72 +1,87 @@
-# Aquadactyl
+<p align="center">
+  <a href="https://aquadactyl.uk">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset=".github/assets/aquadactyl-wordmark.png">
+      <img alt="Aquadactyl" src=".github/assets/aquadactyl-wordmark.png" height="72">
+    </picture>
+  </a>
+</p>
 
-[Website](https://aquadactyl.uk) · [Documentation](https://aquadactyl.uk/docs) ·
-[Source](https://github.com/Aquadactyl/aquadactyl)
+[![Tests](https://img.shields.io/github/actions/workflow/status/Aquadactyl/aquadactyl/ci.yaml?branch=main&label=Tests&style=for-the-badge)](https://github.com/Aquadactyl/aquadactyl/actions/workflows/ci.yaml?query=branch%3Amain)
+![GitHub release](https://img.shields.io/github/v/release/Aquadactyl/aquadactyl?style=for-the-badge)
+![GitHub contributors](https://img.shields.io/github/contributors/Aquadactyl/aquadactyl?style=for-the-badge)
 
-Aquadactyl is a game server management panel built on Pterodactyl, with Blueprint
-bundled and tools for installing and updating the panel on Linux with Nginx and
-PHP-FPM.
+# Aquadactyl Panel
 
-Manage your servers through Aquadactyl's interface, extend the panel
-with Blueprint, and deploy updates using pinned dependencies and automatic backups.
-Game servers run on separate Wings nodes using Docker containers.
+Aquadactyl is a free, open-source game server management panel built with PHP and
+React. This independent Pterodactyl fork includes Blueprint, a customisable dark
+theme and managed updates. Game servers run in Docker containers on Wings nodes,
+using server definitions from the Pterodactyl egg ecosystem.
 
-Aquadactyl is an independent fork. It is not an official Pterodactyl or Blueprint release.
+[Installation](https://aquadactyl.uk/docs) ·
+[Updating](https://aquadactyl.uk/docs/updating) ·
+[Features](https://aquadactyl.uk/docs/panel/features) ·
+[Contributing](CONTRIBUTING.md)
 
-## What Aquadactyl includes
+## Features
 
-- **Charcoal default theme:** Soft grey surfaces, readable text and muted aqua
-  accents across the dashboard, login, console and admin area. See the
-  [theme guide](docs/THEME.md) for palette tokens and customisation.
-- **Blueprint built in:** Framework beta-2026-08, including its CLI, admin pages,
-  extension routes and frontend hooks. The installer initializes the bundled framework.
-- **Managed installation and updates:** Linux scripts build assets, run migrations
-  and refresh application caches. Updates verify release checksums, back up the
-  database and panel files, and preserve configuration and extension data.
-- **Production performance defaults:** Redis cache, sessions and queues; PHP
-  OPcache; cached Laravel configuration, routes and views; and Nginx compression
-  and caching for hashed assets.
-- **Deployment security defaults:** Restricted filesystem permissions, HTTPS
-  session cookies, Nginx rules that protect hidden files and limit PHP execution
-  to the front controller, and validation of update archives before extraction.
-- **Addon libraries:** Axios, Lucide icons, React Select and Lodash ES,
-  alongside the panel's React Hook Form, Zod, UI and chart libraries.
-  See the [addon development guide](docs/ADDONS.md).
-- **Simple server schedules:** Choose daily, weekly, monthly, or regular interval
-  timings, then add restart, backup, or command steps with readable delays.
-  Advanced cron remains available. See the [schedule guide](docs/SCHEDULES.md).
-- **Egg Library:** Browse eggs.download from the admin area, preview egg settings,
-  and import into an existing or new nest. See the [Egg Library guide](docs/EGG-LIBRARY.md).
-- **Dependency maintenance:** Committed Composer and pnpm lockfiles, weekly
-  Dependabot checks and CI audits for production dependencies.
+- **First-run setup and PWA:** Guided branding, optional location/node creation with
+  connectivity checks and additional administrator accounts. Install the panel as
+  an app with a safe offline connection page; admins configure installation,
+  offline support and app names under Settings > PWA.
+- **Appearance:** Charcoal theme, Inter font, custom logos, primary colours,
+  backgrounds and login layouts, with desktop and mobile previews.
+- **Account security:** Passkeys, two-factor authentication and connected Discord,
+  GitHub, Google or OpenID Connect accounts. Admins control available methods.
+- **Languages:** English, French and German in the client and admin areas, with
+  per-user selection, browser language detection and additional language packs.
+- **Blueprint:** Bundled framework, one-command addon installation/removal and
+  adapters for supported legacy Pterodactyl addons and themes.
+- **Server tools:** Guided schedules, an admin Egg Library, player counts, image
+  previews, larger file uploads, optional file trash and redacted console sharing.
+- **Server organisation:** Personal folders with account sync and pagination-aware
+  filtering, with an admin toggle that preserves saved folders when disabled.
+  Admins can search Other servers by owner username, email or name.
+- **Administration:** Branding, SMTP/Mailgun/Postmark/SES delivery and optional
+  features configured in the admin area. Unconfigured sign-in methods stay hidden.
+  Create nodes and locations without leaving the server setup flow, temporarily
+  suspend user accounts and their servers, and review panel-wide audit logs.
+- **Status and Discord:** An optional public or signed-in status page with published
+  services and incident notices, plus automatic Discord roles based on owned
+  servers, eggs and nodes. Configure both under **Admin > Settings**.
+- **Notifications and releases:** Toast notifications, an opt-in account inbox and
+  personal Discord alerts for power actions, schedules, backups and installations.
+  Administrators control availability and personal webhooks. Discord or signed JSON webhooks for system actions,
+  status changes, available updates and detected version changes, with delivery history.
+  Optional background release checks and collapsible GitHub release notes matching the installed panel version.
+- **Server domains and operations:** Cloudflare-managed server subdomains, admin
+  Blueprint installation/removal, themed panel maintenance with an admin preview,
+  a lightweight log viewer and a daemon overview. See the [setup guide](docs/ADMIN-OPERATIONS.md).
+- **Deployment:** Locked Composer/pnpm dependencies, managed backups and updates,
+  Redis, PHP OPcache, lazy frontend routes and cached assets.
 
-See [validation results](docs/VALIDATION.md) for the checks performed and remaining
-build dependency advisories.
+See the [feature guide](https://aquadactyl.uk/docs/panel/features) for settings and
+defaults, and [performance notes](docs/PERFORMANCE.md) for measured results.
 
 ## Try it locally
 
-With Docker and Compose installed, start the current checkout with:
+With Docker and Compose installed, run from this checkout:
 
 ```bash
 docker compose up -d --build --wait --wait-timeout 600
 ```
 
-Open [localhost:8081](http://localhost:8081) and sign in as
-`admin@aquadactyl.test` with password `AquadactylLocal123!`. The local-only stack
-initializes MariaDB, Redis, the panel, Blueprint and a connected Wings node
-automatically. See
-[local setup and reset instructions](BUILDING.md#instant-local-setup-with-docker).
+Open [localhost:8081](http://localhost:8081) and sign in with
+`admin@aquadactyl.test` / `AquadactylLocal123!`. This local testing stack initializes
+MariaDB, Redis, the panel, Blueprint and Wings automatically. See
+[BUILDING.md](BUILDING.md#instant-local-setup-with-docker) for rebuilds and resets.
 
 ## Linux installation
 
-Prepare a Linux host with PHP 8.5 and PHP-FPM (PHP 8.4 is also supported), Composer 2,
-Node.js 22.13 or later, pnpm 12.10.1, Nginx, MariaDB or MySQL, Redis and systemd. Required PHP
-extensions and command-line utilities are listed in the
-[installation guide](https://aquadactyl.uk/docs#requirements).
-
-Place an Aquadactyl release or source checkout in `/var/www/aquadactyl`.
-The scripts also work from an existing installation directory, including
-`/var/www/pterodactyl`; match your Nginx, queue and scheduler paths to that directory.
+Use PHP 8.5 with PHP-FPM (8.4 is also supported), Composer 2, Node.js 24.11 or later,
+pnpm 12.15.0, Nginx, MariaDB/MySQL, Redis and systemd. Prepare the required packages
+and services using the [installation guide](https://aquadactyl.uk/docs), then place
+a release or source checkout in `/var/www/aquadactyl`:
 
 ```bash
 cd /var/www/aquadactyl
@@ -76,101 +91,85 @@ sudo nano .env
 sudo bash scripts/panel-install.sh
 ```
 
-Before running the installer, configure your HTTPS `APP_URL`, database, Redis
-and mail settings in `.env`. The installer generates missing application keys
-and initializes Blueprint. Preserve your application key and Hashids salt
-across updates.
-
-For a **new, empty panel**, add the default nests and create an administrator:
+Configure the HTTPS `APP_URL`, database, Redis and mail in `.env` before running
+the installer. For a **new, empty panel**, seed the default nests and create an
+administrator:
 
 ```bash
 sudo -u www-data php artisan db:seed --class=DatabaseSeeder --force
 sudo -u www-data php artisan p:user:make
 ```
 
-Complete the [installation guide](https://aquadactyl.uk/docs#web-server) to configure TLS, the supplied
-Nginx and PHP settings, the queue service and the scheduler. Configure
-[Wings](https://pterodactyl.io/wings/1.0/installing.html) separately to host game servers.
+Complete the guide's Nginx/TLS, queue and scheduler setup, and configure
+[Wings](https://pterodactyl.io/wings/1.0/installing.html) to host game servers.
+Sign in as your administrator to complete the first-run wizard. Existing panels
+can open it under **Admin > Settings > Panel setup**.
+Existing installations can retain `/var/www/pterodactyl`; match service paths to
+your installation. See the [deployment reference](docs/DEPLOYMENT.md) for details.
 
 ## Updating Aquadactyl
 
-Update the panel and bundled Blueprint together using a reviewed release of this
-fork. Replace `vRELEASE_TAG` with a published release tag:
+Use a reviewed release tag to update the panel and bundled Blueprint together:
 
 ```bash
 cd /var/www/aquadactyl
 sudo bash scripts/panel-update.sh vRELEASE_TAG Aquadactyl/aquadactyl
 ```
 
-If you publish Aquadactyl under a different GitHub repository, replace
-`Aquadactyl/aquadactyl` with that repository's `owner/name`.
-
-The updater verifies the archive, enables maintenance mode, pauses the queue and
-creates database and filesystem backups in `/var/backups/aquadactyl`. It then
-installs locked dependencies, applies migrations, restores extension hooks and
-rebuilds assets and caches before bringing the panel online.
-
-Keep each installed extension's original `identifier.blueprint` package in the
-panel root so its hooks can be reapplied during updates. Read the
-[update and recovery instructions](https://aquadactyl.uk/docs/updating) before deploying.
+The updater verifies the archive, backs up the database and panel files, then
+installs locked dependencies, applies migrations and rebuilds assets and caches.
+Preserve your application key, Hashids salt and original addon packages. Read the
+[update and recovery guide](https://aquadactyl.uk/docs/updating) before deploying.
 
 ## Blueprint extensions
 
-Blueprint is included in Aquadactyl and initialized during installation:
+Place `myextension.blueprint` in the panel root, then run as root inside the panel
+container, or with `sudo` on a native Linux installation:
 
 ```bash
-cd /var/www/aquadactyl
-sudo blueprint -version
-sudo blueprint -i myextension
-sudo blueprint -r myextension
+blueprint -i myextension
+blueprint -r myextension
 ```
 
-Place `myextension.blueprint` in the panel root before installing it. Inside the
-Docker panel container, run `blueprint -i myextension` or `blueprint -r myextension`.
-The commands handle builds, migrations, permissions, caches and PHP reloads.
-Extensions
-execute code as part of the panel, so use trusted publishers and check compatibility
-before updating production.
-
-The stock `blueprint -upgrade` command is disabled in Aquadactyl. Use the managed
-panel updater to keep the framework, dependencies and panel changes compatible.
-See the [Blueprint guide](https://aquadactyl.uk/docs/blueprint) for extension
-maintenance and the [integration reference](docs/BLUEPRINT.md) for framework provenance.
+These commands handle builds, migrations, permissions and caches. Use
+`blueprint -check myextension` to check supported frontend compatibility before
+installation. Extensions execute panel code; choose trusted publishers. The
+stock `blueprint -upgrade` command is disabled; use the managed panel updater.
 
 ## Documentation
 
-Operator guides are hosted at [aquadactyl.uk/docs](https://aquadactyl.uk/docs).
-Their source lives in the [website repository](https://github.com/Aquadactyl/website).
-The local guides retain deployment details, developer references and validation records.
+Operator guides live at [aquadactyl.uk/docs](https://aquadactyl.uk/docs), maintained
+in the [website repository](https://github.com/Aquadactyl/website). Local references:
 
-| Guide                                                                                       | Covers                                                                            |
-| ------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| [Installation](https://aquadactyl.uk/docs)                                                  | Requirements, source checkout, environment, Nginx/TLS, queue, scheduler and Wings |
-| [Updates](https://aquadactyl.uk/docs/updating)                                              | Reviewed releases, managed updates, backups and recovery                          |
-| [Blueprint](https://aquadactyl.uk/docs/blueprint)                                           | Bundled framework, extension installation and maintenance                         |
-| [Deployment reference](docs/DEPLOYMENT.md)                                                  | Deployment scripts, permissions, compatibility settings and recovery details      |
-| [Blueprint integration reference](docs/BLUEPRINT.md)                                        | Framework provenance and implementation details                                   |
-| [Addon development](docs/ADDONS.md)                                                         | Shared libraries, imports and dependency management for extensions and themes     |
-| [Default theme](docs/THEME.md)                                                              | Charcoal palette, shared colour tokens and theme customisation                    |
-| [Validation](docs/VALIDATION.md)                                                            | Test results and dependency audit limitations                                     |
-| [Building](BUILDING.md)                                                                     | Frontend development and production builds                                        |
-| [Security policy](SECURITY.md)                                                              | Reporting vulnerabilities in Aquadactyl and its upstream projects                 |
-| [Branding and licensing](docs/BRANDING.md)                                                  | Rebranding permissions, attribution and compatibility identifiers                 |
-| [Upstream Pterodactyl documentation](https://pterodactyl.io/panel/1.0/getting_started.html) | Panel concepts and administration                                                 |
+| Guide                                                                       | Covers                                                         |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| [Building](BUILDING.md)                                                     | Local Docker setup, frontend builds and site settings          |
+| [Deployment](docs/DEPLOYMENT.md)                                            | Linux installation, proxies, backups, updates and logging      |
+| [Blueprint](docs/BLUEPRINT.md)                                              | Framework integration and addon lifecycle                      |
+| [Compatibility](docs/BLUEPRINT-COMPATIBILITY.md)                            | Supported legacy addon interfaces and limits                   |
+| [Addon development](docs/ADDONS.md)                                         | Shared libraries and dependency management                     |
+| [Theme](docs/THEME.md) / [Appearance and mail](docs/APPEARANCE-AND-MAIL.md) | Theme tokens, branding and mail configuration                  |
+| [Account security](docs/ACCOUNT-SECURITY.md)                                | Passkeys, OAuth providers and two-factor verification          |
+| [Translations](docs/TRANSLATIONS.md)                                        | Language selection and contributing packs                      |
+| [Schedules](docs/SCHEDULES.md) / [Egg Library](docs/EGG-LIBRARY.md)         | Server automation and importing definitions                    |
+| [Testing](docs/TESTING.md) / [Performance](docs/PERFORMANCE.md)             | Coverage gates, dependency audits and performance measurements |
+| [Security](SECURITY.md) / [Branding](docs/BRANDING.md)                      | Vulnerability reporting, attribution and licensing             |
+
+## Privacy and diagnostics
+
+Aquadactyl and Blueprint telemetry are disabled by default on new installations;
+upstream Pterodactyl telemetry has been removed. Admins can explicitly enable
+aggregate Aquadactyl telemetry. Debug logging and console sharing are opt-in.
+See [telemetry and troubleshooting](docs/DEPLOYMENT.md#telemetry-and-troubleshooting)
+for the report contents, settings and redacted log preview/upload commands.
 
 ## Credits and license
 
-Aquadactyl builds on [Pterodactyl Panel](https://github.com/pterodactyl/panel)
-and integrates [Blueprint](https://github.com/BlueprintFramework/framework).
-Credit belongs to their authors and contributors for the underlying panel,
-server management platform and extension framework.
+Aquadactyl builds on [Pterodactyl Panel](https://github.com/pterodactyl/panel) and
+integrates [Blueprint](https://github.com/BlueprintFramework/framework). It is an
+independent project; upstream authors and contributors retain credit for their work.
 
-Panel code is distributed under the [MIT License](LICENSE.md). Blueprint's
-[MIT license](deploy/BLUEPRINT-LICENSE.md) is included separately; bundled artwork
-retains its upstream license files. Existing upstream copyright notices remain
-in their respective files.
-
-The Panel's MIT terms permit modified and commercially distributed forks while
-requiring the original copyright and license notices to accompany copies. They
-contain no explicit trademark license. Blueprint branding artwork has separate,
-restrictive terms; see the [licensing review](docs/BRANDING.md) before redistribution.
+Panel code uses the [MIT License](LICENSE.md); Blueprint's
+[MIT license](licenses/BLUEPRINT-LICENSE.md) is included separately. Keep upstream
+copyright and license notices. Bundled artwork retains its own license terms,
+and MIT does not grant trademark rights; see [branding and licensing](docs/BRANDING.md).

@@ -10,7 +10,7 @@ import { Button } from "@/components/elements/button/index";
 import { FileObject } from "@/api/server/files/loadDirectory";
 import { useFlashKey } from "@/plugins/useFlash";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
-import { WithClassname } from "@/components/types";
+import { WithClassname } from "@/globals";
 import FlashMessageRender from "@/components/FlashMessageRender";
 import { Dialog, DialogWrapperContext } from "@/components/elements/dialog";
 import Code from "@/components/elements/Code";

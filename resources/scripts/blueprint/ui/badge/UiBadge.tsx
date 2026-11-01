@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode;
   className?: string;
@@ -7,7 +7,7 @@ interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
 
 const Badge: React.FC<BadgeProps> = ({ children, className, ...rest }) => {
   return (
-    <span className={classNames("UiBadge", className)} {...rest}>
+    <span className={clsx("UiBadge", className)} {...rest}>
       {children}
     </span>
   );

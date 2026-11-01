@@ -1,29 +1,44 @@
-import { Terminal, ITerminalAddon } from "@xterm/xterm";
+import { Terminal, ITerminalAddon, IDisposable } from "@xterm/xterm";
+import { ArrowDown } from "lucide-react";
+import { createElement } from "react";
+import { createRoot, Root } from "react-dom/client";
 
 export class ScrollDownHelperAddon implements ITerminalAddon {
   private terminal!: Terminal;
-  private element?: HTMLDivElement;
+  private element?: HTMLButtonElement;
+  private iconRoot?: Root;
+  private listeners: IDisposable[] = [];
+  private label = "Scroll to latest output";
 
   activate(terminal: Terminal): void {
     this.terminal = terminal;
 
-    this.terminal.onScroll(() => {
-      if (this.isScrolledDown()) {
-        this.hide();
-      }
-    });
-
-    this.terminal.onLineFeed(() => {
-      if (!this.isScrolledDown()) {
-        this.show();
-      }
-    });
-
-    this.show();
+    const updateVisibility = () => {
+      if (this.isScrolledDown()) this.hide();
+      else this.show();
+    };
+    this.listeners.push(
+      this.terminal.onScroll(updateVisibility),
+      this.terminal.onLineFeed(updateVisibility),
+    );
+    updateVisibility();
   }
 
   dispose(): void {
-    // ignore
+    this.listeners.forEach((listener) => listener.dispose());
+    this.listeners = [];
+    this.iconRoot?.unmount();
+    this.iconRoot = undefined;
+    this.element?.remove();
+    this.element = undefined;
+  }
+
+  setLabel(label: string): void {
+    this.label = label;
+    if (this.element) {
+      this.element.title = label;
+      this.element.setAttribute("aria-label", label);
+    }
   }
 
   show(): void {
@@ -37,21 +52,19 @@ export class ScrollDownHelperAddon implements ITerminalAddon {
 
     this.terminal.element.style.position = "relative";
 
-    this.element = document.createElement("div");
-    this.element.innerHTML =
-      '<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-down" class="svg-inline--fa fa-bell fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M374.6 310.6l-160 160C208.4 476.9 200.2 480 192 480s-16.38-3.125-22.62-9.375l-160-160c-12.5-12.5-12.5-32.75 0-45.25s32.75-12.5 45.25 0L160 370.8V64c0-17.69 14.33-31.1 31.1-31.1S224 46.31 224 64v306.8l105.4-105.4c12.5-12.5 32.75-12.5 45.25 0S387.1 298.1 374.6 310.6z"/></svg>';
-    this.element.style.position = "absolute";
-    this.element.style.right = "1.5rem";
-    this.element.style.bottom = ".5rem";
-    this.element.style.padding = ".5rem";
-    this.element.style.fontSize = "1.25em";
-    this.element.style.boxShadow = "0 2px 8px #000";
-    this.element.style.backgroundColor = "#252526";
-    this.element.style.zIndex = "999";
-    this.element.style.cursor = "pointer";
+    this.element = document.createElement("button");
+    this.element.type = "button";
+    this.element.className =
+      "absolute right-6 bottom-2 z-10 flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border border-gray-600 bg-gray-800 text-gray-100 shadow-lg transition-colors hover:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-400";
+    this.setLabel(this.label);
+    this.iconRoot = createRoot(this.element);
+    this.iconRoot.render(
+      createElement(ArrowDown, { size: 20, "aria-hidden": true }),
+    );
 
     this.element.addEventListener("click", () => {
       this.terminal.scrollToBottom();
+      this.hide();
     });
 
     this.terminal.element.appendChild(this.element);

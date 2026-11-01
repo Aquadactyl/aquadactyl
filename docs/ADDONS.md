@@ -11,26 +11,31 @@ adding a dependency alone does not include it in the panel's browser bundle.
 
 ## Shared frontend libraries
 
-| Package                                                    | Use                                                    |
-| ---------------------------------------------------------- | ------------------------------------------------------ |
-| `axios`                                                    | HTTP requests; prefer `@/api/http` for panel API calls |
-| `lucide-react`                                             | SVG icons through named component imports              |
-| `react-select`                                             | Searchable and multi-value selects                     |
-| `lodash-es`                                                | Utility functions with ES module imports               |
-| `date-fns`                                                 | Date formatting and arithmetic                         |
-| `motion`                                                   | Animation (import from `motion/react`)                 |
-| `chart.js`, `react-chartjs-2`                              | Charts                                                 |
-| `@headlessui/react`, `@floating-ui/react-dom-interactions` | Accessible UI behaviour and positioning                |
-| `styled-components`, `tailwindcss`, `classnames`           | Styling and conditional classes                        |
-| `react-hook-form`                                          | Form management                                        |
-| `@hookform/resolvers`, `zod`                               | Schema validation and resolvers                        |
-| `zustand`                                                  | Lightweight addon state stores                         |
-| `swr`, `easy-peasy`                                        | The panel's existing fetching and state tools          |
-| `i18next`, `react-i18next`                                 | Translation                                            |
+| Package                            | Use                                                                  |
+| ---------------------------------- | -------------------------------------------------------------------- |
+| `axios`                            | HTTP requests; prefer `@/api/http` for panel API calls               |
+| `lucide-react`                     | SVG icons through named component imports                            |
+| `uplot`                            | Fast canvas time-series charts                                       |
+| `es-toolkit`                       | Utility functions with ES module imports                             |
+| `date-fns`                         | Date formatting and arithmetic                                       |
+| `motion`                           | Animation (import from `motion/react`)                               |
+| `@base-ui/react`                   | Accessible unstyled primitives, select, menu, dialog and positioning |
+| `tailwindcss`, `clsx`              | Styling and conditional classes                                      |
+| `react-hook-form`                  | Form management                                                      |
+| `@hookform/resolvers`, `zod`       | Schema validation and resolvers                                      |
+| `zustand`                          | Lightweight addon state stores                                       |
+| `@tanstack/react-query`, `zustand` | The panel's fetching and state tools                                 |
+| `i18next`, `react-i18next`         | Translation                                                          |
 
-React and React DOM remain on 16.14 for compatibility with this panel and Blueprint.
-Use the panel's React installation so extension hooks share the same runtime.
-React Hook Form, Zod and Zustand are shared dependencies for addons.
+This checkout uses React 19, Tailwind CSS 4, React Router 8, and Zustand. Use the
+panel's React installation so extension hooks share the same runtime. React Hook
+Form and Zod are shared dependencies for addons.
+
+Older addons that import Easy Peasy, SWR, styled-components, twin.macro, or
+react-router-dom need to migrate those imports. Use `useAppStore`, `useStoreState`,
+or `useStoreActions` from `@/state` for the application store. The `ServerContext`
+facade in `@/state/server` retains server state and action selectors. Use
+`@tanstack/react-query` for fetching and `react-router` for routing.
 
 ## Imports
 

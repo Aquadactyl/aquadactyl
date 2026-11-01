@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Cache;
 use Pterodactyl\Services\Eggs\EggDownloadService;
 use Pterodactyl\Tests\Fixtures\EggDownloadFixture;
 
+require_once __DIR__ . '/../../../../Fixtures/RuntimeFaults.php';
+afterEach(function () { Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled = []; });
+
 beforeEach(function () {
     Cache::setDefaultDriver('array');
     Cache::flush();
@@ -145,4 +148,29 @@ test('invalid destinations are rejected without downloading', function () {
         ->post(route('admin.egg-library.import', 'library-test'), ['nest_id' => 999999, 'egg_hash' => str_repeat('0', 64)])
         ->assertUnprocessable()->assertJsonPath('errors.0.meta.source_field', 'nest_id');
     Http::assertNothingSent();
+});
+
+test('a missing remote egg redirects back to the library with a recoverable alert', function () {
+    $this->apiStatus = 404;
+    $this->actingAs($this->admin)->get(route('admin.egg-library.show', 'library-test'))->assertRedirect(route('admin.egg-library.index'));
+});
+
+test('temporary file failures cannot leave partial imported eggs', function (string $fault) {
+    Pterodactyl\Tests\Fixtures\RuntimeFaults::$enabled[$fault] = true;
+    $nest = Nest::factory()->create();
+    $this->withoutExceptionHandling()->actingAs($this->admin);
+    expect(fn () => $this->post(route('admin.egg-library.import', 'library-test'), [
+        'nest_id' => $nest->id, 'egg_hash' => hash('sha256', app(EggDownloadService::class)->encode($this->document['egg'])),
+    ]))->toThrow(Pterodactyl\Exceptions\DisplayException::class);
+    expect($nest->eggs()->count())->toBe(0);
+})->with(['eggs.open', 'eggs.write']);
+
+test('an importer rejecting a downloaded file leaves the destination nest untouched', function () {
+    $nest = Nest::factory()->create();
+    $this->mock(Pterodactyl\Services\Eggs\Sharing\EggImporterService::class)->expects('handle')->andThrow(new Pterodactyl\Exceptions\Service\InvalidFileUploadException('Malformed imported document'));
+    $this->withoutExceptionHandling()->actingAs($this->admin);
+    expect(fn () => $this->post(route('admin.egg-library.import', 'library-test'), [
+        'nest_id' => $nest->id, 'egg_hash' => hash('sha256', app(EggDownloadService::class)->encode($this->document['egg'])),
+    ]))->toThrow(Pterodactyl\Exceptions\DisplayException::class);
+    expect($nest->eggs()->count())->toBe(0);
 });

@@ -1,14 +1,20 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useEffect, useState } from "react";
 import { useAppStore } from "@/state";
 import { Button } from "@/components/elements/button/index";
 import SetupTOTPDialog from "@/components/dashboard/forms/SetupTOTPDialog";
 import RecoveryTokensDialog from "@/components/dashboard/forms/RecoveryTokensDialog";
 import DisableTOTPDialog from "@/components/dashboard/forms/DisableTOTPDialog";
+import RegenerateRecoveryTokensDialog from "@/components/dashboard/forms/RegenerateRecoveryTokensDialog";
 import { useFlashKey } from "@/plugins/useFlash";
 
 export default () => {
+  const { t } = usePanelTranslation();
   const [tokens, setTokens] = useState<string[]>([]);
-  const [visible, setVisible] = useState<"enable" | "disable" | null>(null);
+  const [regenerated, setRegenerated] = useState(false);
+  const [visible, setVisible] = useState<
+    "enable" | "disable" | "regenerate" | null
+  >(null);
   const isEnabled = useAppStore((state) => state.user.data!.useTotp);
   const { clearAndAddHttpError } = useFlashKey("account:two-step");
 
@@ -23,6 +29,12 @@ export default () => {
     setVisible(null);
   };
 
+  const onRegeneratedTokens = (tokens: string[]) => {
+    setRegenerated(true);
+    setTokens(tokens);
+    setVisible(null);
+  };
+
   return (
     <div>
       <SetupTOTPDialog
@@ -33,24 +45,53 @@ export default () => {
       <RecoveryTokensDialog
         tokens={tokens}
         open={tokens.length > 0}
-        onClose={() => setTokens([])}
+        onClose={() => {
+          setTokens([]);
+          setRegenerated(false);
+        }}
+        title={
+          regenerated
+            ? t("recovery.backup_recovery_codes", "Backup Recovery Codes")
+            : undefined
+        }
       />
       <DisableTOTPDialog
         open={visible === "disable"}
         onClose={() => setVisible(null)}
       />
+      <RegenerateRecoveryTokensDialog
+        open={visible === "regenerate"}
+        onClose={() => setVisible(null)}
+        onTokens={onRegeneratedTokens}
+      />
       <p className={"text-sm"}>
         {isEnabled
-          ? "Two-step verification is currently enabled on your account."
-          : "You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it."}
+          ? t(
+              "two_factor.two_step_verification_is_currently_enabled_on_your_account",
+              "Two-step verification is currently enabled on your account.",
+            )
+          : t(
+              "two_factor.you_do_not_currently_have_two_step_verification_enabled_on",
+              "You do not currently have two-step verification enabled on your account. Click the button below to begin configuring it.",
+            )}
       </p>
-      <div className={"mt-6"}>
+      <div className={"mt-6 flex flex-wrap gap-3"}>
         {isEnabled ? (
-          <Button.Danger onClick={() => setVisible("disable")}>
-            Disable Two-Step
-          </Button.Danger>
+          <>
+            <Button.Danger onClick={() => setVisible("disable")}>
+              {t("two_factor.disable_two_step", "Disable Two-Step")}
+            </Button.Danger>
+            <Button onClick={() => setVisible("regenerate")}>
+              {t(
+                "two_factor.regenerate_recovery_codes",
+                "Regenerate Backup Codes",
+              )}
+            </Button>
+          </>
         ) : (
-          <Button onClick={() => setVisible("enable")}>Enable Two-Step</Button>
+          <Button onClick={() => setVisible("enable")}>
+            {t("two_factor.enable_two_step", "Enable Two-Step")}
+          </Button>
         )}
       </div>
     </div>

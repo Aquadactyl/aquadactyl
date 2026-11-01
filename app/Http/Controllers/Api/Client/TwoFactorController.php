@@ -4,11 +4,14 @@ namespace Pterodactyl\Http\Controllers\Api\Client;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Pterodactyl\Models\User;
 use Illuminate\Http\Response;
 use Illuminate\Http\JsonResponse;
 use Pterodactyl\Facades\Activity;
+use Illuminate\Support\Facades\DB;
 use Pterodactyl\Services\Users\TwoFactorSetupService;
 use Pterodactyl\Services\Users\ToggleTwoFactorService;
+use Pterodactyl\Services\Users\TwoFactorRecoveryTokenService;
 use Illuminate\Contracts\Validation\Factory as ValidationFactory;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
@@ -20,6 +23,7 @@ class TwoFactorController extends ClientApiController
     public function __construct(
         private ToggleTwoFactorService $toggleTwoFactorService,
         private TwoFactorSetupService $setupService,
+        private TwoFactorRecoveryTokenService $recoveryTokenService,
         private ValidationFactory $validation,
     ) {
         parent::__construct();
@@ -35,13 +39,13 @@ class TwoFactorController extends ClientApiController
      */
     public function index(Request $request): JsonResponse
     {
-        if ($request->user()->use_totp) {
-            throw new BadRequestHttpException('Two-factor authentication is already enabled on this account.');
-        }
+        return $this->withLockedUser($request, function (User $user) {
+            if ($user->use_totp) {
+                throw new BadRequestHttpException('Two-factor authentication is already enabled on this account.');
+            }
 
-        return new JsonResponse([
-            'data' => $this->setupService->handle($request->user()),
-        ]);
+            return new JsonResponse(['data' => $this->setupService->handle($user)]);
+        });
     }
 
     /**
@@ -58,20 +62,18 @@ class TwoFactorController extends ClientApiController
         ]);
 
         $data = $validator->validate();
-        if (!password_verify($data['password'], $request->user()->password)) {
-            throw new BadRequestHttpException('The password provided was not valid.');
-        }
 
-        $tokens = $this->toggleTwoFactorService->handle($request->user(), $data['code'], true);
+        return $this->withLockedUser($request, function (User $user) use ($data) {
+            if (!password_verify($data['password'], $user->password)) {
+                throw new BadRequestHttpException('The password provided was not valid.');
+            }
 
-        Activity::event('user:two-factor.create')->log();
+            $tokens = $this->toggleTwoFactorService->handle($user, $data['code'], true);
 
-        return new JsonResponse([
-            'object' => 'recovery_tokens',
-            'attributes' => [
-                'tokens' => $tokens,
-            ],
-        ]);
+            Activity::event('user:two-factor.create')->log();
+
+            return new JsonResponse(['object' => 'recovery_tokens', 'attributes' => ['tokens' => $tokens]]);
+        });
     }
 
     /**
@@ -82,20 +84,51 @@ class TwoFactorController extends ClientApiController
      */
     public function delete(Request $request): JsonResponse
     {
-        if (!password_verify($request->input('password') ?? '', $request->user()->password)) {
-            throw new BadRequestHttpException('The password provided was not valid.');
-        }
+        return $this->withLockedUser($request, function (User $user) use ($request) {
+            if (!password_verify($request->input('password') ?? '', $user->password)) {
+                throw new BadRequestHttpException('The password provided was not valid.');
+            }
 
-        /** @var \Pterodactyl\Models\User $user */
-        $user = $request->user();
+            $user->update(['totp_authenticated_at' => Carbon::now(), 'use_totp' => false]);
 
-        $user->update([
-            'totp_authenticated_at' => Carbon::now(),
-            'use_totp' => false,
+            Activity::event('user:two-factor.delete')->log();
+
+            return new JsonResponse([], Response::HTTP_NO_CONTENT);
+        });
+    }
+
+    /**
+     * Regenerates recovery tokens for an account if two-factor is enabled and the password provided is valid.
+     *
+     * @throws \Throwable
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function regenerateTokens(Request $request): JsonResponse
+    {
+        $validator = $this->validation->make($request->all(), [
+            'password' => ['required', 'string'],
         ]);
 
-        Activity::event('user:two-factor.delete')->log();
+        $data = $validator->validate();
 
-        return new JsonResponse([], Response::HTTP_NO_CONTENT);
+        return $this->withLockedUser($request, function (User $user) use ($data) {
+            if (!$user->use_totp) {
+                throw new BadRequestHttpException('Two-factor authentication is not enabled on this account.');
+            }
+            if (!password_verify($data['password'], $user->password)) {
+                throw new BadRequestHttpException('The password provided was not valid.');
+            }
+
+            $tokens = $this->recoveryTokenService->handle($user);
+
+            Activity::event('user:two-factor.regenerate-tokens')->log();
+
+            return new JsonResponse(['object' => 'recovery_tokens', 'attributes' => ['tokens' => $tokens]]);
+        });
+    }
+
+    private function withLockedUser(Request $request, \Closure $callback): JsonResponse
+    {
+        return DB::transaction(fn () => $callback(User::query()->lockForUpdate()->findOrFail($request->user()->id)));
     }
 }

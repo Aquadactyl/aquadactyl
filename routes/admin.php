@@ -5,6 +5,28 @@ use Pterodactyl\Http\Controllers\Admin;
 use Pterodactyl\Http\Middleware\Admin\Servers\ServerInstalled;
 
 Route::get('/', [Admin\BaseController::class, 'index'])->name('admin.index');
+Route::get('/settings/pwa', [Admin\Settings\PwaController::class, 'index'])->name('admin.settings.pwa');
+Route::patch('/settings/pwa', [Admin\Settings\PwaController::class, 'update']);
+Route::get('/settings/setup', [Admin\Settings\SetupController::class, 'index'])->name('admin.settings.setup');
+Route::post('/settings/setup/branding', [Admin\Settings\SetupController::class, 'branding'])->name('admin.settings.setup.branding');
+Route::post('/settings/setup/admins', [Admin\Settings\SetupController::class, 'administrator'])->middleware('throttle:10,1,setup-admin:')->name('admin.settings.setup.admins');
+Route::post('/settings/setup/nodes/{node:id}/test', [Admin\Settings\SetupController::class, 'testNode'])->middleware('throttle:10,1,setup-node:')->name('admin.settings.setup.test-node');
+Route::post('/settings/setup/complete', [Admin\Settings\SetupController::class, 'complete'])->name('admin.settings.setup.complete');
+Route::get('/audit-logs', [Admin\AuditLogController::class, 'index'])->name('admin.audit-logs');
+Route::post('/setup/locations', [Admin\QuickSetupController::class, 'location'])->name('admin.setup.locations');
+Route::post('/setup/nodes', [Admin\QuickSetupController::class, 'node'])->name('admin.setup.nodes');
+Route::get('/extensions/install', [Admin\BlueprintInstallController::class, 'index'])->name('admin.extensions.install');
+Route::get('/extensions/install/status', [Admin\BlueprintInstallController::class, 'status']);
+Route::post('/extensions/install', [Admin\BlueprintInstallController::class, 'store'])->middleware('throttle:5,1,blueprint-install:');
+Route::get('/extensions/{identifier}/remove', [Admin\BlueprintInstallController::class, 'confirmRemoval'])->name('admin.extensions.remove');
+Route::post('/extensions/{identifier}/remove', [Admin\BlueprintInstallController::class, 'remove'])->middleware('throttle:5,1,blueprint-remove:');
+Route::get('/subdomains', [Admin\SubdomainsController::class, 'index'])->name('admin.subdomains');
+Route::post('/subdomains', [Admin\SubdomainsController::class, 'store']);
+Route::patch('/subdomains/{domain}', [Admin\SubdomainsController::class, 'update']);
+Route::delete('/subdomains/{domain}', [Admin\SubdomainsController::class, 'destroy']);
+Route::delete('/subdomains/records/{entry}', [Admin\SubdomainsController::class, 'remove']);
+Route::get('/daemon-stats', [Admin\DaemonStatsController::class, 'index'])->name('admin.daemon-stats');
+Route::get('/daemon-stats/{node:id}', [Admin\DaemonStatsController::class, 'status'])->name('admin.daemon-stats.status');
 
 Route::group(['prefix' => 'egg-library'], function () {
     Route::get('/', [Admin\EggLibraryController::class, 'index'])->name('admin.egg-library.index');
@@ -73,10 +95,42 @@ Route::group(['prefix' => 'databases'], function () {
 */
 Route::group(['prefix' => 'settings'], function () {
     Route::get('/', [Admin\Settings\IndexController::class, 'index'])->name('admin.settings');
+    Route::get('/maintenance/preview', [Admin\Settings\MaintenancePreviewController::class, 'index'])->name('admin.settings.maintenance-preview');
     Route::post('/logo', [Admin\Settings\LogoController::class, 'store'])->name('admin.settings.logo');
     Route::delete('/logo', [Admin\Settings\LogoController::class, 'destroy']);
     Route::get('/mail', [Admin\Settings\MailController::class, 'index'])->name('admin.settings.mail');
+    Route::get('/appearance', [Admin\Settings\AppearanceController::class, 'index'])->name('admin.settings.appearance');
+    Route::patch('/appearance', [Admin\Settings\AppearanceController::class, 'update']);
+    Route::post('/appearance/background/{area}', [Admin\Settings\AppearanceController::class, 'upload'])->whereIn('area', ['login', 'client'])->name('admin.settings.background');
+    Route::delete('/appearance/background/{area}', [Admin\Settings\AppearanceController::class, 'remove'])->whereIn('area', ['login', 'client']);
     Route::get('/advanced', [Admin\Settings\AdvancedController::class, 'index'])->name('admin.settings.advanced');
+    Route::get('/oauth', [Admin\Settings\OAuthController::class, 'index'])->name('admin.settings.oauth');
+    Route::patch('/oauth', [Admin\Settings\OAuthController::class, 'update']);
+    Route::get('/notifications', [Admin\Settings\NotificationsController::class, 'index'])->name('admin.settings.notifications');
+    Route::post('/notifications', [Admin\Settings\NotificationsController::class, 'update'])->middleware('throttle:10,1,notification-settings:')->name('admin.settings.notifications.update');
+    Route::get('/webhooks', [Admin\Settings\WebhooksController::class, 'index'])->name('admin.settings.webhooks');
+    Route::post('/webhooks', [Admin\Settings\WebhooksController::class, 'store'])->middleware('throttle:10,1,webhook-settings:')->name('admin.settings.webhooks.store');
+    Route::post('/webhooks/{endpoint}/action', [Admin\Settings\WebhooksController::class, 'action'])->middleware('throttle:10,1,webhook-actions:')->name('admin.settings.webhooks.action');
+    Route::post('/webhooks/deliveries/retry', [Admin\Settings\WebhooksController::class, 'retry'])->middleware('throttle:5,1,webhook-retry:')->name('admin.settings.webhooks.retry');
+    Route::get('/updates', [Admin\Settings\UpdatesController::class, 'index'])->name('admin.settings.updates');
+    Route::patch('/updates', [Admin\Settings\UpdatesController::class, 'update'])->name('admin.settings.updates.save');
+    Route::post('/updates/check', [Admin\Settings\UpdatesController::class, 'check'])->middleware('throttle:2,1,update-check:')->name('admin.settings.updates.check');
+    Route::get('/status', [Admin\Settings\StatusPageController::class, 'index'])->name('admin.settings.status');
+    Route::patch('/status', [Admin\Settings\StatusPageController::class, 'update']);
+    Route::post('/status/components', [Admin\Settings\StatusPageController::class, 'component'])->name('admin.settings.status.components');
+    Route::delete('/status/components/{component}', [Admin\Settings\StatusPageController::class, 'removeComponent']);
+    Route::post('/status/incidents', [Admin\Settings\StatusPageController::class, 'incident'])->name('admin.settings.status.incidents');
+    Route::patch('/status/incidents/{incident}', [Admin\Settings\StatusPageController::class, 'incident']);
+    Route::get('/discord', [Admin\Settings\DiscordRolesController::class, 'index'])->name('admin.settings.discord');
+    Route::patch('/discord', [Admin\Settings\DiscordRolesController::class, 'update'])->middleware('throttle:5,1,discord-settings:');
+    Route::post('/discord/rules', [Admin\Settings\DiscordRolesController::class, 'rule'])->name('admin.settings.discord.rules');
+    Route::patch('/discord/rules/{rule}', [Admin\Settings\DiscordRolesController::class, 'rule']);
+    Route::delete('/discord/rules/{rule}', [Admin\Settings\DiscordRolesController::class, 'remove']);
+    Route::post('/discord/sync', [Admin\Settings\DiscordRolesController::class, 'sync'])->middleware('throttle:2,1,discord-sync:')->name('admin.settings.discord.sync');
+
+    Route::get('/logs', [Admin\Settings\LogController::class, 'index'])->name('admin.settings.logs');
+    Route::get('/logs/download/{file}', [Admin\Settings\LogController::class, 'download'])->name('admin.settings.logs.download');
+    Route::delete('/logs/{file}', [Admin\Settings\LogController::class, 'delete'])->name('admin.settings.logs.delete');
 
     Route::post('/mail/test', [Admin\Settings\MailController::class, 'test'])->name('admin.settings.mail.test');
 
@@ -103,6 +157,8 @@ Route::group(['prefix' => 'users'], function () {
 
     Route::patch('/view/{user:id}', [Admin\UserController::class, 'update']);
     Route::delete('/view/{user:id}', [Admin\UserController::class, 'delete'])->name('admin.users.delete');
+    Route::delete('/view/{user:id}/avatar', [Admin\UserController::class, 'removeAvatar'])->name('admin.users.avatar.delete');
+    Route::post('/view/{user:id}/suspension', [Admin\UserSuspensionController::class, 'update'])->middleware('throttle:5,1,user-suspension:')->name('admin.users.suspension');
 });
 
 /*

@@ -12,5 +12,9 @@ class TrimStrings extends BaseTrimmer
     protected $except = [
         'password',
         'password_confirmation',
+        'current_password',
+        'providers.*.client_secret',
+        'locale',
+        'namespace',
     ];
 }

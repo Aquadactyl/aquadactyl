@@ -13,6 +13,18 @@ beforeEach(function () {
     Event::fake([Failed::class, DirectLogin::class, ProvidedAuthenticationToken::class]);
 });
 
+test('checkpoint sessions reject deleted users and invalid expiration timestamps', function (string $failure) {
+    Session::put('auth_confirmation_token', [
+        'user_id' => PHP_INT_MAX, 'token_value' => 'token',
+        'credential_fingerprint' => str_repeat('0', 64),
+        'expires_at' => match ($failure) {
+            'type' => 'tomorrow', 'expired' => now()->subMinute(), default => now()->addMinute(),
+        },
+    ]);
+    $this->postJson(route('auth.login-checkpoint'), ['confirmation_token' => 'token', 'authentication_code' => '123456'])->assertBadRequest();
+    $this->assertGuest();
+})->with(['deleted', 'type', 'expired']);
+
 test('user can sign in using totp token', function (?int $ts) {
     $user = User::factory()->create([
         'use_totp' => true,
@@ -23,6 +35,7 @@ test('user can sign in using totp token', function (?int $ts) {
     Session::put('auth_confirmation_token', [
         'user_id' => $user->id,
         'token_value' => 'token',
+        'credential_fingerprint' => hash('sha256', $user->password . "\0" . $user->totp_secret),
         'expires_at' => now()->addMinutes(5),
     ]);
 
@@ -38,7 +51,8 @@ test('user can sign in using totp token', function (?int $ts) {
         ->assertJsonPath('data.intended', '/')
         ->assertJsonPath('data.user.uuid', $user->uuid);
 
-    expect($user->refresh()->totp_authenticated_at)->toEqual(now());
+    $period = app(Google2FA::class)->getKeyRegeneration();
+    expect($user->refresh()->totp_authenticated_at->unix())->toBe(app(Google2FA::class)->getTimestamp() * $period);
 
     $this->assertAuthenticatedAs($user);
 
@@ -56,6 +70,7 @@ test('totp token cannot be reused', function (int $seconds) {
     Session::put('auth_confirmation_token', [
         'user_id' => $user->id,
         'token_value' => 'token',
+        'credential_fingerprint' => hash('sha256', $user->password . "\0" . $user->totp_secret),
         'expires_at' => now()->addMinutes(5),
     ]);
 
@@ -112,6 +127,7 @@ test('endpoint blocks session data mismatch', function () {
     Session::put('auth_confirmation_token', [
         'user_id' => $user->id,
         'token_value' => 'token',
+        'credential_fingerprint' => hash('sha256', $user->password . "\0" . $user->totp_secret),
         'expires_at' => now()->addMinutes(5),
     ]);
 
@@ -142,12 +158,13 @@ test('endpoint returns error if user does not exist', function () {
 });
 
 test('endpoint allows recovery token', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->create(['use_totp' => true, 'totp_secret' => encrypt(str_repeat('a', 16))]);
     $token = $user->recoveryTokens()->forceCreate(['token' => password_hash('recovery', PASSWORD_DEFAULT)]);
 
     Session::put('auth_confirmation_token', [
         'user_id' => $user->id,
         'token_value' => 'token',
+        'credential_fingerprint' => hash('sha256', $user->password . "\0" . $user->totp_secret),
         'expires_at' => now()->addMinutes(5),
     ]);
 

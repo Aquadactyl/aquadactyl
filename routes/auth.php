@@ -15,17 +15,30 @@ use Pterodactyl\Http\Controllers\Auth;
 // These routes are defined so that we can continue to reference them programmatically.
 // They all route to the same controller function which passes off to React.
 Route::get('/login', [Auth\LoginController::class, 'index'])->name('auth.login');
+Route::get('/register', [Auth\LoginController::class, 'index'])->name('auth.register');
 Route::get('/password', [Auth\LoginController::class, 'index'])->name('auth.forgot-password');
 Route::get('/password/reset/{token}', [Auth\LoginController::class, 'index'])->name('auth.reset');
+
+Route::get('/methods', [Auth\SignInMethodController::class, 'index']);
+Route::get('/oauth/{provider}', [Auth\OAuthController::class, 'redirect'])->middleware('throttle:authentication');
+Route::get('/oauth/{provider}/callback', [Auth\OAuthController::class, 'callback'])
+    ->withoutMiddleware('guest')->middleware('throttle:authentication');
 
 // Apply a throttle to authentication action endpoints, in addition to the
 // recaptcha endpoints to slow down manual attack spammers even more. 🤷‍
 //
 // @see \Pterodactyl\Providers\RouteServiceProvider
 Route::middleware(['throttle:authentication'])->group(function () {
+    Route::post('/passkeys/options', [Auth\SignInMethodController::class, 'options']);
+    Route::post('/passkeys/login', [Auth\SignInMethodController::class, 'authenticate']);
     // Login endpoints.
     Route::post('/login', [Auth\LoginController::class, 'login'])->middleware('recaptcha');
     Route::post('/login/checkpoint', Auth\LoginCheckpointController::class)->name('auth.login-checkpoint');
+
+    // Registration endpoint.
+    Route::post('/register', [Auth\RegisterController::class, 'register'])
+        ->name('auth.post.register')
+        ->middleware('recaptcha');
 
     // Forgot password route. A post to this endpoint will trigger an
     // email to be sent containing a reset token.
@@ -37,7 +50,7 @@ Route::middleware(['throttle:authentication'])->group(function () {
 // Password reset routes. This endpoint is hit after going through
 // the forgot password routes to acquire a token (or after an account
 // is created).
-Route::post('/password/reset', Auth\ResetPasswordController::class)->name('auth.reset-password');
+Route::post('/password/reset', Auth\ResetPasswordController::class)->middleware('throttle:authentication')->name('auth.reset-password');
 
 // Remove the guest middleware and apply the authenticated middleware to this endpoint,
 // so it cannot be used unless you're already logged in.

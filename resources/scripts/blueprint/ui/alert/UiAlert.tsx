@@ -1,5 +1,5 @@
 import React from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 
 interface AlertProps {
   type: "warning" | "danger" | "info";
@@ -12,7 +12,7 @@ export default ({ type, className, children }: AlertProps) => {
     <div
       className={
         "UiAlert " +
-        classNames(
+        clsx(
           "flex items-center rounded-md border-l-8 px-4 py-3 text-gray-50 shadow-sm",
           {
             ["border-red-500 bg-red-500/25"]: type === "danger",

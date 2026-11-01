@@ -1,3 +1,4 @@
+import usePanelTranslation from "@/plugins/usePanelTranslation";
 import React, { useState } from "react";
 import { Link, useLocation, useParams } from "react-router";
 import performPasswordReset from "@/api/auth/performPasswordReset";
@@ -28,6 +29,7 @@ const schema = z
 type Values = z.infer<typeof schema>;
 
 export default () => {
+  const { t } = usePanelTranslation();
   const { token } = useParams<{ token: string }>();
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -36,7 +38,7 @@ export default () => {
 
   const parsed = new URLSearchParams(location.search);
   if (email.length === 0 && parsed.get("email")) {
-    setEmail(parsed.get("email") || "");
+    setEmail(parsed.get("email")!);
   }
 
   const {
@@ -72,19 +74,24 @@ export default () => {
 
   return (
     <LoginFormContainer
-      title={"Reset Password"}
+      title={t("reset_password.reset_password", "Reset Password")}
       className={"flex w-full"}
       onSubmit={handleSubmit(onSubmit)}
     >
       <div>
-        <label>Email</label>
+        <label>{t("reset_password.email", "Email")}</label>
         <Input value={email} disabled />
       </div>
       <div className={"mt-6"}>
         <FormField
-          label={"New Password"}
+          id={"new_password"}
+          label={t("reset_password.new_password", "New Password")}
           type={"password"}
-          description={"Passwords must be at least 8 characters in length."}
+          autoComplete={"new-password"}
+          description={t(
+            "reset_password.passwords_must_be_at_least_8_characters_in_length",
+            "Passwords must be at least 8 characters in length.",
+          )}
           disabled={isSubmitting}
           error={errors.password}
           {...register("password")}
@@ -92,8 +99,13 @@ export default () => {
       </div>
       <div className={"mt-6"}>
         <FormField
-          label={"Confirm New Password"}
+          id={"confirm_new_password"}
+          label={t(
+            "reset_password.confirm_new_password",
+            "Confirm New Password",
+          )}
           type={"password"}
+          autoComplete={"new-password"}
           disabled={isSubmitting}
           error={errors.passwordConfirmation}
           {...register("passwordConfirmation")}
@@ -106,7 +118,7 @@ export default () => {
           disabled={isSubmitting}
           isLoading={isSubmitting}
         >
-          Reset Password
+          {t("reset_password.reset_password", "Reset Password")}
         </Button>
       </div>
       <div className={"mt-6 text-center"}>
@@ -116,7 +128,7 @@ export default () => {
             "text-xs tracking-wide text-neutral-400 uppercase no-underline hover:text-neutral-200"
           }
         >
-          Return to Login
+          {t("reset_password.return_to_login", "Return to Login")}
         </Link>
       </div>
     </LoginFormContainer>

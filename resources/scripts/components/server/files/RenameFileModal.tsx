@@ -5,7 +5,7 @@ import FormField from "@/components/elements/FormField";
 import { join } from "pathe";
 import renameFiles from "@/api/server/files/renameFiles";
 import { ServerContext } from "@/state/server";
-import classNames from "classnames";
+import clsx from "clsx";
 import Button from "@/components/elements/Button";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
 import useFlash from "@/plugins/useFlash";
@@ -60,7 +60,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
             ),
           false,
         );
-      } else if (useMoveTerminology || len > 1) {
+      } else {
         // Remove the file from this directory since they moved it elsewhere.
         mutate((data) => data.filter((f) => f.name !== files[0]), false);
       }
@@ -94,7 +94,7 @@ const RenameFileModal = ({ files, useMoveTerminology, ...props }: OwnProps) => {
     >
       <form className={"m-0"} onSubmit={handleSubmit(onSubmit)}>
         <div
-          className={classNames(
+          className={clsx(
             "flex flex-wrap",
             useMoveTerminology ? "items-center" : "items-end",
           )}

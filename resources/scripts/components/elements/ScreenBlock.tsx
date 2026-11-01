@@ -1,7 +1,7 @@
 import React from "react";
 import PageContentBlock from "@/components/elements/PageContentBlock";
 import { ArrowLeft, RotateCw } from "lucide-react";
-import classNames from "classnames";
+import clsx from "clsx";
 import Button from "@/components/elements/Button";
 import NotFoundSvg from "@/assets/images/not_found.svg";
 import ServerErrorSvg from "@/assets/images/server_error.svg";
@@ -31,7 +31,7 @@ const ActionButton: React.FC<React.ComponentProps<typeof Button>> = ({
   ...props
 }) => (
   <Button
-    className={classNames(
+    className={clsx(
       "flex h-8 w-8 items-center justify-center rounded-full! p-0!",
       className,
     )}
@@ -56,7 +56,8 @@ const ScreenBlock = ({
         {(typeof onBack === "function" || typeof onRetry === "function") && (
           <div className={"absolute top-0 left-0 mt-4 ml-4"}>
             <ActionButton
-              onClick={() => (onRetry ? onRetry() : onBack ? onBack() : null)}
+              aria-label={onRetry ? "Retry" : "Go back"}
+              onClick={onRetry || onBack}
               className={onRetry ? "hover:animate-spin" : undefined}
             >
               {onRetry ? (

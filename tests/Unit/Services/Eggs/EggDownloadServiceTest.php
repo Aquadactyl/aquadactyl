@@ -91,3 +91,21 @@ test('malformed preview fields are rejected safely', function () {
     expect(fn () => app(EggDownloadService::class)->detail('library-test'))
         ->toThrow(DisplayException::class, 'eggs.download returned a malformed egg file.');
 });
+
+test('streaming egg responses enforce size limits before buffering a response', function (string $stage, bool $exceeded) {
+    $bytes = $exceeded ? 2 * 1024 * 1024 + 1 : 1024;
+    Http::fake(function ($request, $options) use ($stage, $bytes) {
+        if ($stage === 'headers') {
+            $options['on_headers'](new GuzzleHttp\Psr7\Response(200, ['Content-Length' => (string) $bytes]));
+        } else {
+            $options['progress']($bytes, $bytes, 0, 0);
+        }
+
+        return Http::response(EggDownloadFixture::catalog());
+    });
+    if ($exceeded) {
+        expect(fn () => app(EggDownloadService::class)->catalog())->toThrow(DisplayException::class, 'Could not reach eggs.download');
+    } else {
+        expect(app(EggDownloadService::class)->catalog())->toHaveCount(3);
+    }
+})->with([['headers', true], ['headers', false], ['progress', true], ['progress', false]]);

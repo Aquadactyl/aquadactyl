@@ -28,7 +28,7 @@ if [[ "${BASH_SOURCE[0]}" != "${0}" ]]; then
     cmd="${COMP_WORDS[1]}"
 
     case "${cmd}" in
-      -install|-add|-i|-query|-q)
+      -install|-add|-i|-query|-q|-check)
         opts="$(
           find "$BLUEPRINT__FOLDER"/*.blueprint 2> /dev/null |
           sed -e "s|^$BLUEPRINT__FOLDER/||g" -e "s|.blueprint$||g"
@@ -125,8 +125,7 @@ depend() {
   ! [ -x "$(command -v tput)" ] ||                                                # tput
   ! [ -x "$(command -v node)" ] ||                                                # node
   { ! [ -x "$(command -v inotifywait)" ] && [[ "$DeveloperWatch" == true ]]; } || # inotify-tools (devdep)
-  [[ $nodeMajor -lt 22 ]] ||                                                      # node version
-  { [[ $nodeMajor -eq 22 ]] && [[ $nodeMinor -lt 23 ]]; } ||
+  [[ $nodeMajor -lt 24 ]] ||                                                      # node version
   [[ $phpSupported != "yes" ]] ||                                                # PHP version
   [[ $pnpmVersion != "$requiredPnpm" ]] ||                                        # pnpm version
   ! [ -e "node_modules/vite" ] ||                                                 # vite
@@ -139,8 +138,8 @@ depend() {
   if [[ $DEPEND_MISSING == true ]]; then
     PRINT FATAL "Some framework dependencies couldn't be found or have issues. This is usually NOT a bug, do not report it as such."
 
-    if [[ $nodeMajor -lt 22 || ( $nodeMajor -eq 22 && $nodeMinor -lt 13 ) ]]; then
-      PRINT FATAL "Node.js 22.13 or later is required."
+    if [[ $nodeMajor -lt 24 ]]; then
+      PRINT FATAL "Node.js 24 or later is required."
     fi
 
     if [[ $phpSupported != "yes" ]]; then PRINT FATAL "PHP 8.4 or 8.5 is required."; fi
@@ -473,6 +472,7 @@ case "$cmd" in
   -add|-install|-i) source ./scripts/commands/extensions/install.sh ;;
   -remove|-r) source ./scripts/commands/extensions/remove.sh ;;
   -query|-q) source ./scripts/commands/extensions/query.sh ;;
+  -check) source ./scripts/commands/extensions/check.sh ;;
   -init|-I) source ./scripts/commands/developer/init.sh ;;
   -build|-b) source ./scripts/commands/developer/build.sh ;;
   -watch) source ./scripts/commands/developer/watch.sh ;;

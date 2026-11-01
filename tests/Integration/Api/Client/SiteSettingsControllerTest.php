@@ -8,17 +8,18 @@ use Pterodactyl\Providers\SettingsServiceProvider;
 use Pterodactyl\Services\Settings\SiteLogoService;
 use Pterodactyl\Contracts\Repository\SettingsRepositoryInterface;
 
-const FEATURES = ['player_counts', 'custom_profile_pictures', 'privacy_mode', 'server_quick_actions'];
+const FEATURES = ['player_counts', 'custom_profile_pictures', 'privacy_mode', 'server_quick_actions', 'server_folders', 'registration', 'console_log_sharing', 'file_trash'];
 
 beforeEach(function () {
     Storage::fake('public');
+    config()->set('pterodactyl.load_environment_only', false);
     if (!defined('LARAVEL_START')) {
         define('LARAVEL_START', microtime(true));
     }
 });
 
 afterEach(function () {
-    foreach (array_merge(['app:name', 'app:locale', 'pterodactyl:auth:2fa_required', 'aquadactyl:branding:logo_path', 'aquadactyl:branding:show_name'], array_map(fn ($feature) => 'aquadactyl:features:' . $feature, FEATURES)) as $key) {
+    foreach (array_merge(['app:name', 'app:locale', 'pterodactyl:auth:2fa_required', 'aquadactyl:branding:logo_path', 'aquadactyl:branding:show_name', 'aquadactyl:trash:retention_days'], array_map(fn ($feature) => 'aquadactyl:features:' . $feature, FEATURES)) as $key) {
         app(SettingsRepositoryInterface::class)->forget('settings::' . $key);
     }
 });
@@ -57,8 +58,25 @@ test('feature settings persist as booleans and reach the client', function () us
         $this->get('/')->assertOk()->assertSee('"showNameWithLogo":' . $input, false)->assertSee('"playerCounts":' . $input, false)
             ->assertSee('"customProfilePictures":' . $input, false)
             ->assertSee('"privacyMode":' . $input, false)
-            ->assertSee('"serverQuickActions":' . $input, false);
+            ->assertSee('"serverQuickActions":' . $input, false)
+            ->assertSee('"serverFolders":' . $input, false)
+            ->assertSee('"registration":' . $input, false)
+            ->assertSee('"consoleLogSharing":' . $input, false)
+            ->assertSee('"fileTrash":' . $input, false);
     }
+});
+
+test('trash retention is admin configured, validated and preserved when omitted', function () use ($payload, $reloadSettings) {
+    $this->actingAs(User::factory()->create(['root_admin' => true]));
+    $this->patchJson('/admin/settings', array_merge($payload(), ['aquadactyl:trash:retention_days' => 14]))->assertRedirect();
+    $reloadSettings();
+    expect(config('aquadactyl.trash.retention_days'))->toEqual(14);
+    $this->get('/')->assertOk()->assertSee('"retentionDays":14', false);
+    foreach ([0, 366, 'invalid'] as $days) {
+        $this->patchJson('/admin/settings', array_merge($payload(), ['aquadactyl:trash:retention_days' => $days]))->assertUnprocessable();
+    }
+    $this->patchJson('/admin/settings', $payload())->assertRedirect();
+    $this->assertDatabaseHas('settings', ['key' => 'settings::aquadactyl:trash:retention_days', 'value' => '14']);
 });
 
 test('invalid settings are rejected and omitted flags are preserved', function () use ($payload) {
@@ -154,8 +172,8 @@ test('disabled personalization is enforced and saved choices return when enabled
     $this->putJson('/api/client/account/privacy', ['blur_sensitive_data' => false])->assertForbidden();
     $this->getJson('/api/client/account')->assertOk()->assertJsonPath('attributes.avatar_url', null)
         ->assertJsonPath('attributes.blur_sensitive_data', false);
-    $this->actingAs($user, 'web')->get('/account')->assertOk()->assertSee('<html class="">', false)->assertDontSee('/storage/' . $path, false);
-    $this->get('/admin/users')->assertOk()->assertSee('<html class="">', false)->assertDontSee('/storage/' . $path, false);
+    $this->actingAs($user, 'web')->get('/account')->assertOk()->assertSee('<html class=""', false)->assertDontSee('/storage/' . $path, false);
+    $this->get('/admin/users')->assertOk()->assertSee('<html class=""', false)->assertDontSee('/storage/' . $path, false);
     expect($user->toVueObject()['blur_sensitive_data'])->toBeFalse()
         ->and($user->refresh()->avatar)->toBe($path)
         ->and($user->blur_sensitive_data)->toBeTrue();

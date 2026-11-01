@@ -1,12 +1,12 @@
 import React, { forwardRef } from "react";
-import classNames from "classnames";
+import clsx from "clsx";
 import { ButtonProps, Options } from "@/components/elements/button/types";
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ children, shape, size, variant, className, ...rest }, ref) => {
     return (
       <button
         ref={ref}
-        className={classNames(
+        className={clsx(
           "btn",
           "btn-primary",
           {
@@ -27,21 +27,13 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 const TextButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, ...props }, ref) => (
-    <Button
-      ref={ref}
-      className={classNames("btn-text", className)}
-      {...props}
-    />
+    <Button ref={ref} className={clsx("btn-text", className)} {...props} />
   ),
 );
 
 const DangerButton = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, ...props }, ref) => (
-    <Button
-      ref={ref}
-      className={classNames("btn-danger", className)}
-      {...props}
-    />
+    <Button ref={ref} className={clsx("btn-danger", className)} {...props} />
   ),
 );
 

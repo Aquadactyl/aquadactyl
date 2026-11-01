@@ -9,6 +9,7 @@ import {
   Archive,
   Download,
   Trash2,
+  Image as ImageIcon,
 } from "lucide-react";
 import RenameFileModal from "@/components/server/files/RenameFileModal";
 import { ServerContext } from "@/state/server";
@@ -19,20 +20,26 @@ import copyFile from "@/api/server/files/copyFile";
 import Can from "@/components/elements/Can";
 import getFileDownloadUrl from "@/api/server/files/getFileDownloadUrl";
 import useFlash from "@/plugins/useFlash";
-import classNames from "classnames";
+import clsx from "clsx";
 import { FileObject } from "@/api/server/files/loadDirectory";
 import useFileManagerQuery from "@/plugins/useFileManagerQuery";
-import DropdownMenu from "@/components/elements/DropdownMenu";
+import DropdownMenu, {
+  DropdownMenuRef,
+} from "@/components/elements/DropdownMenu";
 import useEventListener from "@/plugins/useEventListener";
 import compressFiles from "@/api/server/files/compressFiles";
 import decompressFiles from "@/api/server/files/decompressFiles";
-import isEqual from "react-fast-compare";
+import { dequal as isEqual } from "dequal";
 import ChmodFileModal from "@/components/server/files/ChmodFileModal";
-import { Dialog } from "@/components/elements/dialog";
+import DeleteFilesDialog from "./DeleteFilesDialog";
+import usePanelTranslation from "@/plugins/usePanelTranslation";
+import { moveFilesToTrash } from "@/api/server/files/trash";
+import { imageMimeType } from "@/lib/filePreview";
+import FileImagePreview from "./FileImagePreview";
 
 import DropdownItems from "@blueprint/components/Server/Files/Browse/DropdownItems";
 
-type ModalType = "rename" | "move" | "chmod";
+type ModalType = "rename" | "move" | "chmod" | "image";
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: React.ComponentType<{ className?: string; size?: number }>;
@@ -48,7 +55,7 @@ const Row = ({
   ...props
 }: RowProps) => (
   <div
-    className={classNames(
+    className={clsx(
       "flex cursor-pointer items-center rounded p-2",
       $danger
         ? "hover:bg-red-900 hover:text-red-200"
@@ -63,10 +70,11 @@ const Row = ({
 );
 
 const FileDropdownMenu = ({ file }: { file: FileObject }) => {
-  const onClickRef = useRef<DropdownMenu>(null);
+  const onClickRef = useRef<DropdownMenuRef>(null);
   const [showSpinner, setShowSpinner] = useState(false);
   const [modal, setModal] = useState<ModalType | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const { t } = usePanelTranslation();
 
   const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
   const { mutate } = useFileManagerQuery();
@@ -81,14 +89,17 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
     }
   });
 
-  const doDeletion = () => {
+  const doDeletion = (trash = false) => {
+    setShowConfirmation(false);
     clearFlashes("files");
 
     // For UI speed, immediately remove the file from the listing before calling the deletion function.
     // If the delete actually fails, we'll fetch the current directory contents again automatically.
     mutate((files) => files.filter((f) => f.key !== file.key), false);
 
-    deleteFiles(uuid, directory, [file.name]).catch((error) => {
+    (trash ? moveFilesToTrash : deleteFiles)(uuid, directory, [
+      file.name,
+    ]).catch((error) => {
       mutate();
       clearAndAddHttpError({ key: "files", error });
     });
@@ -139,49 +150,59 @@ const FileDropdownMenu = ({ file }: { file: FileObject }) => {
 
   return (
     <>
-      <Dialog.Confirm
+      <DeleteFilesDialog
         open={showConfirmation}
         onClose={() => setShowConfirmation(false)}
         title={`Delete ${file.isFile ? "File" : "Directory"}`}
-        confirm={"Delete"}
-        onConfirmed={doDeletion}
-      >
-        You will not be able to recover the contents of&nbsp;
-        <span className={"font-semibold text-gray-50"}>{file.name}</span> once
-        deleted.
-      </Dialog.Confirm>
+        files={[file.name]}
+        onDelete={() => doDeletion()}
+        onTrash={() => doDeletion(true)}
+      />
+      {modal ? (
+        modal === "image" ? (
+          <FileImagePreview file={file} onClose={() => setModal(null)} />
+        ) : modal === "chmod" ? (
+          <ChmodFileModal
+            visible
+            appear
+            files={[{ file: file.name, mode: file.modeBits }]}
+            onDismissed={() => setModal(null)}
+          />
+        ) : (
+          <RenameFileModal
+            visible
+            appear
+            files={[file.name]}
+            useMoveTerminology={modal === "move"}
+            onDismissed={() => setModal(null)}
+          />
+        )
+      ) : null}
+      <SpinnerOverlay visible={showSpinner} fixed size={"large"} />
       <DropdownMenu
         ref={onClickRef}
         renderToggle={(onClick) => (
-          <div className={"px-4 py-2 hover:text-white"} onClick={onClick}>
-            <Ellipsis size={16} />
-            {modal ? (
-              modal === "chmod" ? (
-                <ChmodFileModal
-                  visible
-                  appear
-                  files={[
-                    {
-                      file: file.name,
-                      mode: file.modeBits,
-                    },
-                  ]}
-                  onDismissed={() => setModal(null)}
-                />
-              ) : (
-                <RenameFileModal
-                  visible
-                  appear
-                  files={[file.name]}
-                  useMoveTerminology={modal === "move"}
-                  onDismissed={() => setModal(null)}
-                />
-              )
-            ) : null}
-            <SpinnerOverlay visible={showSpinner} fixed size={"large"} />
-          </div>
+          <button
+            type="button"
+            aria-label={t("files.actions_for_file", "Actions for {{name}}", {
+              name: file.name,
+            })}
+            className={"px-4 py-2 hover:text-white"}
+            onClick={onClick}
+          >
+            <Ellipsis size={16} aria-hidden />
+          </button>
         )}
       >
+        {imageMimeType(file) && (
+          <Can action="file.read-content">
+            <Row
+              onClick={() => setModal("image")}
+              icon={ImageIcon}
+              title={t("files.preview_image", "Image preview")}
+            />
+          </Can>
+        )}
         <Can action={"file.update"}>
           <Row
             onClick={() => setModal("rename")}

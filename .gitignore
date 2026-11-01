@@ -19,13 +19,14 @@ _ide_helper_models.php
 public/assets/manifest.json
 
 # For local development with docker
-# Remove if we ever put the Dockerfile in the repo
 !docker-compose.example.yml
 !docker-compose.example.yaml
 
 # for image related files
 /misc
 coverage.xml
+coverage/
+coverage-*/
 resources/lang/locales.js
 .phpunit.result.cache
 
@@ -51,3 +52,5 @@ public/extensions/blueprint
 public/assets/extensions/blueprint
 public/storage
 .build-cache.json
+# Generated Docker build identity used for update notifications.
+.aquadactyl-build

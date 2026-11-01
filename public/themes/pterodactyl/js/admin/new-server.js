@@ -17,33 +17,33 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
-$(document).ready(function() {
+$(document).ready(function () {
     $('#pNestId').select2({
-        placeholder: 'Select a Nest',
+        placeholder: window.AquadactylAdmin.translate('select_a_nest', 'Select a Nest'),
     }).change();
 
     $('#pEggId').select2({
-        placeholder: 'Select a Nest Egg',
+        placeholder: window.AquadactylAdmin.translate('select_a_nest_egg', 'Select a Nest Egg'),
     });
 
     $('#pPackId').select2({
-        placeholder: 'Select a Service Pack',
+        placeholder: window.AquadactylAdmin.translate('select_service_pack', 'Select a Service Pack'),
     });
 
     $('#pNodeId').select2({
-        placeholder: 'Select a Node',
+        placeholder: window.AquadactylAdmin.translate('select_node', 'Select a Node'),
     }).change();
 
     $('#pAllocation').select2({
-        placeholder: 'Select a Default Allocation',
+        placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
     });
 
     $('#pAllocationAdditional').select2({
-        placeholder: 'Select Additional Allocations',
+        placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
     });
 
     $('#pDefaultContainer').select2({
-        placeholder: 'Select a Docker image',
+        placeholder: window.AquadactylAdmin.translate('select_docker_image', 'Select a Docker image'),
     });
 });
 
@@ -58,22 +58,23 @@ $(document).on('click', function (event) {
 });
 
 $('#pNodeId').on('change', function () {
-    currentNode = $(this).val();
-    $.each(Pterodactyl.nodeData, function (i, v) {
-        if (v.id == currentNode) {
-            $('#pAllocation').html('').select2({
-                data: v.allocations,
-                placeholder: 'Select a Default Allocation',
-            });
+    const currentNode = $(this).val();
+    const node = (Pterodactyl.nodeData || []).find((v) => String(v.id) === String(currentNode));
 
-            updateAdditionalAllocations();
-        }
-    });
+    if (node) {
+        $('#pAllocation').html('').select2({
+            data: node.allocations,
+            placeholder: window.AquadactylAdmin.translate('select_default_allocation', 'Select a Default Allocation'),
+        });
+
+        updateAdditionalAllocations();
+    }
 });
 
-$('#pNestId').on('change', function (event) {
+$('#pNestId').on('change', function () {
+    const eggs = Pterodactyl.nests?.[$(this).val()]?.eggs || [];
     $('#pEggId').html('').select2({
-        data: $.map(_.get(Pterodactyl.nests, $(this).val() + '.eggs', []), function (item) {
+        data: $.map(eggs, function (item) {
             return {
                 id: item.id,
                 text: item.name,
@@ -82,30 +83,27 @@ $('#pNestId').on('change', function (event) {
     }).change();
 });
 
-$('#pEggId').on('change', function (event) {
-    let parentChain = _.get(Pterodactyl.nests, $('#pNestId').val(), null);
-    let objectChain = _.get(parentChain, 'eggs.' + $(this).val(), null);
+$('#pEggId').on('change', function () {
+    const parentChain = Pterodactyl.nests?.[$('#pNestId').val()] || null;
+    const objectChain = parentChain?.eggs?.[$(this).val()] || null;
 
-    const images = _.get(objectChain, 'docker_images', {})
-    $('#pDefaultContainer').html('');
-    const keys = Object.keys(images);
-    for (let i = 0; i < keys.length; i++) {
-        let opt = document.createElement('option');
-        opt.value = images[keys[i]];
-        opt.innerText = keys[i] + " (" + images[keys[i]] + ")";
-        $('#pDefaultContainer').append(opt);
-    }
-    $('#pDefaultContainer').trigger('change.select2');
+    const images = objectChain?.docker_images || {};
+    const $container = $('#pDefaultContainer').empty();
+    Object.entries(images).forEach(([label, value]) => {
+        $container.append(new Option(`${label} (${value})`, value));
+    });
+    $container.trigger('change.select2');
 
-    if (!_.get(objectChain, 'startup', false)) {
-        $('#pStartup').val(_.get(parentChain, 'startup', 'ERROR: Startup Not Defined!'));
+    if (!objectChain?.startup) {
+        $('#pStartup').val(parentChain?.startup ?? 'ERROR: Startup Not Defined!');
     } else {
-        $('#pStartup').val(_.get(objectChain, 'startup'));
+        $('#pStartup').val(objectChain.startup);
     }
 
+    const packs = objectChain?.packs || [];
     $('#pPackId').html('').select2({
-        data: [{ id: 0, text: 'No Service Pack' }].concat(
-            $.map(_.get(objectChain, 'packs', []), function (item, i) {
+        data: [{ id: 0, text: window.AquadactylAdmin.translate('no_service_pack', 'No Service Pack') }].concat(
+            $.map(packs, function (item) {
                 return {
                     id: item.id,
                     text: item.name + ' (' + item.version + ')',
@@ -115,18 +113,19 @@ $('#pEggId').on('change', function (event) {
     });
 
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     const variableIds = {};
-    $('#appendVariablesTo').html('');
-    $.each(_.get(objectChain, 'variables', []), function (i, item) {
+    const $variables = $('#appendVariablesTo').empty();
+    const variables = objectChain?.variables || [];
+    $.each(variables, function (i, item) {
         variableIds[item.env_variable] = 'var_ref_' + item.id;
 
-        let isRequired = (item.required === 1) ? '<span class="label label-danger">Required</span> ' : '';
-        let dataAppend = ' \
+        const isRequired = (item.required === 1) ? '<span class="label label-danger">Required</span> ' : '';
+        const dataAppend = ' \
             <div class="form-group col-sm-6"> \
                 <label for="var_ref_' + escapeHtml(item.id) + '" class="control-label">' + isRequired + escapeHtml(item.name) + '</label> \
                 <input type="text" id="var_ref_' + escapeHtml(item.id) + '" autocomplete="off" name="environment[' + escapeHtml(item.env_variable) + ']" class="form-control" value="' + escapeHtml(item.default_value) + '" /> \
@@ -135,7 +134,7 @@ $('#pEggId').on('change', function (event) {
                 <strong>Validation Rules:</strong> <code>' + escapeHtml(item.rules) + '</code></small></p> \
             </div> \
         ';
-        $('#appendVariablesTo').append(dataAppend);
+        $variables.append(dataAppend);
     });
 
     // If you receive a warning on this line, it should be fine to ignore. this function is
@@ -148,34 +147,27 @@ $('#pAllocation').on('change', function () {
 });
 
 function updateAdditionalAllocations() {
-    let currentAllocation = $('#pAllocation').val();
-    let currentNode = $('#pNodeId').val();
+    const currentAllocation = $('#pAllocation').val();
+    const currentNode = $('#pNodeId').val();
 
-    $.each(Pterodactyl.nodeData, function (i, v) {
-        if (v.id == currentNode) {
-            let allocations = [];
+    const node = (Pterodactyl.nodeData || []).find((v) => String(v.id) === String(currentNode));
+    if (node) {
+        const allocations = (node.allocations || []).filter(
+            (a) => String(a.id) !== String(currentAllocation)
+        );
 
-            for (let i = 0; i < v.allocations.length; i++) {
-                const allocation = v.allocations[i];
-
-                if (allocation.id != currentAllocation) {
-                    allocations.push(allocation);
-                }
-            }
-
-            $('#pAllocationAdditional').html('').select2({
-                data: allocations,
-                placeholder: 'Select Additional Allocations',
-            });
-        }
-    });
+        $('#pAllocationAdditional').html('').select2({
+            data: allocations,
+            placeholder: window.AquadactylAdmin.translate('select_additional_allocations', 'Select Additional Allocations'),
+        });
+    }
 }
 
 function initUserIdSelect(data) {
     function escapeHtml(str) {
-        var div = document.createElement('div');
-        div.appendChild(document.createTextNode(str));
-        return div.innerHTML;
+        return String(str == null ? '' : str).replace(/[&<>"']/g, function (character) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+        });
     }
 
     $('#pUserId').select2({
@@ -191,7 +183,7 @@ function initUserIdSelect(data) {
                 };
             },
 
-            processResults: function (data, params) {
+            processResults: function (data) {
                 return { results: data };
             },
 
@@ -205,7 +197,7 @@ function initUserIdSelect(data) {
             if (data.loading) return escapeHtml(data.text);
 
             return '<div class="user-block"> \
-                <img class="img-circle img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" alt="User Image"> \
+                <img class="img-circle img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" alt=""> \
                 <span class="username"> \
                     <a href="#">' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) +'</a> \
                 </span> \
@@ -215,13 +207,12 @@ function initUserIdSelect(data) {
         templateSelection: function (data) {
             return '<div> \
                 <span> \
-                    <img class="img-rounded img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" style="height:28px;margin-top:-4px;" alt="User Image"> \
+                    <img class="img-rounded img-bordered-xs" src="https://www.gravatar.com/avatar/' + escapeHtml(data.md5) + '?s=120" style="height:28px;margin-top:-4px;" alt=""> \
                 </span> \
                 <span style="padding-left:5px;"> \
                     ' + escapeHtml(data.name_first) + ' ' + escapeHtml(data.name_last) + ' (<strong>' + escapeHtml(data.email) + '</strong>) \
                 </span> \
             </div>';
         }
-
     });
 }

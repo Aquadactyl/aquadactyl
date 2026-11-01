@@ -1,0 +1,19 @@
+[Unit]
+Description=Aquadactyl dedicated Blueprint installer
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/var/www/aquadactyl
+Environment=AQUADACTYL_BLUEPRINT_WEB_INSTALL_ENABLED=true
+ExecStart=/usr/bin/php /var/www/aquadactyl/artisan p:blueprint:work
+Restart=on-failure
+RestartSec=10
+KillMode=control-group
+TimeoutStopSec=1805
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

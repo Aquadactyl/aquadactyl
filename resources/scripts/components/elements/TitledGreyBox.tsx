@@ -1,6 +1,6 @@
 import React, { memo } from "react";
-import classNames from "classnames";
-import isEqual from "react-fast-compare";
+import clsx from "clsx";
+import { dequal as isEqual } from "dequal";
 
 interface Props {
   icon?: React.ComponentType<{ className?: string }>;
@@ -16,13 +16,15 @@ const TitledGreyBox = ({
   className,
 }: Props) => (
   <div
-    className={classNames(
-      "rounded-lg border border-neutral-600 bg-neutral-700 shadow-xs",
+    className={clsx(
+      "panel-form-section rounded-lg border border-neutral-600 bg-neutral-700 shadow-xs",
       className,
     )}
   >
     <div
-      className={"rounded-t-lg border-b border-neutral-600 bg-neutral-700 p-3"}
+      className={
+        "panel-form-section__header rounded-t-lg border-b border-neutral-600 bg-neutral-700 p-3"
+      }
     >
       {typeof title === "string" ? (
         <p className={"flex items-center text-sm uppercase"}>
@@ -35,7 +37,7 @@ const TitledGreyBox = ({
         title
       )}
     </div>
-    <div className={"p-3"}>{children}</div>
+    <div className={"panel-form-section__body p-3"}>{children}</div>
   </div>
 );
 
