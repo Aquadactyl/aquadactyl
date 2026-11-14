@@ -27,10 +27,11 @@ import ServerContentBlock from "@/components/elements/ServerContentBlock";
 import useFlash from "@/plugins/useFlash";
 import ErrorBoundary from "@/components/elements/ErrorBoundary";
 import { FileActionCheckbox } from "@/components/server/files/SelectFileCheckbox";
-import { hashToPath } from "@/helpers";
+import { cleanDirectoryPath, encodePathSegments, hashToPath } from "@/helpers";
 import { Search, X, Trash2 } from "lucide-react";
 import { useAppStore } from "@/state";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
+import searchFiles from "@/api/server/files/searchFiles";
 
 import BeforeContent from "@blueprint/components/Server/Files/Browse/BeforeContent";
 import FileButtons from "@blueprint/components/Server/Files/Browse/FileButtons";
@@ -51,6 +52,10 @@ export default () => {
     (state) => state.settings.data?.features?.fileTrash === true,
   );
   const id = ServerContext.useStoreState((state) => state.server.data!.id);
+  const uuid = ServerContext.useStoreState((state) => state.server.data!.uuid);
+  const daemonProduct = ServerContext.useStoreState(
+    (state) => state.server.data!.daemonProduct,
+  );
   const { hash } = useLocation();
   const { data: files, error, mutate } = useFileManagerQuery();
   const directory = ServerContext.useStoreState(
@@ -69,6 +74,8 @@ export default () => {
   );
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [mantaResults, setMantaResults] = useState<string[] | null>(null);
+  const [mantaSearchError, setMantaSearchError] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -98,6 +105,36 @@ export default () => {
   }, [files, searchTerm]);
 
   const deferredFilteredFiles = useDeferredValue(filteredFiles);
+
+  useEffect(() => {
+    if (daemonProduct !== "manta" || !searchTerm.trim()) {
+      setMantaResults(null);
+      setMantaSearchError(false);
+      return;
+    }
+
+    let active = true;
+    const timer = window.setTimeout(() => {
+      searchFiles(uuid, cleanDirectoryPath(directory), searchTerm.trim())
+        .then((results) => {
+          if (active) {
+            setMantaResults(results);
+            setMantaSearchError(false);
+          }
+        })
+        .catch(() => {
+          if (active) {
+            setMantaResults([]);
+            setMantaSearchError(true);
+          }
+        });
+    }, 250);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timer);
+    };
+  }, [daemonProduct, uuid, directory, searchTerm]);
 
   const rowVirtualizer = useWindowVirtualizer({
     count: deferredFilteredFiles?.length ?? 0,
@@ -260,7 +297,44 @@ export default () => {
         <Spinner size={"large"} centered />
       ) : (
         <>
-          {!files.length ? (
+          {daemonProduct === "manta" && searchTerm.trim() ? (
+            mantaResults === null ? (
+              <Spinner size="large" centered />
+            ) : mantaSearchError ? (
+              <p className="py-12 text-center text-sm text-red-400">
+                File search failed.
+              </p>
+            ) : mantaResults.length === 0 ? (
+              <p className="py-12 text-center text-sm text-neutral-400">
+                {t(
+                  "files.no_matching_files",
+                  'No files or directories matching "{{query}}".',
+                  { query: searchTerm },
+                )}
+              </p>
+            ) : (
+              <div className="divide-y divide-neutral-700">
+                {mantaResults.map((path) => {
+                  const normalized = path
+                    .replace(/\\/g, "/")
+                    .replace(/\/$/, "");
+                  const parent =
+                    normalized.slice(0, normalized.lastIndexOf("/")) || "/";
+                  return (
+                    <NavLink
+                      key={path}
+                      className="block truncate px-4 py-3 text-sm text-neutral-200 hover:bg-neutral-800"
+                      to={`/server/${id}/files#${encodePathSegments(parent)}`}
+                      onClick={() => setSearchTerm("")}
+                      title={path}
+                    >
+                      {path}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            )
+          ) : !files.length ? (
             <p className={"text-center text-sm text-neutral-400"}>
               {t(
                 "files.this_directory_seems_to_be_empty",

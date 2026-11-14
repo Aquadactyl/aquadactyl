@@ -12,6 +12,7 @@ const baseServerData: any = {
     uuid: "uuid-1234",
     name: "Test Server",
     node: "Node 1",
+    daemon_product: "manta",
     node_country: "US",
     node_country_name: "United States",
     upload_limit: 2 * 1024 * 1024 * 1024,
@@ -97,6 +98,7 @@ describe("api/server/getServer", () => {
       expect(server.internalId).toBe(1);
       expect(server.uuid).toBe("uuid-1234");
       expect(server.name).toBe("Test Server");
+      expect(server.daemonProduct).toBe("manta");
       expect(server.nodeCountry).toBe("US");
       expect(server.nodeCountryName).toBe("United States");
       expect(server.uploadLimit).toBe(2 * 1024 * 1024 * 1024);
@@ -113,6 +115,7 @@ describe("api/server/getServer", () => {
           ...baseServerData.attributes,
           node_country: undefined,
           node_country_name: undefined,
+          daemon_product: undefined,
           user_permissions: undefined,
           game_query_type: undefined,
           description: "",
@@ -130,6 +133,7 @@ describe("api/server/getServer", () => {
       expect(server.eggFeatures).toEqual([]);
       expect(server.variables).toEqual([]);
       expect(server.allocations).toEqual([]);
+      expect(server.daemonProduct).toBe("wings");
 
       const nullDescData: any = {
         attributes: {

@@ -22,6 +22,7 @@ export interface Server {
   name: string;
   folderId?: number | null;
   node: string;
+  daemonProduct?: "manta" | "wings";
   nodeCountry?: string | null;
   nodeCountryName?: string | null;
   uploadLimit?: number;
@@ -67,6 +68,7 @@ export const rawDataToServerObject = ({
   name: data.name,
   folderId: data.folder_id ?? null,
   node: data.node,
+  daemonProduct: data.daemon_product === "manta" ? "manta" : "wings",
   nodeCountry: data.node_country ?? null,
   nodeCountryName: data.node_country_name ?? null,
   uploadLimit: data.upload_limit,

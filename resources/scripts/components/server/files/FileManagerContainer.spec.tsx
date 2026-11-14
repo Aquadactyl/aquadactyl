@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import FileManagerContainer from "./FileManagerContainer";
 import { MemoryRouter } from "react-router";
 import { FileObject } from "@/api/server/files/loadDirectory";
@@ -35,6 +35,12 @@ vi.mock("@/components/elements/ScreenBlock", () => ({
 let mockFiles: FileObject[] | null = null;
 let mockError: any = null;
 const mockMutate = vi.fn();
+let mockDaemonProduct: "manta" | "wings" = "wings";
+const mockSearchFiles = vi.fn();
+
+vi.mock("@/api/server/files/searchFiles", () => ({
+  default: (...args: any[]) => mockSearchFiles(...args),
+}));
 
 vi.mock("@/plugins/useFileManagerQuery", () => ({
   default: () => ({
@@ -112,7 +118,13 @@ vi.mock("@/state/server", () => ({
   ServerContext: {
     useStoreState: (selector: any) =>
       selector({
-        server: { data: { id: "srv-1" } },
+        server: {
+          data: {
+            id: "srv-1",
+            uuid: "server-uuid",
+            daemonProduct: mockDaemonProduct,
+          },
+        },
         files: {
           directory: "/",
           selectedFiles: { length: mockSelectedFilesLength },
@@ -155,6 +167,8 @@ describe("components/server/files/FileManagerContainer", () => {
     mockError = null;
     mockSelectedFilesLength = 0;
     mockFileTrash = false;
+    mockDaemonProduct = "wings";
+    mockSearchFiles.mockReset();
   });
 
   const renderComponent = () =>
@@ -239,6 +253,77 @@ describe("components/server/files/FileManagerContainer", () => {
     })[1];
     fireEvent.click(emptyStateClearBtn);
     expect(screen.getByText("plugins")).toBeDefined();
+  });
+
+  it("uses the Manta search endpoint and displays the returned paths", async () => {
+    mockDaemonProduct = "manta";
+    mockFiles = [];
+    mockSearchFiles.mockResolvedValue(["/world/level.dat", "/rootfile"]);
+    renderComponent();
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "level" },
+    });
+
+    expect(await screen.findByText("/world/level.dat")).toBeDefined();
+    await waitFor(() =>
+      expect(mockSearchFiles).toHaveBeenCalledWith("server-uuid", "/", "level"),
+    );
+    fireEvent.click(screen.getByText("/world/level.dat"));
+    expect(
+      (screen.getByLabelText("Search files…") as HTMLInputElement).value,
+    ).toBe("");
+  });
+
+  it("shows an empty state when Manta finds no paths", async () => {
+    mockDaemonProduct = "manta";
+    mockFiles = [];
+    mockSearchFiles.mockResolvedValue([]);
+    renderComponent();
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "missing" },
+    });
+
+    expect(
+      await screen.findByText(/No files or directories matching/),
+    ).toBeDefined();
+  });
+
+  it("shows an error when the Manta search request fails", async () => {
+    mockDaemonProduct = "manta";
+    mockFiles = [];
+    mockSearchFiles.mockRejectedValue(new Error("Search failed"));
+    renderComponent();
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "broken" },
+    });
+
+    expect(await screen.findByText("File search failed.")).toBeDefined();
+  });
+
+  it("ignores a failed Manta request after its search is cancelled", async () => {
+    mockDaemonProduct = "manta";
+    mockFiles = [];
+    let rejectSearch: (error: Error) => void = () => undefined;
+    mockSearchFiles.mockReturnValue(
+      new Promise((_resolve, reject) => {
+        rejectSearch = reject;
+      }),
+    );
+    renderComponent();
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "cancelled" },
+    });
+    await waitFor(() => expect(mockSearchFiles).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "" },
+    });
+    rejectSearch(new Error("Late failure"));
+    await new Promise((resolve) => setTimeout(resolve, 0));
   });
 
   it("handles retry button on server error", () => {

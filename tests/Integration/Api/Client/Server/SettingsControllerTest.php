@@ -3,6 +3,7 @@
 use Illuminate\Http\Response;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Permission;
+use Pterodactyl\Models\SoftwareUpdate;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 
 test('server name can be changed', function (array $permissions) {
@@ -125,3 +126,18 @@ test('skip scripts state is exposed to client', function () {
         ->assertOk()
         ->assertJsonPath('attributes.skip_scripts', true);
 });
+
+test('detected daemon product is exposed to the client server payload', function (string $product) {
+    [$user, $server] = $this->generateTestAccount([Permission::ACTION_SETTINGS_REINSTALL]);
+    SoftwareUpdate::create([
+        'component' => 'node:' . $server->node_id,
+        'node_id' => $server->node_id,
+        'product' => $product,
+        'installed_version' => '1.0.0',
+    ]);
+
+    $this->actingAs($user)
+        ->getJson("/api/client/servers/$server->uuid")
+        ->assertOk()
+        ->assertJsonPath('attributes.daemon_product', $product);
+})->with(['wings', 'manta']);
