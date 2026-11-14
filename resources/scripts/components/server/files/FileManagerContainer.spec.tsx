@@ -303,7 +303,30 @@ describe("components/server/files/FileManagerContainer", () => {
     expect(await screen.findByText("File search failed.")).toBeDefined();
   });
 
-  it("ignores a failed Manta request after its search is cancelled", async () => {
+  it("ignores Manta results after the search is cancelled", async () => {
+    mockDaemonProduct = "manta";
+    mockFiles = [];
+    let resolveSearch: (paths: string[]) => void = () => undefined;
+    mockSearchFiles.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSearch = resolve;
+      }),
+    );
+    renderComponent();
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "cancelled" },
+    });
+    await waitFor(() => expect(mockSearchFiles).toHaveBeenCalled());
+
+    fireEvent.change(screen.getByLabelText("Search files…"), {
+      target: { value: "" },
+    });
+    resolveSearch(["/late-result"]);
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  });
+
+  it("ignores Manta errors after the search is cancelled", async () => {
     mockDaemonProduct = "manta";
     mockFiles = [];
     let rejectSearch: (error: Error) => void = () => undefined;
@@ -318,7 +341,6 @@ describe("components/server/files/FileManagerContainer", () => {
       target: { value: "cancelled" },
     });
     await waitFor(() => expect(mockSearchFiles).toHaveBeenCalled());
-
     fireEvent.change(screen.getByLabelText("Search files…"), {
       target: { value: "" },
     });
