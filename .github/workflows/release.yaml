@@ -89,17 +89,13 @@ jobs:
         run: |
           awk -v heading="## $RELEASE_TAG" '$0 == heading { found=1; next } found && /^## / { exit } found { print }' CHANGELOG.md > RELEASE_CHANGELOG
           test -s RELEASE_CHANGELOG
-      - uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload verified release artifacts
+        uses: actions/upload-artifact@v7
         with:
-          name: ${{ steps.resolve-release.outputs.release_tag }}
-          tag_name: ${{ steps.resolve-release.outputs.release_tag }}
-          target_commitish: ${{ steps.release_source.outputs.sha }}
-          draft: true
-          fail_on_unmatched_files: true
-          prerelease: ${{ steps.resolve-release.outputs.is_prerelease == 'true' }}
-          body_path: ./RELEASE_CHANGELOG
-          files: |
+          name: release-${{ steps.resolve-release.outputs.release_tag }}
+          retention-days: 7
+          if-no-files-found: error
+          path: |
             panel.tar.gz
             SHA256SUMS
+            RELEASE_CHANGELOG
