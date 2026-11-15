@@ -19,7 +19,7 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 - Resolve Blueprint's panel directory from the script location inside containers
   too, supporting Git installations outside `/app`.
 - Stamp the source tag with its runtime version before packaging. Release builds
-  create drafts for verification before publication; prerelease tags remain beta.
+  upload artifacts for maintainer verification and publication; prereleases remain beta.
 - Refresh installation, HTTPS/proxy, service and recovery guidance alongside Manta.
 
 ### Performance and security

@@ -226,6 +226,28 @@ snapshot includes `.env`, vendor dependencies and Blueprint extension data.
 
 ## Dependency maintenance
 
+### Maintainer release publication
+
+Dispatch **Release** with a reviewed version such as `v1.0-beta`. It stamps the
+source tag before building and uploads `release-v1.0-beta` as a workflow artifact.
+Download that artifact with `gh run download RUN_ID --name release-v1.0-beta`.
+Verify `sha256sum --check SHA256SUMS`, the source tag's version and release notes,
+then create a draft using an authenticated maintainer account:
+
+```bash
+gh release create v1.0-beta --repo Aquadactyl/aquadactyl --verify-tag --draft --prerelease --notes-file RELEASE_CHANGELOG panel.tar.gz SHA256SUMS
+```
+
+After the test/build/deployment checks and archive inspection pass, publish it:
+
+```bash
+gh release edit v1.0-beta --repo Aquadactyl/aquadactyl --draft=false --prerelease
+```
+
+This keeps artifact building separate from the account authorized to publish a
+release. Publishing triggers the versioned Docker build. Never move a published
+tag; ship a new version for subsequent changes.
+
 Dependabot checks Composer, pnpm (the `npm` ecosystem) and GitHub Actions weekly.
 Review upgrades in pull requests and release the tested lockfiles. Servers run `composer install` and
 `pnpm install --frozen-lockfile`; they never resolve new dependency versions during
