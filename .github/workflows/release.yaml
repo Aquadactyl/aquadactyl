@@ -52,6 +52,7 @@ jobs:
       - name: Validate release tag
         run: node scripts/helpers/release-version.mjs "$RELEASE_TAG"
       - name: Prepare immutable release source
+        id: release_source
         run: |
           git fetch origin --tags
           if git show-ref --verify --quiet "refs/tags/$RELEASE_TAG"; then
@@ -68,6 +69,7 @@ jobs:
             git push origin "refs/tags/$RELEASE_TAG"
           fi
           grep -Fq "    'version' => '${RELEASE_TAG#v}'," config/app.php
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - uses: pnpm/action-setup@v6
       - uses: actions/setup-node@v7
@@ -93,7 +95,7 @@ jobs:
         with:
           name: ${{ steps.resolve-release.outputs.release_tag }}
           tag_name: ${{ steps.resolve-release.outputs.release_tag }}
-          target_commitish: ${{ steps.resolve-release.outputs.release_tag }}
+          target_commitish: ${{ steps.release_source.outputs.sha }}
           draft: true
           fail_on_unmatched_files: true
           prerelease: ${{ steps.resolve-release.outputs.is_prerelease == 'true' }}
