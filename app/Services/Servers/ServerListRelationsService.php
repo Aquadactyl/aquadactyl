@@ -5,6 +5,7 @@ namespace Pterodactyl\Services\Servers;
 use Pterodactyl\Models\Server;
 use Pterodactyl\Models\EggVariable;
 use Pterodactyl\Models\ServerVariable;
+use Pterodactyl\Models\SoftwareUpdate;
 use Illuminate\Database\Eloquent\Collection;
 
 class ServerListRelationsService
@@ -26,8 +27,10 @@ class ServerListRelationsService
         // eager loading would mix overrides between servers sharing an egg.
         $definitions = EggVariable::query()->whereIn('egg_id', $servers->pluck('egg_id')->unique())->get()->groupBy('egg_id');
         $overrides = ServerVariable::query()->whereIn('server_id', $servers->modelKeys())->get()->groupBy('server_id');
+        $products = SoftwareUpdate::query()->whereIn('component', $servers->pluck('node_id')->unique()->map(fn ($id) => 'node:' . $id))->pluck('product', 'component');
 
         foreach ($servers as $server) {
+            $server->setAttribute('daemon_product', $products->get('node:' . $server->node_id) ?? 'wings');
             $values = ($overrides->get($server->id) ?? new Collection())->keyBy('variable_id');
             $variables = ($definitions->get($server->egg_id) ?? new Collection())->map(function (EggVariable $definition) use ($values) {
                 $variable = clone $definition;

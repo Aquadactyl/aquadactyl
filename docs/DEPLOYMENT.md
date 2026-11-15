@@ -2,7 +2,7 @@
 
 Read the [installation guide](https://aquadactyl.uk/docs) and
 [update guide](https://aquadactyl.uk/docs/updating) on the project website.
-This reference covers the scripts and configuration in this checkout. The hosted
+This reference covers the release installer and configuration in this checkout. The hosted
 guides are maintained in the [website repository](https://github.com/Aquadactyl/website).
 
 This repository includes Blueprint beta-2026-08 in its source and release archives.
@@ -12,15 +12,16 @@ updates so that the panel and Blueprint stay compatible.
 
 ## Requirements
 
-Use PHP 8.5 with FPM (PHP 8.4 is also supported), Composer 2, Node.js 24.11 or later,
+Use PHP 8.5 with FPM (PHP 8.4 is also supported), Composer 2, Node.js 24.22.1 or later,
 pnpm 12.15.0, Nginx, MariaDB/MySQL, Redis, and systemd. The panel's Composer extensions include bcmath,
 curl, gd, mbstring, PDO MySQL, posix, XML and zip. Deployment also uses bash, curl,
 git, zip, unzip, rsync, flock, runuser and mariadb-dump (or mysqldump). On Debian or
 Ubuntu, the last tools are supplied by packages including `rsync`, `util-linux`,
 `zip`, `unzip`, `git`, `curl`, and `mariadb-client`.
 
-Keep MySQL and Redis on localhost or a private network. This workflow manages an
-existing Linux host; it does not provision operating-system packages or TLS certificates.
+Keep MySQL and Redis on localhost or a private network. The installer can provision operating-system packages on supported hosts. Configure
+a trusted TLS certificate before opening the panel to users; a temporary self-signed
+certificate is only a bootstrap step, not a completed HTTPS deployment.
 
 Install the package manager version pinned in `package.json`:
 
@@ -35,23 +36,21 @@ fork. Use `PHP_FPM_SERVICE=php8.4-fpm` and the matching Nginx socket for PHP 8.4
 
 ## First installation
 
-Extract this fork's release to `/var/www/aquadactyl`. A source checkout also works;
-the installer builds the frontend using the committed lockfile.
-
-Existing installations can keep their current directory, database credentials
-and `pteroq.service`. The scripts find the panel root from their own location;
-adjust the Nginx, systemd and cron examples to your actual directory. Do not create
-a second queue worker or scheduler when updating an existing installation.
-See [branding compatibility](BRANDING.md#existing-installations) for display names
-and Redis/session prefixes.
+Use a dedicated Linux host with Ubuntu 24.04/26.04 LTS or Debian 12/13.
+Review the matching [Installer release](https://github.com/Aquadactyl/Installer)
+from Git, then install the exact panel release:
 
 ```bash
-cd /var/www/aquadactyl
-sudo cp .env.example .env
-sudo chmod 640 .env
-sudo nano .env
-sudo bash scripts/panel-install.sh
+git clone --depth 1 --branch v1.0-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+cd /opt/aquadactyl-installer
+sudo bash deploy.sh install v1.0-beta
 ```
+
+The installer provisions packages when needed, fetches the tagged panel source,
+initializes Blueprint, runs migrations, builds assets, and configures Nginx,
+`aquaq.service` and the scheduler. It refuses an initialized panel; use `update`
+for existing installations. The following configuration examples also apply to
+operators managing their own services. Do not add duplicate queues or cron entries.
 
 Configure `APP_URL` with your HTTPS domain, database credentials, Redis and mail.
 New installs default to `APP_NAME=Aquadactyl`, `DB_USERNAME=aquadactyl` and
@@ -91,9 +90,9 @@ Validate Nginx with `sudo nginx -t` before reloading it.
 Install the queue service and scheduler, adjusting paths and PHP version as needed:
 
 ```bash
-sudo cp deploy/systemd/pteroq.service /etc/systemd/system/pteroq.service
+sudo cp deploy/systemd/aquaq.service /etc/systemd/system/aquaq.service
 sudo systemctl daemon-reload
-sudo systemctl enable --now pteroq.service
+sudo systemctl enable --now aquaq.service
 ```
 
 Add this line to `/etc/cron.d/aquadactyl`:
@@ -175,7 +174,7 @@ Source code is owned by root and readable by the web group. Only `storage/` and
 The scripts default to `www-data` and `php8.5-fpm`; customize when necessary:
 
 ```bash
-sudo WEB_USER=nginx WEB_GROUP=nginx PHP_FPM_SERVICE=php-fpm bash scripts/panel-install.sh
+sudo WEB_USER=www-data WEB_GROUP=www-data PHP_FPM_SERVICE=php8.4-fpm bash /opt/aquadactyl-installer/deploy.sh permissions
 ```
 
 ## Updates
@@ -184,8 +183,8 @@ Publish a tagged release of this fork first. The release workflow attaches
 `panel.tar.gz` and `SHA256SUMS`. Then choose an explicit tag:
 
 ```bash
-cd /var/www/aquadactyl
-sudo bash scripts/panel-update.sh vRELEASE_TAG Aquadactyl/aquadactyl
+cd /opt/aquadactyl-installer
+sudo bash deploy.sh update v1.0-beta
 ```
 
 Replace `vRELEASE_TAG` with a reviewed, published release tag. If your fork has a
@@ -193,10 +192,10 @@ different owner, provide its `owner/repository` argument. For an already downloa
 archive, use the SHA256 from your reviewed release:
 
 ```bash
-sudo bash scripts/panel-update.sh --archive /tmp/panel.tar.gz YOUR_64_CHARACTER_SHA256
+sudo bash /opt/aquadactyl-installer/deploy.sh update --archive /tmp/panel.tar.gz YOUR_64_CHARACTER_SHA256
 ```
 
-The updater verifies the archive before entering maintenance, rejects escaping
+The updater fetches an exact Git tag (or verifies a supplied archive) before entering maintenance, rejects escaping
 paths and archive links, pauses the queue, and creates private SQL and filesystem
 backups outside the web root. It preserves `.env`, uploads and extension data,
 installs locked dependencies, runs migrations, rebuilds assets and caches, reloads
@@ -243,7 +242,7 @@ results when reviewing a release; historical advisory counts become stale as
 dependencies and vulnerability databases change.
 
 `php artisan p:upgrade` displays the managed update instructions and exits without
-changing the installation. Use `scripts/panel-update.sh`; upstream Panel archives
+changing the installation. Use `/opt/aquadactyl-installer/deploy.sh update`; upstream Panel archives
 would replace Aquadactyl changes and do not include this bundled Blueprint integration.
 
 For local PHP verification on Windows, build `tests/runtime/Dockerfile`; it provides

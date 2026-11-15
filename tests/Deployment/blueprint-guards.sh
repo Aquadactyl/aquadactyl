@@ -52,4 +52,14 @@ for scenario in dependencies install-build remove-build cache check-frontend ins
     install-preflight) grep -q 'installation was not started' "$WORK/output"; [[ ! -d "$WORK/panel/.blueprint/extensions/fixture" ]] ;;
   esac
 done
-echo 'Blueprint guards passed: dependency, build, cache and compatibility failures return errors and release locks.'
+mkdir -p "$WORK/relocated/scripts/commands/misc" "$WORK/relocated/.blueprint/extensions/blueprint/private/"{db,debug}
+cp "$ROOT/blueprint.sh" "$WORK/relocated/"
+cp -R "$ROOT/scripts/libraries" "$WORK/relocated/scripts/"
+cp "$ROOT/scripts/commands/misc/version.sh" "$WORK/relocated/scripts/commands/misc/"
+printf 'SHORTCUT_DIR=""\n' > "$WORK/relocated/.blueprintrc"
+touch "$WORK/relocated/.env"
+touch "$WORK/relocated/.blueprint/extensions/blueprint/private/db/version"
+# Resolve the script directory even inside Docker and from a different cwd.
+[[ $(cd / && TERM=dumb bash "$WORK/relocated/blueprint.sh" -bash -version) == beta-2026-08 ]]
+
+echo 'Blueprint guards passed: dependency, build, cache, compatibility and installation-path checks.'

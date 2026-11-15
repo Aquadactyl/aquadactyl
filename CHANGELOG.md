@@ -8,6 +8,42 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.0-beta
+
+### Installation and releases
+
+- Install and update an exact release through Git using the versioned Aquadactyl
+  Installer. Replace obsolete commands referring to scripts absent from the panel.
+- Keep backups, application secrets, uploads and Blueprint state during updates;
+  require original addon packages and stop on failed addon reapplication.
+- Resolve Blueprint's panel directory from the script location inside containers
+  too, supporting Git installations outside `/app`.
+- Stamp the source tag with its runtime version before packaging. Release builds
+  create drafts for verification before publication; prerelease tags remain beta.
+- Refresh installation, HTTPS/proxy, service and recovery guidance alongside Manta.
+
+### Performance and security
+
+- Batch daemon-product lookups when returning server lists, avoiding one database
+  query for every server row while preserving Wings/Manta detection.
+- Update the game-query XML parser to a patched release for GHSA-474x-hrwr-fgx4.
+
+### Included in this beta
+
+- Bundled Blueprint and legacy addon adapters, guided setup, configurable PWA,
+  appearance controls, passkeys/OAuth/2FA, per-user languages and notifications.
+- Server folders, schedules, file trash/previews, browser uploads, optional status
+  page, Discord roles, managed server subdomains, audit logs and action webhooks.
+- Manta-aware server file search, with existing Wings compatibility retained.
+
+### Validation
+
+- 2,268 PHP tests pass with 100% executable line coverage; 1,582 frontend tests
+  pass with 100% statement, branch, function and line coverage.
+- Installer safety tests cover exact Git tags, unsafe paths, dotenv values and
+  release-binary checksum/version verification. Test your own addons and workload
+  in staging before upgrading a public panel.
+
 ## v0.4-beta
 
 ### Added

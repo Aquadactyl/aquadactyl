@@ -49,7 +49,7 @@ class ServerTransformer extends BaseClientTransformer
             'name' => $server->name,
             'folder_id' => $server->getAttribute('user_folder_id'),
             'node' => $server->node->name,
-            'daemon_product' => SoftwareUpdate::where('component', 'node:' . $server->node_id)->value('product') ?? 'wings',
+            'daemon_product' => $server->getAttribute('daemon_product') ?? SoftwareUpdate::where('component', 'node:' . $server->node_id)->value('product') ?? 'wings',
             'node_country' => $server->node->country_code,
             'node_country_name' => Countries::name($server->node->country_code),
             'upload_limit' => $server->node->upload_size * 1024 * 1024,

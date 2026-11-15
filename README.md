@@ -15,7 +15,7 @@
 
 Aquadactyl is a free, open-source game server management panel built with PHP and
 React. This independent Pterodactyl fork includes Blueprint, a customisable dark
-theme and managed updates. Game servers run in Docker containers on Wings nodes,
+theme and managed updates. Game servers run in Docker containers on Manta or Wings nodes,
 using server definitions from the Pterodactyl egg ecosystem.
 
 [Installation](https://aquadactyl.uk/docs) ·
@@ -78,48 +78,43 @@ MariaDB, Redis, the panel, Blueprint and Wings automatically. See
 
 ## Linux installation
 
-Use PHP 8.5 with PHP-FPM (8.4 is also supported), Composer 2, Node.js 24.11 or later,
-pnpm 12.15.0, Nginx, MariaDB/MySQL, Redis and systemd. Prepare the required packages
-and services using the [installation guide](https://aquadactyl.uk/docs), then place
-a release or source checkout in `/var/www/aquadactyl`:
+The v1.0-beta release is a prerelease: test your workload and extensions before
+upgrading a live installation. The Git-based installer supports Ubuntu 24.04/26.04
+LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
+Composer 2 and the panel's pinned pnpm.
 
 ```bash
-cd /var/www/aquadactyl
-sudo cp .env.example .env
-sudo chmod 640 .env
-sudo nano .env
-sudo bash scripts/panel-install.sh
+git clone --depth 1 --branch v1.0-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+cd /opt/aquadactyl-installer
+sudo bash deploy.sh install v1.0-beta
 ```
 
-Configure the HTTPS `APP_URL`, database, Redis and mail in `.env` before running
-the installer. For a **new, empty panel**, seed the default nests and create an
-administrator:
+The installer fetches the exact panel tag, installs locked dependencies, initializes
+Blueprint and configures the queue and scheduler. Configure your HTTPS domain,
+database and email, obtain a trusted TLS certificate, then sign in as an
+administrator to complete **Panel setup**. See the [installation guide](https://aquadactyl.uk/docs/panel/installing-the-panel)
+and [deployment reference](docs/DEPLOYMENT.md), including reverse-proxy configuration.
 
-```bash
-sudo -u www-data php artisan db:seed --class=DatabaseSeeder --force
-sudo -u www-data php artisan p:user:make
-```
-
-Complete the guide's Nginx/TLS, queue and scheduler setup, and configure
-[Wings](https://pterodactyl.io/wings/1.0/installing.html) to host game servers.
-Sign in as your administrator to complete the first-run wizard. Existing panels
-can open it under **Admin > Settings > Panel setup**.
-Existing installations can retain `/var/www/pterodactyl`; match service paths to
-your installation. See the [deployment reference](docs/DEPLOYMENT.md) for details.
+Install [Manta](https://github.com/Aquadactyl/manta/blob/main/docs/INSTALLING.md)
+on each game-server node. Existing Wings nodes remain supported. The local Docker
+example above uses test credentials and is intended for development.
 
 ## Updating Aquadactyl
 
-Use a reviewed release tag to update the panel and bundled Blueprint together:
+From your reviewed installer checkout, select an explicit published release:
 
 ```bash
-cd /var/www/aquadactyl
-sudo bash scripts/panel-update.sh vRELEASE_TAG Aquadactyl/aquadactyl
+cd /opt/aquadactyl-installer
+sudo bash deploy.sh update v1.0-beta
 ```
 
-The updater verifies the archive, backs up the database and panel files, then
-installs locked dependencies, applies migrations and rebuilds assets and caches.
-Preserve your application key, Hashids salt and original addon packages. Read the
-[update and recovery guide](https://aquadactyl.uk/docs/updating) before deploying.
+The updater fetches the tagged source through Git, pauses the panel, backs up its
+database and files, installs locked dependencies, runs migrations and rebuilds
+assets. Keep `.env`, application keys, Hashids salt and original `identifier.blueprint`
+packages. It preserves uploads and extension state, and stops if an addon package
+is missing. Failures leave maintenance active for recovery. Read the
+[update guide](https://aquadactyl.uk/docs/panel/updating-the-panel) before deploying.
+Do not run `git pull` over files modified by extensions.
 
 ## Blueprint extensions
 

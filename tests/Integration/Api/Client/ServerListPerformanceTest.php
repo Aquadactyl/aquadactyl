@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Pterodactyl\Models\Permission;
 use Pterodactyl\Models\EggVariable;
 use Pterodactyl\Models\ServerVariable;
+use Pterodactyl\Models\SoftwareUpdate;
 
 test('list variables retain distinct overrides and defaults for servers sharing an egg', function () {
     $user = User::factory()->create();
@@ -14,6 +15,7 @@ test('list variables retain distinct overrides and defaults for servers sharing 
     $first->update(['egg_id' => $egg->id]);
     $second = $this->createServerModel(['owner_id' => $user->id, 'egg_id' => $first->egg_id, 'startup' => '{{BENCH_VALUE}} {{BENCH_SECRET}}']);
     $third = $this->createServerModel(['owner_id' => $user->id, 'egg_id' => $first->egg_id, 'startup' => '{{BENCH_VALUE}} {{BENCH_SECRET}}']);
+    SoftwareUpdate::create(['component' => 'node:' . $first->node_id, 'node_id' => $first->node_id, 'product' => 'manta', 'installed_version' => '1.0-beta']);
     $visible = EggVariable::factory()->create(['egg_id' => $first->egg_id, 'env_variable' => 'BENCH_VALUE', 'default_value' => 'fallback', 'user_viewable' => true]);
     $secret = EggVariable::factory()->create(['egg_id' => $first->egg_id, 'env_variable' => 'BENCH_SECRET', 'default_value' => 'private-default', 'user_viewable' => false]);
     ServerVariable::query()->create(['server_id' => $first->id, 'variable_id' => $visible->id, 'variable_value' => 'first-value']);
@@ -25,6 +27,8 @@ test('list variables retain distinct overrides and defaults for servers sharing 
     expect($servers[$first->uuid]['attributes']['invocation'])->toBe('first-value [hidden]');
     expect($servers[$second->uuid]['attributes']['invocation'])->toBe(' [hidden]');
     expect($servers[$third->uuid]['attributes']['invocation'])->toBe('fallback [hidden]');
+    expect($servers[$first->uuid]['attributes']['daemon_product'])->toBe('manta');
+    expect($servers[$third->uuid]['attributes']['daemon_product'])->toBe('wings');
     foreach ($servers as $server) {
         expect(collect($server['attributes']['relationships']['variables']['data'])->pluck('attributes.env_variable')->all())->not->toContain('BENCH_SECRET');
         expect($server['attributes']['relationships']['allocations']['data'][0]['attributes']['is_default'])->toBeTrue();

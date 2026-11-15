@@ -68,7 +68,6 @@ D_USERSHELL="/bin/bash"
 # Check for panels that are using Docker, which should have better support in the future.
 if [[ -f "/.dockerenv" ]]; then
   DOCKER="y"
-  FOLDER="/app"
 else
   DOCKER="n"
 fi
