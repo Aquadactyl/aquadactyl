@@ -36,12 +36,12 @@ fork. Use `PHP_FPM_SERVICE=php8.4-fpm` and the matching Nginx socket for PHP 8.4
 
 ## First installation
 
-Use a dedicated Linux host with Ubuntu 24.04/26.04 LTS or Debian 12/13.
+Use a dedicated Linux host with Ubuntu 22.04/24.04/26.04 LTS or Debian 12/13.
 Review the matching [Installer release](https://github.com/Aquadactyl/Installer)
 from Git, then install the exact panel release:
 
 ```bash
-git clone --depth 1 --branch v1.0-beta.1 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.0-beta.2 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
 sudo bash deploy.sh install v1.0-beta
 ```
@@ -52,7 +52,13 @@ initializes Blueprint, runs migrations, builds assets, and configures Nginx,
 for existing installations. The following configuration examples also apply to
 operators managing their own services. Do not add duplicate queues or cron entries.
 
-Installer `v1.0-beta.1` adds recovery for an unused, unfinished checkout that
+Installer `v1.0-beta.2` supports Ubuntu 22.04 and checks the host before changing
+panel files or configuration. PHP 8.4/8.5 is still required; Ubuntu's stock PHP
+version is not sufficient. The installer provisions the PHP repository when needed.
+If an earlier attempt recovered source and then rejected the OS, select the new
+installer and rerun `install v1.0-beta` without another source refresh.
+
+The installer also supports recovery for an unused, unfinished checkout that
 reports a different panel version. Run `install v1.0-beta --refresh-source` only
 for that case: it fetches the requested release before backing up the old directory,
 then preserves `.env`, `.blueprintrc` and `storage/app`. Initialized panels are
