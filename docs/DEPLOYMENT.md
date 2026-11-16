@@ -41,7 +41,7 @@ Review the matching [Installer release](https://github.com/Aquadactyl/Installer)
 from Git, then install the exact panel release:
 
 ```bash
-git clone --depth 1 --branch v1.0-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.0-beta.1 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
 sudo bash deploy.sh install v1.0-beta
 ```
@@ -51,6 +51,12 @@ initializes Blueprint, runs migrations, builds assets, and configures Nginx,
 `aquaq.service` and the scheduler. It refuses an initialized panel; use `update`
 for existing installations. The following configuration examples also apply to
 operators managing their own services. Do not add duplicate queues or cron entries.
+
+Installer `v1.0-beta.1` adds recovery for an unused, unfinished checkout that
+reports a different panel version. Run `install v1.0-beta --refresh-source` only
+for that case: it fetches the requested release before backing up the old directory,
+then preserves `.env`, `.blueprintrc` and `storage/app`. Initialized panels are
+refused even with this flag. The installer prints the private backup path.
 
 Configure `APP_URL` with your HTTPS domain, database credentials, Redis and mail.
 New installs default to `APP_NAME=Aquadactyl`, `DB_USERNAME=aquadactyl` and
