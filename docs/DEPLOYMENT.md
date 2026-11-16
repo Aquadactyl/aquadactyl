@@ -41,7 +41,7 @@ Review the matching [Installer release](https://github.com/Aquadactyl/Installer)
 from Git, then install the exact panel release:
 
 ```bash
-git clone --depth 1 --branch v1.0-beta.2 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.0-beta.3 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
 sudo bash deploy.sh install v1.0-beta
 ```
@@ -52,11 +52,24 @@ initializes Blueprint, runs migrations, builds assets, and configures Nginx,
 for existing installations. The following configuration examples also apply to
 operators managing their own services. Do not add duplicate queues or cron entries.
 
-Installer `v1.0-beta.2` supports Ubuntu 22.04 and checks the host before changing
+Installer `v1.0-beta.3` supports Ubuntu 22.04 and checks the host before changing
 panel files or configuration. PHP 8.4/8.5 is still required; Ubuntu's stock PHP
 version is not sufficient. The installer provisions the PHP repository when needed.
 If an earlier attempt recovered source and then rejected the OS, select the new
 installer and rerun `install v1.0-beta` without another source refresh.
+
+If an installation already installed dependencies and then failed, repair the
+saved configuration and use `install v1.0-beta --resume`. This requires matching
+release source and an existing `.env`, preserves application keys and uploads,
+and refuses initialized Blueprint/addon state. Database connectivity is checked
+before key generation or maintenance. Existing database-account passwords are
+not reset by `CREATE USER IF NOT EXISTS`; repair credentials or grants deliberately
+without dropping the database or regenerating the application key.
+For an unfinished local TCP installation, `sudo bash deploy.sh repair-database`
+creates a dedicated account limited to the saved panel database, verifies it and
+updates only `.env`'s database username/password after a private backup. Existing
+accounts and data are preserved. It requires local `sudo mariadb` socket access
+and refuses remote/URL/socket configuration and system databases.
 
 The installer also supports recovery for an unused, unfinished checkout that
 reports a different panel version. Run `install v1.0-beta --refresh-source` only

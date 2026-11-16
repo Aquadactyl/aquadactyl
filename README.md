@@ -84,7 +84,7 @@ LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
 Composer 2 and the panel's pinned pnpm.
 
 ```bash
-git clone --depth 1 --branch v1.0-beta.2 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.0-beta.3 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
 sudo bash deploy.sh install v1.0-beta
 ```
