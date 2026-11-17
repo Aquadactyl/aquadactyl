@@ -20,7 +20,7 @@ Dokploy can build this Compose definition from a pinned Git commit. Use a separa
 
 ## Isolation and resource limits
 
-Manta and its example containers use a **separate rootless Docker engine**. The runtime runs as UID 1000, uses user namespaces and a TUN device, and receives no production Docker socket, privileged mode, host filesystem mount or host network. RootlessKit requires the explicit seccomp/AppArmor/system-path exceptions shown in Compose. Test host support before making the deployment public; do not replace this setup with privileged Docker-in-Docker.
+Manta and its example containers use a **separate rootless Docker engine**. Initialization selects subordinate IDs that exist in the parent user namespace, keeps their configuration root-owned, then drops to UID 1000 before starting the engine or Manta. This also supports nested hosts with a 65536-ID mapping. The runtime uses user namespaces and a TUN device, and receives no production Docker socket, privileged mode, host filesystem mount or host network. RootlessKit requires the explicit seccomp/AppArmor/system-path exceptions shown in Compose. Test host support before making the deployment public; do not replace this setup with privileged Docker-in-Docker.
 
 The runtime has a hard outer limit of 1.5 GiB RAM, one CPU and 512 processes. The database, panel, cache and reset worker have separate limits. Per-server cgroup enforcement/accounting is limited inside this nested rootless setup, so the demo is for exploring the interface and workflow, **not production performance benchmarking**. Normal Manta deployments use their native Docker/cgroup limits.
 
