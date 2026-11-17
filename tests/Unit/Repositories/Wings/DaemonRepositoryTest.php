@@ -9,6 +9,15 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Handler\MockHandler;
 use Pterodactyl\Repositories\Wings\DaemonServerRepository;
 
+test('demo backend requests use the private runtime without changing the public node address', function () {
+    config(['aquadactyl.demo.enabled' => true]);
+    $node = m::mock(Node::class);
+    $node->shouldNotReceive('getConnectionAddress');
+    $node->shouldReceive('getDecryptedKey')->andReturn('demo-node-key');
+    $client = (new DaemonServerRepository($this->app))->setNode($node)->getHttpClient();
+    expect((string) $client->getConfig('base_uri'))->toBe('http://manta:8080');
+});
+
 test('Wings requests accept numeric timeouts stored as settings or environment strings', function (int|float|string $timeout, int|float|string $connectTimeout, float $expectedTimeout, float $expectedConnectTimeout) {
     config()->set('pterodactyl.guzzle.timeout', $timeout);
     config()->set('pterodactyl.guzzle.connect_timeout', $connectTimeout);

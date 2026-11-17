@@ -3,6 +3,7 @@ export interface SiteSettings {
   appUrl?: string;
   locale: string;
   timezone?: string;
+  demo?: { password: string; accounts: string[] } | null;
   notifications?: { enabled: boolean; discord_enabled: boolean };
   logoUrl?: string | null;
   showNameWithLogo?: boolean;

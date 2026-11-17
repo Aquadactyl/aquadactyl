@@ -40,6 +40,7 @@
         @include('partials.appearance')
     </head>
     <body class="hold-transition skin-blue fixed sidebar-mini aquadactyl-admin">
+        @include('partials.demo-banner')
         @yield('blueprint.cache')
         <div class="wrapper">
             <header class="main-header">

@@ -46,6 +46,10 @@ class AssetComposer
             'appUrl' => config('app.url') ?? '',
             'locale' => config('app.locale') ?? 'en',
             'timezone' => config('app.timezone') ?? 'UTC',
+            'demo' => config('aquadactyl.demo.enabled', false) ? [
+                'password' => config('aquadactyl.demo.password'),
+                'accounts' => ['demo', 'demo-admin'],
+            ] : null,
             'logoUrl' => config('aquadactyl.branding.logo_path') ? '/storage/' . config('aquadactyl.branding.logo_path') : null,
             'showNameWithLogo' => (bool) config('aquadactyl.branding.show_name', false),
             'appearance' => app(\Pterodactyl\Services\Settings\AppearanceService::class)->publicSettings(),
