@@ -8,6 +8,15 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.1-beta.2
+
+- Show `/etc/aquadactyl` in English, French and German node configuration
+  instructions, and remove the old-directory dependency from generated setup
+  commands. Quote the panel URL for the node's shell.
+- Add the Aquadactyl configuration directory to the mount-source denylist while
+  keeping the legacy entry. Use the canonical directory in the isolated demo's
+  shared configuration volume and Manta command.
+
 ## v1.1-beta.1
 
 - Keep the first-start Blueprint welcome dialog outside admin layout containers so

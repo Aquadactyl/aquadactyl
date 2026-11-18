@@ -51,4 +51,4 @@ done
 if ! docker image inspect aquadactyl-demo-runtime:1 >/dev/null 2>&1; then
   docker build --tag aquadactyl-demo-runtime:1 /opt/demo-runtime
 fi
-exec /usr/local/bin/manta --config /etc/pterodactyl/config.yml
+exec /usr/local/bin/manta --config /etc/aquadactyl/config.yml
