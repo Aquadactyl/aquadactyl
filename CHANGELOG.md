@@ -8,6 +8,9 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+- Keep the first-start Blueprint welcome dialog outside admin layout containers so
+  header clipping and sidebar transforms cannot hide it behind its backdrop.
+
 ## v1.1-beta
 
 ### Security
