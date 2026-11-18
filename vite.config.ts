@@ -34,13 +34,13 @@ export default defineConfig({
     exclude: ["lucide-react"],
   },
   server: {
-    host: "0.0.0.0",
+    host: process.env.VITE_DEV_HOST || "127.0.0.1",
+    allowedHosts: ["aquadactyl.test"],
     port: 5173,
     strictPort: true,
-    cors: true,
     https: httpsOptions,
     hmr: {
-      host: "aquadactyl.test",
+      host: process.env.VITE_HMR_HOST || "aquadactyl.test",
     },
   },
   build: {

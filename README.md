@@ -78,7 +78,7 @@ MariaDB, Redis, the panel, Blueprint and Wings automatically. See
 
 ## Linux installation
 
-The v1.0-beta release is a prerelease: test your workload and extensions before
+The v1.1-beta release is a prerelease: test your workload and extensions before
 upgrading a live installation. The Git-based installer supports Ubuntu 22.04/24.04/26.04
 LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
 Composer 2 and the panel's pinned pnpm.
@@ -86,7 +86,7 @@ Composer 2 and the panel's pinned pnpm.
 ```bash
 git clone --depth 1 --branch v1.0-beta.3 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
-sudo bash deploy.sh install v1.0-beta
+sudo bash deploy.sh install v1.1-beta
 ```
 
 The installer fetches the exact panel tag, installs locked dependencies, initializes
@@ -105,7 +105,7 @@ From your reviewed installer checkout, select an explicit published release:
 
 ```bash
 cd /opt/aquadactyl-installer
-sudo bash deploy.sh update v1.0-beta
+sudo bash deploy.sh update v1.1-beta
 ```
 
 The updater fetches the tagged source through Git, pauses the panel, backs up its

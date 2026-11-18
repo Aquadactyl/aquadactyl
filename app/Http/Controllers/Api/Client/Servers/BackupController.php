@@ -47,7 +47,11 @@ class BackupController extends ClientApiController
             throw new AuthorizationException();
         }
 
-        $limit = min($request->query('per_page') ?? 20, 50);
+        $request->validate([
+            'page' => ['sometimes', 'integer', 'between:1,2147483647'],
+            'per_page' => ['sometimes', 'integer', 'min:1'],
+        ]);
+        $limit = min($request->integer('per_page', 20), 50);
 
         return $this->fractal->collection($server->backups()->paginate($limit))
             ->transformWith($this->getTransformer(BackupTransformer::class))

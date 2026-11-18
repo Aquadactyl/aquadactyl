@@ -6,7 +6,11 @@ class GetServersRequest extends ClientApiRequest
 {
     public function rules(): array
     {
-        return ['folder' => ['sometimes', 'string', 'regex:/^(?:unfiled|[1-9][0-9]*)$/']];
+        return [
+            'page' => ['sometimes', 'integer', 'between:1,2147483647'],
+            'per_page' => ['sometimes', 'integer', 'min:1'],
+            'folder' => ['sometimes', 'string', 'regex:/^(?:unfiled|[1-9][0-9]*)$/'],
+        ];
     }
 
     public function authorize(): bool

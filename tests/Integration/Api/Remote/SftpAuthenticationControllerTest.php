@@ -153,6 +153,34 @@ test('user is not throttled if no public key matches', function () use ($getUser
     }
 });
 
+test('SFTP password throttling follows the account across servers, node addresses and username casing', function () {
+    $other = $this->createServerModel(['user_id' => $this->user->id]);
+    for ($attempt = 0; $attempt < 5; ++$attempt) {
+        $server = $attempt % 2 ? $other : $this->server;
+        $name = $attempt % 2 ? strtoupper($this->user->username) : $this->user->username;
+        $identifier = $attempt % 2 ? $server->uuid : $server->identifier;
+        $this->withHeader('Authorization', 'Bearer ' . $server->node->daemon_token_id . '.' . $server->node->getDecryptedKey())
+            ->withServerVariables(['REMOTE_ADDR' => '192.0.2.' . ($attempt + 1)])
+            ->postJson('/api/remote/sftp/auth', ['username' => $name . '.' . $identifier, 'password' => 'incorrect'])
+            ->assertForbidden();
+    }
+
+    $this->withHeader('Authorization', 'Bearer ' . $other->node->daemon_token_id . '.' . $other->node->getDecryptedKey())
+        ->withServerVariables(['REMOTE_ADDR' => '192.0.2.100'])
+        ->postJson('/api/remote/sftp/auth', ['username' => $this->user->username . '.' . $other->identifier, 'password' => 'foobar'])
+        ->assertStatus(429);
+});
+
+test('SFTP failures for one account do not lock other users out of the same server', function () {
+    $admin = Pterodactyl\Models\User::factory()->create(['root_admin' => true, 'password' => password_hash('other-password', PASSWORD_DEFAULT)]);
+    for ($attempt = 0; $attempt < 5; ++$attempt) {
+        $this->postJson('/api/remote/sftp/auth', ['username' => $this->user->username . '.' . $this->server->identifier, 'password' => 'incorrect'])
+            ->assertForbidden();
+    }
+    $this->postJson('/api/remote/sftp/auth', ['username' => $admin->username . '.' . $this->server->identifier, 'password' => 'other-password'])
+        ->assertOk()->assertJsonPath('user', $admin->uuid);
+});
+
 test('certificate public key authentication is rejected as invalid key', function () use ($getUsername, $makeCertificate) {
     $certificate = $makeCertificate();
 

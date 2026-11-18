@@ -93,6 +93,20 @@ links also include the issuer. A provider account cannot belong to two panel use
 Changing an OIDC issuer requires unlinking the old connection and linking the new one.
 OAuth access and refresh tokens are not retained in the panel database.
 
+## SFTP authentication
+
+SFTP failures are limited per account across servers and nodes, with username
+casing normalized. Five failures trigger the existing one-minute cooldown;
+attempts against one account do not lock other users out of the same server.
+Valid public keys that are not registered retain the normal SSH key-selection
+behavior and do not consume password attempts.
+
+The Docker web server executes only Laravel's `index.php`, denies hidden files,
+and disables query-string access logging in its HTTPS configuration. Its HTTPS
+listener accepts TLS 1.2 and 1.3. Blueprint routes continue to pass through Laravel;
+placing standalone PHP entrypoints in a public extension directory is unsupported,
+as with the native Nginx configuration.
+
 ## Verification
 
 OpenID Connect discovery and signing-key downloads are streamed with a 1 MiB

@@ -187,8 +187,10 @@ class SftpAuthenticationController extends Controller
      */
     protected function throttleKey(Request $request): string
     {
-        $username = explode('.', strrev($request->input('username', '')));
+        $username = $this->parseUsername($request->input('username', ''))['username'];
 
-        return strtolower(strrev($username[0] ?? '') . '|' . $request->ip()); // @phpstan-ignore nullCoalesce.offset
+        // The request IP belongs to the daemon, not the SFTP client. Bind failures
+        // to the account so rotating servers, UUID forms or nodes cannot bypass it.
+        return 'sftp:' . hash('sha256', mb_strtolower($username));
     }
 }

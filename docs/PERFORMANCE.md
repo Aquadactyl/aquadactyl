@@ -86,10 +86,17 @@ sources. Build measurements and their locked dependencies are documented in the
 [frontend benchmark guide](https://aquadactyl.uk/docs/panel/benchmarks).
 
 The Docker frontend stage copies its manifests, build configuration, resources,
-public files and Blueprint extensions separately from backend source. PHP,
-migration and documentation edits can reuse compiled frontend layers. BuildKit
+and Blueprint extensions separately from backend source. Public files are copied
+only into the runtime stage; changing a logo or admin stylesheet can reuse the
+frontend build as well as PHP, migration and documentation edits. BuildKit
 cache mounts retain pnpm and Composer downloads outside the final image;
 dependency installation still uses lockfiles.
+
+Daemon configuration pages batch primary allocations, inherited egg settings and
+server variables. Variable definitions and overrides take two queries per page,
+with separate values for each server sharing an egg. Integration tests verify
+that increasing a daemon page from one to ten servers does not increase the SQL
+query count. This measures database work, not end-user page latency.
 
 ```bash
 docker compose build panel

@@ -73,7 +73,7 @@ class ClientController extends ClientApiController
                 $builder->whereIn('servers.id', $assignments->where('server_folder_id', $folder));
             }
         }
-        $servers = $builder->paginate(min($request->query('per_page', 50), 100))->appends($request->query());
+        $servers = $builder->paginate(min($request->integer('per_page', 50), 100))->appends($request->query());
         app(ServerListRelationsService::class)->handle($servers->getCollection());
         $folders = $foldersEnabled ? DB::table('server_folder_assignments')->where('user_id', $user->id)
             ->whereIn('server_id', $servers->getCollection()->modelKeys())->pluck('server_folder_id', 'server_id') : collect();
