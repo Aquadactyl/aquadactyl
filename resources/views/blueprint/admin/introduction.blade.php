@@ -7,7 +7,7 @@
 
 @section("blueprint.introduction")
   @if(!$blueprint->dbGet("blueprint", "flags:introduction_dismissed"))
-    <div class="modal fade" id="blueprintIntroductionModal" tabindex="-1" role="dialog">
+    <div class="modal fade" id="blueprintIntroductionModal" tabindex="-1" role="dialog" aria-labelledby="blueprintIntroductionTitle">
       <div class="modal-dialog" role="document">
         <div class="modal-content" style="background: transparent;">
           <form action="/admin/extensions/blueprint" method="POST">
@@ -15,7 +15,7 @@
               <img src="/assets/extensions/blueprint/welcomebanner.jpeg" style="width: 100%"/>
             </div>
             <div class="modal-body">
-              <h3 class="modal-title">Welcome to Blueprint</h3>
+              <h3 class="modal-title" id="blueprintIntroductionTitle">Welcome to Blueprint</h3>
               <p style="padding-top: 5px;">
                 Blueprint is the industry-leading tool to build, manage and maintain extensions for the Aquadactyl panel. You are almost ready to manage extensions, this is the last step.
               </p>

@@ -26,6 +26,31 @@ beforeEach(function () {
     Route::getRoutes()->refreshNameLookups();
 });
 
+test('the first-start Blueprint dialog is a body-level sibling of its backdrop outside admin layout containers', function () {
+    config()->set('aquadactyl.setup.completed', true);
+    app(BlueprintAdminLibrary::class)->dbSet('blueprint', 'flags:introduction_dismissed', false);
+    $response = $this->get('/admin')->assertOk();
+    $document = new DOMDocument();
+    $document->loadHTML($response->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $xpath = new DOMXPath($document);
+
+    expect($xpath->query('/html/body/div[@id="blueprintIntroductionModal"]')->length)->toBe(1)
+        ->and($xpath->query('//section[contains(@class, "content-header")]//*[@id="blueprintIntroductionModal"]')->length)->toBe(0);
+    $response->assertSee('Welcome to Blueprint')->assertSee('Take me to my extensions!');
+});
+
+test('dismissing the Blueprint welcome dialog persists and leaves later admin visits unobstructed', function () {
+    config()->set('aquadactyl.setup.completed', true);
+    $library = app(BlueprintAdminLibrary::class);
+    $library->dbSet('blueprint', 'flags:introduction_dismissed', false);
+    $this->get('/admin')->assertOk()->assertSee('id="blueprintIntroductionModal"', false);
+
+    $this->patch('/admin/extensions/blueprint', ['flags:introduction_dismissed' => 1])->assertRedirect(route('admin.extensions'));
+
+    expect($library->dbGet('blueprint', 'flags:introduction_dismissed'))->toBe('1');
+    $this->get('/admin')->assertOk()->assertDontSee('id="blueprintIntroductionModal"', false);
+});
+
 test('Blueprint flags are validated persisted and metadata refreshed only when its setting changes', function () {
     $settings = app(SettingsRepositoryInterface::class);
     $settings->set('blueprint::flags:remote_metadata', '0');

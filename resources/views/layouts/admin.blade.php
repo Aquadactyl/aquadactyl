@@ -163,7 +163,6 @@
             </aside>
             <div class="content-wrapper">
                 <section class="content-header">
-                    @yield('blueprint.introduction')
                     @yield('content-header')
                 </section>
                 <section class="content">
@@ -200,6 +199,8 @@
                 </div>
             </footer>
         </div>
+        {{-- Keep fixed dialogs outside layout containers that may clip or create stacking contexts. --}}
+        @yield('blueprint.introduction')
         @section('footer-scripts')
             {!! Theme::js('vendor/jquery/jquery.min.js?t={cache-version}') !!}
             {!! Theme::js('vendor/sweetalert/sweetalert.min.js?t={cache-version}') !!}
