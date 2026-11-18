@@ -1,0 +1,11 @@
+Welcome to the Aquadactyl live demo!
+
+These are real Python example containers managed by Manta in a separate rootless Docker engine.
+
+Try the console commands: help, status, list, say hello, stop.
+Use Start, Restart and Stop to control the example workloads.
+You can edit this welcome.txt file to try the file editor.
+
+The shared demo database, sessions, containers and this file return to their baseline every five minutes.
+Startup code, account security, daemon credentials and installation changes are protected.
+No personal information should be entered into this public demonstration.

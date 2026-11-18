@@ -1,6 +1,12 @@
 <?php
 
 return [
+    // Only enable on a dedicated demonstration deployment with disposable data.
+    'demo' => [
+        'enabled' => env('AQUADACTYL_DEMO_MODE', false),
+        'password' => env('AQUADACTYL_DEMO_PASSWORD', 'AquadactylDemo123!'),
+        'reset_marker' => '/app/var/demo-resetting',
+    ],
     // The installation migration explicitly opts new panels into onboarding.
     'setup' => ['completed' => true],
     'pwa' => [

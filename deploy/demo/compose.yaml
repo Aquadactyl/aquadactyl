@@ -1,0 +1,159 @@
+name: aquadactyl-public-demo
+
+x-demo-logging: &demo-logging
+  driver: local
+  options:
+    max-size: 10m
+    max-file: "2"
+
+x-panel-environment: &panel-environment
+  APP_ENV: production
+  APP_DEBUG: "false"
+  LOG_CHANNEL: stderr
+  LOG_LEVEL: warning
+  APP_NAME: Aquadactyl Demo
+  APP_URL: ${DEMO_URL:-https://demo.aquadactyl.uk}
+  APP_TIMEZONE: UTC
+  TRUSTED_PROXIES: "*"
+  SESSION_SECURE_COOKIE: ${DEMO_SECURE_COOKIE:-true}
+  SESSION_SAME_SITE: lax
+  SESSION_COOKIE: aquadactyl_public_demo_session
+  AQUADACTYL_DEMO_MODE: "true"
+  AQUADACTYL_DEMO_PASSWORD: AquadactylDemo123!
+  AQUADACTYL_BLUEPRINT_WEB_INSTALL_ENABLED: "false"
+  AQUADACTYL_TELEMETRY_ENABLED: "false"
+  AQUADACTYL_PWA_ENABLED: "false"
+  DB_HOST: database
+  DB_DATABASE: aquadactyl_demo
+  DB_USERNAME: aquadactyl_demo
+  DB_PASSWORD: ${DEMO_DB_PASSWORD:?Set a unique demo database password}
+  DB_PORT: "3306"
+  REDIS_HOST: cache
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: "null"
+  CACHE_STORE: redis
+  CACHE_DRIVER: redis
+  SESSION_DRIVER: redis
+  QUEUE_CONNECTION: redis
+  QUEUE_DRIVER: redis
+  MAIL_MAILER: log
+  MAIL_FROM_ADDRESS: demo@example.invalid
+  RECAPTCHA_ENABLED: "false"
+  ADDONS_HOOKS_ENABLED: "false"
+
+services:
+  database:
+    logging: *demo-logging
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: aquadactyl_demo
+      MARIADB_USER: aquadactyl_demo
+      MARIADB_PASSWORD: ${DEMO_DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DEMO_DB_ROOT_PASSWORD:?Set a unique demo database root password}
+    volumes:
+      - database:/var/lib/mysql
+    healthcheck:
+      test: [CMD, healthcheck.sh, --connect, --innodb_initialized]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    mem_limit: 384m
+    cpus: 0.5
+    networks: [backend]
+
+  cache:
+    logging: *demo-logging
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: [redis-server, --maxmemory, 64mb, --maxmemory-policy, allkeys-lru]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    mem_limit: 96m
+    cpus: 0.25
+    networks: [backend]
+
+  panel:
+    logging: *demo-logging
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    image: aquadactyl-public-demo:local
+    restart: unless-stopped
+    environment: *panel-environment
+    depends_on:
+      database: {condition: service_healthy}
+      cache: {condition: service_healthy}
+    volumes:
+      - panel-var:/app/var
+      - panel-storage:/app/storage
+      - manta-config:/etc/pterodactyl
+      - game-data:/home/rootless/demo-data
+    healthcheck:
+      test: [CMD, curl, --fail, --silent, --output, /dev/null, http://127.0.0.1/auth/login]
+      interval: 5s
+      timeout: 5s
+      start_period: 180s
+      retries: 40
+    mem_limit: 768m
+    cpus: 1.0
+    networks: [backend]
+
+  manta:
+    logging: *demo-logging
+    build:
+      context: ../..
+      dockerfile: deploy/demo/manta.Dockerfile
+    image: aquadactyl-demo-manta:local
+    restart: unless-stopped
+    depends_on:
+      panel: {condition: service_healthy}
+    volumes:
+      - runtime-home:/home/rootless
+      - game-data:/home/rootless/demo-data
+      - manta-config:/etc/pterodactyl:ro
+    # RootlessKit needs user namespaces and a TUN device. It receives neither
+    # privileged mode nor the Docker host socket, host filesystem or host network.
+    devices: [/dev/net/tun:/dev/net/tun]
+    security_opt: [seccomp=unconfined, apparmor=unconfined, systempaths=unconfined]
+    healthcheck:
+      test: [CMD, nc, -z, 127.0.0.1, "8080"]
+      interval: 5s
+      timeout: 3s
+      start_period: 180s
+      retries: 40
+    mem_limit: 1536m
+    cpus: 1.0
+    pids_limit: 512
+    stop_grace_period: 30s
+    networks: [backend]
+
+  resetter:
+    logging: *demo-logging
+    image: aquadactyl-public-demo:local
+    restart: unless-stopped
+    entrypoint: [php, /app/deploy/demo/reset.php]
+    depends_on:
+      panel: {condition: service_healthy}
+      manta: {condition: service_healthy}
+    environment: *panel-environment
+    volumes:
+      - panel-var:/app/var
+      - game-data:/home/rootless/demo-data
+      - runtime-home:/home/rootless
+    mem_limit: 256m
+    cpus: 0.5
+    networks: [backend]
+
+volumes:
+  database:
+  panel-var:
+  panel-storage:
+  manta-config:
+  runtime-home:
+  game-data:
+networks:
+  backend:

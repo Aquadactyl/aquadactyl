@@ -40,6 +40,7 @@ const LoginContainer = () => {
   const [methodError, setMethodError] = useState("");
 
   const { clearFlashes, clearAndAddHttpError } = useFlash();
+  const demo = useAppStore((state) => state.settings.data?.demo);
   const registrationEnabled = useAppStore(
     (state) => state.settings.data?.features?.registration ?? false,
   );
@@ -55,11 +56,15 @@ const LoginContainer = () => {
 
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<Values>({
     resolver: zodResolver(schema),
-    defaultValues: { username: "", password: "" },
+    defaultValues: {
+      username: demo?.accounts[0] ?? "",
+      password: demo?.password ?? "",
+    },
   });
 
   useEffect(() => {
@@ -141,6 +146,32 @@ const LoginContainer = () => {
       )}
       onSubmit={handleSubmit(onSubmit)}
     >
+      {demo && (
+        <div className="border-primary-400/30 bg-primary-500/10 mb-5 rounded-lg border p-4 text-neutral-100">
+          <p className="mb-2 font-medium">Explore the live demo</p>
+          <p className="mb-3 text-sm text-neutral-300">
+            Credentials are filled in below. Choose an account, then sign in.
+            Account security and deployment changes are protected.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {demo.accounts.map((account) => (
+              <button
+                key={account}
+                type="button"
+                className="hover:border-primary-400 focus-visible:outline-primary-400 rounded border border-neutral-500 px-3 py-2 text-sm focus-visible:outline"
+                onClick={() => {
+                  setValue("username", account);
+                  setValue("password", demo.password);
+                }}
+              >
+                {account === "demo-admin"
+                  ? "Restricted admin demo"
+                  : "User demo"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       {methodError && (
         <div className="mb-5">
           <MessageBox type="error" title={t("login.sign_in", "Sign in")}>

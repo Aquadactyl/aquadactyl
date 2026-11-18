@@ -49,6 +49,7 @@
         @include('partials.appearance')
     </head>
     <body class="{{ $css['body'] ?? 'bg-neutral-50' }}">
+        @include('partials.demo-banner')
         @section('content')
             @yield('above-container')
             @yield('container')

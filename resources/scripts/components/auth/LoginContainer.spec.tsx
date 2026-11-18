@@ -113,6 +113,41 @@ describe("components/auth/LoginContainer", () => {
     expect(screen.getByRole("button", { name: "Sign in" })).toBeDefined();
     expect(screen.getByText("Forgot password?")).toBeDefined();
     expect(screen.getByText("Create an account")).toBeDefined();
+    expect(
+      (screen.getByLabelText(/Username or email/i) as HTMLInputElement).value,
+    ).toBe("");
+    expect(
+      (screen.getByLabelText(/^Password$/i) as HTMLInputElement).value,
+    ).toBe("");
+    expect(screen.queryByText("Explore the live demo")).toBeNull();
+  });
+
+  it("prefills only configured demo credentials and switches between the demo accounts", async () => {
+    store.getActions().settings.setSettings({
+      ...store.getState().settings.data!,
+      demo: {
+        accounts: ["demo", "demo-admin"],
+        password: "public-demo-password",
+      },
+    });
+    render(
+      <MemoryRouter>
+        <LoginContainer />
+      </MemoryRouter>,
+    );
+    const username = (await screen.findByLabelText(
+      /Username or email/i,
+    )) as HTMLInputElement;
+    const password = screen.getByLabelText(/^Password$/i) as HTMLInputElement;
+    expect(username.value).toBe("demo");
+    expect(password.value).toBe("public-demo-password");
+    fireEvent.click(
+      screen.getByRole("button", { name: "Restricted admin demo" }),
+    );
+    expect(username.value).toBe("demo-admin");
+    expect(password.value).toBe("public-demo-password");
+    fireEvent.click(screen.getByRole("button", { name: "User demo" }));
+    expect(username.value).toBe("demo");
   });
 
   it("redirects on initial load if confirmation_token is present in methods", async () => {

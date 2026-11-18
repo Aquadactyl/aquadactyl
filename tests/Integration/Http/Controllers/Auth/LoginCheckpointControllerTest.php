@@ -39,7 +39,9 @@ test('user can sign in using totp token', function (?int $ts) {
         'expires_at' => now()->addMinutes(5),
     ]);
 
-    $totp = $this->app->make(Google2FA::class)->getCurrentOtp(str_repeat('a', 16));
+    $google2FA = $this->app->make(Google2FA::class);
+    $counter = $google2FA->getTimestamp();
+    $totp = $google2FA->oathTotp(str_repeat('a', 16), $counter);
 
     $this->withoutExceptionHandling()->postJson(route('auth.login-checkpoint', [
         'confirmation_token' => 'token',
@@ -51,8 +53,9 @@ test('user can sign in using totp token', function (?int $ts) {
         ->assertJsonPath('data.intended', '/')
         ->assertJsonPath('data.user.uuid', $user->uuid);
 
-    $period = app(Google2FA::class)->getKeyRegeneration();
-    expect($user->refresh()->totp_authenticated_at->unix())->toBe(app(Google2FA::class)->getTimestamp() * $period);
+    // Verification stores the matched counter, even if a new period starts
+    // between generating the code and checking the response.
+    expect($user->refresh()->totp_authenticated_at->unix())->toBe($counter * $google2FA->getKeyRegeneration());
 
     $this->assertAuthenticatedAs($user);
 

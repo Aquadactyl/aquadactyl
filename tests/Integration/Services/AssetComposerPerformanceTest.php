@@ -45,3 +45,20 @@ test('configuration is refreshed when the current request changes even if a comp
         ->and($second->getData()['siteConfiguration']['name'])->toBe('Second viewer')
         ->and($second->getData()['siteConfiguration']['features']['fileTrash'])->toBeFalse();
 });
+
+test('only an explicitly enabled demo publishes its public demonstration credentials', function () {
+    $this->mock(BlueprintAdminLibrary::class)->shouldReceive('dbGetMany')->twice()
+        ->andReturn(['flags:disable_attribution' => false]);
+    config(['aquadactyl.demo.enabled' => false, 'aquadactyl.demo.password' => 'public-demo-password']);
+    $view = view('templates.wrapper');
+    app(AssetComposer::class)->compose($view);
+    expect($view->getData()['siteConfiguration']['demo'])->toBeNull();
+
+    $this->app->forgetScopedInstances();
+    config(['aquadactyl.demo.enabled' => true]);
+    $demo = view('templates.wrapper');
+    app(AssetComposer::class)->compose($demo);
+    expect($demo->getData()['siteConfiguration']['demo'])->toBe([
+        'password' => 'public-demo-password', 'accounts' => ['demo', 'demo-admin'],
+    ]);
+});

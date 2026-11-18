@@ -93,6 +93,9 @@ done
 
 echo "Running database migrations and Aquadactyl seeders."
 php artisan config:clear
+if [ "${AQUADACTYL_DEMO_MODE:-false}" = "true" ]; then
+  php deploy/demo/prepare.php
+fi
 php artisan migrate --force
 if [ "${AQUADACTYL_LOCAL_SETUP:-false}" = "true" ]; then
   php .github/docker/local-setup.php
@@ -102,6 +105,10 @@ fi
 
 echo "Seeding Blueprint settings."
 php artisan db:seed --class=BlueprintSeeder --force
+
+if [ "${AQUADACTYL_DEMO_MODE:-false}" = "true" ]; then
+  php deploy/demo/setup.php
+fi
 
 # Refresh the shortcut even when the image already contains an initialized framework.
 cp /app/scripts/helpers/blueprint /usr/local/bin/blueprint
