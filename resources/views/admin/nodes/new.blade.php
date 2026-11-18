@@ -124,7 +124,7 @@
                     <div class="row">
                         <div class="form-group col-xs-12">
                             <label for="pDaemonBase" class="form-label">{{ __('admin/ui.daemon_server_file_directory') }}</label>
-                            <input type="text" name="daemonBase" id="pDaemonBase" class="form-control" value="/var/lib/pterodactyl/volumes" />
+                            <input type="text" name="daemonBase" id="pDaemonBase" class="form-control" value="/var/lib/aquadactyl/volumes" />
                             <p class="text-muted small">{!! __('admin/ui.enter_the_directory_where_server_files_should_be_stored_if_you_use_ovh_you_should_che') !!}</p>
                         </div>
                     </div>

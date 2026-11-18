@@ -134,7 +134,7 @@ class Node extends Model implements Identifiable
         'behind_proxy' => false,
         'memory_overallocate' => 0,
         'disk_overallocate' => 0,
-        'daemonBase' => '/var/lib/pterodactyl/volumes',
+        'daemonBase' => '/var/lib/aquadactyl/volumes',
         'daemonSFTP' => 2022,
         'daemonListen' => 8080,
         'maintenance_mode' => false,
@@ -190,6 +190,7 @@ class Node extends Model implements Identifiable
     public function getConfiguration(): array
     {
         return [
+            'config_version' => 1,
             'debug' => false,
             'uuid' => $this->uuid,
             'token_id' => $this->daemon_token_id,

@@ -87,6 +87,7 @@ class Mount extends Model implements Identifiable
     public static $invalidSourcePaths = [
         '/etc/aquadactyl',
         '/etc/pterodactyl',
+        '/var/lib/aquadactyl/volumes',
         '/var/lib/pterodactyl/volumes',
         '/srv/daemon-data',
     ];

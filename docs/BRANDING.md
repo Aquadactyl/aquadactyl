@@ -107,6 +107,8 @@ prefixes. Legacy fallback prefixes remain unchanged when `APP_NAME` is absent.
 Refresh Laravel's configuration cache and restart queue workers after editing
 environment settings, as the managed deployment scripts do.
 
-New Manta installations use `/etc/aquadactyl/config.yml`. Existing legacy files
+New Manta installations use the `manta` executable, `manta.service`,
+`/etc/aquadactyl/config.yml`, `/var/lib/aquadactyl`, `/var/log/aquadactyl`,
+`/tmp/aquadactyl`, `/run/manta` and the `aquadactyl` system user. Existing legacy files
 remain discoverable during upgrades; follow the [configuration migration guide](https://aquadactyl.uk/docs/manta/installing-manta#migrate-config)
 before changing an existing service or Docker mount.
