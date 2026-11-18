@@ -64,7 +64,7 @@ The following Pterodactyl identifiers remain intentionally:
 | `window.PterodactylUser` and the `Pterodactyl` JavaScript namespace     | Existing frontend and admin integrations                                    |
 | `/themes/pterodactyl/`, `pterodactyl.css` and legacy asset filenames    | Extension stylesheets and asset URLs                                        |
 | `application/vnd.pterodactyl.v1+json` and Wings identifiers             | API clients and the existing Wings protocol                                 |
-| `/etc/pterodactyl`, game image URLs and egg author addresses            | The separately installed Wings daemon and upstream egg provenance           |
+| `/etc/pterodactyl` on existing nodes, game image URLs and egg author addresses | Legacy configuration discovery and upstream egg provenance |
 | `pteroq.service` and `p:*` Artisan commands                             | Existing services, deployment scripts and administration workflows          |
 | Upstream URLs, author details, changelog history and license notices    | Accurate provenance, troubleshooting references and license obligations     |
 
@@ -106,3 +106,7 @@ Use your existing values if the installation already had a custom name or
 prefixes. Legacy fallback prefixes remain unchanged when `APP_NAME` is absent.
 Refresh Laravel's configuration cache and restart queue workers after editing
 environment settings, as the managed deployment scripts do.
+
+New Manta installations use `/etc/aquadactyl/config.yml`. Existing legacy files
+remain discoverable during upgrades; follow the [configuration migration guide](https://aquadactyl.uk/docs/manta/installing-manta#migrate-config)
+before changing an existing service or Docker mount.

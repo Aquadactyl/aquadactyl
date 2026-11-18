@@ -102,7 +102,7 @@
             url: '{{ route('admin.nodes.view.configuration.token', $node->id) }}',
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
         }).done(function (data) {
-            var command = 'cd /etc/pterodactyl && sudo wings configure --panel-url ' + {{ \Illuminate\Support\Js::from(config('app.url')) }} + ' --token ' + data.token + ' --node ' + data.node + {{ \Illuminate\Support\Js::from(config('app.debug') ? ' --allow-insecure' : '') }};
+            var command = 'sudo wings configure --panel-url ' + {{ \Illuminate\Support\Js::from(escapeshellarg((string) config('app.url'))) }} + ' --token ' + data.token + ' --node ' + data.node + {{ \Illuminate\Support\Js::from(config('app.debug') ? ' --allow-insecure' : '') }};
             var commandBlock = $('<pre>').attr({ 'data-sensitive': '', tabindex: '0' }).css({ whiteSpace: 'pre-wrap', wordBreak: 'break-all', textAlign: 'left', marginTop: '10px' }).text(command);
             swal({
                 type: 'success',

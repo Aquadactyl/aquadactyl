@@ -23,8 +23,8 @@ foreach (['', '/volumes', '/logs', '/archives', '/backups', '/tmp', '/etc', '/ma
     chown($path, 1000);
     chgrp($path, 1000);
 }
-chown('/etc/pterodactyl', 1000);
-chgrp('/etc/pterodactyl', 1000);
+chown('/etc/aquadactyl', 1000);
+chgrp('/etc/aquadactyl', 1000);
 
 if (User::query()->whereNotIn('username', ['demo', 'demo-admin'])->exists()) {
     throw new RuntimeException('Refusing to initialise a demo over existing operator accounts.');
@@ -107,10 +107,10 @@ $config['docker'] = [
     'image_pull_policy' => 'IfNotPresent', 'container_pid_limit' => 128,
     'cpu_burst' => ['enabled' => false],
 ];
-file_put_contents('/etc/pterodactyl/config.yml', Yaml::dump($config, 8, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE));
-chmod('/etc/pterodactyl/config.yml', 0600);
-chown('/etc/pterodactyl/config.yml', 1000);
-chgrp('/etc/pterodactyl/config.yml', 1000);
+file_put_contents('/etc/aquadactyl/config.yml', Yaml::dump($config, 8, 2, Yaml::DUMP_EMPTY_ARRAY_AS_SEQUENCE));
+chmod('/etc/aquadactyl/config.yml', 0600);
+chown('/etc/aquadactyl/config.yml', 1000);
+chgrp('/etc/aquadactyl/config.yml', 1000);
 
 $nginxPath = '/etc/nginx/http.d/panel.conf';
 $nginx = file_get_contents($nginxPath);

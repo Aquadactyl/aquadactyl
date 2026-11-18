@@ -574,7 +574,7 @@
     "token_created": "Token erstellt.",
     "error": "Fehler",
     "something_went_wrong_creating_your_token": "Beim Erstellen Ihres Tokens ist ein Fehler aufgetreten.",
-    "this_file_should_be_placed_in_your_daemon_s_root_directory_usually_etc_pterodactyl_in": "Diese Datei gehört in das Stammverzeichnis des Daemons (normalerweise <code>/etc/pterodactyl</code>) unter dem Namen <code>config.yml</code>.",
+    "this_file_should_be_placed_in_your_daemon_s_root_directory_usually_etc_pterodactyl_in": "Diese Datei gehört in das Stammverzeichnis des Daemons (normalerweise <code>/etc/aquadactyl</code>) unter dem Namen <code>config.yml</code>.",
     "configuration_8656f7": ": Konfiguration",
     "your_daemon_configuration_file": "Die Konfigurationsdatei Ihres Daemons.",
     "configuration_file": "Konfigurationsdatei",

@@ -574,7 +574,7 @@
     "token_created": "Jeton créé.",
     "error": "Erreur",
     "something_went_wrong_creating_your_token": "Une erreur est survenue lors de la création du jeton.",
-    "this_file_should_be_placed_in_your_daemon_s_root_directory_usually_etc_pterodactyl_in": "Placez ce fichier dans le répertoire du daemon (généralement <code>/etc/pterodactyl</code>), sous le nom <code>config.yml</code>.",
+    "this_file_should_be_placed_in_your_daemon_s_root_directory_usually_etc_pterodactyl_in": "Placez ce fichier dans le répertoire du daemon (généralement <code>/etc/aquadactyl</code>), sous le nom <code>config.yml</code>.",
     "configuration_8656f7": ": Configuration",
     "your_daemon_configuration_file": "Le fichier de configuration de votre daemon.",
     "configuration_file": "Fichier de configuration",

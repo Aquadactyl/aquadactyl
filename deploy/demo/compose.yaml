@@ -90,7 +90,7 @@ services:
     volumes:
       - panel-var:/app/var
       - panel-storage:/app/storage
-      - manta-config:/etc/pterodactyl
+      - manta-config:/etc/aquadactyl
       - game-data:/home/rootless/demo-data
     healthcheck:
       test: [CMD, curl, --fail, --silent, --output, /dev/null, http://127.0.0.1/auth/login]
@@ -114,7 +114,7 @@ services:
     volumes:
       - runtime-home:/home/rootless
       - game-data:/home/rootless/demo-data
-      - manta-config:/etc/pterodactyl:ro
+      - manta-config:/etc/aquadactyl:ro
     # RootlessKit needs user namespaces and a TUN device. It receives neither
     # privileged mode nor the Docker host socket, host filesystem or host network.
     devices: [/dev/net/tun:/dev/net/tun]
