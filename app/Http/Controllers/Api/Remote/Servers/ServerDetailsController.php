@@ -11,6 +11,7 @@ use Pterodactyl\Facades\Activity;
 use Illuminate\Database\ConnectionInterface;
 use Pterodactyl\Http\Controllers\Controller;
 use Pterodactyl\Services\Eggs\EggConfigurationService;
+use Pterodactyl\Services\Servers\ServerVariableLoader;
 use Pterodactyl\Exceptions\Http\HttpForbiddenException;
 use Pterodactyl\Repositories\Eloquent\ServerRepository;
 use Pterodactyl\Http\Resources\Wings\ServerConfigurationCollection;
@@ -64,16 +65,21 @@ class ServerDetailsController extends Controller
      */
     public function list(Request $request): ServerConfigurationCollection
     {
+        $request->validate([
+            'page' => ['sometimes', 'integer', 'between:1,2147483647'],
+            'per_page' => ['sometimes', 'integer', 'min:1'],
+        ]);
         /** @var Node $node */
         $node = $request->attributes->get('node');
 
         // Avoid run-away N+1 SQL queries by preloading the relationships that are used
         // within each of the services called below.
-        $servers = Server::query()->with('allocations', 'egg', 'mounts', 'variables', 'location')
+        $servers = Server::query()->with('allocation', 'allocations', 'egg.configFrom', 'mounts', 'location')
             ->where('node_id', $node->id)
             // If you don't cast this to a string you'll end up with a stringified per_page returned in
             // the metadata, and then Wings will panic crash as a result.
-            ->paginate((int) $request->input('per_page', 50));
+            ->paginate(min($request->integer('per_page', 50), 1000));
+        app(ServerVariableLoader::class)->load($servers->getCollection());
 
         return new ServerConfigurationCollection($servers);
     }

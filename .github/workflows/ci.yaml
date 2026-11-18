@@ -73,6 +73,8 @@ jobs:
           mkdir -p public/build
           printf '%s\n' '{"resources/scripts/index.tsx":{"file":"assets/test.js","src":"resources/scripts/index.tsx","isEntry":true}}' > public/build/manifest.json
       - run: vendor/bin/pest tests/Integration --fail-on-deprecation
+        # The coverage job runs this suite as part of its complete coverage gate.
+        if: matrix.php != '8.5' || matrix.database != 'mariadb:11'
         env:
           DB_PORT: ${{ job.services.database.ports[3306] }}
           DB_USERNAME: root

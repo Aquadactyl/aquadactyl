@@ -53,6 +53,13 @@ Docker reuses frontend layers after backend-only edits and retains dependency
 downloads in BuildKit caches. See [performance notes](docs/PERFORMANCE.md) for
 measurements and caching details.
 
+The Vite development server binds to `127.0.0.1` and uses the Laravel plugin's
+restricted CORS defaults (including your `APP_URL`). For development in a
+container or WSL, explicitly set `VITE_DEV_HOST=0.0.0.0` and
+`VITE_HMR_HOST` to the hostname your browser uses. Add other owned hostnames with
+`__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS`; avoid wildcard CORS or allowed hosts.
+Production builds do not need a running Vite development server.
+
 Blueprint addon installation and removal each use one command. Put the package
 in `/app` and, from a root shell inside the panel container, run:
 

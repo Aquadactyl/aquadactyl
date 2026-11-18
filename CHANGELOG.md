@@ -8,6 +8,61 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.1-beta
+
+### Security
+
+- Apply SFTP failure limits per account across server identifiers, nodes and
+  username casing. Failed logins no longer lock other users out of the same server.
+- Reject negative, malformed and overflowing pagination parameters before listing
+  servers or backups. Preserve existing client page-size caps and bound daemon
+  configuration pages to 1,000 servers.
+- Execute only Laravel's front controller in Docker Nginx, deny hidden files,
+  hide runtime version headers and stop recording HTTPS query strings in access logs.
+- Require TLS 1.2/1.3 in the bundled HTTPS configuration and remove world-writable
+  application cache, storage and panel log permissions from new Docker images.
+- Bind the Vite development server to loopback and restore restricted CORS defaults,
+  with explicit options for container/WSL development.
+
+### Performance and correctness
+
+- Preserve each server's variable overrides in daemon configuration responses,
+  including servers sharing an egg. Batch primary allocations and inherited egg
+  settings rather than querying them for every server.
+- Load variable definitions and overrides in two queries per nonempty page.
+- Reuse Docker frontend build layers after public branding or admin stylesheet edits.
+- Avoid rerunning the integration suite separately in the PHP coverage matrix job;
+  the complete coverage gate and database-free unit checks remain enabled.
+
+### Also included since v1.0-beta
+
+- An opt-in, isolated public demo with restricted user/admin accounts, real Manta
+  example servers and automatic five-minute resets. Ordinary deployments keep demo
+  mode disabled.
+- Updated Git installation, database-repair and unfinished-installation recovery
+  instructions using the versioned installer.
+
+### Updating
+
+- Back up the database, application secrets, uploads and original Blueprint addon
+  packages. Update with the versioned installer or recreate the panel from the
+  versioned Docker image. Rebuilding frontend assets alone does not apply PHP or
+  Nginx fixes.
+- Customized or persisted Nginx configurations must adopt the front-controller,
+  hidden-file, logging and TLS changes explicitly. Standalone public PHP entrypoints
+  are unsupported, matching the native Nginx template. Blueprint Laravel routes
+  continue to work.
+
+### Validation
+
+- 2,343 PHP tests and 30,715 assertions pass with 100% executable line coverage on
+  PHP 8.5 and MariaDB 11. The frontend retains 1,583 passing tests and 100%
+  statement, branch, function and line coverage.
+- Production Composer and pnpm audits, scoped PHP static analysis, type/lint checks,
+  security/admin/game-query tests and Blueprint preflight pass.
+- The rebuilt Docker image passes isolated HTTP/HTTPS routing, hidden-file,
+  direct-PHP and TLS checks. Public-file edits retain the frontend build cache.
+
 ## v1.0-beta
 
 ### Installation and releases

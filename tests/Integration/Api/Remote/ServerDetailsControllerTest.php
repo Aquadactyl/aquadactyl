@@ -70,6 +70,58 @@ test('Wings configuration pagination returns integer limits and excludes other n
         ->assertJsonPath('meta.per_page', 1)->assertJsonPath('meta.total', 1);
 });
 
+test('daemon lists reject invalid pagination before loading configurations', function (string $query) {
+    $this->configuration->shouldNotReceive('handle');
+    $this->eggConfiguration->shouldNotReceive('handle');
+    $this->getJson('/api/remote/servers?' . $query)->assertUnprocessable();
+})->with(['per_page=-1', 'per_page=0', 'per_page[]=1', 'per_page=invalid', 'page=-1', 'page=2147483648']);
+
+test('daemon page size is capped and its pagination metadata remains an integer', function () {
+    $this->configuration->shouldReceive('handle')->once()->andReturn([]);
+    $this->eggConfiguration->shouldReceive('handle')->once()->andReturn([]);
+    $this->getJson('/api/remote/servers?per_page=10000')->assertOk()->assertJsonPath('meta.per_page', 1000);
+});
+
+test('daemon server lists keep variable overrides isolated for servers sharing an egg', function () {
+    $other = $this->createServerModel(['node_id' => $this->node->id, 'egg_id' => $this->server->egg_id]);
+    $variable = Pterodactyl\Models\EggVariable::factory()->create(['egg_id' => $this->server->egg_id, 'env_variable' => 'SERVER_SECRET', 'default_value' => 'default']);
+    foreach ([$this->server, $other] as $index => $server) {
+        Pterodactyl\Models\ServerVariable::create(['server_id' => $server->id, 'variable_id' => $variable->id, 'variable_value' => 'secret-' . $index]);
+    }
+    $this->configuration->shouldReceive('handle')->twice()->andReturnUsing(fn ($server) => [
+        'secret' => $server->variables->firstWhere('id', $variable->id)->server_value,
+    ]);
+    $this->eggConfiguration->shouldReceive('handle')->twice()->andReturn([]);
+    $this->getJson('/api/remote/servers')->assertOk()
+        ->assertJsonPath('data.0.settings.secret', 'secret-0')
+        ->assertJsonPath('data.1.settings.secret', 'secret-1');
+});
+
+test('daemon configuration loading does not add SQL queries for each server', function () {
+    $this->server->egg->update(['config_from' => 1]);
+    for ($index = 0; $index < 9; ++$index) {
+        $this->createServerModel(['node_id' => $this->node->id, 'egg_id' => $this->server->egg_id]);
+    }
+    $this->configuration->shouldReceive('handle')->andReturnUsing(fn ($server) => [
+        'address' => $server->allocation->ip,
+        'environment' => app(Pterodactyl\Services\Servers\EnvironmentService::class)->handle($server),
+    ]);
+    $this->eggConfiguration->shouldReceive('handle')->andReturnUsing(fn ($server) => ['files' => $server->egg->configFrom?->config_files]);
+    $counts = [];
+    foreach ([1, 10] as $size) {
+        Illuminate\Support\Facades\DB::enableQueryLog();
+        Illuminate\Support\Facades\DB::flushQueryLog();
+        try {
+            $this->getJson('/api/remote/servers?per_page=' . $size)->assertOk()->assertJsonCount($size, 'data');
+            $counts[] = count(Illuminate\Support\Facades\DB::getQueryLog());
+        } finally {
+            Illuminate\Support\Facades\DB::disableQueryLog();
+            Illuminate\Support\Facades\DB::flushQueryLog();
+        }
+    }
+    expect($counts[1])->toBe($counts[0]);
+});
+
 test('Wings restart resets interrupted installs and restores only on its own node', function () {
     $this->server->update(['status' => Server::STATUS_RESTORING_BACKUP]);
     $backup = Backup::factory()->create(['server_id' => $this->server->id, 'name' => 'Interrupted backup']);

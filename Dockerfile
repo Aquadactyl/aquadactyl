@@ -15,7 +15,6 @@ RUN --mount=type=cache,id=aquadactyl-pnpm,target=/pnpm/store \
 # Backend and documentation edits do not invalidate the frontend build.
 COPY vite.config.ts tsconfig.json ./
 COPY resources ./resources
-COPY public ./public
 # Blueprint links addon components, styles and views into resources/.
 COPY .blueprint/extensions ./.blueprint/extensions
 RUN pnpm run build
@@ -83,7 +82,7 @@ RUN find app routes config resources public/themes/pterodactyl -type f -exec sha
 
 RUN cp .env.example .env \
     && mkdir -p bootstrap/cache storage/logs storage/framework/sessions storage/framework/views storage/framework/cache public/extensions public/assets/extensions \
-    && chmod 777 -R bootstrap storage \
+    && chmod -R u=rwX,g=rX,o= bootstrap storage \
     && export CACHE_STORE=array CACHE_DRIVER=array SESSION_DRIVER=array QUEUE_CONNECTION=sync \
     && composer dump-autoload --no-dev --no-interaction --optimize \
     && composer run-script --no-dev --no-interaction post-install-cmd \

@@ -2,7 +2,8 @@
 cd /app
 
 mkdir -p /var/log/panel /var/log/supervisord /var/log/nginx /var/log/php7
-chmod 777 /var/log/panel
+chown nginx:nginx /var/log/panel
+chmod 750 /var/log/panel
 ln -sfn /app/storage/logs /var/log/panel/logs
 
 # Check for a persisted .env file and generate application secrets if missing.
@@ -78,6 +79,7 @@ fi
 echo "Checking storage folder permissions."
 mkdir -p /app/storage/framework/cache/data /app/storage/framework/sessions /app/storage/framework/views
 chown -R nginx:nginx /app/storage /app/bootstrap/cache
+chmod 750 /app/storage /app/bootstrap/cache
 
 echo "Checking log folder permissions."
 if [ "$(stat -c %U:%G /app/storage/logs)" != "nginx:nginx" ]; then
