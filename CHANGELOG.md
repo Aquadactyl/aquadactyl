@@ -10,6 +10,8 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 - Keep the first-start Blueprint welcome dialog outside admin layout containers so
   header clipping and sidebar transforms cannot hide it behind its backdrop.
+- Remove the unused `APP_THEME` default and use `AQUADACTYL_FILES_MAX_EDIT_SIZE`
+  for editor/image-preview limits, retaining the legacy environment-key fallback.
 
 ## v1.1-beta
 

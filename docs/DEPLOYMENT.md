@@ -132,8 +132,11 @@ Nginx template compresses text assets, caches hashed assets and executes only
 `index.php`. It also denies hidden files and suppresses PHP version headers.
 
 The web file editor and image previews accept files up to 32 MiB by default.
-Set `PTERODACTYL_FILES_MAX_EDIT_SIZE` in `.env` to change this limit in bytes, then
-run `php artisan config:cache`. The bundled Nginx and PHP configuration accepts
+Set `AQUADACTYL_FILES_MAX_EDIT_SIZE` in `.env` to change this limit in bytes, then
+run `php artisan config:cache`. Existing `PTERODACTYL_FILES_MAX_EDIT_SIZE` values
+remain supported as a fallback; when both are set, the Aquadactyl key takes priority.
+The obsolete `APP_THEME` variable can be removed: the panel does not read it.
+The bundled Nginx and PHP configuration accepts
 100 MiB request bodies; a separate reverse proxy must also allow the size you
 intend to save. Files above the editor limit can still be uploaded, downloaded,
 or accessed through SFTP. This editor limit is separate from browser uploads.

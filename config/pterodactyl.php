@@ -130,7 +130,8 @@ return [
     */
 
     'files' => [
-        'max_edit_size' => env('PTERODACTYL_FILES_MAX_EDIT_SIZE', 1024 * 1024 * 32),
+        // Preserve the legacy environment key and config namespace for existing panels/addons.
+        'max_edit_size' => env('AQUADACTYL_FILES_MAX_EDIT_SIZE', env('PTERODACTYL_FILES_MAX_EDIT_SIZE', 1024 * 1024 * 32)),
     ],
 
     /*
