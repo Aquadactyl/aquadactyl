@@ -23,7 +23,7 @@ test('node configuration instructions use the Aquadactyl directory in each langu
         ->get(route('admin.nodes.view.configuration', $node->id))
         ->assertOk()
         ->assertSee('/etc/aquadactyl', false)
-        ->assertSee('sudo wings configure', false)
+        ->assertSee('sudo manta configure', false)
         ->assertDontSee('cd /etc/pterodactyl', false);
 })->with(['en', 'fr', 'de']);
 
@@ -33,6 +33,15 @@ test('daemon configuration directories cannot be added as server mount sources',
     expect($validator->passes())->toBe($allowed);
 })->with([
     'Aquadactyl configuration' => ['/etc/aquadactyl', false],
+    'Aquadactyl server data' => ['/var/lib/aquadactyl/volumes', false],
     'legacy configuration' => ['/etc/pterodactyl', false],
     'shared game data' => ['/srv/shared', true],
 ]);
+
+test('new nodes use Aquadactyl data defaults without rewriting existing nodes', function () {
+    expect((new Node())->daemonBase)->toBe('/var/lib/aquadactyl/volumes');
+    $node = Node::factory()->for(Location::factory())->create(['daemonBase' => '/srv/existing-servers']);
+    $configuration = $node->getConfiguration();
+    expect($configuration['config_version'])->toBe(1)
+        ->and($configuration['system']['data'])->toBe('/srv/existing-servers');
+});

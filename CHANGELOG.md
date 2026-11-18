@@ -8,6 +8,16 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.1-beta.3
+
+- Use `/var/lib/aquadactyl/volumes` for new nodes created through the UI, API
+  and CLI, and generate `manta configure` setup commands. Existing node paths
+  remain unchanged. Mark generated daemon configs with `config_version: 1`.
+- Protect the new default server-data directory from being added as a server
+  mount, alongside the existing configuration and legacy path guards.
+- Match installation documentation to Manta v1.1-beta.2 and Installer v1.1-beta.2,
+  including the `manta` executable, service and native Aquadactyl storage paths.
+
 ## v1.1-beta.2
 
 - Show `/etc/aquadactyl` in English, French and German node configuration
