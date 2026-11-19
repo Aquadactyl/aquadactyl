@@ -1,82 +1,78 @@
-name: Bug Reports
-description: For reporting known and reproducible issues with the software.
+name: Bug report
+description: Report a reproducible Aquadactyl Panel defect.
+title: "[Bug]: "
+labels: [bug]
 body:
   - type: markdown
     attributes:
       value: |
-        Report reproducible Aquadactyl bugs here. For installation and dependency help, read the [Aquadactyl documentation](https://aquadactyl.uk/docs) or open a question in this repository.
-
-  - type: textarea
-    attributes:
-      label: Current Behavior
-      description: Please provide a clear & concise description of the issue.
-    validations:
-      required: true
-
-  - type: textarea
-    attributes:
-      label: Expected Behavior
-      description: Please describe what you expected to happen.
-    validations:
-      required: true
-
-  - type: textarea
-    attributes:
-      label: Steps to Reproduce
-      description: Please be as detailed as possible when providing steps to reproduce, failure to provide steps will result in this issue being closed.
-    validations:
-      required: true
-
+        This is a public report. Use [private security reporting](https://github.com/Aquadactyl/aquadactyl/security/advisories/new) for vulnerabilities.
+        Check [common issues](https://aquadactyl.uk/docs/panel/troubleshooting) first. Never post credentials, complete environment/node configuration, cookies or private user data.
   - type: input
-    id: panel-version
+    id: version
     attributes:
-      label: Panel Version
-      description: Version number of your Panel (latest is not a version)
-      placeholder: 1.4.0
+      label: Panel version or commit
+      description: Copy the exact version; "latest" is not a version.
+      placeholder: v1.1-beta.4
     validations:
       required: true
-
   - type: input
-    id: wings-version
+    id: related-version
     attributes:
-      label: Wings Version
-      description: Version number of your Wings (latest is not a version)
-      placeholder: 1.4.2
-    validations:
-      required: true
-
-  - type: input
-    id: egg-details
+      label: Manta version, if relevant
+      description: Include the other component version when the failure involves a node connection.
+  - type: dropdown
+    id: deployment
     attributes:
-      label: Games and/or Eggs Affected
-      description: Please include the specific game(s) or egg(s) you are running into this bug with.
-      placeholder: Minecraft (Paper), Minecraft (Forge)
-
-  - type: input
-    id: docker-image
-    attributes:
-      label: Docker Image
-      description: The specific Docker image you are using for the game(s) above.
-      placeholder: ghcr.io/pterodactyl/yolks:java_17
-
-  - type: textarea
-    id: panel-logs
-    attributes:
-      label: Error Logs
-      description: |
-        Run the following command to collect logs on your system.
-
-        Wings: `sudo wings diagnostics`
-        Panel: `tail -n 150 /var/www/aquadactyl/storage/logs/laravel-$(date +%F).log | nc pteropaste.com 99`
-      placeholder: "https://pteropaste.com/a1h6z"
-      render: bash
-    validations:
-      required: false
-
-  - type: checkboxes
-    attributes:
-      label: Is there an existing issue for this?
-      description: Please [search here](https://github.com/Aquadactyl/aquadactyl/issues) to see if an issue already exists for your problem.
+      label: Deployment
       options:
-        - label: I have searched the existing issues before opening this issue. I understand that maintainers may close this issue without communication if I have not provided sufficient information.
+        - Linux (Installer)
+        - Linux (manual)
+        - Docker / Dokploy
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system and environment
+      description: Include OS/version, architecture and relevant runtime/proxy/addon versions. Do not include secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Describe the action and smallest repeatable example, including any relevant settings.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include the exact error, time/timezone and whether one server, node, account or the whole installation is affected.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Reviewed and redacted diagnostics
+      description: |
+        Run php artisan p:debug --dry-run locally using the documented service user and review its output before sharing a short relevant excerpt.
+        Remove secrets, tokens, webhook URLs, private paths and personal data. Do not upload raw configuration or browser network exports.
+      render: text
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked the common issues guide and searched existing issues.
+          required: true
+        - label: I reviewed this public report and removed secrets and private data.
           required: true
