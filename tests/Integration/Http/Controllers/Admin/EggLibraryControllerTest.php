@@ -18,7 +18,7 @@ beforeEach(function () {
     $this->document = EggDownloadFixture::document();
     $this->apiStatus = 200;
     Http::fake(fn ($request) => Http::response(
-        $request->url() === 'https://eggs.download/api/eggs' ? EggDownloadFixture::catalog() : $this->document,
+        $request->url() === 'https://eggs.download/api/v1/eggs/_index.json' ? EggDownloadFixture::catalog() : $this->document,
         $this->apiStatus,
     ));
     $this->admin = User::factory()->admin()->create();
@@ -44,11 +44,14 @@ test('catalog supports source and search filters', function () {
     Http::assertSentCount(1);
 });
 
-test('an API outage renders a useful catalog error', function () {
-    $this->apiStatus = 503;
+test('an API outage renders a useful catalog error', function (int $status, string $message) {
+    $this->apiStatus = $status;
     $this->actingAs($this->admin)->get(route('admin.egg-library.index'))->assertOk()
-        ->assertSee('eggs.download is temporarily unavailable.');
-});
+        ->assertSee($message)->assertDontSee('This egg is no longer available');
+})->with([
+    [503, 'eggs.download is temporarily unavailable.'],
+    [404, 'The eggs.download catalog is currently unavailable.'],
+]);
 
 test('preview escapes remote markup and download returns just the egg', function () {
     $document = EggDownloadFixture::document();

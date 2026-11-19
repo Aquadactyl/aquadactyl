@@ -13,13 +13,13 @@ class EggDownloadService
 {
     public const SOURCES = ['pterodactyl', 'pelican', 'community'];
 
-    private const BASE_URL = 'https://eggs.download/api/eggs';
+    private const BASE_URL = 'https://eggs.download/api/v1/eggs';
     private const MAX_BYTES = 2 * 1024 * 1024;
 
     public function catalog(): array
     {
-        return Cache::remember('egg-download:catalog:v1', 600, function () {
-            $data = $this->fetch(self::BASE_URL);
+        return Cache::remember('egg-download:catalog:v2', 600, function () {
+            $data = $this->fetch(self::BASE_URL . '/_index.json', catalog: true);
             if (!array_is_list($data)) {
                 throw new DisplayException('eggs.download returned an invalid catalog. Please try again later.');
             }
@@ -41,8 +41,8 @@ class EggDownloadService
             throw new DisplayException('The selected egg identifier is invalid.');
         }
 
-        return Cache::remember('egg-download:detail:v1:' . $slug, 300, function () use ($slug) {
-            $data = $this->fetch(self::BASE_URL . '/' . rawurlencode($slug));
+        return Cache::remember('egg-download:detail:v2:' . $slug, 300, function () use ($slug) {
+            $data = $this->fetch(self::BASE_URL . '/' . rawurlencode($slug) . '.json');
             if (!is_array($data['egg'] ?? null) || !is_array($data['meta'] ?? null)
                 || ($data['meta']['slug'] ?? null) !== $slug || !is_string($data['egg']['name'] ?? null)) {
                 throw new DisplayException('eggs.download returned an invalid egg file. Please try again later.');
@@ -88,7 +88,7 @@ class EggDownloadService
         return is_string($slug) && strlen($slug) <= 150 && preg_match('/\A[a-z0-9]+(?:-[a-z0-9]+)*\z/', $slug) === 1;
     }
 
-    private function fetch(string $url): array
+    private function fetch(string $url, bool $catalog = false): array
     {
         try {
             $response = Http::acceptJson()->withUserAgent('Aquadactyl Egg Library (https://github.com/Aquadactyl/aquadactyl)')
@@ -113,7 +113,7 @@ class EggDownloadService
             throw new DisplayException('eggs.download is limiting requests. Please wait a few minutes and try again.');
         }
         if ($response->status() === 404) {
-            throw new DisplayException('This egg is no longer available on eggs.download. Choose another egg from the library.');
+            throw new DisplayException($catalog ? 'The eggs.download catalog is currently unavailable. Please try again later.' : 'This egg is no longer available on eggs.download. Choose another egg from the library.');
         }
         if (!$response->successful()) {
             throw new DisplayException('eggs.download is temporarily unavailable. Please try again later.');
