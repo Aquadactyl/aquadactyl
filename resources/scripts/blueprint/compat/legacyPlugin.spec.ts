@@ -45,8 +45,57 @@ it("scopes module adapters to addons and leaves the modern panel alone", async (
   expect(call("react-router-dom", symlink)).toBe(
     path.join(root, "resources/scripts/blueprint/compat/router.tsx"),
   );
+  expect(call("react-router", addon)).toBe(
+    path.join(root, "resources/scripts/blueprint/compat/router-core.ts"),
+  );
+  expect(call("react-transition-group", addon)).toBe(
+    path.join(root, "resources/scripts/blueprint/compat/CSSTransition.tsx"),
+  );
+  expect(call("@/components/elements/button", addon)).toBe(
+    path.join(root, "resources/scripts/blueprint/compat/button.ts"),
+  );
+  expect(call("@/components/elements/button/index", addon)).toBe(
+    path.join(root, "resources/scripts/blueprint/compat/button.ts"),
+  );
+  expect(
+    call(
+      `${root.replaceAll("\\", "/")}/resources/scripts/components/elements/button/index`,
+      addon,
+    ),
+  ).toBe(path.join(root, "resources/scripts/blueprint/compat/button.ts"));
   expect(call("@/components/elements/Field", addon)).toBe(
     path.join(root, "resources/scripts/blueprint/compat/Field.tsx"),
+  );
+  expect(call("@/components/elements/FormikFieldWrapper", addon)).toBe(
+    path.join(
+      root,
+      "resources/scripts/blueprint/compat/FormikFieldWrapper.tsx",
+    ),
+  );
+  expect(
+    call(
+      `${root.replaceAll("\\", "/")}/resources/scripts/components/elements/FormikFieldWrapper`,
+      symlink,
+    ),
+  ).toBe(
+    path.join(
+      root,
+      "resources/scripts/blueprint/compat/FormikFieldWrapper.tsx",
+    ),
+  );
+  expect(
+    call(
+      `${root.replaceAll("\\", "/")}/resources/scripts/components/elements/FormikFieldWrapper`.replaceAll(
+        "/",
+        "\\",
+      ),
+      addon,
+    ),
+  ).toBe(
+    path.join(
+      root,
+      "resources/scripts/blueprint/compat/FormikFieldWrapper.tsx",
+    ),
   );
   expect(
     call(
@@ -60,6 +109,12 @@ it("scopes module adapters to addons and leaves the modern panel alone", async (
   });
   expect(await call("lodash/get", addon)).toEqual({ id: "lodash/get" });
   expect(call("unlisted", addon)).toBeUndefined();
+  expect(
+    call(
+      "react-router",
+      path.join(root, "resources/scripts/components/App.tsx"),
+    ),
+  ).toBeUndefined();
 });
 
 it("resolves dependencies for checks outside the panel without intercepting relative files", async () => {
@@ -112,6 +167,23 @@ it("compiles original twin syntax, css props and styled components using the cur
   expect(output.code).toContain("&:hover");
   expect(output.map.sources.length).toBe(1);
   expect(output.map.sourcesContent).toContain(code);
+});
+
+it("preserves palette variables and slash opacity modifiers in legacy colours", async () => {
+  const plugin = legacyBlueprint(root) as any;
+  const output = await plugin.transform(
+    "import tw from 'twin.macro'; export default tw`bg-neutral-800/40 border-primary-500/50 hover:text-blue-500/75`;",
+    addon,
+  );
+  expect(output.code).toContain("var(--color-neutral-800");
+  expect(output.code).toContain("var(--color-primary-500");
+  expect(output.code).toContain("var(--color-blue-500");
+  expect(output.code).toContain("backgroundColor");
+  expect(output.code).toContain("borderColor");
+  expect(output.code).toContain("&:hover");
+  expect(output.code).toContain("0.4");
+  expect(output.code).toContain("0.5");
+  expect(output.code).toContain("0.75");
 });
 
 it.each(["js", "jsx", "ts", "tsx"])(
