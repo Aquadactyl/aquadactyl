@@ -5,11 +5,34 @@ Upstream support commitments do not apply to changes made in this fork.
 
 ## Reporting a vulnerability
 
-Report Aquadactyl-specific vulnerabilities privately to this repository's
-maintainers. Use the repository's GitHub Security tab to submit a private report
-when that feature is enabled; otherwise arrange a private channel with the
-maintainers before sending details. Do not publish sensitive details in issues.
-Include the affected Aquadactyl version, reproduction steps and impact.
+Use [GitHub private vulnerability reporting](https://github.com/Aquadactyl/aquadactyl/security/advisories/new)
+to contact the Aquadactyl maintainers. Private reporting is enabled. Do not open a
+public issue or PR containing an exploit, unpatched vulnerability, credentials or
+private user data.
+
+Include the exact Panel version or commit, deployment type, affected component,
+impact, prerequisites and minimal reproduction steps from an environment you
+control. Provide reviewed, redacted evidence. Never send your complete `.env`,
+application key, node tokens, session cookies or a database dump.
+
+Manta daemon vulnerabilities belong in
+[Manta's private report form](https://github.com/Aquadactyl/manta/security/advisories/new).
+Use the [public issue forms](https://github.com/Aquadactyl/aquadactyl/issues/new/choose)
+for ordinary bugs, requests and help after reading
+[common issues](https://aquadactyl.uk/docs/common-issues).
+
+## Supported releases and disclosure
+
+Current releases are public betas. Security fixes target the
+[latest published Panel release](https://github.com/Aquadactyl/aquadactyl/releases)
+and the default development branch. Include the original affected version even
+if it is older; when possible, check whether it also occurs in a current release.
+Panel and Manta versions are independent.
+
+Maintainers assess reports privately, coordinate fixes and publication, and use
+GitHub security advisories when appropriate. Keep details private while that
+coordination is in progress. Do not test against installations without their
+operator's permission.
 
 For vulnerabilities affecting upstream Pterodactyl Panel or Wings, follow the
 [upstream security policy](https://github.com/pterodactyl/panel/blob/1.0-develop/SECURITY.md)

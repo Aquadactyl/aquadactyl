@@ -5,7 +5,7 @@ Contributions to this panel are welcome, including features, fixes and documenta
 Operator documentation is hosted at [aquadactyl.uk/docs](https://aquadactyl.uk/docs)
 and maintained in the [website repository](https://github.com/Aquadactyl/website).
 Keep its command snippets and guides aligned with changes to the panel's deployment tools.
-Changes to Wings belong in the [upstream Wings repository](https://github.com/pterodactyl/wings).
+Changes to our server daemon belong in [Aquadactyl/Manta](https://github.com/Aquadactyl/manta).
 
 ## Responsible Disclosure
 
@@ -25,11 +25,38 @@ Keep upstream copyright and license notices intact. PHP namespaces, integration
 keys and protocol identifiers remain compatible with Pterodactyl and Blueprint;
 see [branding and licensing](docs/BRANDING.md) before changing them.
 
+## Bugs, requests and pull requests
+
+Use the [issue chooser](https://github.com/Aquadactyl/aquadactyl/issues/new/choose)
+for bugs, feature requests or help after checking
+[common issues](https://aquadactyl.uk/docs/common-issues). Feature requests are
+welcome without prior approval. Discuss substantial changes in an issue first.
+
+1. Fork this repository and create a focused branch from `main`.
+2. Explain the problem, resulting behaviour and related issue in the PR template.
+3. Add regression coverage for behaviour changes and update relevant documentation.
+4. Run the applicable checks in [docs/TESTING.md](docs/TESTING.md). Use the runtimes
+   in `composer.json` and `package.json`; preserve lockfiles and coverage gates.
+5. Respond to review, resolve conversations and keep your branch current with `main`.
+
+Merging into `main` requires at least one approval from a maintainer listed in
+[CODEOWNERS](.github/CODEOWNERS), all required CI checks and resolved review
+conversations. New changes invalidate previous approvals, and the latest push
+must be approved by someone other than its pusher. These requirements also apply
+to administrators; direct pushes, force pushes and branch deletion are blocked.
+
+Workflows from external forks require maintainer approval before running. That
+permission starts CI; it does not approve the code or bypass merge review. CI
+uses GitHub-hosted runners and read-only default tokens. Never add secrets to a
+PR or switch untrusted builds to `pull_request_target`.
+
+Published `v*` release tags cannot be moved or deleted. New versions get new tags.
+When changing a CI matrix or job name, coordinate the corresponding required
+status-check names in the repository rules before merging.
+
 ## AI-assisted contributions
 
-AI and LLMs are awesome, they can truly 10x your productivity, help explore a large codebase, help with large changes, and write lots of test coverage. That said, they do not replace your responsibility for the result and output of an LLM tool.
-
-- Please keep the conversation in your own voice. Review, rewrite generated code comments, issue reports, and pull requests descriptions so they reflect the intent of what you mean.
-- Keep ownership of the of all decisions made, you have to understand every change, and you must verify the behavior with appropriate test coverage at the bare minimum, your code should reflect the style of the codebase.
-- Do not copy paste LLM output verbatim into the codebase and expect a contribution, you will treat generated output as a draft, and you, the human, are expected to check it's claims, adapt it to the repository, and remove anything that you yourself cannot justify. Issues that are entirely unreviewed LLM output will be closed without review.
-- AI-assisted contributions follow the same standards for quality, correctness, testing, etc as any other contribution.
+You remain responsible for every contribution, including work prepared with AI.
+Understand and review the code, verify its behaviour, and write descriptions in
+your own voice. Remove claims you cannot substantiate. AI-assisted changes follow
+the same review, testing and documentation requirements as other contributions.
