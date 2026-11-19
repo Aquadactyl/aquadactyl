@@ -8,6 +8,12 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+- Fix legacy Blueprint preflight imports using an addon's identifier placeholder,
+  Twin palette colours with slash opacity, Formik field wrappers, core router
+  history hooks and button CSS-module exports. Add a React 19-safe CSSTransition
+  adapter. MC Mods 2.1, MC Plugins 2.1 and Subdomains 0.5.2 now pass frontend checks
+  without modifying their packages or running their lifecycle scripts.
+
 ## v1.1-beta.4
 
 - Restore the Egg Library using eggs.download's canonical versioned JSON API.

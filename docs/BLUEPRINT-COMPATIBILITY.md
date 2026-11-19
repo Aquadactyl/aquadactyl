@@ -11,7 +11,11 @@ blueprint -r myaddon
 The archive and its source files are preserved. The frontend build resolves old
 imports through adapters and compiles legacy styling automatically. Installation
 checks the frontend before running update scripts or changing panel files.
-No conversion service, network upload or additional account is required.
+No conversion service, network upload or additional account is required. During
+preflight, both `@blueprint/extensions/{identifier}/...` and
+`@/blueprint/extensions/{identifier}/...` resolve to the extracted addon's own
+components. Imports using its actual identifier work too, before installation
+has created any extension symlinks or replaced placeholders.
 
 Check a package without installing it:
 
@@ -36,6 +40,11 @@ with an error and blocks installation. The existing installed version is retaine
 | `react-router-dom` v5 `useHistory`, `useRouteMatch`, `matchPath`, `Route`, `Switch`, `Redirect`, `NavLink`, `useParams` | Adapters use the current router and provide common v5 matching, navigation, route props and active link styling. Current router exports such as `Link` and `useLocation` are also available.                                              |
 | `twin.macro`, `tw` props, `css` props, `tw.div`, `styled`, `css`                                                        | Compiled with a separate Tailwind 3 toolchain and styled-components 6. Babel 8 removes TypeScript before Babel 7 runs legacy styling plugins. Panel Tailwind 4 remains separate. Legacy palette colors use the live appearance variables. |
 | Formik and Yup; `@/components/elements/Field`                                                                           | Formik forms continue to register fields and show validation with the panel's current input styling.                                                                                                                                      |
+| `@/components/elements/FormikFieldWrapper`                                                                              | Retains custom controls, labels, descriptions, nested field errors and synchronous/asynchronous Formik field validation.                                                                                                                  |
+| `react-router` v5 `useHistory` and `useRouteMatch`                                                                      | Restores the removed hooks while keeping current `Route`, `Routes` and other router exports. Use the existing `react-router-dom` adapter for legacy v5 route components.                                                                  |
+| Legacy button `styles` imports from `@/components/elements/button` or `/button/index`                                   | Maps CSS-module keys to the current panel button classes and retains the current `Button` component.                                                                                                                                      |
+| Slash opacity utilities such as `bg-neutral-800/40`                                                                     | Preserves opacity and live appearance palette changes in the legacy Twin/Tailwind compiler.                                                                                                                                               |
+| `react-transition-group` `CSSTransition`                                                                                | Provides a React 19-safe DOM ref when omitted, preserves child refs and cleanup, and retains legacy callbacks, timeouts, CSS classes and mount/unmount behaviour. Explicit `nodeRef` is respected.                                        |
 | Font Awesome solid, regular and brand icons                                                                             | Original icon imports are available to addons; the panel continues to use its current icons.                                                                                                                                              |
 | `swr`, `lodash`, `styled-components`                                                                                    | Available from the compatibility package.                                                                                                                                                                                                 |
 | `framer-motion`                                                                                                         | Resolves to `motion/react`. Addons using removed motion APIs may need changes.                                                                                                                                                            |
@@ -73,6 +82,9 @@ These cases still need an addon-specific change:
   `NavLink.isActive` callbacks.
 - Old React APIs removed in React 19, incompatible PHP/Laravel packages, or
   addon-specific assumptions about databases and server software.
+- Transition helpers other than `CSSTransition` still need an adapter. Transition
+  children must be DOM elements or forward their ref to a DOM element, unless the
+  addon supplies a valid `nodeRef`. Addons remain responsible for transition CSS.
 
 Successful compilation does not verify an addon's runtime behavior, security,
 permissions, third-party services or custom scripts. Install packages from
@@ -93,3 +105,9 @@ router matching/navigation, source scoping, macro compilation and unsupported
 utilities. The original **MC Logs 1.6**, **Laravel Logs 1.5** and **Resource Manager
 1.4.1** archives are used for local WSL installation checks. These examples are
 not a blanket certification of other addons or themes.
+
+The unchanged **MC Mods 2.1**, **MC Plugins 2.1** and **Subdomains 0.5.2** packages
+also pass the frontend preflight checks. This does not run their PHP or lifecycle
+scripts or certify their external services. The MC manager packages include
+publisher-specific daemon modifications; those need separate review against the
+installed Manta/Wings version. The frontend adapter does not apply daemon patches.

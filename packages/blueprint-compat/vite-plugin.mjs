@@ -26,7 +26,11 @@ function tailwindConfig(root) {
   for (const [, name, shade, value] of css.matchAll(
     /--color-(\w+)-(\d+):\s*([^;]+);/g,
   )) {
-    (colors[name] ??= {})[shade] = `var(--color-${name}-${shade}, ${value})`;
+    const color = `var(--color-${name}-${shade}, ${value})`;
+    (colors[name] ??= {})[shade] = ({ opacityValue }) =>
+      opacityValue === undefined
+        ? color
+        : `color-mix(in srgb, ${color} calc(${opacityValue} * 100%), transparent)`;
   }
   return {
     theme: {
@@ -63,12 +67,24 @@ export function legacyBlueprint(root, extraRoot) {
       if (source === "easy-peasy") return path.join(adapters, "store.ts");
       if (source === "react-router-dom")
         return path.join(adapters, "router.tsx");
-      if (
-        source === "@/components/elements/Field" ||
-        source ===
-          `${normalizedRoot}/resources/scripts/components/elements/Field`
-      )
-        return path.join(adapters, "Field.tsx");
+      if (source === "react-router")
+        return path.join(adapters, "router-core.ts");
+      if (source === "react-transition-group")
+        return path.join(adapters, "CSSTransition.tsx");
+      const componentSource = source.replaceAll("\\", "/");
+      for (const [component, adapter] of Object.entries({
+        Field: "Field.tsx",
+        FormikFieldWrapper: "FormikFieldWrapper.tsx",
+        button: "button.ts",
+        "button/index": "button.ts",
+      })) {
+        if (
+          componentSource === `@/components/elements/${component}` ||
+          componentSource ===
+            `${normalizedRoot}/resources/scripts/components/elements/${component}`
+        )
+          return path.join(adapters, adapter);
+      }
       if (source === "framer-motion")
         return this.resolve("motion/react", path.join(root, "package.json"));
       const name = source.startsWith("@")

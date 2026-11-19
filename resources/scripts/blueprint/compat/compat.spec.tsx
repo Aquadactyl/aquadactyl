@@ -16,9 +16,13 @@ import {
   useNavigationType,
 } from "react-router";
 import * as legacy from "./router";
+import * as legacyCore from "./router-core";
+import { Button as LegacyButton, styles as buttonStyles } from "./button";
+import { Button } from "@/components/elements/button/index";
 import { useStore, useStoreActions, useStoreState } from "./store";
 import { appStore, store } from "@/state";
 import Field from "./Field";
+import FormikFieldWrapper from "./FormikFieldWrapper";
 import { COMPATIBILITY_API_VERSION } from "./index";
 
 const navigate = vi.fn();
@@ -70,6 +74,99 @@ it("registers an old Field with Formik and displays validation after blur", asyn
   fireEvent.click(screen.getByText("Save"));
   await waitFor(() =>
     expect(submit).toHaveBeenCalledWith({ name: "Paper" }, expect.anything()),
+  );
+});
+
+it("registers custom wrapper validation and preserves nested Formik control behaviour", async () => {
+  const submit = vi.fn();
+  const validate = vi.fn(async (value: string) =>
+    value ? undefined : "Choose a domain",
+  );
+  render(
+    <Formik initialValues={{ domain: { name: "" } }} onSubmit={submit}>
+      {({ values, handleChange, handleBlur }) => (
+        <Form>
+          <FormikFieldWrapper
+            id="legacy-domain"
+            name="domain.name"
+            label="Domain"
+            description="Select the server domain"
+            className="addon-domain"
+            validate={validate}
+          >
+            <select
+              id="legacy-domain"
+              name="domain.name"
+              value={values.domain.name}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            >
+              <option value="">Choose...</option>
+              <option value="example.com">example.com</option>
+            </select>
+          </FormikFieldWrapper>
+          <button type="submit">Save domain</button>
+        </Form>
+      )}
+    </Formik>,
+  );
+  const select = screen.getByLabelText("Domain");
+  expect(select.parentElement?.classList.contains("addon-domain")).toBe(true);
+  expect(screen.queryByRole("alert")).toBeNull();
+  expect(screen.getByText("Select the server domain")).toBeTruthy();
+  fireEvent.blur(select);
+  expect((await screen.findByRole("alert")).textContent).toBe(
+    "Choose a domain",
+  );
+  expect(validate).toHaveBeenCalledWith("");
+  expect(select.parentElement?.classList.contains("has-error")).toBe(true);
+  expect(screen.queryByText("Select the server domain")).toBeNull();
+  fireEvent.change(select, { target: { value: "example.com" } });
+  await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+  expect(select.parentElement?.classList.contains("has-error")).toBe(false);
+  fireEvent.click(screen.getByText("Save domain"));
+  await waitFor(() =>
+    expect(submit).toHaveBeenCalledWith(
+      { domain: { name: "example.com" } },
+      expect.anything(),
+    ),
+  );
+});
+
+it("preserves custom wrapper children when optional label and help are omitted", () => {
+  const view = render(
+    <Formik initialValues={{ notes: "" }} onSubmit={() => {}}>
+      <FormikFieldWrapper name="notes">
+        <textarea aria-label="Notes" />
+      </FormikFieldWrapper>
+    </Formik>,
+  );
+  expect(screen.getByRole("textbox", { name: "Notes" })).toBeTruthy();
+  expect(view.container.querySelector("label, .input-help")).toBeNull();
+});
+
+it("restores core routing hooks without replacing modern route components", () => {
+  expect(legacyCore.useHistory).toBe(legacy.useHistory);
+  expect(legacyCore.useRouteMatch).toBe(legacy.useRouteMatch);
+  expect(legacyCore.Route).toBe(ModernRoute);
+  expect(legacyCore.Routes).toBe(Routes);
+});
+
+it("keeps legacy CSS-module buttons aligned with the panel button styles", () => {
+  expect(LegacyButton).toBe(Button);
+  render(
+    <>
+      <Button.Text>Modern text button</Button.Text>
+      <a
+        href="/account"
+        className={`${buttonStyles.button} ${buttonStyles.text}`}
+      >
+        Legacy text button
+      </a>
+    </>,
+  );
+  expect(new Set(screen.getByText("Legacy text button").classList)).toEqual(
+    new Set(screen.getByText("Modern text button").classList),
   );
 });
 

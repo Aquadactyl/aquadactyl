@@ -28,7 +28,9 @@ if (!components) {
         dedupe: ["react", "react-dom", "styled-components"],
         alias: {
           ...(identifier ? { [`@blueprint/extensions/${identifier}`]: directory } : {}),
+          ...(identifier ? { [`@/blueprint/extensions/${identifier}`]: directory } : {}),
           "@blueprint/extensions/{identifier}": directory,
+          "@/blueprint/extensions/{identifier}": directory,
           "@": path.join(root, "resources/scripts"),
           "@blueprint": path.join(root, "resources/scripts/blueprint"),
           "@definitions": path.join(root, "resources/scripts/api/definitions"),

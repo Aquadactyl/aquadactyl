@@ -28,24 +28,36 @@ test("Blueprint preflight compiles unchanged legacy interfaces and blocks unsupp
       import { useStoreActions, Actions } from 'easy-peasy';
       import { ApplicationStore } from '@/state';
       import { useHistory, NavLink } from 'react-router-dom';
+      import { useHistory as useCoreHistory, Route, Routes } from 'react-router';
+      import { Button, styles } from '@/components/elements/button/index';
+      import { CSSTransition } from 'react-transition-group';
       import { Formik, Form } from 'formik';
       import * as Yup from 'yup';
       import Field from '@/components/elements/Field';
+      import FormikFieldWrapper from '@/components/elements/FormikFieldWrapper';
       import Helper from '@blueprint/extensions/legacy/Helper';
+      import PlaceholderHelper from '@blueprint/extensions/{identifier}/Helper';
+      import LegacyHelper from '@/blueprint/extensions/legacy/Helper';
+      import LegacyPlaceholderHelper from '@/blueprint/extensions/{identifier}/Helper';
       import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
       import { faServer } from '@fortawesome/free-solid-svg-icons';
       import { faGithub } from '@fortawesome/free-brands-svg-icons';
       import { faFile } from '@fortawesome/free-regular-svg-icons';
-      const Card = tw.div\`bg-neutral-800 text-primary-500 p-4\`;
+      const Card = tw.div\`bg-neutral-800/40 text-primary-500/75 p-4\`;
       export default function Legacy() {
         const add = useStoreActions((actions: Actions<ApplicationStore>) => actions.flashes.addError);
         const history = useHistory();
-        return <Card><Helper /><NavLink to='/account'>Account</NavLink>
+        const coreHistory = useCoreHistory();
+        return <CSSTransition in appear timeout={150} classNames='fade'><Card><Helper /><PlaceholderHelper /><LegacyHelper /><LegacyPlaceholderHelper /><NavLink to='/account'>Account</NavLink>
           <FontAwesomeIcon icon={faServer} /><FontAwesomeIcon icon={faGithub} /><FontAwesomeIcon icon={faFile} />
           <Formik initialValues={{ name: '' }} validationSchema={Yup.object({ name: Yup.string().required() })}
             onSubmit={() => { add({ message: 'legacy' }); history.push('/account'); }}>
-            <Form><Field name='name' label='Name' /><button css={tw\`p-2\`}>Save</button></Form>
-          </Formik></Card>;
+            <Form><Field name='name' label='Name' />
+              <FormikFieldWrapper name='category' label='Category'><select name='category' /></FormikFieldWrapper>
+              <Button className={styles.text} onClick={() => coreHistory.push('/account')}>Open</Button>
+              <Routes><Route path='/example' element={<span>Modern route</span>} /></Routes>
+              <button css={tw\`p-2\`}>Save</button></Form>
+          </Formik></Card></CSSTransition>;
       }
     `,
     );
