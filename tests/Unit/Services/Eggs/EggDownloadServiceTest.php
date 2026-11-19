@@ -14,11 +14,11 @@ beforeEach(function () {
 });
 
 test('catalog is cached and fetches only the public API without credentials', function () {
-    Http::fake(['https://eggs.download/api/eggs' => Http::response(EggDownloadFixture::catalog())]);
+    Http::fake(['https://eggs.download/api/v1/eggs/_index.json' => Http::response(EggDownloadFixture::catalog())]);
     $service = app(EggDownloadService::class);
     expect($service->catalog())->toHaveCount(3)->and($service->catalog())->toHaveCount(3);
     Http::assertSentCount(1);
-    Http::assertSent(fn ($request) => $request->url() === 'https://eggs.download/api/eggs' && !$request->hasHeader('Authorization'));
+    Http::assertSent(fn ($request) => $request->url() === 'https://eggs.download/api/v1/eggs/_index.json' && !$request->hasHeader('Authorization'));
 });
 
 test('catalog drops invalid paths and unknown sources', function () {
@@ -32,11 +32,37 @@ test('catalog drops invalid paths and unknown sources', function () {
 
 test('detail caching preserves the complete egg document', function () {
     $document = EggDownloadFixture::document();
-    Http::fake(['*' => Http::response($document)]);
+    Http::fake(['https://eggs.download/api/v1/eggs/library-test.json' => Http::response($document)]);
     $service = app(EggDownloadService::class);
     expect($service->detail('library-test')['egg'])->toBe($document['egg']);
     expect($service->detail('library-test')['readme'])->toBe('Test setup notes.');
     Http::assertSentCount(1);
+    Http::assertSent(fn ($request) => $request->url() === 'https://eggs.download/api/v1/eggs/library-test.json' && !$request->hasHeader('Authorization'));
+});
+
+test('the versioned API does not reuse cached catalog or details from legacy endpoints', function () {
+    Cache::put('egg-download:catalog:v1', [], 600);
+    Cache::put('egg-download:detail:v1:library-test', ['egg' => ['name' => 'Outdated egg']], 300);
+    Http::fake([
+        'https://eggs.download/api/v1/eggs/_index.json' => Http::response(EggDownloadFixture::catalog()),
+        'https://eggs.download/api/v1/eggs/library-test.json' => Http::response(EggDownloadFixture::document()),
+    ]);
+
+    $service = app(EggDownloadService::class);
+    expect($service->catalog())->toHaveCount(3)
+        ->and($service->detail('library-test')['egg']['name'])->toBe('Library Test Egg');
+    Http::assertSentCount(2);
+});
+
+test('a missing individual egg has a specific error and is not cached', function () {
+    Http::fake(['https://eggs.download/api/v1/eggs/library-test.json' => Http::response([], 404)]);
+    $service = app(EggDownloadService::class);
+
+    for ($i = 0; $i < 2; ++$i) {
+        expect(fn () => $service->detail('library-test'))
+            ->toThrow(DisplayException::class, 'This egg is no longer available on eggs.download.');
+    }
+    Http::assertSentCount(2);
 });
 
 test('invalid identifiers never trigger an outbound request', function (string $slug) {
@@ -56,7 +82,7 @@ test('API errors produce useful messages and are not cached', function (int $sta
 })->with([
     [429, 'eggs.download is limiting requests.'],
     [503, 'eggs.download is temporarily unavailable.'],
-    [404, 'This egg is no longer available'],
+    [404, 'The eggs.download catalog is currently unavailable.'],
     [302, 'eggs.download is temporarily unavailable.'],
 ]);
 

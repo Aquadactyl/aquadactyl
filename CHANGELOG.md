@@ -8,6 +8,12 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.1-beta.4
+
+- Restore the Egg Library using eggs.download's canonical versioned JSON API.
+  Refresh legacy catalog/preview caches and distinguish a catalog outage from
+  an individual egg that is no longer available.
+
 ## v1.1-beta.3
 
 - Use `/var/lib/aquadactyl/volumes` for new nodes created through the UI, API
