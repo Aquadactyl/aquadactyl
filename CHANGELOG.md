@@ -8,6 +8,14 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.1-beta.5
+
+- Disable PHP session upload progress in the native PHP-FPM template, matching
+  Docker. Existing native deployments must apply the setting to their actual
+  FPM configuration and reload that service; a source update alone is insufficient.
+- Add public contribution forms and private security-report links. Keep required
+  CI and branch protections mandatory, with a separate review-only exemption
+  for the current code owners.
 - Fix legacy Blueprint preflight imports using an addon's identifier placeholder,
   Twin palette colours with slash opacity, Formik field wrappers, core router
   history hooks and button CSS-module exports. Add a React 19-safe CSSTransition
