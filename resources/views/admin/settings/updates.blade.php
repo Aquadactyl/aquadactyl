@@ -17,13 +17,19 @@
     </form>
     <div class="box"><div class="box-header with-border"><h3 class="box-title">{{ __('webhooks.versions') }}</h3></div><div class="box-body">
         <form method="POST" action="{{ route('admin.settings.updates.check', [], false) }}">@csrf<button type="submit" class="btn btn-default"><i class="fa fa-refresh" aria-hidden="true"></i> {{ __('webhooks.check_now') }}</button></form>
-        <div class="software-versions">@foreach(collect([['key' => 'panel', 'name' => config('app.name')]])->concat($nodes->map(fn ($node) => ['key' => 'node:' . $node->id, 'name' => $node->name])) as $component)
-            @php($state = $states->get($component['key']))
+        <div class="software-versions">@foreach(collect([['key' => 'panel', 'name' => config('app.name'), 'product' => 'panel']])->concat($nodes->map(fn ($node) => ['key' => 'node:' . $node->id, 'name' => $node->name, 'product' => $products[$node->id] ?? 'auto'])) as $component)
+            @php
+                $state = $states->get($component['key']);
+                if ($state && $component['product'] !== 'auto' && $state->product !== $component['product']) {
+                    $state = null;
+                }
+                $prereleases = $state && \Pterodactyl\Services\Updates\SoftwareVersion::isPrerelease($state->installed_version);
+            @endphp
             <article class="webhook-delivery">
                 <strong>{{ $component['name'] }}</strong>
                 @if($state)
-                    <div>{{ ucfirst($state->product) }} &middot; {{ __('webhooks.installed') }}: <code>{{ $state->installed_version }}</code></div>
-                    <div>{{ __('webhooks.latest') }}: {{ $state->latest_version ?? __('webhooks.no_release') }} @if($state->latest_version && \Pterodactyl\Services\Updates\SoftwareMonitor::newer($state->installed_version, $state->latest_version))<span class="label label-info">{{ __('webhooks.available') }}</span>@endif</div>
+                    <div>{{ $state->product === 'unknown' ? __('webhooks.unknown_product') : ucfirst($state->product) }} &middot; {{ __('webhooks.installed') }}: <code>{{ $state->installed_version }}</code></div>
+                    <div>{{ __($prereleases ? 'webhooks.latest_prerelease' : 'webhooks.latest') }}: {{ $state->latest_version ?? __($prereleases ? 'webhooks.no_versioned_release' : 'webhooks.no_release') }} @if($state->latest_version && \Pterodactyl\Services\Updates\SoftwareMonitor::newer($state->installed_version, $state->latest_version))<span class="label label-info">{{ __('webhooks.available') }}</span>@endif</div>
                     <small class="text-muted">{{ __('webhooks.checked') }}: {{ $state->checked_at?->toDateTimeString() }}</small>
                     @if($state->last_error)<p class="text-warning">{{ $state->last_error }}</p>@endif
                     @if($state->release_url)<a href="{{ $state->release_url }}" target="_blank" rel="noopener noreferrer">{{ __('webhooks.releases') }} <i class="fa fa-external-link" aria-hidden="true"></i></a>@endif

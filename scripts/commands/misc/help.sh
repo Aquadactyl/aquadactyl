@@ -45,5 +45,8 @@ ${help_dev_primary}Developer${help_dev_status}\x1b[0m${help_dev_secondary}
     blueprint -i theme
     blueprint -r theme
   These commands rebuild assets, refresh caches and permissions, and reload PHP.
+  For reviewed addons that patch root-owned core files (runs scripts as root):
+    sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 blueprint -i theme
+    sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 blueprint -r theme
 "
 }

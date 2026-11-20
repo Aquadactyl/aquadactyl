@@ -26,7 +26,7 @@
                 <p class="text-muted small panel-update-notes-help">{{ __('webhooks.notes_help') }} <a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }} &rarr;</a></p>
                 @if($panelUpdate?->last_error)<p class="text-warning">{{ $panelUpdate->last_error }}</p>@endif
                 @if($panelUpdate?->latest_version)
-                    <p class="text-muted small">{{ __('webhooks.latest') }} <strong>{{ $panelUpdate->latest_version }}</strong> &middot; {{ $panelUpdate->checked_at?->diffForHumans() }} <a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }} &rarr;</a></p>
+                    <p class="text-muted small">{{ __(\Pterodactyl\Services\Updates\SoftwareVersion::isPrerelease($panelUpdate->installed_version) ? 'webhooks.latest_prerelease' : 'webhooks.latest') }} <strong>{{ $panelUpdate->latest_version }}</strong> &middot; {{ $panelUpdate->checked_at?->diffForHumans() }} <a href="{{ route('admin.settings.updates', [], false) }}">{{ __('webhooks.updates') }} &rarr;</a></p>
                 @endif
             </div>
         </div>

@@ -78,19 +78,21 @@ MariaDB, Redis, the panel, Blueprint and Wings automatically. See
 
 ## Linux installation
 
-The v1.1-beta.5 release includes native PHP-FPM hardening and legacy Blueprint
-frontend compatibility fixes. Manta v1.1-beta.4 adds nonblocking filesystem
-checks; update the daemon separately.
+Beta tags now advance the minor version: `v1.2-beta`, followed by `v1.3-beta`.
 
-The v1.1-beta.5 release is a prerelease: test your workload and extensions before
+The v1.2-beta release fixes Blueprint backend installation failures and separates
+Manta/Wings release feeds, notes and beta comparisons. Manta v1.2-beta explicitly
+identifies its product in the system API; update the daemon separately.
+
+The v1.2-beta release is a prerelease: test your workload and extensions before
 upgrading a live installation. The Git-based installer supports Ubuntu 22.04/24.04/26.04
 LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
 Composer 2 and the panel's pinned pnpm.
 
 ```bash
-git clone --depth 1 --branch v1.1-beta.2 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.2-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
-sudo bash deploy.sh install v1.1-beta.5
+sudo bash deploy.sh install v1.2-beta
 ```
 
 The installer fetches the exact panel tag, installs locked dependencies, initializes
@@ -109,9 +111,17 @@ From your reviewed installer checkout, select an explicit published release:
 
 ```bash
 cd /opt/aquadactyl-installer
-git fetch origin tag v1.1-beta.2
-git checkout --detach v1.1-beta.2
-sudo bash deploy.sh update v1.1-beta.5
+git fetch origin tag v1.2-beta
+git checkout --detach v1.2-beta
+sudo bash deploy.sh update v1.2-beta
+```
+
+For reviewed addons that patch core PHP files, use the
+[explicit lifecycle-script option](docs/BLUEPRINT-COMPATIBILITY.md#addons-that-patch-core-php-files)
+when updating:
+
+```bash
+sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 bash deploy.sh update v1.2-beta
 ```
 
 The updater fetches the tagged source through Git, pauses the panel, backs up its

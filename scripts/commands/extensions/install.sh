@@ -1307,29 +1307,7 @@ InstallExtension() {
       hide_progress
       chmod --silent +x ".blueprint/extensions/$identifier/private/install.sh" 2>> "$BLUEPRINT__DEBUG"
 
-      # Run script while also parsing some useful variables for the install script to use.
-      if $F_developerEscalateInstallScript; then
-        ENGINE="$BLUEPRINT_ENGINE"         \
-        EXTENSION_IDENTIFIER="$identifier" \
-        EXTENSION_TARGET="$target"         \
-        EXTENSION_VERSION="$version"       \
-        PTERODACTYL_DIRECTORY="$FOLDER"    \
-        BLUEPRINT_VERSION="$VERSION"       \
-        BLUEPRINT_DEVELOPER="$dev"         \
-        bash .blueprint/extensions/"$identifier"/private/install.sh
-      else
-        su "$WEBUSER" -s "$USERSHELL" -c "
-          cd \"$FOLDER\";
-          ENGINE=\"$BLUEPRINT_ENGINE\"         \
-          EXTENSION_IDENTIFIER=\"$identifier\" \
-          EXTENSION_TARGET=\"$target\"         \
-          EXTENSION_VERSION=\"$version\"       \
-          PTERODACTYL_DIRECTORY=\"$FOLDER\"    \
-          BLUEPRINT_VERSION=\"$VERSION\"       \
-          BLUEPRINT_DEVELOPER=\"$dev\"         \
-          bash .blueprint/extensions/$identifier/private/install.sh
-        "
-      fi
+      blueprint_extension_run_script "$identifier" install "$F_developerEscalateInstallScript" || return $?
       echo -e "\e[0m\x1b[0m\033[0m"
     fi
   fi

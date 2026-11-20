@@ -41,9 +41,9 @@ Review the matching [Installer release](https://github.com/Aquadactyl/Installer)
 from Git, then install the exact panel release:
 
 ```bash
-git clone --depth 1 --branch v1.1-beta.2 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.2-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
-sudo bash deploy.sh install v1.1-beta.5
+sudo bash deploy.sh install v1.2-beta
 ```
 
 The installer provisions packages when needed, fetches the tagged panel source,
@@ -52,16 +52,16 @@ initializes Blueprint, runs migrations, builds assets, and configures Nginx,
 for existing installations. The following configuration examples also apply to
 operators managing their own services. Do not add duplicate queues or cron entries.
 
-Installer `v1.1-beta.2` supports Ubuntu 22.04 and checks the host before changing
+Installer `v1.2-beta` supports Ubuntu 22.04 and checks the host before changing
 panel files or configuration. PHP 8.4/8.5 is still required; Ubuntu's stock PHP
 version is not sufficient. The installer provisions the PHP repository when needed.
 If an earlier attempt recovered source and then rejected the OS, retry with
 the same panel tag as that checkout. To move an unfinished checkout to
-`v1.1-beta.5`, use the source-recovery procedure below. Initialized panels must
+`v1.2-beta`, use the source-recovery procedure below. Initialized panels must
 use `update` instead.
 
 If an installation already installed dependencies and then failed, repair the
-saved configuration and use `install v1.1-beta.5 --resume`. This requires matching
+saved configuration and use `install v1.2-beta --resume`. This requires matching
 release source and an existing `.env`, preserves application keys and uploads,
 and refuses initialized Blueprint/addon state. Database connectivity is checked
 before key generation or maintenance. Existing database-account passwords are
@@ -74,7 +74,7 @@ accounts and data are preserved. It requires local `sudo mariadb` socket access
 and refuses remote/URL/socket configuration and system databases.
 
 The installer also supports recovery for an unused, unfinished checkout that
-reports a different panel version. Run `install v1.1-beta.5 --refresh-source` only
+reports a different panel version. Run `install v1.2-beta --refresh-source` only
 for that case: it fetches the requested release before backing up the old directory,
 then preserves `.env`, `.blueprintrc` and `storage/app`. Initialized panels are
 refused even with this flag. The installer prints the private backup path.
@@ -237,10 +237,20 @@ Publish a tagged release of this fork first. The release workflow attaches
 
 ```bash
 cd /opt/aquadactyl-installer
-git fetch origin tag v1.1-beta.2
-git checkout --detach v1.1-beta.2
-sudo bash deploy.sh update v1.1-beta.5
+git fetch origin tag v1.2-beta
+git checkout --detach v1.2-beta
+sudo bash deploy.sh update v1.2-beta
 ```
+
+If installed addons have reviewed scripts that modify root-owned core files,
+pass the explicit lifecycle option for their reapplication:
+
+```bash
+sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 bash deploy.sh update v1.2-beta
+```
+
+This runs custom lifecycle scripts as root. Default updates retain web-user
+execution. Inspect a failed addon script and its backup before retrying.
 
 Replace `vRELEASE_TAG` with a reviewed, published release tag. If your fork has a
 different owner, provide its `owner/repository` argument. For an already downloaded
@@ -283,20 +293,20 @@ snapshot includes `.env`, vendor dependencies and Blueprint extension data.
 
 ### Maintainer release publication
 
-Dispatch **Release** with a reviewed version such as `v1.1-beta.5`. It stamps the
-source tag before building and uploads `release-v1.1-beta.5` as a workflow artifact.
-Download that artifact with `gh run download RUN_ID --name release-v1.1-beta.5`.
+Dispatch **Release** with a reviewed version such as `v1.2-beta`. It stamps the
+source tag before building and uploads `release-v1.2-beta` as a workflow artifact.
+Download that artifact with `gh run download RUN_ID --name release-v1.2-beta`.
 Verify `sha256sum --check SHA256SUMS`, the source tag's version and release notes,
 then create a draft using an authenticated maintainer account:
 
 ```bash
-gh release create v1.1-beta.5 --repo Aquadactyl/aquadactyl --verify-tag --draft --prerelease --notes-file RELEASE_CHANGELOG panel.tar.gz SHA256SUMS
+gh release create v1.2-beta --repo Aquadactyl/aquadactyl --verify-tag --draft --prerelease --notes-file RELEASE_CHANGELOG panel.tar.gz SHA256SUMS
 ```
 
 After the test/build/deployment checks and archive inspection pass, publish it:
 
 ```bash
-gh release edit v1.1-beta.5 --repo Aquadactyl/aquadactyl --draft=false --prerelease
+gh release edit v1.2-beta --repo Aquadactyl/aquadactyl --draft=false --prerelease
 ```
 
 This keeps artifact building separate from the account authorized to publish a

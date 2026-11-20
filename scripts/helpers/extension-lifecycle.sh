@@ -1,6 +1,51 @@
 #!/usr/bin/env bash
 
 # Complete an extension transaction so callers do not need separate deployment commands.
+blueprint_extension_run_script() {
+  local identifier=$1 action=$2 legacy_root=${3:-false}
+  local script="$FOLDER/.blueprint/extensions/$identifier/private/$action.sh"
+  [[ -f $script ]] || return 0
+
+  local as_root=false command status=0
+  if [[ ${BLUEPRINT__ALLOW_CORE_SCRIPTS:-0} == 1 || $legacy_root == true ]]; then
+    if [[ $EUID != 0 ]]; then
+      PRINT FATAL "Running a core-modifying extension script requires root."
+      return 1
+    fi
+    as_root=true
+    PRINT WARNING "Running '$identifier/$action.sh' as root; it can modify panel and host files."
+  fi
+
+  local -a invocation=(env
+    "ENGINE=${BLUEPRINT_ENGINE:-}"
+    "EXTENSION_IDENTIFIER=$identifier"
+    "EXTENSION_TARGET=${target:-}"
+    "EXTENSION_VERSION=${version:-}"
+    "PTERODACTYL_DIRECTORY=$FOLDER"
+    "BLUEPRINT_VERSION=${VERSION:-}"
+    "BLUEPRINT_DEVELOPER=${dev:-false}"
+    bash -e -o pipefail "$script")
+
+  # Stop legacy scripts on a failed copy/write rather than letting their final
+  # cache-clear command hide a partially installed backend. Quote each argument
+  # before crossing the su shell boundary, including publisher metadata.
+  if [[ $as_root == true ]]; then
+    (cd "$FOLDER" && "${invocation[@]}") || status=$?
+  else
+    printf -v command '%q ' "${invocation[@]}"
+    printf -v command 'cd %q && %s' "$FOLDER" "$command"
+    su "$WEBUSER" -s "$USERSHELL" -c "$command" || status=$?
+  fi
+
+  if [[ $status != 0 ]]; then
+    PRINT FATAL "Extension '$identifier' $action script failed (exit $status); the operation was not completed."
+    if [[ $as_root != true && $OWNERSHIP == root:* ]]; then
+      PRINT WARNING "Panel source is root-owned. If this trusted addon patches core files, review its scripts and rerun with sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 blueprint -i $identifier (use -r for removal)."
+    fi
+  fi
+  return "$status"
+}
+
 blueprint_extension_artisan() {
   local command
   printf -v command '%q ' php "$FOLDER/artisan" "$@"
