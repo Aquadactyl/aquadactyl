@@ -41,7 +41,7 @@ Review the matching [Installer release](https://github.com/Aquadactyl/Installer)
 from Git, then install the exact panel release:
 
 ```bash
-git clone --depth 1 --branch v1.2-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.3-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
 sudo bash deploy.sh install v1.2-beta
 ```
@@ -52,7 +52,7 @@ initializes Blueprint, runs migrations, builds assets, and configures Nginx,
 for existing installations. The following configuration examples also apply to
 operators managing their own services. Do not add duplicate queues or cron entries.
 
-Installer `v1.2-beta` supports Ubuntu 22.04 and checks the host before changing
+Installer `v1.3-beta` supports Ubuntu 22.04 and checks the host before changing
 panel files or configuration. PHP 8.4/8.5 is still required; Ubuntu's stock PHP
 version is not sufficient. The installer provisions the PHP repository when needed.
 If an earlier attempt recovered source and then rejected the OS, retry with
@@ -237,10 +237,15 @@ Publish a tagged release of this fork first. The release workflow attaches
 
 ```bash
 cd /opt/aquadactyl-installer
-git fetch origin tag v1.2-beta
-git checkout --detach v1.2-beta
+git fetch origin tag v1.3-beta
+git checkout --detach v1.3-beta
 sudo bash deploy.sh update v1.2-beta
 ```
+
+Use Installer v1.3-beta or later for panels with Blueprint addons. It fixes
+the extension audit's handling of native `|identifier,` records without editing
+installed metadata. The panel target remains v1.2-beta. See
+[inventory troubleshooting](https://aquadactyl.uk/docs/panel/troubleshooting#blueprint-inventory).
 
 If installed addons have reviewed scripts that modify root-owned core files,
 pass the explicit lifecycle option for their reapplication:
