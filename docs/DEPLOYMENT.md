@@ -112,6 +112,9 @@ and Blueprint's seeder, which preserves existing Blueprint settings.
 Edit `deploy/nginx/panel.conf` for your domain, certificate paths, panel path and
 FPM socket, then install it as your Nginx site. Serve only `public/`. Install
 `deploy/php/99-panel.ini` in your PHP FPM `conf.d` directory and reload FPM.
+On existing installations, refresh this file when updating the panel. It disables
+PHP's session-based upload progress as a PHP-FPM hardening measure. Keep PHP
+updated through your OS package provider.
 Validate Nginx with `sudo nginx -t` before reloading it.
 
 Install the queue service and scheduler, adjusting paths and PHP version as needed:

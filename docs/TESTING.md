@@ -111,11 +111,10 @@ review both audits. Review new advisories and dependency installation scripts as
 part of an update. A passing audit or coverage gate is not a complete security
 assessment. CI artifacts retain test and coverage reports for each revision.
 
-The full pnpm audit currently flags `braces` 3.0.3 for
-[CVE-2026-93687](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), which has no
-upstream fixed release as of 20 October 2026. The locked dependency has a local
-depth-limit patch in `patches/braces@3.0.3.patch`. `pnpm run test:security` exercises
+The advisory for `braces` 3.0.3 was
+[withdrawn](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm). The locked
+dependency still has a local depth-limit patch in `patches/braces@3.0.3.patch`.
+`pnpm run test:security` exercises
 the installed dependency's parser, compiler and expansion functions with deeply
 nested input, and verifies normal expansion. It also tests the release-tag CLI
-against shell and PHP injection inputs. The advisory remains visible in the full
-audit; the local mitigation does not change the package's published version.
+against shell and PHP injection inputs.
