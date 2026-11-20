@@ -453,18 +453,29 @@ if (!ctype_digit($timestamp) || abs(time() - (int) $timestamp) > 300 || !hash_eq
 ```
 
 Use **Settings > Updates** to queue a check or opt into hourly checks. Checks fetch
-the latest stable release from `Aquadactyl/aquadactyl`, `Aquadactyl/manta` or
-`pterodactyl/wings` and read the authenticated daemon system endpoint. Select Manta
-explicitly for nodes whose version string does not identify the fork. Checks run
+releases from `Aquadactyl/aquadactyl`, `Aquadactyl/manta` or `pterodactyl/wings`
+and read the authenticated daemon system endpoint. Manta and Wings have separate
+release feeds, caches, links and descriptions. Explicit daemon product metadata
+identifies new builds. Older Manta betas, including `1.1-beta.3`, are recognized
+by their existing host-usage capability and beta version format. Ambiguous builds
+show an unidentified state instead of assuming Wings; select the product for
+that node, save, then queue a check. A changed selection hides previously cached
+notes for another product until a matching check finishes. Checks run
 in the background and never install software. GitHub metadata is cached for an
 hour; unavailable nodes retain their last known installed version with an error.
 
 The first successful observation establishes an installed-version baseline.
 Subsequent version changes can notify subscribed webhooks; a product selection
 change alone does not count as an installation. Available-update notices compare
-stable `X.Y.Z` versions only and are deduplicated per destination revision and
+stable versions and recognized alpha/beta/RC versions, including Aquadactyl's
+two-component beta tags, and are deduplicated per destination revision and
 installed/latest version pair while their delivery history is retained (30 days).
 Canary and custom builds cannot be ordered reliably.
+Stable installations use the stable feed. Prerelease installations include
+versioned prereleases from the same repository and can graduate to a newer
+stable release. Drafts and unversioned canary releases are excluded. Correcting
+a daemon's product establishes a new baseline and replaces old release notes;
+it does not report that a different product was installed.
 Docker builds carry a stable build fingerprint to detect a changed canary image.
 
 The administration overview displays **Update notes** in a collapsed section in

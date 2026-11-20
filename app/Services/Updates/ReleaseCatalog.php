@@ -9,9 +9,9 @@ class ReleaseCatalog
 {
     public const REPOSITORIES = ['panel' => 'Aquadactyl/aquadactyl', 'manta' => 'Aquadactyl/manta', 'wings' => 'pterodactyl/wings'];
 
-    public function latest(string $product): array
+    public function latest(string $product, ?string $installedVersion = null): array
     {
-        return $this->release($product);
+        return $this->release($product, includePrereleases: SoftwareVersion::isPrerelease($installedVersion ?? ''));
     }
 
     public function forPanelVersion(string $version): array
@@ -29,16 +29,16 @@ class ReleaseCatalog
         return $release;
     }
 
-    private function release(string $product, ?string $tag = null): array
+    private function release(string $product, ?string $tag = null, bool $includePrereleases = false): array
     {
         $repository = self::REPOSITORIES[$product];
 
-        return Cache::remember('aquadactyl-release:' . $product . ($tag === null ? '' : ':tag:' . $tag), 3600, function () use ($repository, $tag) {
+        return Cache::remember('aquadactyl-release:v2:' . $product . ($tag === null ? ($includePrereleases ? ':prereleases' : ':stable') : ':tag:' . $tag), 3600, function () use ($repository, $tag, $includePrereleases) {
             $empty = $this->emptyRelease($repository);
             try {
                 $response = Http::acceptJson()->withUserAgent('Aquadactyl-Update-Checker')->connectTimeout(3)->timeout(8)
                     ->withoutRedirecting()->withOptions(['stream' => true, 'read_timeout' => 3])
-                    ->get('https://api.github.com/repos/' . $repository . '/releases/' . ($tag === null ? 'latest' : 'tags/' . rawurlencode($tag)));
+                    ->get('https://api.github.com/repos/' . $repository . '/releases' . ($includePrereleases ? '?per_page=30' : '/' . ($tag === null ? 'latest' : 'tags/' . rawurlencode($tag))));
                 $stream = $response->toPsrResponse()->getBody();
                 try {
                     if ($response->status() === 404) {
@@ -57,10 +57,28 @@ class ReleaseCatalog
                         }
                     }
                     $data = json_decode($json, true, 32, JSON_THROW_ON_ERROR);
-                    if (!is_array($data) || !is_string($data['tag_name'] ?? null) || ($tag === null ? !preg_match('/^v?[0-9]+\.[0-9]+\.[0-9]+$/D', $data['tag_name']) : $data['tag_name'] !== $tag)) {
+                    if ($includePrereleases) {
+                        if (!is_array($data) || !array_is_list($data)) {
+                            throw new \RuntimeException();
+                        }
+                        $candidate = null;
+                        foreach ($data as $release) {
+                            if (!is_array($release) || ($release['draft'] ?? false) || !is_string($release['tag_name'] ?? null) || SoftwareVersion::parse($release['tag_name']) === null) {
+                                continue;
+                            }
+                            if ($candidate === null || SoftwareVersion::newer($candidate['tag_name'], $release['tag_name'])) {
+                                $candidate = $release;
+                            }
+                        }
+                        if ($candidate === null) {
+                            return $empty;
+                        }
+                        $data = $candidate;
+                    }
+                    if (!is_array($data) || !is_string($data['tag_name'] ?? null) || ($tag === null ? ($includePrereleases ? SoftwareVersion::parse($data['tag_name']) === null : !preg_match('/^v?[0-9]+\.[0-9]+\.[0-9]+$/D', $data['tag_name'])) : $data['tag_name'] !== $tag)) {
                         throw new \RuntimeException();
                     }
-                    if (($data['draft'] ?? false) || ($tag === null && ($data['prerelease'] ?? false))) {
+                    if (($data['draft'] ?? false) || ($tag === null && !$includePrereleases && ($data['prerelease'] ?? false))) {
                         return $empty;
                     }
 

@@ -145,6 +145,9 @@ test('available notifications deduplicate and installed notifications require an
     $monitor->observe('panel', 'manta', '1.2.3', null);
     expect(WebhookDelivery::where('event_type', 'updates.installed')->count())->toBe(1);
     expect(SoftwareUpdate::where('component', 'panel')->value('release_notes'))->toBe('**Release**');
+    // Restore the panel identity before rendering its notes; a product change
+    // is a fresh baseline and must not display another product's cached notes.
+    $monitor->observe('panel', 'panel', '1.2.3', null);
     $response = $this->actingAs(User::factory()->create(['root_admin' => true]))->get('/admin/settings/updates')->assertOk();
     $response->assertSee('<strong>Release</strong>', false);
     config()->set('app.version', '1.2.3');

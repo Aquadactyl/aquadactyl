@@ -12,6 +12,10 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
   backend copies behind a successful cache clear. Preserve the configured web
   identity by default and support an explicit root-operator opt-in for reviewed
   legacy core-modifying scripts, including removal. Keep panel source root-owned.
+- Identify legacy Manta betas and explicit daemon products without mixing Wings
+  and Manta release feeds. Compare recognized beta/RC versions, include beta
+  releases for prerelease installations, isolate caches and replace incorrect
+  cached notes. Ambiguous builds require an explicit product selection.
 
 ## v1.1-beta.5
 
