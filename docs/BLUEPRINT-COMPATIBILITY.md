@@ -91,6 +91,38 @@ permissions, third-party services or custom scripts. Install packages from
 publishers you trust and keep backups as usual. Custom lifecycle scripts are
 reported for review; their effects cannot be translated safely in general.
 
+## Addons that patch core PHP files
+
+Some older addons copy controllers/models into `app/` and edit the panel's route
+files from `private/install.sh`. Those scripts normally run as the configured
+web user. On root-owned deployments they cannot change panel source. Frontend
+compilation alone does not establish that these backend changes succeeded.
+
+Lifecycle scripts now stop on failed commands/pipelines and propagate a failing
+exit code to Blueprint. A failed new install is not added to the active list, and a
+failed removal stops before deleting the addon. A script can still have made
+partial changes before failing; inspect the output and restore a backup if needed.
+
+After reviewing a trusted addon's install and removal scripts and backing up the
+panel, a root operator can explicitly allow core modifications for one command:
+
+```bash
+sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 blueprint -i myaddon
+sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 blueprint -r myaddon
+```
+
+This runs custom lifecycle scripts as root, with permission to change host files.
+The default web-user execution and root-owned panel permissions remain in place.
+The admin web installer does not enable this option automatically. The existing
+`developerEscalateInstallScript` manifest flag retains its install-time behavior.
+
+If an earlier version reported success but an addon endpoint returns 404, check
+`php artisan route:list --path=domains` (substitute the addon's endpoint), the
+addon's copied controller/model files and installation output. Missing backend
+files require reapplying the reviewed install script; clearing caches alone does
+not create them. Keep any existing addon settings/data and rebuild the route
+cache as the web user after the repair.
+
 ## Stable API for new addons
 
 New addons can use `@blueprint/compat` for the version constant, application
