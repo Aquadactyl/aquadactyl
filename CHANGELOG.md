@@ -8,6 +8,11 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+- Stop and report failed Blueprint lifecycle scripts instead of hiding failed
+  backend copies behind a successful cache clear. Preserve the configured web
+  identity by default and support an explicit root-operator opt-in for reviewed
+  legacy core-modifying scripts, including removal. Keep panel source root-owned.
+
 ## v1.1-beta.5
 
 - Disable PHP session upload progress in the native PHP-FPM template, matching
