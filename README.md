@@ -78,7 +78,11 @@ MariaDB, Redis, the panel, Blueprint and Wings automatically. See
 
 ## Linux installation
 
-The v1.1-beta.4 release is a prerelease: test your workload and extensions before
+The v1.1-beta.5 release includes native PHP-FPM hardening and legacy Blueprint
+frontend compatibility fixes. Manta v1.1-beta.4 adds nonblocking filesystem
+checks; update the daemon separately.
+
+The v1.1-beta.5 release is a prerelease: test your workload and extensions before
 upgrading a live installation. The Git-based installer supports Ubuntu 22.04/24.04/26.04
 LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
 Composer 2 and the panel's pinned pnpm.
@@ -86,7 +90,7 @@ Composer 2 and the panel's pinned pnpm.
 ```bash
 git clone --depth 1 --branch v1.1-beta.2 https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
-sudo bash deploy.sh install v1.1-beta.4
+sudo bash deploy.sh install v1.1-beta.5
 ```
 
 The installer fetches the exact panel tag, installs locked dependencies, initializes
@@ -107,7 +111,7 @@ From your reviewed installer checkout, select an explicit published release:
 cd /opt/aquadactyl-installer
 git fetch origin tag v1.1-beta.2
 git checkout --detach v1.1-beta.2
-sudo bash deploy.sh update v1.1-beta.4
+sudo bash deploy.sh update v1.1-beta.5
 ```
 
 The updater fetches the tagged source through Git, pauses the panel, backs up its
