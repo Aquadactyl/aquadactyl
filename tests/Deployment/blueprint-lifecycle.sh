@@ -22,6 +22,10 @@ chmod 0640 "$FOLDER/routes/api-client.php"
 touch "$FOLDER/.env" "$FOLDER/blueprint.sh"
 PRINT() { printf '%s\n' "$*"; }
 source "$ROOT/scripts/helpers/extension-lifecycle.sh"
+# The runner's checkout may be inside a private home directory. Give the
+# unprivileged fixture its own readable copy, not access to that checkout.
+cp "$ROOT/scripts/helpers/extension-lifecycle.sh" "$WORK/extension-lifecycle.sh"
+chmod 0644 "$WORK/extension-lifecycle.sh"
 # Test that publisher metadata stays literal.
 # shellcheck disable=SC2016
 target='literal $(touch SHOULD_NOT_EXIST) "quotes"'
@@ -90,7 +94,7 @@ FOLDER="$LIFECYCLE_PANEL"
 BLUEPRINT__ALLOW_CORE_SCRIPTS=1 blueprint_extension_run_script fixture install
 SH
 status=0
-su "$WEBUSER" -s /bin/bash -c "LIFECYCLE_SOURCE='$ROOT/scripts/helpers/extension-lifecycle.sh' LIFECYCLE_PANEL='$FOLDER' bash '$WORK/nonroot.sh'" > "$WORK/nonroot.log" 2>&1 || status=$?
+su "$WEBUSER" -s /bin/bash -c "LIFECYCLE_SOURCE='$WORK/extension-lifecycle.sh' LIFECYCLE_PANEL='$FOLDER' bash '$WORK/nonroot.sh'" > "$WORK/nonroot.log" 2>&1 || status=$?
 [[ $status != 0 ]]
 grep -q 'requires root' "$WORK/nonroot.log"
 

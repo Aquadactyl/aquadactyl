@@ -32,6 +32,9 @@ test('release comparisons normalize version prefixes missing patch numbers and b
     expect(SoftwareVersion::newer($installed, $latest))->toBe($expected);
 })->with([
     ['1.1-beta.3', 'v1.1-beta.4', true],
+    ['1.1-beta.5', 'v1.2-beta', true],
+    ['1.2-beta', 'v1.3-beta', true],
+    ['1.2-beta', 'v1.2-beta', false],
     ['1.1-beta.4', 'v1.1-beta.3', false],
     ['1.1-beta.9', 'v1.1-beta.10', true],
     ['1.1-beta.3', 'v1.1.0-beta.3', false],

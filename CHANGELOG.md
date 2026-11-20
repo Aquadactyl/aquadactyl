@@ -8,6 +8,8 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.2-beta
+
 - Stop and report failed Blueprint lifecycle scripts instead of hiding failed
   backend copies behind a successful cache clear. Preserve the configured web
   identity by default and support an explicit root-operator opt-in for reviewed
