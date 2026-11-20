@@ -44,8 +44,7 @@ class SoftwareMonitor
                         if ($response->getStatusCode() !== 200 || !is_string($info['version'] ?? null) || $info['version'] === '' || strlen($info['version']) > 100) {
                             throw new \RuntimeException();
                         }
-                        $override = $products[$id] ?? 'auto';
-                        $product = in_array($override, ['wings', 'manta'], true) ? $override : ((str_contains(strtolower($info['version']), 'manta') || ($info['product'] ?? null) === 'manta') ? 'manta' : 'wings');
+                        $product = DaemonProduct::identify($info, $products[$id] ?? 'auto');
                         $this->observe('node:' . $id, $product, $info['version'], $id);
                     } catch (\Throwable) {
                         $this->failedNode($id);
@@ -58,11 +57,13 @@ class SoftwareMonitor
 
     public function observe(string $component, string $product, string $version, ?int $nodeId): void
     {
-        $release = $this->catalog->latest($product);
+        $release = $product === 'unknown'
+            ? ['tag' => null, 'url' => null, 'notes' => '', 'error' => __('webhooks.unknown_daemon')]
+            : $this->catalog->latest($product, $version);
         $installedRelease = $product === 'panel' ? $this->catalog->forPanelVersion($version) : null;
         DB::transaction(function () use ($component, $product, $version, $nodeId, $release, $installedRelease) {
             $state = SoftwareUpdate::where('component', $component)->lockForUpdate()->first();
-            if ($state && $state->installed_version !== $version) {
+            if ($state && $state->product === $product && $state->installed_version !== $version) {
                 $this->emitter->emit('updates.installed', ['component' => $component, 'product' => $product, 'previous' => $state->installed_version, 'installed' => $version]);
             }
             SoftwareUpdate::updateOrCreate(['component' => $component], ['node_id' => $nodeId, 'product' => $product, 'installed_version' => $version,
@@ -77,9 +78,7 @@ class SoftwareMonitor
 
     public static function newer(string $installed, string $latest): bool
     {
-        return preg_match('/^v?[0-9]+\.[0-9]+\.[0-9]+$/D', $installed) === 1
-            && preg_match('/^v?[0-9]+\.[0-9]+\.[0-9]+$/D', $latest) === 1
-            && version_compare(ltrim($latest, 'v'), ltrim($installed, 'v'), '>');
+        return SoftwareVersion::newer($installed, $latest);
     }
 
     private function failedNode(int $id): void

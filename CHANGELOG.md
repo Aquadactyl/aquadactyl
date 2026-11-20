@@ -8,6 +8,11 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+- Identify legacy Manta betas and explicit daemon products without mixing Wings
+  and Manta release feeds. Compare recognized beta/RC versions, include beta
+  releases for prerelease installations, isolate caches and replace incorrect
+  cached notes. Ambiguous builds require an explicit product selection.
+
 ## v1.1-beta.5
 
 - Disable PHP session upload progress in the native PHP-FPM template, matching
