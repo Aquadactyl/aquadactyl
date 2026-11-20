@@ -90,7 +90,7 @@ LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
 Composer 2 and the panel's pinned pnpm.
 
 ```bash
-git clone --depth 1 --branch v1.2-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.3-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
 sudo bash deploy.sh install v1.2-beta
 ```
@@ -111,10 +111,14 @@ From your reviewed installer checkout, select an explicit published release:
 
 ```bash
 cd /opt/aquadactyl-installer
-git fetch origin tag v1.2-beta
-git checkout --detach v1.2-beta
+git fetch origin tag v1.3-beta
+git checkout --detach v1.3-beta
 sudo bash deploy.sh update v1.2-beta
 ```
+
+Installer v1.3-beta fixes the Blueprint inventory audit that rejected native
+`|identifier,` records. Select that installer revision before updating a panel
+with addons; preserve the installed-extension metadata and original packages.
 
 For reviewed addons that patch core PHP files, use the
 [explicit lifecycle-script option](docs/BLUEPRINT-COMPATIBILITY.md#addons-that-patch-core-php-files)
