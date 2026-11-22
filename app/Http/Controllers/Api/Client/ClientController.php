@@ -74,7 +74,10 @@ class ClientController extends ClientApiController
             }
         }
         $servers = $builder->paginate(min($request->integer('per_page', 50), 100))->appends($request->query());
-        app(ServerListRelationsService::class)->handle($servers->getCollection());
+        $includeSubusers = collect($this->parseIncludes())->contains(
+            fn ($include) => is_string($include) && preg_match('/^subusers(?:[.:]|$)/', $include) === 1
+        );
+        app(ServerListRelationsService::class)->handle($servers->getCollection(), $user, $includeSubusers);
         $folders = $foldersEnabled ? DB::table('server_folder_assignments')->where('user_id', $user->id)
             ->whereIn('server_id', $servers->getCollection()->modelKeys())->pluck('server_folder_id', 'server_id') : collect();
         foreach ($servers as $server) {
