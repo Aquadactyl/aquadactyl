@@ -56,6 +56,13 @@ field or maximum-capacity results, and are separate from the Pterodactyl compari
   page. Accessible-server IDs use a database subquery instead of first loading
   every accessible server into PHP. Permissions and variable overrides remain
   server-specific.
+- Normal server lists skip membership hydration for owners and administrators.
+  Shared-server lists hydrate only the requesting user's membership. An explicit
+  `include=subusers` still returns the complete authorized list and batches its
+  user records, avoiding a user query per member. Integration tests check bounded
+  query growth from one to twelve servers with distinct members and verify
+  permission and variable isolation. This reduces database/model work; a new
+  matched HTTP comparison is needed to quantify the latency change.
 - Blade partials share one asset composer and public appearance configuration per
   request. Long-lived composers refresh that data when the request changes.
 - API-key usage timestamps avoid repeating identity validation for unchanged

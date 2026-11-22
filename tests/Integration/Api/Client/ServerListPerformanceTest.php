@@ -1,12 +1,14 @@
 <?php
 
 use Pterodactyl\Models\User;
+use Pterodactyl\Models\Server;
 use Pterodactyl\Models\Subuser;
 use Illuminate\Support\Facades\DB;
 use Pterodactyl\Models\Permission;
 use Pterodactyl\Models\EggVariable;
 use Pterodactyl\Models\ServerVariable;
 use Pterodactyl\Models\SoftwareUpdate;
+use Pterodactyl\Services\Servers\ServerListRelationsService;
 
 test('list variables retain distinct overrides and defaults for servers sharing an egg', function () {
     $user = User::factory()->create();
@@ -52,18 +54,22 @@ test('batch loading does not expose startup variables or allocation notes to a r
     expect($response->getContent())->not->toContain('do-not-disclose', 'private-allocation-note');
 });
 
-test('list query count stays bounded as the page grows', function () {
+test('list query count stays bounded as the page grows', function (bool $includeSubusers) {
     $user = User::factory()->create();
     for ($i = 0; $i < 12; ++$i) {
-        $this->createServerModel(['owner_id' => $user->id]);
+        $server = $this->createServerModel(['owner_id' => $user->id]);
+        foreach (User::factory()->count(2)->create() as $member) {
+            Subuser::query()->create(['server_id' => $server->id, 'user_id' => $member->id, 'permissions' => [Permission::ACTION_CONTROL_CONSOLE]]);
+        }
     }
-    $this->actingAs($user)->getJson('/api/client?per_page=1')->assertOk();
+    $suffix = $includeSubusers ? '&include=subusers' : '';
+    $this->actingAs($user)->getJson('/api/client?per_page=1' . $suffix)->assertOk();
     DB::enableQueryLog();
     DB::flushQueryLog();
-    $this->getJson('/api/client?per_page=1')->assertOk();
+    $this->getJson('/api/client?per_page=1' . $suffix)->assertOk();
     $small = count(DB::getQueryLog());
     DB::flushQueryLog();
-    $this->getJson('/api/client?per_page=12')->assertOk()->assertJsonCount(12, 'data');
+    $this->getJson('/api/client?per_page=12' . $suffix)->assertOk()->assertJsonCount(12, 'data');
     $large = count(DB::getQueryLog());
     // Pagination must not first fetch all accessible server rows into PHP.
     $enumerations = collect(DB::getQueryLog())->filter(fn (array $query) => str_starts_with($query['query'], 'select `servers`.* from `servers` left join `subusers`')
@@ -72,4 +78,66 @@ test('list query count stays bounded as the page grows', function () {
 
     expect($large)->toBeLessThanOrEqual($small + 2);
     expect($enumerations)->toBeEmpty();
+})->with([false, true]);
+
+test('owned and administrator lists avoid fetching memberships unless explicitly included', function (bool $administrator) {
+    $user = User::factory()->create(['root_admin' => $administrator]);
+    $server = $this->createServerModel($administrator ? [] : ['owner_id' => $user->id]);
+    foreach (User::factory()->count(3)->create() as $member) {
+        Subuser::query()->create(['server_id' => $server->id, 'user_id' => $member->id, 'permissions' => [Permission::ACTION_CONTROL_CONSOLE]]);
+    }
+    $url = '/api/client' . ($administrator ? '?type=admin-all' : '');
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+    try {
+        $this->actingAs($user)->getJson($url)->assertOk()->assertJsonPath('data.0.attributes.user_permissions.0', '*');
+        $queries = collect(DB::getQueryLog())->filter(fn (array $query) => str_contains($query['query'], 'from `subusers`'));
+        expect($queries)->toBeEmpty();
+    } finally {
+        DB::disableQueryLog();
+    }
+})->with([false, true]);
+
+test('shared lists hydrate only the requesting membership while explicit includes remain complete', function () {
+    $user = User::factory()->create();
+    $server = $this->createServerModel();
+    $permissions = [Permission::ACTION_CONTROL_CONSOLE, Permission::ACTION_USER_READ];
+    Subuser::query()->create(['server_id' => $server->id, 'user_id' => $user->id, 'permissions' => $permissions]);
+    foreach (User::factory()->count(4)->create() as $member) {
+        Subuser::query()->create(['server_id' => $server->id, 'user_id' => $member->id, 'permissions' => [Permission::ACTION_STARTUP_READ]]);
+    }
+    $servers = Server::query()->whereKey($server->id)->get();
+    app(ServerListRelationsService::class)->handle($servers, $user);
+    expect($servers->first()->subusers->pluck('user_id')->all())->toBe([$user->id]);
+    $this->actingAs($user)->getJson('/api/client')->assertOk()->assertJsonPath('data.0.attributes.user_permissions', $permissions);
+    // The service's previous one-argument use remains compatible for integrations.
+    $fresh = Server::query()->whereKey($server->id)->get();
+    app(ServerListRelationsService::class)->handle($fresh);
+    expect($fresh->first()->subusers)->toHaveCount(5);
+});
+
+test('explicit subuser includes preserve the complete authorized list', function (string $scope, string $include) {
+    $user = User::factory()->create(['root_admin' => $scope === 'admin']);
+    $server = $this->createServerModel($scope === 'owner' ? ['owner_id' => $user->id] : []);
+    $count = 3;
+    foreach (User::factory()->count($count)->create() as $member) {
+        Subuser::query()->create(['server_id' => $server->id, 'user_id' => $member->id, 'permissions' => [Permission::ACTION_CONTROL_CONSOLE]]);
+    }
+    if ($scope === 'shared') {
+        Subuser::query()->create(['server_id' => $server->id, 'user_id' => $user->id, 'permissions' => [Permission::ACTION_USER_READ]]);
+        ++$count;
+    }
+    $url = '/api/client?include=' . $include . ($scope === 'admin' ? '&type=admin-all' : '');
+    $this->actingAs($user)->getJson($url)->assertOk()->assertJsonCount($count, 'data.0.attributes.relationships.subusers.data');
+})->with(['owner', 'admin', 'shared'])->with(['subusers', 'subusers.user']);
+
+test('empty server list batching performs no relationship queries', function () {
+    DB::enableQueryLog();
+    DB::flushQueryLog();
+    try {
+        app(ServerListRelationsService::class)->handle(new Illuminate\Database\Eloquent\Collection());
+        expect(DB::getQueryLog())->toBeEmpty();
+    } finally {
+        DB::disableQueryLog();
+    }
 });
