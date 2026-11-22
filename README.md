@@ -78,21 +78,22 @@ MariaDB, Redis, the panel, Blueprint and Wings automatically. See
 
 ## Linux installation
 
-Beta tags now advance the minor version: `v1.2-beta`, followed by `v1.3-beta`.
+Beta tags now advance the minor version: `v1.3-beta`, followed by `v1.4-beta`.
 
-The v1.2-beta release fixes Blueprint backend installation failures and separates
-Manta/Wings release feeds, notes and beta comparisons. Manta v1.2-beta explicitly
-identifies its product in the system API; update the daemon separately.
+The v1.3-beta release reduces server-list membership loading and batches member
+user records for explicit includes. Manta v1.3-beta improves directory-listing
+performance; update the daemon separately. See each repository's changelog for
+validation and the scope of the measured improvements.
 
-The v1.2-beta release is a prerelease: test your workload and extensions before
+The v1.3-beta release is a prerelease: test your workload and extensions before
 upgrading a live installation. The Git-based installer supports Ubuntu 22.04/24.04/26.04
 LTS and Debian 12/13, with PHP 8.5 (8.4 supported), Node.js 24.22.1 or later,
 Composer 2 and the panel's pinned pnpm.
 
 ```bash
-git clone --depth 1 --branch v1.4-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
+git clone --depth 1 --branch v1.5-beta https://github.com/Aquadactyl/Installer.git /opt/aquadactyl-installer
 cd /opt/aquadactyl-installer
-sudo bash deploy.sh install v1.2-beta
+sudo bash deploy.sh install v1.3-beta
 ```
 
 The installer fetches the exact panel tag, installs locked dependencies, initializes
@@ -111,12 +112,12 @@ From your reviewed installer checkout, select an explicit published release:
 
 ```bash
 cd /opt/aquadactyl-installer
-git fetch origin tag v1.4-beta
-git checkout --detach v1.4-beta
-sudo bash deploy.sh update v1.2-beta
+git fetch origin tag v1.5-beta
+git checkout --detach v1.5-beta
+sudo bash deploy.sh update v1.3-beta
 ```
 
-Installer v1.4-beta fixes Blueprint inventory parsing and package paths during
+Installer v1.5-beta includes the Blueprint inventory and package-path fixes for
 addon reapplication. Select that installer revision before updating a panel
 with addons; preserve the installed-extension metadata and original packages.
 
@@ -125,7 +126,7 @@ For reviewed addons that patch core PHP files, use the
 when updating:
 
 ```bash
-sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 bash deploy.sh update v1.2-beta
+sudo BLUEPRINT__ALLOW_CORE_SCRIPTS=1 bash deploy.sh update v1.3-beta
 ```
 
 The updater fetches the tagged source through Git, pauses the panel, backs up its

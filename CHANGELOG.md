@@ -8,6 +8,24 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+## v1.3-beta
+
+- Reduce client server-list database/model work: owners and administrators skip
+  membership hydration, while shared servers load only the requesting membership.
+- Batch member user records for explicit subuser includes, preserving the complete
+  authorized response without issuing a user query for every membership.
+- Preserve server-specific permissions, startup variables and allocation privacy,
+  and retain the relationship service's previous one-argument integration API.
+- Add query-growth and authorization regression tests. The full PHP 8.5/MariaDB 11
+  suite passes 2,428 tests and 30,914 assertions with 100% executable line coverage;
+  the PHP 8.4/8.5 database matrix, UI build, deployment and CodeQL checks pass.
+- Refresh install/update instructions for Panel and Manta v1.3-beta and Installer
+  v1.5-beta. No new database migration or configuration change is required for
+  this release. Existing backups and Blueprint update precautions still apply.
+
+The database-work reduction is verified by integration tests. A new matched live
+HTTP comparison is required before claiming a panel latency improvement.
+
 ## v1.2-beta
 
 - Stop and report failed Blueprint lifecycle scripts instead of hiding failed
