@@ -40,6 +40,39 @@ test('installed packs expose safe display metadata and regional names', function
         ->and($languages['pt_BR']['name'])->not->toBeEmpty();
 });
 
+test('locale selection defers display metadata while preserving the later language list', function () {
+    $this->languages->available();
+    $files = m::mock(Filesystem::class);
+    $files->expects('directories')->once()->with(resource_path('lang'))->andReturn([
+        resource_path('lang/fr'), resource_path('lang/en'), resource_path('lang/auto'),
+        resource_path('lang/invalid.name'), resource_path('lang/' . str_repeat('x', 36)),
+    ]);
+    $files->expects('exists')->twice()->andReturn(true);
+    $files->expects('get')->twice()->andReturn('{"name":"Custom name","nativeName":"Custom native name","direction":"rtl"}');
+    $languages = new LanguageService($files);
+    expect($languages->resolve('fr'))->toBe('fr')
+        ->and($languages->resolve('auto', ['fr-CA']))->toBe('fr')
+        ->and($languages->fallback())->toBe('en');
+    // The two metadata reads above must occur only here, once per installed pack.
+    $list = $languages->available();
+    expect(array_keys($list))->toBe(['en', 'fr'])
+        ->and($list['fr'])->toBe(['name' => 'Custom name', 'nativeName' => 'Custom native name', 'direction' => 'rtl'])
+        ->and($languages->available())->toBe($list);
+});
+
+test('resolving requests never reads locale metadata', function () {
+    $this->languages->available();
+    $files = m::mock(Filesystem::class);
+    $files->expects('directories')->once()->andReturn([resource_path('lang/en'), resource_path('lang/fr')]);
+    $files->shouldNotReceive('exists', 'get');
+    $languages = new LanguageService($files);
+    $request = Request::create('/', 'GET', server: ['HTTP_ACCEPT_LANGUAGE' => 'fr;q=1,en;q=0.5']);
+    expect($languages->forRequest($request, 'en'))->toBe('en')
+        ->and($languages->forRequest($request, 'missing'))->toBe('en')
+        ->and($languages->forRequest($request, 'auto'))->toBe('fr')
+        ->and($languages->forRequest($request, null))->toBe('fr');
+});
+
 test('a request locale cannot become the site default for another viewer', function () {
     expect($this->languages->resolve('fr'))->toBe('fr');
     $this->app->setLocale('fr');

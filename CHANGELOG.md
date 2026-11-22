@@ -8,6 +8,15 @@ This project follows [Semantic Versioning](http://semver.org) guidelines.
 
 ## Unreleased (Aquadactyl)
 
+- Resolve request languages using validated installed pack codes, loading display
+  metadata only when the language catalogue is requested. Explicit account
+  preferences also skip parsing the browser's language header. Keep discovery
+  scoped to the current request and preserve regional matching and fallbacks.
+- Add regression coverage for lazy metadata loading. The complete local PHP
+  8.5/MariaDB 11 suite passes 2,430 tests and 30,932 assertions with 100% executable
+  line coverage. Matched locale-selection component results and their limits are
+  recorded in docs/PERFORMANCE.md; these are not full HTTP latency measurements.
+
 ## v1.3-beta
 
 - Reduce client server-list database/model work: owners and administrators skip

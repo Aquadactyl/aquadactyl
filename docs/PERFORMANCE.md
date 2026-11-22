@@ -41,6 +41,11 @@ field or maximum-capacity results, and are separate from the Pterodactyl compari
 
 ## Server requests and fonts
 
+- Request language selection discovers installed pack codes once per request.
+  It reads display metadata and resolves ICU display names only when the full
+  language catalogue is requested. An explicit account preference skips parsing
+  `Accept-Language`; automatic selection retains quality ordering, regional
+  matching and site fallbacks. No language choice is cached across users.
 - Dashboard resource and player-count queries run only for rows within 200 pixels
   of the viewport. Queries pause when rows leave that area, while cached values
   remain available. Browsers without IntersectionObserver retain eager fetching.
@@ -79,6 +84,12 @@ See the [full comparison and methodology](https://aquadactyl.uk/docs/panel/panel
 for pinned revisions, raw samples, source provenance and limitations. Historical
 before/after results remain in the website's
 [optimization guide](https://aquadactyl.uk/docs/panel/optimization-benchmarks).
+
+The unreleased locale-selection change has a separate
+[matched component measurement](../tests/Performance/README.md). With the three
+bundled packs, median explicit selection fell from 43.95 to 15.13 microseconds;
+automatic selection fell from 44.67 to 25.85 microseconds. This excludes Laravel
+boot and other HTTP work, and does not replace the released panel benchmarks.
 
 ## Frontend and Docker builds
 

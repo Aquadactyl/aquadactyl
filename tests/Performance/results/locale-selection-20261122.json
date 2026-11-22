@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "measuredOn": "2026-11-22",
+  "php": "8.5.13",
+  "opcacheCli": true,
+  "iterationsPerBatch": 5000,
+  "installedCodes": [
+    "de",
+    "en",
+    "fr"
+  ],
+  "methodology": "Fresh service per operation with real bundled language directories/JSON files and the same reusable Request/Filesystem. App boot and request construction excluded. One discarded 100-operation warm-up per variant/case, five measured 5000-operation batches each in alternating variant order. Warm filesystem/opcode caches; no concurrent test/build jobs. This measures locale selection, not full HTTP latency.",
+  "runs": [
+    {
+      "case": "explicit",
+      "variant": "baseline",
+      "round": 1,
+      "nsPerOperation": 43857.9466
+    },
+    {
+      "case": "explicit",
+      "variant": "candidate",
+      "round": 1,
+      "nsPerOperation": 15129.0636
+    },
+    {
+      "case": "explicit",
+      "variant": "candidate",
+      "round": 2,
+      "nsPerOperation": 15265.6966
+    },
+    {
+      "case": "explicit",
+      "variant": "baseline",
+      "round": 2,
+      "nsPerOperation": 43950.3766
+    },
+    {
+      "case": "explicit",
+      "variant": "baseline",
+      "round": 3,
+      "nsPerOperation": 44170.6984
+    },
+    {
+      "case": "explicit",
+      "variant": "candidate",
+      "round": 3,
+      "nsPerOperation": 14985.2752
+    },
+    {
+      "case": "explicit",
+      "variant": "candidate",
+      "round": 4,
+      "nsPerOperation": 15036.8022
+    },
+    {
+      "case": "explicit",
+      "variant": "baseline",
+      "round": 4,
+      "nsPerOperation": 43490.6412
+    },
+    {
+      "case": "explicit",
+      "variant": "baseline",
+      "round": 5,
+      "nsPerOperation": 44112.871
+    },
+    {
+      "case": "explicit",
+      "variant": "candidate",
+      "round": 5,
+      "nsPerOperation": 15299.7438
+    },
+    {
+      "case": "automatic",
+      "variant": "baseline",
+      "round": 1,
+      "nsPerOperation": 44387.4158
+    },
+    {
+      "case": "automatic",
+      "variant": "candidate",
+      "round": 1,
+      "nsPerOperation": 25852.0412
+    },
+    {
+      "case": "automatic",
+      "variant": "candidate",
+      "round": 2,
+      "nsPerOperation": 25896.7564
+    },
+    {
+      "case": "automatic",
+      "variant": "baseline",
+      "round": 2,
+      "nsPerOperation": 44557.0226
+    },
+    {
+      "case": "automatic",
+      "variant": "baseline",
+      "round": 3,
+      "nsPerOperation": 44671.829
+    },
+    {
+      "case": "automatic",
+      "variant": "candidate",
+      "round": 3,
+      "nsPerOperation": 25444.5474
+    },
+    {
+      "case": "automatic",
+      "variant": "candidate",
+      "round": 4,
+      "nsPerOperation": 25916.622
+    },
+    {
+      "case": "automatic",
+      "variant": "baseline",
+      "round": 4,
+      "nsPerOperation": 44946.8252
+    },
+    {
+      "case": "automatic",
+      "variant": "baseline",
+      "round": 5,
+      "nsPerOperation": 44729.9666
+    },
+    {
+      "case": "automatic",
+      "variant": "candidate",
+      "round": 5,
+      "nsPerOperation": 25448.289
+    }
+  ],
+  "completedAt": "2026-11-22T17:58:12+00:00",
+  "baseline": "1399df4b4903f08ad6f8a7059bfee431a63adb29",
+  "patchSha256": "4ed6be52365e374e86e62d1014bd5640bef4f796152ca343e064eb426293fa9a",
+  "quota": {
+    "cpus": 2,
+    "memoryBytes": 2147483648
+  }
+}
