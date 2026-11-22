@@ -14,6 +14,9 @@ class LanguageService
 
     private ?array $languages = null;
 
+    /** @var array<string, string>|null */
+    private ?array $directories = null;
+
     private string $defaultLocale;
 
     private string $fallbackLocale;
@@ -39,12 +42,7 @@ class LanguageService
         }
 
         $languages = [];
-        foreach ($this->files->directories(resource_path('lang')) as $directory) {
-            $code = basename($directory);
-            if ($code === self::AUTOMATIC || !preg_match('/^' . self::CODE_PATTERN . '$/D', $code) || strlen($code) > 35) {
-                continue;
-            }
-
+        foreach ($this->installedDirectories() as $code => $directory) {
             $metadataPath = $directory . '/locale.json';
             $metadata = $this->files->exists($metadataPath)
                 ? json_decode($this->files->get($metadataPath), true)
@@ -68,7 +66,7 @@ class LanguageService
 
     public function fallback(): string
     {
-        $languages = $this->available();
+        $languages = $this->installedDirectories();
         foreach ([$this->defaultLocale, $this->fallbackLocale, 'en'] as $locale) {
             if (isset($languages[$locale])) {
                 return $locale;
@@ -98,7 +96,7 @@ class LanguageService
         $resources = [];
         $loader = app('translator')->getLoader();
         foreach (array_unique([app()->getLocale(), $this->fallbackLocale, 'en']) as $locale) {
-            if (isset($this->available()[$locale])) {
+            if (isset($this->installedDirectories()[$locale])) {
                 $resources[$locale]['panel'] = self::forFrontend($loader->load($locale, 'panel'));
             }
         }
@@ -119,6 +117,10 @@ class LanguageService
 
     public function forRequest(Request $request, ?string $preference): string
     {
+        if ($preference !== null && $preference !== self::AUTOMATIC) {
+            return $this->resolve($preference);
+        }
+
         $preferred = [];
         foreach (AcceptHeader::fromString($request->header('Accept-Language', ''))->all() as $item) {
             if ($item->getQuality() > 0) {
@@ -135,7 +137,7 @@ class LanguageService
      */
     public function resolve(?string $preference, array $preferredLanguages = []): string
     {
-        $languages = $this->available();
+        $languages = $this->installedDirectories();
         if ($preference !== null && $preference !== self::AUTOMATIC) {
             return isset($languages[$preference]) ? $preference : $this->fallback();
         }
@@ -166,6 +168,30 @@ class LanguageService
         }
 
         return $this->fallback();
+    }
+
+    /**
+     * Locale selection needs only validated codes. Load display metadata lazily
+     * when a language selector actually requests it, not on every API call.
+     *
+     * @return array<string, string>
+     */
+    private function installedDirectories(): array
+    {
+        if ($this->directories !== null) {
+            return $this->directories;
+        }
+
+        $directories = [];
+        foreach ($this->files->directories(resource_path('lang')) as $directory) {
+            $code = basename($directory);
+            if ($code !== self::AUTOMATIC && strlen($code) <= 35 && preg_match('/^' . self::CODE_PATTERN . '$/D', $code)) {
+                $directories[$code] = $directory;
+            }
+        }
+        ksort($directories);
+
+        return $this->directories = $directories;
     }
 
     private function label(mixed $value, string $fallback): string
